@@ -1,59 +1,198 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SJ Website
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Proyek web berbasis [Laravel 12](https://laravel.com) yang berjalan di atas Docker (Laravel Sail) dengan database **PostgreSQL**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Prasyarat
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Sebelum mulai, pastikan sudah terpasang:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Tool | Versi | Keterangan |
+| --- | --- | --- |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | terbaru | Wajib (dipakai Laravel Sail) |
+| [Docker Compose](https://docs.docker.com/compose/) | v2 | Biasanya sudah termasuk Docker Desktop |
+| [Composer](https://getcomposer.org) | 2.x | Hanya diperlukan jika ingin **tanpa** Docker |
+| [PHP](https://www.php.net) | ^8.2 | Hanya diperlukan jika ingin **tanpa** Docker |
+| [Node.js](https://nodejs.org) | 20+ | Hanya diperlukan jika ingin **tanpa** Docker |
 
-## Learning Laravel
+> **Rekomendasi:** gunakan Docker (Sail). Semua dependensi (PHP, Composer, Node, PostgreSQL)
+> ikut terinstal di dalam container sehingga tidak perlu setup PHP/Node di lokal.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 1. Setup Awal (Pertama Kali)
 
-## Laravel Sponsors
+```bash
+# Clone repository
+git clone <url-repository>.git
+cd sjwebsite
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Salin .env dari contoh
+cp .env.example .env
 
-### Premium Partners
+# Setup kredensial (bisa dibiarkan, sudah disesuaikan untuk Sail + PostgreSQL)
+# Pastikan bagian ini tidak kosong di .env:
+#   DB_CONNECTION=pgsql
+#   DB_HOST=pgsql
+#   DB_PORT=5432
+#   DB_DATABASE=laravel
+#   DB_USERNAME=laravel
+#   DB_PASSWORD=<bebas>
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Generate application key
+php artisan key:generate
 
-## Contributing
+# Jalankan container (build image + start app & pgsql)
+./vendor/bin/sail up -d
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Install dependensi PHP di dalam container
+./vendor/bin/sail composer install
 
-## Code of Conduct
+# Install dependensi frontend
+./vendor/bin/sail npm install
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Build asset (satu kali, atau setiap kali mengubah resource)
+./vendor/bin/sail npm run dev
 
-## Security Vulnerabilities
+# Jalankan migrasi database
+./vendor/bin/sail artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Buka aplikasi di: **http://localhost**
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 2. Setup Tanpa Docker (Opsional)
+
+Jika tidak ingin memakai Docker, jalankan langsung di lokal. Pastikan PostgreSQL
+sudah berjalan dan kredensial di `.env` mengarah ke DB tersebut
+(`DB_HOST=127.0.0.1`, `DB_PORT=5432`).
+
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+npm run build
+php artisan migrate
+php artisan serve   # http://127.0.0.1:8000
+```
+
+---
+
+## 3. Perintah Harian
+
+Semua perintah dijalankan lewat `./vendor/bin/sail` agar berjalan di dalam container.
+
+| Perintah | Fungsi |
+| --- | --- |
+| `./vendor/bin/sail up -d` | Menjalankan semua container (app + pgsql) |
+| `./vendor/bin/sail down` | Menghentikan container |
+| `./vendor/bin/sail ps` | Melihat status container |
+| `./vendor/bin/sail artisan` | Menjalankan perintah `artisan` di container |
+| `./vendor/bin/sail composer` | Menjalankan Composer di container |
+| `./vendor/bin/sail npm` | Menjalankan npm di container |
+| `./vendor/bin/sail tinker` | REPL / shell interaktif |
+| `./vendor/bin/sail logs` | Melihat log aplikasi |
+| `./vendor/bin/sail test` | Menjalankan test (PHPUnit) |
+
+### Lint & Formatter
+
+```bash
+./vendor/bin/sail artisan pint --test   # cek kode (Laravel Pint)
+./vendor/bin/sail artisan pint          # format otomatis
+```
+
+---
+
+## 4. Database (PostgreSQL)
+
+- **Host:** `pgsql` (nama service di network Sail, bukan `127.0.0.1`)
+- **Port:** `5432` (di-forward ke `FORWARD_DB_PORT`, default `5432`)
+- **Database default:** `laravel`
+- **User / Password:** sesuai `DB_USERNAME` / `DB_PASSWORD` di `.env`
+
+Masuk ke psql di dalam container:
+
+```bash
+./vendor/bin/sail exec pgsql psql -U laravel -d laravel
+```
+
+Membuat migrasi baru:
+
+```bash
+./vendor/bin/sail artisan make:migration nama_migrasi
+./vendor/bin/sail artisan migrate            # jalankan migrasi
+./vendor/bin/sail artisan migrate:rollback   # rollback batch terakhir
+```
+
+Mengisi data awal:
+
+```bash
+./vendor/bin/sail artisan db:seed
+```
+
+---
+
+## 5. Frontend (Vite)
+
+Jalankan dev server di dalam container:
+
+```bash
+./vendor/bin/sail npm run dev
+```
+
+Saat siap produksi, build asset:
+
+```bash
+./vendor/bin/sail npm run build
+```
+
+---
+
+## 6. Testing
+
+```bash
+# Menjalankan seluruh test
+./vendor/bin/sail artisan test
+
+# Hanya test tertentu
+./vendor/bin/sail artisan test --filter=NamaTest
+```
+
+---
+
+## 7. Struktur & Aturan Repo
+
+- **`docker-compose.yml`** — konfigurasi Sail + PostgreSQL (WAJIB di-commit).
+- **`.env`** — konfigurasi lokal/pribadi (TIDAK di-commit; sudah masuk `.gitignore`).
+- **`.env.example`** — template konfigurasi (WAJIB di-commit).
+- Jika menambah komponen eksternal (misal Redis, Mailpit), sesuaikan `docker-compose.yml`
+  dan `.env`, lalu pastikan saltin `.env.example`.
+
+---
+
+## Troubleshooting
+
+**Port 5432 sudah terpakai?**
+Ubah `FORWARD_DB_PORT` di `.env`, lalu restart:
+```bash
+./vendor/bin/sail down && ./vendor/bin/sail up -d
+```
+
+**Ganti password database?**
+Ubah `DB_PASSWORD` di `.env`. Untuk database yang sudah terlanjur dibuat, ganti juga
+password user di PostgreSQL:
+```bash
+./vendor/bin/sail exec pgsql psql -U laravel -d postgres -c "ALTER USER laravel PASSWORD 'password-baru';"
+```
+
+**Container gagal start karena image belum ter-build?**
+```bash
+./vendor/bin/sail up -d --build
+```
+
+**Saat `npm run dev` gagal / hot reload tidak jalan?**
+Pastikan `VITE_PORT` di `.env` sama dengan port yang dipetakan ulang di `docker-compose.yml`,
+lalu jalankan lagi `./vendor/bin/sail npm run dev`.
