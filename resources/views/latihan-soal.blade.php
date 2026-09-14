@@ -212,6 +212,36 @@
                     </div>
                 </section>
 
+                <!-- SESI LATIHAN INTERAKTIF (5 layar kuis) -->
+                <section class="flex flex-col gap-space-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label-upper text-label-upper tracking-wider text-gray-500 uppercase font-bold">SESI LATIHAN INTERAKTIF</span>
+                        <a href="{{ url('/masuk') }}" class="font-caption text-caption text-primary-700 font-semibold hover:underline">Mlebu kanggo miwiti</a>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-gutter">
+                        @php
+                            $sesi = [
+                                ['href' => url('/kuis/pilihan-ganda'), 'ikon' => 'quiz', 'judul' => 'Pilihan Ganda', 'sub' => 'FR-3 Evaluasi basa'],
+                                ['href' => url('/kuis/susun-ukara'), 'ikon' => 'segment', 'judul' => 'Susun Ukara', 'sub' => 'FR-4 Alih basa'],
+                                ['href' => url('/kuis/wicara-audio'), 'ikon' => 'graphic_eq', 'judul' => 'Kuis Wicara', 'sub' => 'FR-8 STS/STT'],
+                                ['href' => url('/kuis/speak-to-text'), 'ikon' => 'keyboard_voice', 'judul' => 'Speak to Text', 'sub' => 'FR-7 STT'],
+                                ['href' => url('/kuis/tracing-aksara'), 'ikon' => 'draw', 'judul' => 'Tracing Aksara', 'sub' => 'FR-22 Kanvas'],
+                            ];
+                        @endphp
+                        @foreach ($sesi as $item)
+                            <a href="{{ $item['href'] }}" class="group flex items-center gap-3 rounded-2xl bg-surface-container-lowest p-4 shadow-sm hover:shadow-md border border-gray-100 transition-all">
+                                <span class="w-11 h-11 rounded-xl bg-primary-fixed flex items-center justify-center text-primary-700 shrink-0">
+                                    <span class="material-symbols-outlined text-[22px]">{{ $item['ikon'] }}</span>
+                                </span>
+                                <span class="flex flex-col min-w-0">
+                                    <span class="font-heading text-body font-bold text-on-surface truncate">{{ $item['judul'] }}</span>
+                                    <span class="font-caption text-caption text-gray-500 truncate">{{ $item['sub'] }}</span>
+                                </span>
+                            </a>
+                        @endforeach
+                    </div>
+                </section>
+
                 <!-- Filter & Tab Navigasi Kategori Soal -->
                 <section class="flex flex-col gap-space-sm">
                     <div class="flex items-center justify-between">

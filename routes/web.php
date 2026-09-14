@@ -1,27 +1,100 @@
 <?php
 
+use App\Http\Controllers\Web\AuthWebController;
+use App\Http\Controllers\Web\GuruWebController;
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\KuisSesiController;
+use App\Http\Controllers\Web\SuperadminWebController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+/*
+|--------------------------------------------------------------------------
+| Beranda (role-aware) & Halaman Siswa
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [HomeController::class, 'index'])->name('siswa.dashboard');
+Route::get('/dashboard', [HomeController::class, 'index']);
+
+Route::middleware('web.auth:siswa')->group(function () {
+    Route::get('/latihan-soal', fn () => view('latihan-soal'))->name('siswa.latihan');
+    Route::get('/papan-skor', fn () => view('papan-skor'))->name('siswa.papan-skor');
+    Route::get('/asisten-ai', fn () => view('asisten-ai'))->name('siswa.asisten');
+    Route::get('/profil', fn () => view('profil'))->name('siswa.profil');
 });
 
-Route::get('/dashboard', function () {
-    return view('welcome');
+/*
+|--------------------------------------------------------------------------
+| Autentikasi Web (login terpadu tanpa pilih peran)
+|--------------------------------------------------------------------------
+*/
+Route::get('/masuk', [AuthWebController::class, 'showMasuk'])->name('masuk');
+Route::post('/masuk', [AuthWebController::class, 'masuk']);
+Route::get('/daftar', [AuthWebController::class, 'showDaftar'])->name('daftar');
+Route::post('/daftar', [AuthWebController::class, 'daftar']);
+Route::post('/keluar', [AuthWebController::class, 'keluar'])->name('keluar');
+
+/*
+|--------------------------------------------------------------------------
+| Sesi Kuis Siswa (Blade) — FR-3, FR-4, FR-8, FR-7, FR-22
+|--------------------------------------------------------------------------
+*/
+Route::middleware('web.auth:siswa')->prefix('kuis')->group(function () {
+    Route::get('/pilihan-ganda', [KuisSesiController::class, 'pilihanGanda'])->name('kuis.pilihan-ganda');
+    Route::get('/susun-ukara', [KuisSesiController::class, 'susunUkara'])->name('kuis.susun-ukara');
+    Route::get('/wicara-audio', [KuisSesiController::class, 'wicaraAudio'])->name('kuis.wicara-audio');
+    Route::get('/speak-to-text', [KuisSesiController::class, 'speakToText'])->name('kuis.speak-to-text');
+    Route::get('/tracing-aksara', [KuisSesiController::class, 'tracingAksara'])->name('kuis.tracing-aksara');
+
+    Route::post('/jawab', [KuisSesiController::class, 'jawab'])->name('kuis.jawab');
+    Route::post('/tts', [KuisSesiController::class, 'tts'])->name('kuis.tts');
+    Route::post('/stt', [KuisSesiController::class, 'stt'])->name('kuis.stt');
+    Route::post('/sts', [KuisSesiController::class, 'sts'])->name('kuis.sts');
+    Route::post('/chat', [KuisSesiController::class, 'chat'])->name('kuis.chat');
 });
 
-Route::get('/latihan-soal', function () {
-    return view('latihan-soal');
+/*
+|--------------------------------------------------------------------------
+| Area Guru — FR-11, FR-12, FR-23
+|--------------------------------------------------------------------------
+*/
+Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(function () {
+    Route::get('/dashboard', [GuruWebController::class, 'dashboard'])->name('dashboard');
+
+    Route::get('/soal', [GuruWebController::class, 'soal'])->name('soal');
+    Route::post('/soal', [GuruWebController::class, 'soalStore'])->name('soal.store');
+    Route::put('/soal/{soal}', [GuruWebController::class, 'soalUpdate'])->name('soal.update');
+    Route::delete('/soal/{soal}', [GuruWebController::class, 'soalDestroy'])->name('soal.destroy');
+
+    Route::get('/test', [GuruWebController::class, 'test'])->name('test');
+    Route::post('/test', [GuruWebController::class, 'testStore'])->name('test.store');
+    Route::delete('/test/{test}', [GuruWebController::class, 'testDestroy'])->name('test.destroy');
 });
 
-Route::get('/papan-skor', function () {
-    return view('papan-skor');
-});
+/*
+|--------------------------------------------------------------------------
+| Area Superadmin — FR-16 s.d. FR-20
+|--------------------------------------------------------------------------
+*/
+Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::get('/dashboard', [SuperadminWebController::class, 'dashboard'])->name('dashboard');
 
-Route::get('/asisten-ai', function () {
-    return view('asisten-ai');
-});
+    Route::get('/guru', [SuperadminWebController::class, 'guru'])->name('guru');
+    Route::post('/guru', [SuperadminWebController::class, 'guruStore'])->name('guru.store');
+    Route::put('/guru/{guru}', [SuperadminWebController::class, 'guruUpdate'])->name('guru.update');
+    Route::delete('/guru/{guru}', [SuperadminWebController::class, 'guruDestroy'])->name('guru.destroy');
 
-Route::get('/profil', function () {
-    return view('profil');
+    Route::get('/siswa', [SuperadminWebController::class, 'siswa'])->name('siswa');
+    Route::post('/siswa', [SuperadminWebController::class, 'siswaStore'])->name('siswa.store');
+    Route::put('/siswa/{siswa}', [SuperadminWebController::class, 'siswaUpdate'])->name('siswa.update');
+    Route::delete('/siswa/{siswa}', [SuperadminWebController::class, 'siswaDestroy'])->name('siswa.destroy');
+
+    Route::get('/level-materi', [SuperadminWebController::class, 'levelMateri'])->name('level-materi');
+    Route::post('/level-materi', [SuperadminWebController::class, 'levelMateriStore'])->name('level-materi.store');
+    Route::put('/level-materi/{levelMateri}', [SuperadminWebController::class, 'levelMateriUpdate'])->name('level-materi.update');
+    Route::delete('/level-materi/{levelMateri}', [SuperadminWebController::class, 'levelMateriDestroy'])->name('level-materi.destroy');
+
+    Route::get('/soal', [SuperadminWebController::class, 'soal'])->name('soal');
+    Route::post('/soal', [SuperadminWebController::class, 'soalStore'])->name('soal.store');
+    Route::put('/soal/{soal}', [SuperadminWebController::class, 'soalUpdate'])->name('soal.update');
+    Route::delete('/soal/{soal}', [SuperadminWebController::class, 'soalDestroy'])->name('soal.destroy');
 });

@@ -35,4 +35,29 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Sinau Jowo — AI Speech & RAG vendors (PRD §6C, §10.2)
+    |--------------------------------------------------------------------------
+    | Semua kredensial opsional. Bila kosong, service terkait otomatis
+    | memakai mode mock deterministik agar demo tetap berjalan tanpa key.
+    */
+
+    'azure_speech' => [
+        'key' => env('AZURE_SPEECH_KEY'),
+        'region' => env('AZURE_SPEECH_REGION', 'southeastasia'),
+        'voice_default' => env('AZURE_SPEECH_VOICE', 'jv-ID-SitiNeural'),
+        'voice_male' => env('AZURE_SPEECH_VOICE_MALE', 'jv-ID-DimasNeural'),
+    ],
+
+    'google_speech' => [
+        'key' => env('GOOGLE_SPEECH_KEY'),
+        'language' => env('GOOGLE_SPEECH_LANGUAGE', 'jv-ID'),
+    ],
+
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'live_translate_model' => env('GEMINI_LIVE_MODEL', 'gemini-3.5-live-translate-preview'),
+    ],
+
 ];

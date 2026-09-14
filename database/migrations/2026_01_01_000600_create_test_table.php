@@ -1,0 +1,26 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('test', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('level_materi_id')->constrained('level_materi')->cascadeOnDelete();
+            $table->string('nama_test');
+            $table->text('deskripsi')->nullable();
+            $table->foreignId('guru_id')->nullable()->constrained('guru')->nullOnDelete();
+            $table->foreignId('superadmin_id')->nullable()->constrained('superadmin')->nullOnDelete();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('test');
+    }
+};

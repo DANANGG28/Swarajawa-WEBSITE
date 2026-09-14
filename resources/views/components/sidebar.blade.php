@@ -89,9 +89,13 @@
                     <span class="font-caption text-caption text-on-surface-variant truncate">Kelas 7A • Siswa</span>
                 </div>
             </div>
-            <button type="button" aria-label="Menu Profil" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors flex-shrink-0">
-                <span class="material-symbols-outlined text-[20px]">more_vert</span>
-            </button>
+            <form method="POST" action="{{ route('keluar') }}" class="flex-shrink-0">
+                @csrf
+                <button type="submit" aria-label="Metu" title="Metu"
+                    class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-error-container/60 hover:text-error transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                </button>
+            </form>
         </div>
     </div>
 </aside>
