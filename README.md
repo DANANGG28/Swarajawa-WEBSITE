@@ -173,6 +173,37 @@ Saat siap produksi, build asset:
 
 ---
 
+## 8. Alur Kerja Git (Workflow Project)
+
+1. **Pull / Update branch utama (`main`)**
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+
+2. **Buat & checkout branch baru**
+   ```bash
+   git checkout -b feature/nama-fitur
+   ```
+
+3. **Simpan perubahan (Commit)**
+   ```bash
+   git add .
+   git commit -m "feat: deskripsi perubahan"
+   ```
+
+4. **Push branch ke remote**
+   ```bash
+   git push -u origin feature/nama-fitur
+   ```
+
+5. **Buat Pull Request (PR)**
+   - Buka halaman repositori di GitHub/GitLab.
+   - Buat Pull Request dari branch `feature/nama-fitur` ke `main`.
+   - Tunggu review sebelum di-merge.
+
+---
+
 ## Troubleshooting
 
 **Port 5432 sudah terpakai?**
