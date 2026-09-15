@@ -28,7 +28,6 @@ class WebDashboardTest extends TestCase
 
         $this->actingAs($guru, 'guru')->get('/guru/dashboard')->assertOk();
         $this->actingAs($guru, 'guru')->get('/guru/soal')->assertOk();
-        $this->actingAs($guru, 'guru')->get('/guru/test')->assertOk();
         $this->actingAs($guru, 'guru')->get('/superadmin/dashboard')->assertForbidden();
     }
 

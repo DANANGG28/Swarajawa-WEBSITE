@@ -6,11 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\LevelMateri;
 use App\Models\Soal;
-use App\Models\Test;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class GuruWebController extends Controller
@@ -107,67 +105,6 @@ class GuruWebController extends Controller
         $soal->delete();
 
         return back()->with('sukses', 'Soal kasil dibusak.');
-    }
-
-    /**
-     * FR-23: Daftar paket test milik guru.
-     */
-    public function test(): View
-    {
-        $guru = $this->guru();
-
-        return view('guru.test', [
-            'judul' => 'Paket Test',
-            'subjudul' => 'Susun paket latihan dari bank soal Anda (boleh campur tipe)',
-            'role' => 'guru',
-            'active' => 'test',
-            'testList' => Test::query()->with('levelMateri')->withCount('soal')->where('guru_id', $guru->id)->latest()->get(),
-            'levels' => LevelMateri::orderBy('urutan')->get(),
-            'soalList' => Soal::query()->with('levelMateri')->where('guru_id', $guru->id)->orderBy('level_materi_id')->get(),
-            'tipeList' => $this->tipeList(),
-        ]);
-    }
-
-    public function testStore(Request $request): RedirectResponse
-    {
-        $guru = $this->guru();
-
-        $data = $request->validate([
-            'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
-            'nama_test' => ['required', 'string', 'max:255'],
-            'deskripsi' => ['nullable', 'string'],
-            'soal_ids' => ['required', 'array', 'min:1'],
-            'soal_ids.*' => ['integer', 'exists:soal,id'],
-        ]);
-
-        $test = DB::transaction(function () use ($data, $guru) {
-            $test = Test::create([
-                'level_materi_id' => $data['level_materi_id'],
-                'nama_test' => $data['nama_test'],
-                'deskripsi' => $data['deskripsi'] ?? null,
-                'guru_id' => $guru->id,
-            ]);
-
-            $pivot = [];
-            foreach (array_values($data['soal_ids']) as $index => $soalId) {
-                $pivot[$soalId] = ['urutan' => $index + 1];
-            }
-            $test->soal()->sync($pivot);
-
-            return $test;
-        });
-
-        return back()->with('sukses', 'Paket test "'.$test->nama_test.'" kasil disimpen.');
-    }
-
-    public function testDestroy(Test $test): RedirectResponse
-    {
-        $guru = $this->guru();
-        abort_unless($test->guru_id === $guru->id, 403);
-
-        $test->delete();
-
-        return back()->with('sukses', 'Paket test kasil dibusak.');
     }
 
     private function guru(): Guru

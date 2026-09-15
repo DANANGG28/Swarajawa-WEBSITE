@@ -8,7 +8,6 @@ use App\Models\LevelMateri;
 use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Superadmin;
-use App\Models\Test;
 use Illuminate\Http\JsonResponse;
 
 class SuperadminDashboardController extends Controller
@@ -24,7 +23,6 @@ class SuperadminDashboardController extends Controller
             'total_superadmin' => Superadmin::count(),
             'total_level_materi' => LevelMateri::count(),
             'total_soal' => Soal::count(),
-            'total_test' => Test::count(),
         ]);
     }
 }

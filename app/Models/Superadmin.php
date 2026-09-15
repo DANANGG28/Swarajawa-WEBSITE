@@ -39,9 +39,4 @@ class Superadmin extends Authenticatable
     {
         return $this->hasMany(Soal::class, 'superadmin_id');
     }
-
-    public function test(): HasMany
-    {
-        return $this->hasMany(Test::class, 'superadmin_id');
-    }
 }

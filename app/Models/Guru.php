@@ -44,11 +44,6 @@ class Guru extends Authenticatable
         return $this->hasMany(Soal::class, 'guru_id');
     }
 
-    public function test(): HasMany
-    {
-        return $this->hasMany(Test::class, 'guru_id');
-    }
-
     public function siswa(): BelongsToMany
     {
         return $this->belongsToMany(Siswa::class, 'guru_siswa', 'guru_id', 'siswa_id')

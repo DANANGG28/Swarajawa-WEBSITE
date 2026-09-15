@@ -51,8 +51,8 @@
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
                             <span class="px-3 py-1.5 rounded-full bg-yellow-300/50 text-tertiary font-caption text-caption font-bold">+{{ $level->reward_exp }} XP</span>
-                            <span class="px-3 py-1.5 rounded-full bg-primary-fixed text-primary-700 font-caption text-caption font-bold">{{ $level->soal_count }} soal • {{ $level->test_count }} test</span>
-                            <form method="POST" action="{{ route('superadmin.level-materi.destroy', $level) }}" onsubmit="return confirm('Busak level materi iki? Kabeh soal lan test ing level iki uga bakal kebusak.')">
+                            <span class="px-3 py-1.5 rounded-full bg-primary-fixed text-primary-700 font-caption text-caption font-bold">{{ $level->soal_count }} soal</span>
+                            <form method="POST" action="{{ route('superadmin.level-materi.destroy', $level) }}" onsubmit="return confirm('Busak level materi iki? Kabeh soal ing level iki uga bakal kebusak.')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="w-9 h-9 rounded-full bg-error-container/60 text-error flex items-center justify-center hover:bg-error-container transition-colors">
                                     <span class="material-symbols-outlined text-[18px]">delete</span>

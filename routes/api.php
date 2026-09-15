@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\SiswaController;
 use App\Http\Controllers\Api\SoalController;
 use App\Http\Controllers\Api\SpeechController;
 use App\Http\Controllers\Api\SuperadminDashboardController;
-use App\Http\Controllers\Api\TestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json([
@@ -56,7 +55,6 @@ Route::middleware('auth.any')->group(function () {
 
     Route::middleware('role:guru,superadmin')->group(function () {
         Route::apiResource('soal', SoalController::class);
-        Route::apiResource('test', TestController::class);
         Route::apiResource('level-materi', LevelMateriController::class)
             ->parameters(['level-materi' => 'levelMateri'])
             ->only(['index', 'show']);

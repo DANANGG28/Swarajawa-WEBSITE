@@ -6,7 +6,6 @@ use Database\Factories\SoalFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Soal extends Model
 {
@@ -61,13 +60,6 @@ class Soal extends Model
     public function superadmin(): BelongsTo
     {
         return $this->belongsTo(Superadmin::class, 'superadmin_id');
-    }
-
-    public function tests(): BelongsToMany
-    {
-        return $this->belongsToMany(Test::class, 'test_soal', 'soal_id', 'test_id')
-            ->withPivot('urutan')
-            ->withTimestamps();
     }
 
     public function getPembuatAttribute(): ?string

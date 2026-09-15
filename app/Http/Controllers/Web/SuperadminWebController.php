@@ -8,7 +8,6 @@ use App\Models\LevelMateri;
 use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Superadmin;
-use App\Models\Test;
 use App\Services\ProgresService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,7 +33,6 @@ class SuperadminWebController extends Controller
                 'siswa' => Siswa::count(),
                 'level' => LevelMateri::count(),
                 'soal' => Soal::count(),
-                'test' => Test::count(),
             ],
             'levelTerbaru' => LevelMateri::withCount('soal')->orderBy('urutan')->get(),
         ]);
@@ -44,7 +42,7 @@ class SuperadminWebController extends Controller
 
     public function guru(Request $request): View
     {
-        $query = Guru::query()->withCount(['soal', 'test']);
+        $query = Guru::query()->withCount('soal');
 
         if ($request->filled('q')) {
             $term = '%'.$request->query('q').'%';
@@ -187,7 +185,7 @@ class SuperadminWebController extends Controller
             'subjudul' => 'Susun struktur level/materi pembelajaran',
             'role' => 'superadmin',
             'active' => 'level-materi',
-            'levelList' => LevelMateri::withCount(['soal', 'test'])->orderBy('urutan')->get(),
+            'levelList' => LevelMateri::withCount('soal')->orderBy('urutan')->get(),
         ]);
     }
 

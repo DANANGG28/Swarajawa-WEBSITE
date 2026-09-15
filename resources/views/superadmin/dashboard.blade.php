@@ -2,14 +2,13 @@
 
 @section('konten')
     <div class="flex flex-col gap-6">
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-gutter">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             @php
                 $cards = [
                     ['label' => 'Total Guru', 'value' => $stat['guru'], 'ikon' => 'supervisor_account', 'bg' => 'bg-primary-fixed', 'text' => 'text-primary-700'],
                     ['label' => 'Total Siswa', 'value' => $stat['siswa'], 'ikon' => 'groups', 'bg' => 'bg-yellow-300/50', 'text' => 'text-tertiary'],
                     ['label' => 'Level Materi', 'value' => $stat['level'], 'ikon' => 'stairs', 'bg' => 'bg-orange-300/40', 'text' => 'text-tertiary'],
                     ['label' => 'Bank Soal', 'value' => $stat['soal'], 'ikon' => 'quiz', 'bg' => 'bg-green-500/15', 'text' => 'text-green-500'],
-                    ['label' => 'Paket Test', 'value' => $stat['test'], 'ikon' => 'playlist_add_check', 'bg' => 'bg-pink-100', 'text' => 'text-secondary'],
                 ];
             @endphp
             @foreach ($cards as $card)

@@ -12,7 +12,6 @@
         : [
             ['key' => 'dashboard', 'label' => 'Pemantauan Siswa', 'ikon' => 'monitoring', 'url' => route('guru.dashboard')],
             ['key' => 'soal', 'label' => 'Manajemen Soal', 'ikon' => 'quiz', 'url' => route('guru.soal')],
-            ['key' => 'test', 'label' => 'Paket Test', 'ikon' => 'playlist_add_check', 'url' => route('guru.test')],
         ];
 
     $user = \App\Support\AuthContext::currentUser(request());

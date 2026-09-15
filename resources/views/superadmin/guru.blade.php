@@ -77,7 +77,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
-                            <span class="px-3 py-1.5 rounded-full bg-primary-fixed text-primary-700 font-caption text-caption font-bold">{{ $g->soal_count }} soal • {{ $g->test_count }} test</span>
+                            <span class="px-3 py-1.5 rounded-full bg-primary-fixed text-primary-700 font-caption text-caption font-bold">{{ $g->soal_count }} soal</span>
                             <form method="POST" action="{{ route('superadmin.guru.destroy', $g) }}" onsubmit="return confirm('Busak akun guru iki?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="w-9 h-9 rounded-full bg-error-container/60 text-error flex items-center justify-center hover:bg-error-container transition-colors">

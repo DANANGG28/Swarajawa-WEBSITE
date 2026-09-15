@@ -54,7 +54,7 @@ Route::middleware('web.auth:siswa')->prefix('kuis')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Area Guru — FR-11, FR-12, FR-23
+| Area Guru — FR-11, FR-12
 |--------------------------------------------------------------------------
 */
 Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(function () {
@@ -64,10 +64,6 @@ Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(functio
     Route::post('/soal', [GuruWebController::class, 'soalStore'])->name('soal.store');
     Route::put('/soal/{soal}', [GuruWebController::class, 'soalUpdate'])->name('soal.update');
     Route::delete('/soal/{soal}', [GuruWebController::class, 'soalDestroy'])->name('soal.destroy');
-
-    Route::get('/test', [GuruWebController::class, 'test'])->name('test');
-    Route::post('/test', [GuruWebController::class, 'testStore'])->name('test.store');
-    Route::delete('/test/{test}', [GuruWebController::class, 'testDestroy'])->name('test.destroy');
 });
 
 /*

@@ -14,7 +14,7 @@ class GuruController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Guru::query()->withCount(['soal', 'test']);
+        $query = Guru::query()->withCount('soal');
 
         if ($request->filled('q')) {
             $term = '%'.$request->query('q').'%';
@@ -44,7 +44,7 @@ class GuruController extends Controller
     public function show(Guru $guru): JsonResponse
     {
         return response()->json([
-            'data' => $guru->loadCount(['soal', 'test']),
+            'data' => $guru->loadCount('soal'),
         ]);
     }
 
