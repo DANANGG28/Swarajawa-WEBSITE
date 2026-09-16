@@ -75,6 +75,8 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
     Route::get('/dashboard', [SuperadminWebController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/guru', [SuperadminWebController::class, 'guru'])->name('guru');
+    Route::get('/guru/tambah', [SuperadminWebController::class, 'guruCreate'])->name('guru.create');
+    Route::get('/guru/{guru}', [SuperadminWebController::class, 'guruDetail'])->name('guru.show');
     Route::post('/guru', [SuperadminWebController::class, 'guruStore'])->name('guru.store');
     Route::put('/guru/{guru}', [SuperadminWebController::class, 'guruUpdate'])->name('guru.update');
     Route::delete('/guru/{guru}', [SuperadminWebController::class, 'guruDestroy'])->name('guru.destroy');

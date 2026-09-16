@@ -58,6 +58,27 @@ class SuperadminWebController extends Controller
         ]);
     }
 
+    public function guruCreate(): View
+    {
+        return view('superadmin.tambah-guru', [
+            'judul' => 'Daftarake Guru Anyar',
+            'subjudul' => 'Tambah akun guru anyar supaya bisa ngatur siswa lan bank soal',
+            'role' => 'superadmin',
+            'active' => 'guru',
+        ]);
+    }
+
+    public function guruDetail(Guru $guru): View
+    {
+        return view('superadmin.detail-guru', [
+            'judul' => 'Detail Akun Guru',
+            'subjudul' => 'Informasi profil, kontak, lan kredensial akun guru',
+            'role' => 'superadmin',
+            'active' => 'guru',
+            'guru' => $guru,
+        ]);
+    }
+
     public function guruStore(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -72,7 +93,7 @@ class SuperadminWebController extends Controller
 
         Guru::create($data);
 
-        return back()->with('sukses', 'Akun guru kasil didaftarake.');
+        return redirect()->route('superadmin.guru')->with('sukses', 'Akun guru kasil didaftarake.');
     }
 
     public function guruUpdate(Request $request, Guru $guru): RedirectResponse
@@ -93,14 +114,14 @@ class SuperadminWebController extends Controller
 
         $guru->update($data);
 
-        return back()->with('sukses', 'Akun guru kasil dianyari.');
+        return back()->with('sukses', 'Data akun guru kasil dianyari.');
     }
 
     public function guruDestroy(Guru $guru): RedirectResponse
     {
         $guru->delete();
 
-        return back()->with('sukses', 'Akun guru kasil dibusak.');
+        return redirect()->route('superadmin.guru')->with('sukses', 'Akun guru kasil dibusak.');
     }
 
     // --------------------------------------------------------------- Siswa
