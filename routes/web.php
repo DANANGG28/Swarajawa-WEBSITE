@@ -77,11 +77,15 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
     Route::get('/guru', [SuperadminWebController::class, 'guru'])->name('guru');
     Route::get('/guru/tambah', [SuperadminWebController::class, 'guruCreate'])->name('guru.create');
     Route::get('/guru/{guru}', [SuperadminWebController::class, 'guruDetail'])->name('guru.show');
+    Route::get('/guru/{guru}/edit', [SuperadminWebController::class, 'guruEdit'])->name('guru.edit');
     Route::post('/guru', [SuperadminWebController::class, 'guruStore'])->name('guru.store');
     Route::put('/guru/{guru}', [SuperadminWebController::class, 'guruUpdate'])->name('guru.update');
     Route::delete('/guru/{guru}', [SuperadminWebController::class, 'guruDestroy'])->name('guru.destroy');
 
     Route::get('/siswa', [SuperadminWebController::class, 'siswa'])->name('siswa');
+    Route::get('/siswa/tambah', [SuperadminWebController::class, 'siswaCreate'])->name('siswa.create');
+    Route::get('/siswa/{siswa}', [SuperadminWebController::class, 'siswaDetail'])->name('siswa.show');
+    Route::get('/siswa/{siswa}/edit', [SuperadminWebController::class, 'siswaEdit'])->name('siswa.edit');
     Route::post('/siswa', [SuperadminWebController::class, 'siswaStore'])->name('siswa.store');
     Route::put('/siswa/{siswa}', [SuperadminWebController::class, 'siswaUpdate'])->name('siswa.update');
     Route::delete('/siswa/{siswa}', [SuperadminWebController::class, 'siswaDestroy'])->name('siswa.destroy');
@@ -96,3 +100,12 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
     Route::put('/soal/{soal}', [SuperadminWebController::class, 'soalUpdate'])->name('soal.update');
     Route::delete('/soal/{soal}', [SuperadminWebController::class, 'soalDestroy'])->name('soal.destroy');
 });
+
+Route::get('/resources/image/guru/{filename}', function (string $filename) {
+    $path = resource_path('image/guru/' . $filename);
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    return response()->file($path);
+})->name('guru.image');
+
