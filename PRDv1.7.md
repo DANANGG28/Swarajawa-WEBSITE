@@ -17,6 +17,8 @@ Versi 1.7 — Politeknik Negeri Jember (Polije), Tugas Kelompok Semester 3, 2026
 > **Catatan revisi v1.6:** Menambahkan **FR-22 Latihan Menulis Aksara Jawa (Tracing)** dan Bagian 6D — kanvas dengan template bayangan yang ditelusuri siswa, skor kemiripan dihitung dengan algoritma geometris ringan ($1/$N Recognizer) sebelum goresan kasar siswa dianimasikan ("snap") menjadi bentuk baku. Risiko terkait toleransi algoritma pengenalan goresan ditambahkan ke Bagian 9.
 >
 > **Catatan revisi v1.7:** Menambahkan entitas **`test`** dan pivot **`test_soal`** ke Bagian 6A, serta **FR-23**. Keputusan: komposisi latihan diatur berdasarkan `tipe_soal` pada tiap butir soal (bukan "jenis test" terpisah yang mengunci satu tipe) — guru/superadmin bebas menyusun satu `test` berisi campuran beberapa tipe soal, atau hanya satu tipe soal yang sama, sesuai kebutuhan (variatif vs. remedial/drilling). Sistem tidak membatasi ini di level skema database.
+>
+> **Catatan revisi v1.7.1 (Sinkronisasi Fitur CRUD Akun & UI Detail Superadmin):** Menyempurnakan spesifikasi FR-17 & FR-18 terkait manajemen akun Guru dan Siswa oleh Superadmin. Penyesuaian mencakup: (1) pemisahan form pendaftaran (`create`) dan form sunting (`edit`) ke halaman antarmuka terpisah (`/superadmin/guru/tambah`, `/superadmin/guru/{id}/edit`, `/superadmin/siswa/tambah`, `/superadmin/siswa/{id}/edit`), (2) penambahan atribut `foto_url` pada entitas `guru` beserta dukungan upload berkas gambar profil ke `resources/image/guru/` dan fitur modal zoom foto interaktif, (3) penyediaan halaman rincian akun (`detail/show`) untuk melihat profil lengkap, kontak, status kepegawaian guru, serta capaian EXP & streak belajar siswa, (4) standardisasi antarmuka tabel dengan toolbar terpadu (pencarian real-time + filter kelas), 3 tombol aksi cepat berikon (Edit, Detail, Hapus), pagination 10 data per halaman, dan notifikasi animasi toast pop-up sukses/gagal di sudut kanan bawah.
 
 ---
 
@@ -94,8 +96,8 @@ Mengikuti rumusan Tujuan Khusus pada laporan resmi tim:
 | Guru | Sebagai guru, saya ingin menambah atau mengelola soal untuk materi tertentu, agar konten latihan tetap relevan. | Guru dapat memilih materi, membuat soal baru (pilihan ganda/susun kalimat/pencocokan/audio), dan melakukan CRUD/edit/hapus **hanya atas soal buatannya sendiri** (soal buatan guru lain tidak dapat diubah/dihapus oleh guru tersebut). |
 | Guru | Sebagai guru, saya ingin melihat progres siswa berdasarkan kelas atau NIS, agar saya tahu siapa yang tertinggal. | Guru dapat mencari siswa berdasarkan kelas/NIS, **tetapi hanya untuk kelas/mata pelajaran yang ia ampu sendiri**; guru tidak dapat melihat progres siswa di luar kelas/mapel yang diampunya (siswa yang sama boleh muncul di lebih dari satu guru bila diampu beberapa mapel). Menampilkan persentase penyelesaian level serta aktivitas terakhir. |
 | Superadmin | Sebagai superadmin, saya ingin melihat dashboard ringkas jumlah guru dan siswa terdaftar, agar saya punya gambaran skala penggunaan sistem. | Dashboard superadmin menampilkan total akun guru dan total akun siswa terdaftar saat login. |
-| Superadmin | Sebagai superadmin, saya ingin mendaftarkan atau mengelola (CRUD) akun guru, agar hanya guru terverifikasi yang punya akses mengajar. | Superadmin dapat menambah akun guru baru atau melihat daftar akun guru yang ada dan melakukan CRUD/edit/hapus. |
-| Superadmin | Sebagai superadmin, saya ingin mengelola akun siswa secara terpusat, agar data siswa tetap konsisten meski siswa sudah mendaftar sendiri. | Superadmin dapat melihat daftar akun siswa dan melakukan CRUD/edit/hapus. |
+| Superadmin | Sebagai superadmin, saya ingin mendaftarkan, melihat detail profil, menyunting, dan menghapus (CRUD) akun guru, agar pengelolaan pengajar teratur dan terverifikasi. | Superadmin dapat mendaftarkan guru baru beserta upload foto profil, melihat detail profil & zoom foto, menyunting data profil/kontak/password, serta menghapus akun guru dengan konfirmasi. |
+| Superadmin | Sebagai superadmin, saya ingin mendaftarkan, melihat rincian capaian, menyunting, dan menghapus (CRUD) akun siswa secara terpusat, agar data siswa tetap konsisten dan terpantau. | Superadmin dapat mendaftarkan siswa baru via form terpisah, melihat rincian capaian EXP/streak/kontak di halaman detail, menyunting data akademik/sandi siswa, memfilter daftar per kelas/NIS, serta menghapus akun siswa dengan konfirmasi. |
 | Superadmin | Sebagai superadmin, saya ingin membuat dan mengelola level/materi quiz baru, agar struktur pembelajaran bisa berkembang tanpa mengubah kode aplikasi. | Superadmin dapat menambah nama materi quiz baru atau melihat daftar materi yang sudah ada dan melakukan CRUD/edit/hapus. |
 | Superadmin | Sebagai superadmin, saya ingin menambah dan mengelola soal di seluruh materi (tidak terbatas pada satu guru), agar kualitas bank soal tetap terjaga. | Superadmin dapat membuat soal baru untuk materi manapun atau mengelola (CRUD/edit/hapus) seluruh soal yang ada di sistem. |
 
@@ -123,8 +125,8 @@ Prioritas menggunakan kerangka MoSCoW (Must / Should / Could / Won't untuk fase 
 | FR-14 | Mode Offline Sebagian | Sistem DAPAT menyimpan materi teks dasar untuk diakses tanpa koneksi internet (fitur suara tetap butuh koneksi). | Siswa | Could |
 | FR-15 | Ekspansi Bahasa Daerah Lain | Sistem DAPAT dirancang agar arsitektur mendukung penambahan bahasa daerah lain di masa depan. | — | Won't (fase ini) |
 | FR-16 | Dashboard & Ringkasan Superadmin | Website HARUS menampilkan dashboard superadmin berisi jumlah total akun guru dan akun siswa terdaftar. | Superadmin | Should |
-| FR-17 | Manajemen Akun Guru (Superadmin) | Website HARUS menyediakan panel superadmin untuk mendaftarkan akun guru baru dan melakukan CRUD/edit/hapus atas akun guru yang ada. | Superadmin | Must |
-| FR-18 | Manajemen Akun Siswa (Superadmin) | Website HARUS menyediakan panel superadmin untuk melihat dan melakukan CRUD/edit/hapus akun siswa. | Superadmin | Must |
+| FR-17 | Manajemen Akun Guru (Superadmin) | Website HARUS menyediakan panel superadmin untuk mendaftarkan akun guru baru (`create`) beserta upload foto profil, melihat daftar akun guru dengan pencarian/filter serta halaman detail profil (`read/detail`) dengan zoom foto, menyunting data profil, kontak, password & foto (`update/edit`), serta menghapus akun guru (`delete`) dengan konfirmasi. Dilengkapi notifikasi feedback aksi (toast pop-up). | Superadmin | Must |
+| FR-18 | Manajemen Akun Siswa (Superadmin) | Website HARUS menyediakan panel superadmin untuk mendaftarkan akun siswa baru (`create`), melihat daftar siswa dengan pencarian & filter kelas (`read`) per 10 data (pagination), melihat rincian capaian EXP, streak & profil siswa pada halaman detail (`detail`), menyunting data profil, kelas, kontak & password siswa (`update/edit`), serta menghapus akun siswa (`delete`) dengan konfirmasi. Dilengkapi notifikasi feedback aksi (toast pop-up). | Superadmin | Must |
 | FR-19 | Manajemen Level Materi (Superadmin) | Website HARUS menyediakan panel superadmin untuk membuat level/materi quiz baru (nama materi, deskripsi, reward_exp) serta CRUD/edit/hapus level materi yang ada. | Superadmin | Must |
 | FR-20 | Manajemen Soal Lintas Materi (Superadmin) | Website HARUS menyediakan panel superadmin untuk membuat soal baru di materi manapun serta CRUD/edit/hapus seluruh soal di sistem, sebagai otoritas tertinggi di atas manajemen soal guru (FR-12). | Superadmin | Must |
 | FR-21 | Latihan Puzzle Pakaian Adat | Sistem HARUS menyediakan latihan puzzle menyusun potongan gambar pakaian adat Jawa (selain puzzle kata di FR-4), sebagai bagian dari format evaluasi budaya yang lebih variatif. | Siswa | Should |
@@ -139,17 +141,19 @@ Ringkasan entitas dan atribut utama berdasarkan ERD yang telah dirancang tim.
 
 | Entitas | Atribut Utama |
 |---|---|
-| **siswa** | id, nis, nama_lengkap, jenis_kelamin, kelas, no_telpon, email, password, created_at |
-| **guru** | id, nip, nama_lengkap, jenis_kelamin, status_pegawaian, no_telpon, email, password, created_at |
-| **superadmin** | id, nama_lengkap, email, no_telpon, password, created_at |
-| **level_materi** | id, nama_materi, deskripsi, reward_exp, created_at |
-| **soal** | id, level_materi_id (FK), tipe_soal, pertanyaan, opsi_jawaban, kunci_jawaban, media_audio_url, bobot_exp |
-| **test** *(baru, v1.7)* | id, level_materi_id (FK), nama_test, deskripsi, dibuat_oleh (guru_id/superadmin_id), created_at |
+| **siswa** | id, nis, nama_lengkap, jenis_kelamin, kelas, no_telpon, email, password, created_at, updated_at |
+| **guru** | id, nip, nama_lengkap, jenis_kelamin, status_pegawaian, no_telpon, email, password, foto_url, created_at, updated_at |
+| **superadmin** | id, nama_lengkap, email, no_telpon, password, created_at, updated_at |
+| **level_materi** | id, nama_materi, deskripsi, reward_exp, created_at, updated_at |
+| **soal** | id, level_materi_id (FK), tipe_soal, pertanyaan, opsi_jawaban, kunci_jawaban, media_audio_url, bobot_exp, created_at, updated_at |
+| **test** *(baru, v1.7)* | id, level_materi_id (FK), nama_test, deskripsi, dibuat_oleh (guru_id/superadmin_id), created_at, updated_at |
 | **test_soal** *(baru, v1.7 — pivot)* | test_id (FK), soal_id (FK), urutan |
 | **exp** | id, siswa_id (FK), total_exp, updated_at |
 | **strek (streak)** | id, siswa_id (FK), current_streak, highest_streak, last_activity_date, updated_at |
 
 > **Catatan penamaan kolom (disengaja berbeda dari laporan sumber):** laporan/ERD asli menulis beberapa kolom secara tidak konsisten antar tabel — `jenis_klamin` (typo dari `jenis_kelamin`), `st_pegawaian` (singkatan tak baku dari `status_pegawaian`), serta kolom timestamp yang bercampur antara `update_at`/`create_at` (tanpa "d") di sebagian tabel dan `updated_at`/`created_at` (standar Laravel) di tabel lain. PRD ini **sengaja menstandarkan** semua nama kolom ke ejaan penuh dan konvensi timestamp standar Laravel (`created_at`/`updated_at` di semua tabel), karena inkonsistensi tersebut berisiko menyulitkan migrasi database dan query lintas tabel. Tim developer disarankan memakai penamaan yang sudah dirapikan di tabel ini, bukan menyalin apa adanya dari laporan/ERD gambar.
+>
+> **Catatan desain (foto profil guru):** atribut `foto_url` pada tabel `guru` bersifat opsional (nullable) untuk menyimpan tautan/path berkas foto profil yang diunggah superadmin ke direktori lokal (`resources/image/guru/`) atau media storage, dengan fallback otomatis berupa inisial 2 huruf nama guru jika foto belum diunggah.
 
 **Relasi utama:**
 - **siswa – exp**: satu-ke-satu — setiap siswa memiliki satu rekap total EXP.
@@ -181,7 +185,21 @@ Ringkasan entitas dan atribut utama berdasarkan ERD yang telah dirancang tim.
 
 **Alur Guru:** Mulai → pilih peran "Guru" → login (tanpa opsi daftar) → pilih tujuan: (a) Manajemen Soal — tambah soal baru (pilih materi → buat soal → simpan) atau kelola (CRUD/edit/hapus) daftar soal yang ada; (b) Manajemen Siswa — pilih kelas/cari NIS → lihat progres & perkembangan siswa.
 
-**Alur Superadmin:** Mulai → pilih peran "Superadmin" → login → tampil dashboard (jumlah guru & siswa terdaftar) → pilih area kelola: (a) Manajemen Akun Guru — daftarkan guru baru atau CRUD akun guru; (b) Manajemen Akun Siswa — CRUD akun siswa; (c) Manajemen Level Quiz — buat materi quiz baru atau CRUD level materi; (d) Manajemen Soal — buat soal baru untuk materi manapun atau CRUD seluruh soal.
+**Alur Superadmin:** Mulai → pilih peran "Superadmin" → login → tampil dashboard (jumlah guru & siswa terdaftar) → pilih area kelola:
+- **(a) Manajemen Akun Guru:** Buka halaman daftar guru (dilengkapi pencarian nama/NIP real-time dan modal zoom foto profil). Superadmin dapat:
+  - Mendaftarkan guru baru (`create`) via halaman formulir terpisah dengan dukungan upload berkas foto profil (`resources/image/guru/`).
+  - Melihat rincian detail profil & kredensial guru (`detail/show`) pada halaman dedicated.
+  - Menyunting data profil, status kepegawaian, kontak, kredensial password, dan foto guru (`edit/update`).
+  - Menghapus akun guru (`delete`) dengan konfirmasi keamanan dialog.
+- **(b) Manajemen Akun Siswa:** Buka halaman daftar siswa (dilengkapi pencarian nama/NIS, filter kelas, dan pagination 10 item per halaman). Superadmin dapat:
+  - Mendaftarkan siswa baru (`create`) via halaman formulir terpisah.
+  - Melihat rincian profil akademik, informasi kontak, dan rekap statistik capaian belajar (total EXP, streak saat ini, streak tertinggi) pada halaman detail dedicated (`detail/show`).
+  - Menyunting data profil, kelas, kontak, dan sandi siswa (`edit/update`).
+  - Menghapus akun siswa (`delete`) dengan konfirmasi keamanan dialog.
+- **(c) Manajemen Level Quiz:** Buat materi quiz baru atau CRUD level materi.
+- **(d) Manajemen Soal:** Buat soal baru untuk materi manapun atau CRUD seluruh soal di sistem.
+
+Seluruh aksi manipulasi data akun superadmin (tambah/edit/hapus) HARUS memberikan umpan balik visual langsung berupa notifikasi toast pop-up animasi yang meluncur di sudut kanan bawah antarmuka.
 
 Ketiga alur bermuara pada titik akhir (Selesai) yang sama setelah aksi masing-masing tersimpan ke database.
 

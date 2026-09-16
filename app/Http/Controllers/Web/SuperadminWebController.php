@@ -79,6 +79,17 @@ class SuperadminWebController extends Controller
         ]);
     }
 
+    public function guruEdit(Guru $guru): View
+    {
+        return view('superadmin.edit-guru', [
+            'judul' => 'Sunting Akun Guru',
+            'subjudul' => 'Owahi data profil, informasi kontak, foto, lan kredensial guru',
+            'role' => 'superadmin',
+            'active' => 'guru',
+            'guru' => $guru,
+        ]);
+    }
+
     public function guruStore(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -89,7 +100,18 @@ class SuperadminWebController extends Controller
             'no_telpon' => ['nullable', 'string', 'max:30'],
             'email' => ['required', 'email', 'max:255', 'unique:guru,email'],
             'password' => ['required', 'string', 'min:6'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
         ]);
+
+        if ($request->hasFile('foto')) {
+            $folder = resource_path('image/guru');
+            if (!\Illuminate\Support\Facades\File::isDirectory($folder)) {
+                \Illuminate\Support\Facades\File::makeDirectory($folder, 0755, true, true);
+            }
+            $filename = time() . '_' . \Illuminate\Support\Str::slug($request->nama_lengkap) . '.' . $request->file('foto')->getClientOriginalExtension();
+            $request->file('foto')->move($folder, $filename);
+            $data['foto'] = $filename;
+        }
 
         Guru::create($data);
 
@@ -106,7 +128,21 @@ class SuperadminWebController extends Controller
             'no_telpon' => ['nullable', 'string', 'max:30'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:guru,email,'.$guru->id],
             'password' => ['nullable', 'string', 'min:6'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
         ]);
+
+        if ($request->hasFile('foto')) {
+            $folder = resource_path('image/guru');
+            if (!\Illuminate\Support\Facades\File::isDirectory($folder)) {
+                \Illuminate\Support\Facades\File::makeDirectory($folder, 0755, true, true);
+            }
+            if ($guru->foto && \Illuminate\Support\Facades\File::exists($folder . '/' . $guru->foto)) {
+                \Illuminate\Support\Facades\File::delete($folder . '/' . $guru->foto);
+            }
+            $filename = time() . '_' . \Illuminate\Support\Str::slug($request->nama_lengkap ?? $guru->nama_lengkap) . '.' . $request->file('foto')->getClientOriginalExtension();
+            $request->file('foto')->move($folder, $filename);
+            $data['foto'] = $filename;
+        }
 
         if (empty($data['password'])) {
             unset($data['password']);
@@ -114,11 +150,15 @@ class SuperadminWebController extends Controller
 
         $guru->update($data);
 
-        return back()->with('sukses', 'Data akun guru kasil dianyari.');
+        return redirect()->route('superadmin.guru')->with('sukses', 'Data akun guru kasil dianyari.');
     }
 
     public function guruDestroy(Guru $guru): RedirectResponse
     {
+        if ($guru->foto && \Illuminate\Support\Facades\File::exists(resource_path('image/guru/' . $guru->foto))) {
+            \Illuminate\Support\Facades\File::delete(resource_path('image/guru/' . $guru->foto));
+        }
+
         $guru->delete();
 
         return redirect()->route('superadmin.guru')->with('sukses', 'Akun guru kasil dibusak.');
@@ -149,6 +189,42 @@ class SuperadminWebController extends Controller
         ]);
     }
 
+    public function siswaCreate(): View
+    {
+        return view('superadmin.tambah-siswa', [
+            'judul' => 'Tambah Akun Siswa',
+            'subjudul' => 'Daftarake akun siswa anyar supaya bisa ngakses latihan lan kuis',
+            'role' => 'superadmin',
+            'active' => 'siswa',
+            'kelasList' => Siswa::query()->distinct()->pluck('kelas')->filter()->values(),
+        ]);
+    }
+
+    public function siswaDetail(Siswa $siswa): View
+    {
+        $siswa->load(['exp', 'strek', 'progres.levelMateri']);
+
+        return view('superadmin.detail-siswa', [
+            'judul' => 'Detail Akun Siswa',
+            'subjudul' => 'Informasi profil, statistik capaian, lan administrasi siswa',
+            'role' => 'superadmin',
+            'active' => 'siswa',
+            'siswa' => $siswa,
+        ]);
+    }
+
+    public function siswaEdit(Siswa $siswa): View
+    {
+        return view('superadmin.edit-siswa', [
+            'judul' => 'Sunting Akun Siswa',
+            'subjudul' => 'Owahi data profil, informasi kontak, kelas, lan sandi siswa',
+            'role' => 'superadmin',
+            'active' => 'siswa',
+            'siswa' => $siswa,
+            'kelasList' => Siswa::query()->distinct()->pluck('kelas')->filter()->values(),
+        ]);
+    }
+
     public function siswaStore(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -166,7 +242,7 @@ class SuperadminWebController extends Controller
         $siswa->strek()->create(['current_streak' => 0, 'highest_streak' => 0]);
         $this->progres->initialize($siswa);
 
-        return back()->with('sukses', 'Akun siswa kasil digawe.');
+        return redirect()->route('superadmin.siswa')->with('sukses', 'Akun siswa kasil didaftarake.');
     }
 
     public function siswaUpdate(Request $request, Siswa $siswa): RedirectResponse
@@ -187,14 +263,14 @@ class SuperadminWebController extends Controller
 
         $siswa->update($data);
 
-        return back()->with('sukses', 'Akun siswa kasil dianyari.');
+        return redirect()->route('superadmin.siswa')->with('sukses', 'Akun siswa kasil dianyari.');
     }
 
     public function siswaDestroy(Siswa $siswa): RedirectResponse
     {
         $siswa->delete();
 
-        return back()->with('sukses', 'Akun siswa kasil dibusak.');
+        return redirect()->route('superadmin.siswa')->with('sukses', 'Akun siswa kasil dibusak.');
     }
 
     // --------------------------------------------------------- Level Materi

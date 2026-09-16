@@ -25,7 +25,17 @@ class Guru extends Authenticatable
         'no_telpon',
         'email',
         'password',
+        'foto',
     ];
+
+    public function getFotoUrlAttribute(): ?string
+    {
+        if ($this->foto && file_exists(resource_path('image/guru/' . $this->foto))) {
+            return route('guru.image', $this->foto);
+        }
+
+        return null;
+    }
 
     protected $hidden = [
         'password',

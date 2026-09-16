@@ -1,11 +1,18 @@
 @extends('layouts.admin')
 
 @section('aksi')
-    <a href="{{ route('superadmin.guru') }}"
-       class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-body text-body font-bold transition-all shadow-sm">
-        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-        <span>Bali menyang Akun Guru</span>
-    </a>
+    <div class="flex items-center gap-2">
+        <a href="{{ route('superadmin.guru.edit', $guru) }}"
+           class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-body font-bold transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">edit</span>
+            <span>Sunting Akun</span>
+        </a>
+        <a href="{{ route('superadmin.guru') }}"
+           class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-body text-body font-bold transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            <span>Bali</span>
+        </a>
+    </div>
 @endsection
 
 @section('konten')
@@ -26,9 +33,18 @@
             <div class="absolute right-40 -top-10 w-48 h-48 rounded-full bg-yellow-300/15 blur-xl pointer-events-none"></div>
 
             <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 min-w-0">
-                {{-- Avatar Inisial Besar --}}
-                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/20 backdrop-blur-md border-2 border-white/40 text-white flex items-center justify-center font-display font-extrabold text-2xl sm:text-3xl uppercase shadow-inner shrink-0">
-                    {{ \Illuminate\Support\Str::of($guru->nama_lengkap)->substr(0, 2) }}
+                {{-- Avatar Inisial / Foto Besar dengan Zoom --}}
+                <div title="Klik kanggo ndeleng foto luwih gedhe"
+                     onclick="openPhotoModal('{{ $guru->foto_url ?? '' }}', '{{ addslashes($guru->nama_lengkap) }}', '{{ $guru->nip }}', '{{ $guru->status_pegawaian ?: '-' }}', '{{ \Illuminate\Support\Str::of($guru->nama_lengkap)->substr(0, 2) }}')"
+                     class="group relative w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/20 backdrop-blur-md border-2 border-white/40 text-white flex items-center justify-center font-display font-extrabold text-2xl sm:text-3xl uppercase shadow-inner shrink-0 overflow-hidden cursor-pointer hover:scale-105 active:scale-95 transition-all">
+                    @if ($guru->foto_url)
+                        <img src="{{ $guru->foto_url }}" alt="{{ $guru->nama_lengkap }}" class="w-full h-full object-cover">
+                    @else
+                        {{ \Illuminate\Support\Str::of($guru->nama_lengkap)->substr(0, 2) }}
+                    @endif
+                    <div class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="material-symbols-outlined text-[28px]">zoom_in</span>
+                    </div>
                 </div>
 
                 <div class="flex flex-col gap-2.5 min-w-0">
@@ -198,4 +214,93 @@
             </form>
         </section>
     </div>
+
+    {{-- Modal Pop-up Zoom Foto Guru --}}
+    <div id="photoModal"
+         class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300 ease-out"
+         onclick="handleBackdropClick(event)">
+        <div id="photoModalContent"
+             class="relative max-w-md w-full bg-surface-container-lowest rounded-3xl overflow-hidden shadow-2xl scale-90 transition-all duration-300 ease-out border border-white/20">
+            {{-- Modal Header --}}
+            <div class="px-6 py-4 flex items-center justify-between border-b border-gray-100 bg-surface-container-low/50">
+                <div class="flex flex-col min-w-0 pr-3">
+                    <h4 id="modalTeacherName" class="font-heading text-heading font-bold text-on-surface truncate">Nama Guru</h4>
+                    <span id="modalTeacherNip" class="font-caption text-caption text-gray-500">NIP: -</span>
+                </div>
+                <button type="button"
+                        onclick="closePhotoModal()"
+                        title="Tutup (Esc)"
+                        class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+
+            {{-- Modal Body: Zoom Image / Avatar --}}
+            <div class="p-6 flex flex-col items-center justify-center bg-gray-900/5 min-h-[260px]">
+                <div id="modalImageContainer" class="w-64 h-64 sm:w-72 sm:h-72 rounded-3xl overflow-hidden shadow-lg border-4 border-white bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center">
+                    <img id="modalPhotoImage" src="" alt="Foto Guru" class="w-full h-full object-cover hidden">
+                    <span id="modalPhotoInitials" class="text-white font-display text-6xl font-extrabold uppercase">SJ</span>
+                </div>
+            </div>
+
+            {{-- Modal Footer --}}
+            <div class="px-6 py-3.5 bg-surface-container-low/40 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                <span id="modalTeacherStatus" class="font-label-upper font-bold uppercase text-primary-700">Status Pegawai</span>
+                <span class="font-caption">Klik area njaba kanggo nutup</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPhotoModal(imageUrl, name, nip, status, initials) {
+            const modal = document.getElementById('photoModal');
+            const content = document.getElementById('photoModalContent');
+            const img = document.getElementById('modalPhotoImage');
+            const init = document.getElementById('modalPhotoInitials');
+
+            document.getElementById('modalTeacherName').textContent = name;
+            document.getElementById('modalTeacherNip').textContent = 'NIP: ' + nip;
+            document.getElementById('modalTeacherStatus').textContent = status;
+
+            if (imageUrl && imageUrl.trim() !== '') {
+                img.src = imageUrl;
+                img.classList.remove('hidden');
+                init.classList.add('hidden');
+            } else {
+                img.classList.add('hidden');
+                init.textContent = initials;
+                init.classList.remove('hidden');
+            }
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100', 'pointer-events-auto');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closePhotoModal() {
+            const modal = document.getElementById('photoModal');
+            const content = document.getElementById('photoModalContent');
+            if (!modal) return;
+
+            modal.classList.remove('opacity-100', 'pointer-events-auto');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function handleBackdropClick(e) {
+            if (e.target.id === 'photoModal') {
+                closePhotoModal();
+            }
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePhotoModal();
+            }
+        });
+    </script>
 @endsection
