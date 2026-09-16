@@ -50,17 +50,44 @@ class GuruWebController extends Controller
     }
 
     /**
-     * FR-12: Daftar soal milik guru.
+     * FR-12: Pilih level materi untuk manajemen soal.
      */
-    public function soal(Request $request): View
+    public function levelMateri(): View
     {
         $guru = $this->guru();
 
-        $query = Soal::query()->with('levelMateri')->where('guru_id', $guru->id);
+        return view('guru.level-materi', [
+            'judul' => 'Manajemen Soal',
+            'subjudul' => 'Pilih level materi untuk mengelola soal',
+            'role' => 'guru',
+            'active' => 'soal',
+            'levels' => LevelMateri::withCount(['soal' => function ($query) {
+                $query->where('guru_id', $this->guru()->id);
+            }])
+                ->orderBy('urutan')
+                ->get(),
+        ]);
+    }
 
-        if ($request->filled('level_materi_id')) {
-            $query->where('level_materi_id', $request->integer('level_materi_id'));
+    /**
+     * FR-12: Daftar soal milik guru untuk level tertentu.
+     */
+    public function soal(Request $request): View|RedirectResponse
+    {
+        $guru = $this->guru();
+
+        // Redirect ke pilihan level jika tidak ada level_materi_id
+        if (!$request->filled('level_materi_id')) {
+            return redirect()->route('guru.level-materi');
         }
+
+        $levelId = $request->integer('level_materi_id');
+        $level = LevelMateri::findOrFail($levelId);
+
+        $query = Soal::query()
+            ->with('levelMateri')
+            ->where('guru_id', $guru->id)
+            ->where('level_materi_id', $levelId);
 
         if ($request->filled('tipe_soal')) {
             $query->where('tipe_soal', (string) $request->query('tipe_soal'));
@@ -68,10 +95,11 @@ class GuruWebController extends Controller
 
         return view('guru.soal', [
             'judul' => 'Manajemen Soal',
-            'subjudul' => 'Buat dan kelola soal milik Anda sendiri',
+            'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
             'role' => 'guru',
             'active' => 'soal',
             'soalList' => $query->latest()->paginate(12)->withQueryString(),
+            'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
             'tipeList' => $this->tipeList(),
         ]);
