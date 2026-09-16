@@ -119,6 +119,17 @@ Masuk ke psql di dalam container:
 ./vendor/bin/sail exec pgsql psql -U laravel -d laravel
 ```
 
+### Akses Database via Web Browser (Adminer)
+
+Untuk mengelola dan melihat isi tabel database melalui browser:
+1. Akses halaman: **`http://localhost:8080`**
+2. Masukkan informasi login:
+   - **System:** `PostgreSQL`
+   - **Server:** `pgsql`
+   - **Username:** `laravel` (sesuai `DB_USERNAME` di `.env`)
+   - **Password:** `secret` (sesuai `DB_PASSWORD` di `.env`)
+   - **Database:** `laravel` (sesuai `DB_DATABASE` di `.env`)
+
 Membuat migrasi baru:
 
 ```bash
