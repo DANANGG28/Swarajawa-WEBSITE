@@ -60,6 +60,7 @@ Route::middleware('web.auth:siswa')->prefix('kuis')->group(function () {
 Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard', [GuruWebController::class, 'dashboard'])->name('dashboard');
 
+    Route::get('/level-materi', [GuruWebController::class, 'levelMateri'])->name('level-materi');
     Route::get('/soal', [GuruWebController::class, 'soal'])->name('soal');
     Route::post('/soal', [GuruWebController::class, 'soalStore'])->name('soal.store');
     Route::put('/soal/{soal}', [GuruWebController::class, 'soalUpdate'])->name('soal.update');

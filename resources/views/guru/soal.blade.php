@@ -2,6 +2,15 @@
 
 @section('konten')
     <div class="flex flex-col gap-6">
+        {{-- Breadcrumb: Kembali ke Pilihan Level --}}
+        <div class="flex items-center gap-2">
+            <a href="{{ route('guru.level-materi') }}" class="flex items-center gap-1 text-primary-600 hover:text-primary-700 font-body text-body font-semibold transition-colors">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Kembali ke Pilihan Level</span>
+            </a>
+        </div>
+
+        {{-- Section: Tambah Soal Anyar --}}
         <section class="bg-surface-container-lowest rounded-2xl shadow-sm border border-gray-100">
             <details class="group">
                 <summary class="cursor-pointer list-none px-5 py-4 flex items-center justify-between">
@@ -22,17 +31,11 @@
             </details>
         </section>
 
+        {{-- Section: Filter Tipe Soal (opsional, tanpa level filter) --}}
         <section class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm border border-gray-100">
             <form method="GET" class="flex flex-col sm:flex-row sm:items-end gap-3">
-                <label class="flex flex-col gap-1.5 sm:w-56">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Level</span>
-                    <select name="level_materi_id" class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 font-body text-body outline-none focus:border-primary-500">
-                        <option value="">Kabeh Level</option>
-                        @foreach ($levels as $level)
-                            <option value="{{ $level->id }}" @selected(request('level_materi_id') == $level->id)>Level {{ $level->urutan }} — {{ $level->nama_materi }}</option>
-                        @endforeach
-                    </select>
-                </label>
+                <input type="hidden" name="level_materi_id" value="{{ request('level_materi_id') }}">
+                
                 <label class="flex flex-col gap-1.5 sm:w-56">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Tipe Soal</span>
                     <select name="tipe_soal" class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 font-body text-body outline-none focus:border-primary-500">
@@ -48,13 +51,14 @@
             </form>
         </section>
 
+        {{-- Section: Daftar Soal --}}
         <section class="flex flex-col gap-3">
             @forelse ($soalList as $s)
                 <div class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-3">
                     <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                         <div class="flex flex-col min-w-0">
                             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">
-                                LEVEL {{ $s->levelMateri?->urutan }}<span class="mx-1">•</span>{{ str_replace('_', ' ', strtoupper($s->tipe_soal)) }}
+                                {{ str_replace('_', ' ', strtoupper($s->tipe_soal)) }}
                             </span>
                             <h3 class="font-heading text-heading font-bold text-on-surface mt-0.5">{{ $s->pertanyaan }}</h3>
                         </div>
