@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\LevelMateri;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
@@ -16,6 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
@@ -32,6 +34,86 @@ class KuisSesiController extends Controller
         private readonly StsService $sts,
         private readonly RagService $rag,
     ) {}
+
+    /**
+     * Mapping tipe_soal → metadata untuk halaman latihan soal.
+     */
+    private const TIPE_META = [
+        'pilihan_ganda'      => ['label' => 'Pilihan Ganda',      'ikon' => 'quiz',        'route' => 'kuis.pilihan-ganda'],
+        'susun_kalimat'      => ['label' => 'Susun Ukara',        'ikon' => 'segment',     'route' => 'kuis.susun-ukara'],
+        'kuis_suara'         => ['label' => 'Kuis Wicara Audio',  'ikon' => 'graphic_eq',  'route' => 'kuis.wicara-audio'],
+        'menulis_aksara'     => ['label' => 'Tracing Kanvas',     'ikon' => 'draw',        'route' => 'kuis.tracing-aksara'],
+        'pencocokan_arti'    => ['label' => 'Pencocokan Arti',    'ikon' => 'swap_horiz',  'route' => 'kuis.pilihan-ganda'],
+        'puzzle_pakaian_adat'=> ['label' => 'Puzzle Pakaian Adat','ikon' => 'checkroom',   'route' => 'kuis.pilihan-ganda'],
+    ];
+
+    /**
+     * Halaman daftar kuis — FR-3/4/7/8/22 (latihan-soal.blade.php).
+     */
+    public function latihanSoal(): View
+    {
+        $siswa = $this->siswa();
+        $this->gamification->syncStreak($siswa);
+
+        $progresMap = ProgresSiswa::query()
+            ->where('siswa_id', $siswa->id)
+            ->pluck('status', 'level_materi_id');
+
+        $soalGroups = Soal::query()
+            ->select('level_materi_id', 'tipe_soal', DB::raw('count(*) as jumlah'))
+            ->groupBy('level_materi_id', 'tipe_soal')
+            ->orderBy('level_materi_id')
+            ->get()
+            ->groupBy('level_materi_id');
+
+        $levels = LevelMateri::query()
+            ->withCount('soal')
+            ->orderBy('urutan')
+            ->get();
+
+        $kuisItems = collect();
+
+        foreach ($levels as $level) {
+            $tipeSoals = $soalGroups->get($level->id, collect());
+            if ($tipeSoals->isEmpty()) {
+                continue;
+            }
+
+            $status = $progresMap->get($level->id, ProgresSiswa::STATUS_TERKUNCI);
+
+            foreach ($tipeSoals as $group) {
+                $meta = self::TIPE_META[$group->tipe_soal] ?? null;
+                if (! $meta) {
+                    continue;
+                }
+
+                $kuisItems->push([
+                    'level_urutan' => $level->urutan ?? 1,
+                    'level_nama'   => $level->nama_materi,
+                    'tipe_soal'    => $group->tipe_soal,
+                    'tipe_label'   => $meta['label'],
+                    'tipe_ikon'    => $meta['ikon'],
+                    'jumlah_soal'  => $group->jumlah,
+                    'status'       => $status,
+                    'reward_exp'   => $level->reward_exp ?? 50,
+                    'route'        => route($meta['route']),
+                    'deskripsi'    => $level->deskripsi,
+                ]);
+            }
+        }
+
+        $totalExp  = (int) ($siswa->exp()?->value('total_exp') ?? 0);
+        $streak    = (int) ($siswa->strek()?->value('current_streak') ?? 0);
+        $totalSoal = Soal::count();
+
+        return view('latihan-soal', [
+            'kuisItems' => $kuisItems,
+            'totalExp'  => $totalExp,
+            'streak'    => $streak,
+            'totalSoal' => $totalSoal,
+            'siswa'     => $siswa,
+        ]);
+    }
 
     public function pilihanGanda(): View
     {
