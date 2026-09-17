@@ -65,6 +65,8 @@ Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(functio
     Route::post('/soal', [GuruWebController::class, 'soalStore'])->name('soal.store');
     Route::put('/soal/{soal}', [GuruWebController::class, 'soalUpdate'])->name('soal.update');
     Route::delete('/soal/{soal}', [GuruWebController::class, 'soalDestroy'])->name('soal.destroy');
+
+    Route::post('/soal/generate-tts', [GuruWebController::class, 'generateTts'])->name('soal.tts');
 });
 
 /*

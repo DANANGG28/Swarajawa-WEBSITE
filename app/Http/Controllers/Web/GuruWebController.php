@@ -10,6 +10,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Services\TtsService;
+use Illuminate\Support\Facades\Storage;
 
 class GuruWebController extends Controller
 {
@@ -112,6 +114,13 @@ class GuruWebController extends Controller
         $data['guru_id'] = $guru->id;
         $data['superadmin_id'] = null;
 
+        if ($request->hasFile('file_gambar')) {
+            $data['media_gambar_url'] = $request->file('file_gambar')->store('soal_media', 'public');
+        }
+        if ($request->hasFile('file_audio')) {
+            $data['media_audio_url'] = $request->file('file_audio')->store('soal_media', 'public');
+        }
+
         Soal::create($data);
 
         return back()->with('sukses', 'Soal kasil disimpen.');
@@ -121,7 +130,16 @@ class GuruWebController extends Controller
     {
         $this->authorize('update', $soal);
 
-        $soal->update($this->validatedSoal($request));
+        $data = $this->validatedSoal($request);
+
+        if ($request->hasFile('file_gambar')) {
+            $data['media_gambar_url'] = $request->file('file_gambar')->store('soal_media', 'public');
+        }
+        if ($request->hasFile('file_audio')) {
+            $data['media_audio_url'] = $request->file('file_audio')->store('soal_media', 'public');
+        }
+
+        $soal->update($data);
 
         return back()->with('sukses', 'Soal kasil dianyari.');
     }
@@ -133,6 +151,26 @@ class GuruWebController extends Controller
         $soal->delete();
 
         return back()->with('sukses', 'Soal kasil dibusak.');
+    }
+
+    public function generateTts(Request $request, TtsService $ttsService)
+    {
+        $request->validate(['text' => 'required|string']);
+        
+        $path = $ttsService->generate($request->text);
+        
+        if ($path) {
+            return response()->json([
+                'success' => true,
+                'url' => Storage::url($path),
+                'path' => $path
+            ]);
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal generate TTS. Pastikan API Key Azure sudah dikonfigurasi.'
+        ], 500);
     }
 
     private function guru(): Guru
@@ -156,6 +194,8 @@ class GuruWebController extends Controller
             'kunci_jawaban_raw' => ['required', 'string'],
             'media_audio_url' => ['nullable', 'string', 'max:2048'],
             'bobot_exp' => ['required', 'integer', 'min:0', 'max:1000'],
+            'file_gambar' => ['nullable', 'image', 'max:5120'], // max 5MB
+            'file_audio' => ['nullable', 'mimetypes:audio/*', 'max:10240'], // max 10MB
         ]);
 
         $data['opsi_jawaban'] = $this->decodeJson($data['opsi_jawaban_raw'] ?? null);
