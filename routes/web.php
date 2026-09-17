@@ -62,6 +62,7 @@ Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(functio
 
     Route::get('/level-materi', [GuruWebController::class, 'levelMateri'])->name('level-materi');
     Route::get('/soal', [GuruWebController::class, 'soal'])->name('soal');
+    Route::get('/soal/tambah', [GuruWebController::class, 'soalCreate'])->name('soal.create');
     Route::post('/soal', [GuruWebController::class, 'soalStore'])->name('soal.store');
     Route::put('/soal/{soal}', [GuruWebController::class, 'soalUpdate'])->name('soal.update');
     Route::delete('/soal/{soal}', [GuruWebController::class, 'soalDestroy'])->name('soal.destroy');
