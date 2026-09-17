@@ -44,7 +44,10 @@ Route::middleware('auth.any')->group(function () {
         Route::get('leaderboard', [LeaderboardController::class, 'index']);
         Route::get('progres', [ProgresController::class, 'index']);
 
-        Route::post('chat', [ChatController::class, 'ask']);
+        Route::post('chat', [ChatController::class, 'ask'])->middleware('throttle:30,1');
+        Route::get('chat/histori', [ChatController::class, 'histori']);
+        Route::get('chat/sesi/{chatSession}', [ChatController::class, 'show']);
+        Route::delete('chat/sesi/{chatSession}', [ChatController::class, 'destroy']);
 
         Route::prefix('speech')->group(function () {
             Route::post('tts', [SpeechController::class, 'tts']);
