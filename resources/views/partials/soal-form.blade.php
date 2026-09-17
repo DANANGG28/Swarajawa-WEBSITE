@@ -16,7 +16,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <label class="flex flex-col gap-1.5">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Level Materi</span>
-            <select name="level_materi_id" required class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+            <select name="level_materi_id" required class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 @foreach ($levels as $level)
                     <option value="{{ $level->id }}" @selected(old('level_materi_id', $soal->level_materi_id ?? '') == $level->id)>
                         Level {{ $level->urutan }} — {{ $level->nama_materi }}
@@ -27,7 +27,7 @@
 
         <label class="flex flex-col gap-1.5">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Tipe Soal</span>
-            <select name="tipe_soal" required data-tipe class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+            <select name="tipe_soal" required data-tipe class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 @foreach ($tipeList as $value => $label)
                     <option value="{{ $value }}" @selected(old('tipe_soal', $soal->tipe_soal ?? '') === $value)>{{ $label }}</option>
                 @endforeach
@@ -37,35 +37,38 @@
         <label class="flex flex-col gap-1.5">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Bobot EXP</span>
             <input type="number" name="bobot_exp" min="0" max="1000" required value="{{ old('bobot_exp', $soal->bobot_exp ?? 10) }}"
-                class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+                class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
         </label>
     </div>
 
     <label class="flex flex-col gap-1.5">
         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Pertanyaan / Instruksi</span>
-        <textarea name="pertanyaan" id="pertanyaan-{{ $prefix }}" rows="2" required class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">{{ old('pertanyaan', $soal->pertanyaan ?? '') }}</textarea>
+        <textarea name="pertanyaan" id="pertanyaan-{{ $prefix }}" rows="2" required class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">{{ old('pertanyaan', $soal->pertanyaan ?? '') }}</textarea>
     </label>
     
     <label class="flex flex-col gap-1.5">
         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Gambar Pendukung (Opsional)</span>
-        <input type="file" name="file_gambar" accept="image/*" class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+        <input type="file" name="file_gambar" accept="image/*" class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
         @if(isset($soal) && $soal->media_gambar_url)
             <span class="text-caption text-gray-500">Gambar saat ini tersimpan: <a href="{{ Storage::url($soal->media_gambar_url) }}" target="_blank" class="text-primary-600 underline">Lihat Gambar</a></span>
         @endif
     </label>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label class="flex flex-col gap-1.5">
-            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Opsi Jawaban (JSON)</span>
-            <textarea name="opsi_jawaban_raw" rows="5" spellcheck="false" data-opsi
-                class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-mono text-caption outline-none focus:border-primary-500">{{ old('opsi_jawaban_raw', $opsiVal) }}</textarea>
-        </label>
+    <!-- Hidden inputs for backend JSON submission -->
+    <textarea name="opsi_jawaban_raw" data-opsi class="hidden">{{ old('opsi_jawaban_raw', $opsiVal) }}</textarea>
+    <textarea name="kunci_jawaban_raw" data-kunci class="hidden">{{ old('kunci_jawaban_raw', $kunciVal) }}</textarea>
 
-        <label class="flex flex-col gap-1.5">
-            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Kunci Jawaban (JSON)</span>
-            <textarea name="kunci_jawaban_raw" rows="5" required spellcheck="false" data-kunci
-                class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-mono text-caption outline-none focus:border-primary-500">{{ old('kunci_jawaban_raw', $kunciVal) }}</textarea>
-        </label>
+    <!-- Dynamic Form Builder Container -->
+    <div id="dynamic-form-builder-{{ $prefix }}" class="flex flex-col gap-4 p-5 border border-gray-200 rounded-xl bg-white shadow-sm mt-2">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-2">
+            <div class="flex flex-col">
+                <h4 class="font-heading text-heading font-bold text-on-surface">Detail Opsi & Kunci Jawaban</h4>
+                <span class="text-caption text-gray-500">Form di bawah menyesuaikan dengan Tipe Soal yang dipilih.</span>
+            </div>
+        </div>
+        <div id="dynamic-fields-{{ $prefix }}" class="flex flex-col gap-4">
+            <!-- Fields injected by JS -->
+        </div>
     </div>
 
     <div class="flex flex-col gap-3 p-4 rounded-xl border border-gray-100 bg-gray-50/50">
@@ -73,11 +76,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label class="flex flex-col gap-1.5">
                 <span class="text-caption text-gray-500">Upload File Audio Manual</span>
-                <input type="file" name="file_audio" accept="audio/*" class="rounded-xl border border-gray-200 bg-white px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+                <input type="file" name="file_audio" accept="audio/*" class="rounded-full border border-gray-200 bg-white px-4 py-3 font-body text-body outline-none focus:border-primary-500">
             </label>
             <div class="flex flex-col gap-1.5">
                 <span class="text-caption text-gray-500">Atau Buat Otomatis via AI Text-to-Speech</span>
-                <button type="button" id="btn-tts-{{ $prefix }}" class="flex items-center justify-center gap-2 rounded-xl bg-primary-100 hover:bg-primary-200 text-primary-800 font-body text-body font-bold px-4 py-3 transition-colors">
+                <button type="button" id="btn-tts-{{ $prefix }}" class="flex items-center justify-center gap-2 rounded-full bg-primary-100 hover:bg-primary-200 text-primary-800 font-body text-body font-bold px-4 py-3 transition-colors">
                     <span class="material-symbols-outlined text-[20px]">record_voice_over</span> Generate dari Teks
                 </button>
             </div>
@@ -86,7 +89,7 @@
         <label class="flex flex-col gap-1.5 mt-2">
             <span class="text-caption text-gray-500">URL Audio (Otomatis terisi jika upload file / pakai TTS)</span>
             <input type="text" name="media_audio_url" id="audio-url-{{ $prefix }}" value="{{ old('media_audio_url', $soal->media_audio_url ?? '') }}"
-                class="rounded-xl border border-gray-200 bg-white px-4 py-3 font-body text-body outline-none focus:border-primary-500" placeholder="Path ke file audio...">
+                class="rounded-full border border-gray-200 bg-white px-4 py-3 font-body text-body outline-none focus:border-primary-500" placeholder="Path ke file audio...">
         </label>
 
         <!-- Preview Audio -->

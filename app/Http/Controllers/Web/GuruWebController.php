@@ -95,12 +95,37 @@ class GuruWebController extends Controller
             $query->where('tipe_soal', (string) $request->query('tipe_soal'));
         }
 
+        if ($request->filled('q')) {
+            $term = '%' . $request->query('q') . '%';
+            $query->where('pertanyaan', 'like', $term);
+        }
+
         return view('guru.soal', [
             'judul' => 'Manajemen Soal',
             'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
             'role' => 'guru',
             'active' => 'soal',
             'soalList' => $query->latest()->paginate(12)->withQueryString(),
+            'level' => $level,
+            'levels' => LevelMateri::orderBy('urutan')->get(),
+            'tipeList' => $this->tipeList(),
+        ]);
+    }
+
+    public function soalCreate(Request $request): View|RedirectResponse
+    {
+        if (!$request->filled('level_materi_id')) {
+            return redirect()->route('guru.level-materi');
+        }
+
+        $levelId = $request->integer('level_materi_id');
+        $level = LevelMateri::findOrFail($levelId);
+
+        return view('guru.soal-create', [
+            'judul' => 'Tambah Soal Anyar',
+            'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
+            'role' => 'guru',
+            'active' => 'soal',
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
             'tipeList' => $this->tipeList(),
@@ -123,7 +148,7 @@ class GuruWebController extends Controller
 
         Soal::create($data);
 
-        return back()->with('sukses', 'Soal kasil disimpen.');
+        return redirect()->route('guru.soal', ['level_materi_id' => $data['level_materi_id']])->with('sukses', 'Soal kasil disimpen.');
     }
 
     public function soalUpdate(Request $request, Soal $soal): RedirectResponse
