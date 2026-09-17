@@ -49,7 +49,10 @@ Route::middleware('web.auth:siswa')->prefix('kuis')->group(function () {
     Route::post('/tts', [KuisSesiController::class, 'tts'])->name('kuis.tts');
     Route::post('/stt', [KuisSesiController::class, 'stt'])->name('kuis.stt');
     Route::post('/sts', [KuisSesiController::class, 'sts'])->name('kuis.sts');
-    Route::post('/chat', [KuisSesiController::class, 'chat'])->name('kuis.chat');
+    Route::post('/chat', [KuisSesiController::class, 'chat'])->name('kuis.chat')->middleware('throttle:30,1');
+    Route::get('/chat/histori', [KuisSesiController::class, 'chatHistori'])->name('kuis.chat.histori');
+    Route::get('/chat/sesi/{chatSession}', [KuisSesiController::class, 'chatSesiShow'])->name('kuis.chat.sesi.show');
+    Route::delete('/chat/sesi/{chatSession}', [KuisSesiController::class, 'chatSesiDestroy'])->name('kuis.chat.sesi.destroy');
 });
 
 /*
@@ -112,4 +115,3 @@ Route::get('/resources/image/guru/{filename}', function (string $filename) {
     }
     return response()->file($path);
 })->name('guru.image');
-
