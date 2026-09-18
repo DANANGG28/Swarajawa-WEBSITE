@@ -12,7 +12,7 @@
 
     <footer class="sticky bottom-0 z-40 bg-surface-container-lowest border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
         <div class="max-w-6xl mx-auto px-4 md:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="font-caption text-caption text-gray-500">© 2026 Sinau Jowo <span class="mx-1">•</span> Sedaya Hak Kereksa</div>
+            <div class="font-caption text-caption text-gray-500">© 2026 Sinau Jowo <span class="mx-1">•</span> Semua Hak Dilindungi</div>
             <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
                 @yield('aksi')
             </div>
@@ -40,7 +40,7 @@
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) {
-                throw Object.assign(new Error(data.message || 'Gagal ngirim data.'), { data, status: res.status });
+                throw Object.assign(new Error(data.message || 'Gagal mengirim data.'), { data, status: res.status });
             }
             return data;
         };

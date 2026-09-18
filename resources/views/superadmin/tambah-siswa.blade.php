@@ -4,7 +4,7 @@
     <a href="{{ route('superadmin.siswa') }}"
        class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-body text-body font-bold transition-all shadow-sm">
         <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-        <span>Bali menyang Akun Siswa</span>
+        <span>Kembali ke Akun Siswa</span>
     </a>
 @endsection
 
@@ -38,7 +38,7 @@
                         </span>
                     </div>
                     <p class="font-body text-body text-white/90">
-                        Daftarake akun siswa anyar supaya bisa ngakses latihan mandiri, kuis interaktif, lan melu ing papan skor.
+                        Daftarkan akun siswa baru agar dapat mengakses latihan mandiri, kuis interaktif, dan bergabung di papan skor.
                     </p>
                 </div>
             </div>
@@ -53,7 +53,7 @@
                     </div>
                     <div>
                         <h3 class="font-heading text-heading font-bold text-on-surface">Formulir Data Akun Siswa</h3>
-                        <p class="font-caption text-caption text-gray-500">Kabeh kolom kanthi tandha (*) wajib diisi kanthi bener</p>
+                        <p class="font-caption text-caption text-gray-500">Semua kolom bertanda (*) wajib diisi dengan benar</p>
                     </div>
                 </div>
             </div>
@@ -72,12 +72,12 @@
                         {{-- NIS --}}
                         <label class="flex flex-col gap-1.5">
                             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">
-                                NIS (Nomer Induk Siswa) <span class="text-error">*</span>
+                                NIS (Nomor Induk Siswa) <span class="text-error">*</span>
                             </span>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">badge</span>
                                 <input type="text" name="nis" value="{{ old('nis') }}" required
-                                       placeholder="Conto: 202607001"
+                                       placeholder="Contoh: 202607001"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
                         </label>
@@ -85,7 +85,7 @@
                         {{-- Nama Lengkap --}}
                         <label class="flex flex-col gap-1.5">
                             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">
-                                Nama Jangkep <span class="text-error">*</span>
+                                Nama Lengkap <span class="text-error">*</span>
                             </span>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">id_card</span>
@@ -104,8 +104,8 @@
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">wc</span>
                                 <select name="jenis_kelamin"
                                         class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
-                                    <option value="L" {{ old('jenis_kelamin') === 'L' ? 'selected' : '' }}>Lanang (L)</option>
-                                    <option value="P" {{ old('jenis_kelamin') === 'P' ? 'selected' : '' }}>Wadon (P)</option>
+                                    <option value="L" {{ old('jenis_kelamin') === 'L' ? 'selected' : '' }}>Laki-laki (L)</option>
+                                    <option value="P" {{ old('jenis_kelamin') === 'P' ? 'selected' : '' }}>Perempuan (P)</option>
                                 </select>
                             </div>
                         </label>
@@ -118,7 +118,7 @@
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">school</span>
                                 <input type="text" name="kelas" value="{{ old('kelas') }}"
-                                       placeholder="Conto: 7A / 8B / 9C"
+                                       placeholder="Contoh: 7A / 8B / 9C"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
                         </label>
@@ -171,14 +171,14 @@
                     <label class="flex flex-col gap-1.5">
                         <div class="flex items-center justify-between">
                             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">
-                                Tembung Sandi (Password) <span class="text-error">*</span>
+                                Kata Sandi (Password) <span class="text-error">*</span>
                             </span>
                             <span class="font-caption text-caption text-gray-400">Minimal 6 karakter</span>
                         </div>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">key</span>
                             <input type="password" name="password" required
-                                   placeholder="Ketik sandi awal akun siswa..."
+                                   placeholder="Ketik kata sandi awal akun siswa..."
                                    class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                         </div>
                     </label>

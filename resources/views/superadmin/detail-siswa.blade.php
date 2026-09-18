@@ -5,12 +5,12 @@
         <a href="{{ route('superadmin.siswa.edit', $siswa) }}"
            class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-body font-bold transition-all shadow-sm">
             <span class="material-symbols-outlined text-[20px]">edit</span>
-            <span>Sunting Akun</span>
+            <span>Edit Akun</span>
         </a>
         <a href="{{ route('superadmin.siswa') }}"
            class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-body text-body font-bold transition-all shadow-sm">
             <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-            <span>Bali</span>
+            <span>Kembali</span>
         </a>
     </div>
 @endsection
@@ -42,7 +42,7 @@
                             {{ $siswa->nama_lengkap }}
                         </h2>
                         <span class="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-label-upper text-[11px] font-bold tracking-wider uppercase">
-                            {{ $siswa->jenis_kelamin === 'L' ? 'Lanang' : 'Wadon' }}
+                            {{ $siswa->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
                         </span>
                     </div>
 
@@ -72,7 +72,7 @@
                     <div class="font-stat-number text-stat-number font-extrabold text-primary-700 mt-1">
                         {{ number_format($siswa->exp?->total_exp ?? 0) }}
                     </div>
-                    <p class="font-caption text-caption text-gray-500">Poin pengalaman sinau</p>
+                    <p class="font-caption text-caption text-gray-500">Poin pengalaman belajar</p>
                 </div>
                 <div class="w-12 h-12 rounded-2xl bg-primary-fixed text-primary-700 flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-[26px]">bolt</span>
@@ -81,11 +81,11 @@
 
             <div class="bg-surface-container-lowest rounded-3xl p-5 shadow-sm border border-gray-100 flex items-center justify-between">
                 <div class="flex flex-col">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Streak Saiki</span>
+                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Streak Saat Ini</span>
                     <div class="font-stat-number text-stat-number font-extrabold text-orange-600 mt-1">
-                        {{ $siswa->strek?->current_streak ?? 0 }} Dina
+                        {{ $siswa->strek?->current_streak ?? 0 }} Hari
                     </div>
-                    <p class="font-caption text-caption text-gray-500">Sinau berturut-turut</p>
+                    <p class="font-caption text-caption text-gray-500">Belajar berturut-turut</p>
                 </div>
                 <div class="w-12 h-12 rounded-2xl bg-orange-300/40 text-orange-600 flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-[26px]">local_fire_department</span>
@@ -94,11 +94,11 @@
 
             <div class="bg-surface-container-lowest rounded-3xl p-5 shadow-sm border border-gray-100 flex items-center justify-between">
                 <div class="flex flex-col">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Streak Paling Dhuwur</span>
+                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Streak Tertinggi</span>
                     <div class="font-stat-number text-stat-number font-extrabold text-tertiary mt-1">
-                        {{ $siswa->strek?->highest_streak ?? 0 }} Dina
+                        {{ $siswa->strek?->highest_streak ?? 0 }} Hari
                     </div>
-                    <p class="font-caption text-caption text-gray-500">Rekor sinau terpanjang</p>
+                    <p class="font-caption text-caption text-gray-500">Rekor belajar terpanjang</p>
                 </div>
                 <div class="w-12 h-12 rounded-2xl bg-yellow-300/40 text-tertiary flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-[26px]">emoji_events</span>
@@ -115,7 +115,7 @@
                     </div>
                     <div>
                         <h3 class="font-heading text-heading font-bold text-on-surface">Rincian Informasi Akun Siswa</h3>
-                        <p class="font-caption text-caption text-gray-500">Data pribadi, akademik, lan informasi kontak siswa</p>
+                        <p class="font-caption text-caption text-gray-500">Data pribadi, akademik, dan informasi kontak siswa</p>
                     </div>
                 </div>
             </div>
@@ -149,7 +149,7 @@
                     <span class="material-symbols-outlined text-primary-600 text-[22px] mt-0.5">wc</span>
                     <div class="flex flex-col min-w-0">
                         <span class="font-label-upper text-[11px] text-gray-500 uppercase tracking-wider font-semibold">Jenis Kelamin</span>
-                        <span class="font-body text-body font-bold text-on-surface">{{ $siswa->jenis_kelamin === 'L' ? 'Lanang (L)' : 'Wadon (P)' }}</span>
+                        <span class="font-body text-body font-bold text-on-surface">{{ $siswa->jenis_kelamin === 'L' ? 'Laki-laki (L)' : 'Perempuan (P)' }}</span>
                     </div>
                 </div>
 

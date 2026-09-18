@@ -10,7 +10,7 @@
                 <span class="material-symbols-outlined text-[30px]">person_add</span>
             </div>
             <h1 class="font-display text-display font-extrabold text-on-surface">Daftar Akun Siswa</h1>
-            <p class="font-caption text-caption text-gray-500">Pendaftaran mandiri mung kanggo siswa. Guru lan superadmin didaftarake dening sekolah.</p>
+            <p class="font-caption text-caption text-gray-500">Pendaftaran mandiri hanya untuk siswa. Guru dan superadmin didaftarkan oleh sekolah.</p>
         </div>
 
         <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -23,7 +23,7 @@
             <form method="POST" action="{{ route('daftar') }}" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 @csrf
                 <label class="flex flex-col gap-1.5 sm:col-span-2">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Nama Jangkep</span>
+                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Nama Lengkap</span>
                     <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required
                         class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 </label>
@@ -37,8 +37,8 @@
                 <label class="flex flex-col gap-1.5">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Jenis Kelamin</span>
                     <select name="jenis_kelamin" class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
-                        <option value="L" @selected(old('jenis_kelamin') === 'L')>Lanang</option>
-                        <option value="P" @selected(old('jenis_kelamin') === 'P')>Wadon</option>
+                        <option value="L" @selected(old('jenis_kelamin') === 'L')>Laki-laki</option>
+                        <option value="P" @selected(old('jenis_kelamin') === 'P')>Perempuan</option>
                     </select>
                 </label>
 
@@ -61,26 +61,26 @@
                 </label>
 
                 <label class="flex flex-col gap-1.5">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Tembung Sandi</span>
+                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Kata Sandi</span>
                     <input type="password" name="password" required
                         class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 </label>
 
                 <label class="flex flex-col gap-1.5">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Ulangi Sandi</span>
+                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Ulangi Kata Sandi</span>
                     <input type="password" name="password_confirmation" required
                         class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 </label>
 
                 <button type="submit" class="sm:col-span-2 mt-1 flex items-center justify-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold px-6 py-3 shadow-sm transition-colors">
                     <span class="material-symbols-outlined text-[20px]">how_to_reg</span>
-                    <span>Daftar lan Mulai Sinau</span>
+                    <span>Daftar dan Mulai Belajar</span>
                 </button>
             </form>
 
             <p class="mt-4 text-center font-caption text-caption text-gray-500">
-                Wis duwe akun?
-                <a href="{{ route('masuk') }}" class="text-primary-600 font-bold hover:underline">Mlebu ing kene</a>
+                Sudah punya akun?
+                <a href="{{ route('masuk') }}" class="text-primary-600 font-bold hover:underline">Masuk di sini</a>
             </p>
         </div>
     </div>

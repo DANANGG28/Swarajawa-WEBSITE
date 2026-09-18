@@ -17,8 +17,8 @@
 
         <div class="hidden md:flex flex-col items-center max-w-xs w-full">
             <div class="flex items-center justify-between w-full mb-1">
-                <span class="font-caption text-caption font-bold text-on-surface-variant">Soal {{ $progress['nomor'] ?? 0 }} saka {{ $progress['total'] ?? 0 }}</span>
-                <span class="font-caption text-caption font-bold text-primary-600">{{ $persen }}% rampung</span>
+                <span class="font-caption text-caption font-bold text-on-surface-variant">Soal {{ $progress['nomor'] ?? 0 }} dari {{ $progress['total'] ?? 0 }}</span>
+                <span class="font-caption text-caption font-bold text-primary-600">{{ $persen }}% selesai</span>
             </div>
             <div class="w-full h-2.5 bg-surface-container-high rounded-full overflow-hidden">
                 <div class="h-full bg-gradient-to-r from-primary-600 to-primary-400 rounded-full transition-all duration-500" style="width: {{ $persen }}%"></div>
@@ -28,11 +28,11 @@
         <div class="flex items-center gap-3 shrink-0">
             <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-300/30 text-tertiary shadow-sm">
                 <span class="material-symbols-outlined icon-fill text-[20px] text-orange-500">local_fire_department</span>
-                <span class="font-heading text-body font-extrabold">{{ $header['streak'] }} Dina</span>
+                <span class="font-heading text-body font-extrabold">{{ $header['streak'] }} Hari</span>
             </div>
             <a href="{{ url('/latihan-soal') }}" class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gray-50 hover:bg-surface-container-high text-on-surface border border-gray-200 transition-colors font-body text-body font-semibold">
                 <span class="material-symbols-outlined text-[18px]">close</span>
-                <span>Metu</span>
+                <span>Keluar</span>
             </a>
         </div>
     </div>

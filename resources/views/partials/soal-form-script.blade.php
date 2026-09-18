@@ -18,11 +18,11 @@
                 kunci: { urutan: [1, 2] },
             },
             menulis_aksara: {
-                opsi: { aksara: 'ha', petunjuk: 'Tlusuri bayangan aksara.' },
+                opsi: { aksara: 'ha', petunjuk: 'Telusuri bayangan aksara.' },
                 kunci: { paths: [[[0.3, 0.3], [0.5, 0.5], [0.7, 0.3]]] },
             },
             kuis_suara: {
-                opsi: { instruksi: 'Ngucapna ukara kanthi cetha.' },
+                opsi: { instruksi: 'Ucapkan kalimat dengan jelas.' },
                 kunci: { teks: 'sugeng enjing' },
             },
         };
@@ -324,7 +324,7 @@
                     const row1 = document.createElement('div');
                     row1.className = 'flex flex-col gap-1.5';
                     row1.innerHTML = '<span class="font-bold text-caption text-gray-700">Instruksi Kuis Suara</span>';
-                    row1.appendChild(createInput(opsi.instruksi, (val) => opsi.instruksi = val, 'Contoh: Ngucapna ukara kanthi cetha.'));
+                    row1.appendChild(createInput(opsi.instruksi, (val) => opsi.instruksi = val, 'Contoh: Ucapkan kalimat dengan jelas.'));
                     
                     const row2 = document.createElement('div');
                     row2.className = 'flex flex-col gap-1.5 mt-2';

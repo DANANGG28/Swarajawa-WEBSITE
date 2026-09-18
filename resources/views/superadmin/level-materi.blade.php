@@ -7,7 +7,7 @@
                 <summary class="cursor-pointer list-none px-5 py-4 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary-600">add_circle</span>
-                        <span class="font-heading text-heading font-bold text-on-surface">Tambah Level Materi Anyar</span>
+                        <span class="font-heading text-heading font-bold text-on-surface">Tambah Level Materi Baru</span>
                     </div>
                     <span class="material-symbols-outlined text-gray-500 group-open:rotate-180 transition-transform">expand_more</span>
                 </summary>
@@ -15,7 +15,7 @@
                     @csrf
                     <label class="flex flex-col gap-1.5">
                         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Nama Materi</span>
-                        <input type="text" name="nama_materi" required placeholder="Tuladha: Basa Krama Alus" class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+                        <input type="text" name="nama_materi" required placeholder="Contoh: Bahasa Krama Alus" class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                     </label>
                     <div class="grid grid-cols-2 gap-3">
                         <label class="flex flex-col gap-1.5">
@@ -28,8 +28,8 @@
                         </label>
                     </div>
                     <label class="flex flex-col gap-1.5 sm:col-span-2">
-                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Deskripsi Pasinaon</span>
-                        <textarea name="deskripsi" rows="2" placeholder="Katrangan ringkes ngenani materi pasinaon iki..." class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500"></textarea>
+                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Deskripsi Pembelajaran</span>
+                        <textarea name="deskripsi" rows="2" placeholder="Keterangan ringkas mengenai materi pembelajaran ini..." class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500"></textarea>
                     </label>
                     <button type="submit" class="sm:col-span-2 self-start flex items-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold px-6 py-3 shadow-sm">
                         <span class="material-symbols-outlined text-[20px]">save</span> Simpan Level Materi
@@ -88,7 +88,7 @@
             @else
                 <div class="bg-surface-container-lowest rounded-2xl p-10 text-center border border-gray-100">
                     <span class="material-symbols-outlined text-[40px] text-gray-500">layers</span>
-                    <p class="font-body text-body text-gray-500 mt-2">Durung ana level materi. Tambah level anyar ing dhuwur.</p>
+                    <p class="font-body text-body text-gray-500 mt-2">Belum ada level materi. Tambah level baru di atas.</p>
                 </div>
             @endif
         </section>

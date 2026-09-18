@@ -5,12 +5,12 @@
         <a href="{{ route('superadmin.guru.edit', $guru) }}"
            class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-body font-bold transition-all shadow-sm">
             <span class="material-symbols-outlined text-[20px]">edit</span>
-            <span>Sunting Akun</span>
+            <span>Edit Akun</span>
         </a>
         <a href="{{ route('superadmin.guru') }}"
            class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-body text-body font-bold transition-all shadow-sm">
             <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-            <span>Bali</span>
+            <span>Kembali</span>
         </a>
     </div>
 @endsection
@@ -34,7 +34,7 @@
 
             <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 min-w-0">
                 {{-- Avatar Inisial / Foto Besar dengan Zoom --}}
-                <div title="Klik kanggo ndeleng foto luwih gedhe"
+                <div title="Klik untuk melihat foto lebih besar"
                      onclick="openPhotoModal('{{ $guru->foto_url ?? '' }}', '{{ addslashes($guru->nama_lengkap) }}', '{{ $guru->nip }}', '{{ $guru->status_pegawaian ?: '-' }}', '{{ \Illuminate\Support\Str::of($guru->nama_lengkap)->substr(0, 2) }}')"
                      class="group relative w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/20 backdrop-blur-md border-2 border-white/40 text-white flex items-center justify-center font-display font-extrabold text-2xl sm:text-3xl uppercase shadow-inner shrink-0 overflow-hidden cursor-pointer hover:scale-105 active:scale-95 transition-all">
                     @if ($guru->foto_url)
@@ -53,7 +53,7 @@
                             {{ $guru->nama_lengkap }}
                         </h2>
                         <span class="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-label-upper text-[11px] font-bold tracking-wider uppercase">
-                            {{ $guru->jenis_kelamin === 'L' ? 'Lanang' : 'Wadon' }}
+                            {{ $guru->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
                         </span>
                     </div>
 
@@ -64,7 +64,7 @@
                         </span>
                         <span class="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full border border-white/20">
                             <span class="material-symbols-outlined text-[16px] text-yellow-300">school</span>
-                            Guru Basa Jawa
+                            Guru Bahasa Jawa
                         </span>
                         <span class="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full border border-white/20">
                             <span class="material-symbols-outlined text-[16px] text-yellow-300">work</span>
@@ -83,8 +83,8 @@
                         <span class="material-symbols-outlined text-[24px]">manage_accounts</span>
                     </div>
                     <div>
-                        <h3 class="font-heading text-heading font-bold text-on-surface">Informasi & Sunting Akun Guru</h3>
-                        <p class="font-caption text-caption text-gray-500">Ngatur data pribadi, informasi kontak, lan kredensial akses guru</p>
+                        <h3 class="font-heading text-heading font-bold text-on-surface">Informasi & Edit Akun Guru</h3>
+                        <p class="font-caption text-caption text-gray-500">Kelola data pribadi, informasi kontak, dan kredensial akses guru</p>
                     </div>
                 </div>
             </div>
@@ -114,7 +114,7 @@
 
                         {{-- Nama Lengkap --}}
                         <label class="flex flex-col gap-1.5">
-                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">Nama Jangkep</span>
+                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">Nama Lengkap</span>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">id_card</span>
                                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $guru->nama_lengkap) }}" required
@@ -130,8 +130,8 @@
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">wc</span>
                                 <select name="jenis_kelamin"
                                         class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
-                                    <option value="L" {{ old('jenis_kelamin', $guru->jenis_kelamin) === 'L' ? 'selected' : '' }}>Lanang (L)</option>
-                                    <option value="P" {{ old('jenis_kelamin', $guru->jenis_kelamin) === 'P' ? 'selected' : '' }}>Wadon (P)</option>
+                                    <option value="L" {{ old('jenis_kelamin', $guru->jenis_kelamin) === 'L' ? 'selected' : '' }}>Laki-laki (L)</option>
+                                    <option value="P" {{ old('jenis_kelamin', $guru->jenis_kelamin) === 'P' ? 'selected' : '' }}>Perempuan (P)</option>
                                 </select>
                             </div>
                         </label>
@@ -188,12 +188,12 @@
 
                     <label class="flex flex-col gap-1.5">
                         <div class="flex items-center justify-between">
-                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">Tembung Sandi Anyar (Opsional)</span>
-                            <span class="font-caption text-caption text-gray-400">Kosongake menawa ora pengin ngganti sandi</span>
+                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">Kata Sandi Baru (Opsional)</span>
+                            <span class="font-caption text-caption text-gray-400">Kosongkan jika tidak ingin mengganti kata sandi</span>
                         </div>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">key</span>
-                            <input type="password" name="password" placeholder="Ketik sandi anyar minimal 6 karakter..."
+                            <input type="password" name="password" placeholder="Ketik kata sandi baru minimal 6 karakter..."
                                    class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                         </div>
                     </label>
@@ -208,7 +208,7 @@
                     <button type="submit"
                             class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-body font-bold px-8 py-3 shadow-md hover:shadow-lg transition-all">
                         <span class="material-symbols-outlined text-[20px]">save</span>
-                        <span>Simpan Owahan Profil</span>
+                        <span>Simpan Perubahan Profil</span>
                     </button>
                 </div>
             </form>
@@ -246,7 +246,7 @@
             {{-- Modal Footer --}}
             <div class="px-6 py-3.5 bg-surface-container-low/40 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                 <span id="modalTeacherStatus" class="font-label-upper font-bold uppercase text-primary-700">Status Pegawai</span>
-                <span class="font-caption">Klik area njaba kanggo nutup</span>
+                <span class="font-caption">Klik area luar untuk menutup</span>
             </div>
         </div>
     </div>

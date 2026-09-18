@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Asisten Tanya Basa AI - Sinau Jowo Web</title>
+    <title>Asisten Tanya Bahasa AI - Sinau Jowo Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400..800;1,400..800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -167,7 +167,7 @@
                     <div class="flex items-center justify-between pb-3 bg-surface-container-low/60 -mx-6 -mt-6 px-6 pt-4 rounded-t-2xl border-b border-primary-100/50">
                         <div class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-primary-600 text-xl" style="font-variation-settings: 'FILL' 1;">forum</span>
-                            <span class="font-heading text-heading font-bold text-on-surface">Rembugan Pasinaon Aktif</span>
+                            <span class="font-heading text-heading font-bold text-on-surface">Diskusi Pembelajaran Aktif</span>
                         </div>
                         <div class="flex items-center gap-2 text-green-500">
                             <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
@@ -184,15 +184,15 @@
                             </div>
                             <div class="flex flex-col gap-1 flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
-                                    <span class="font-body text-body font-bold text-on-surface">Kanca Sinau Jawa AI</span>
-                                    <span class="font-caption text-caption text-gray-500">saiki</span>
+                                    <span class="font-body text-body font-bold text-on-surface">Teman Belajar Jawa AI</span>
+                                    <span class="font-caption text-caption text-gray-500">sekarang</span>
                                 </div>
                                 <div class="bg-surface-container-low p-4 rounded-2xl text-on-surface space-y-2 border border-primary-100/40">
                                     <p class="font-body text-body leading-relaxed">
-                                        Sugeng rawuh, {{ $userNama }}! Kula minangka <strong class="text-primary-700">Kanca Sinau Jawa</strong>. Kula siyaga mbiyantu panjenengan nyinau tata krama, unggah-ungguh basa (Ngoko, Ngoko Alus, Krama, Krama Alus), aksara Jawa, tembung saroja, paribasan, ngantos babagan budaya Jawa.
+                                        Selamat datang, {{ $userNama }}! Saya adalah <strong class="text-primary-700">Teman Belajar Jawa</strong>. Saya siap membantu Anda mempelajari tata krama, unggah-ungguh bahasa (Ngoko, Ngoko Alus, Krama, Krama Alus), aksara Jawa, tembung saroja, peribahasa, hingga seputar budaya Jawa.
                                     </p>
                                     <p class="font-body text-body text-on-surface-variant leading-relaxed">
-                                        Sumangga nyuwun pirsa babagan basa utawa budaya Jawa ingkang taksih ndadosaken bingung!
+                                        Silakan tanyakan hal seputar bahasa atau budaya Jawa yang masih membingungkan!
                                     </p>
                                 </div>
                             </div>
@@ -207,24 +207,24 @@
                 <!-- Popular Suggestion Chips -->
                 <div class="flex flex-col gap-2 w-full">
                     <div class="flex items-center justify-between px-1">
-                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Pitakon Populer Pasinaon</span>
+                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Pertanyaan Populer Pembelajaran</span>
                     </div>
                     <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                         <button type="button" data-prompt="Krama Inggil tembung 'Turu' punapa nggih?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
                             <span class="material-symbols-outlined text-base text-primary-600">help_outline</span>
-                            <span>Krama Inggil tembung "Turu"?</span>
+                            <span>Krama Inggil kata "Turu"?</span>
                         </button>
                         <button type="button" data-prompt="Bentenipun Aksara Murda kaliyan Aksara Swara kados pundi?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
                             <span class="material-symbols-outlined text-base text-primary-600">spellcheck</span>
-                            <span>Bedane Aksara Murda & Swara</span>
+                            <span>Perbedaan Aksara Murda & Swara</span>
                         </button>
                         <button type="button" data-prompt="Punapa tegesipun paribasan 'Becik ketitik, ala ketara'?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
                             <span class="material-symbols-outlined text-base text-primary-600">auto_awesome</span>
-                            <span>Tegese Paribasan "Becik Ketitik"</span>
+                            <span>Arti Peribahasa "Becik Ketitik"</span>
                         </button>
                         <button type="button" data-prompt="Kados pundi caranipun nyuwun idin marang Guru ingkang leres miturut krama alus?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
                             <span class="material-symbols-outlined text-base text-primary-600">record_voice_over</span>
-                            <span>Unggah-ungguh marang Guru</span>
+                            <span>Tata krama izin kepada Guru</span>
                         </button>
                     </div>
                 </div>
@@ -238,19 +238,19 @@
                             </button>
                         </div>
                         <div class="flex-1 min-w-0 bg-surface-container-low rounded-xl px-4 py-1.5 flex items-center border border-primary-100/50">
-                            <input type="text" id="chat-input-field" placeholder="Ketik pitakon babagan basa utawa budaya Jawa ing kene..." autocomplete="off" class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-400 py-1">
+                            <input type="text" id="chat-input-field" placeholder="Ketik pertanyaan seputar bahasa atau budaya Jawa di sini..." autocomplete="off" class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-400 py-1">
                         </div>
                         <button type="button" id="chat-send-btn" class="shrink-0 inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-body text-body font-bold transition-all shadow-md">
-                            <span>Kirim Pitakon</span>
+                            <span>Kirim Pertanyaan</span>
                             <span class="material-symbols-outlined text-lg">send</span>
                         </button>
                     </div>
                     <div class="flex items-center justify-between px-1 pt-1 border-t border-gray-100/60">
                         <div class="flex items-center gap-1.5 text-gray-500">
                             <span class="material-symbols-outlined text-sm text-green-500">verified</span>
-                            <span class="font-caption text-caption text-on-surface-variant">Asisten Tanya Basa njawab adhedhasar basis data korpus resmi sekolah. Ora ngarang wangsulan ing sanjabane materi.</span>
+                            <span class="font-caption text-caption text-on-surface-variant">Asisten Tanya Bahasa menjawab berdasarkan basis data korpus resmi sekolah. Tidak mengarang jawaban di luar materi.</span>
                         </div>
-                        <span class="font-caption text-caption text-gray-400 hidden sm:inline">Enter kangge ngirim</span>
+                        <span class="font-caption text-caption text-gray-400 hidden sm:inline">Enter untuk mengirim</span>
                     </div>
                 </div>
                     </div>
@@ -301,7 +301,7 @@
                         <div class="flex flex-col items-end gap-1 max-w-3xl lg:max-w-4xl">
                             <div class="flex items-center gap-2">
                                 <span class="font-caption text-caption text-gray-500" data-waktu>${waktu || nowWib()}</span>
-                                <span class="font-body text-body font-bold text-on-surface">Panjenengan</span>
+                                <span class="font-body text-body font-bold text-on-surface">Anda</span>
                                 <div class="w-8 h-8 rounded-full bg-primary-700 text-white font-bold text-xs flex items-center justify-center">${userInitial}</div>
                             </div>
                             <div class="bg-primary-600 text-white p-4 rounded-2xl shadow-sm leading-relaxed">
@@ -322,7 +322,7 @@
                         </div>
                         <div class="flex flex-col gap-1 flex-1 min-w-0">
                             <div class="flex items-center gap-2">
-                                <span class="font-body text-body font-bold text-on-surface">Kanca Sinau Jawa AI</span>
+                                <span class="font-body text-body font-bold text-on-surface">Teman Belajar Jawa AI</span>
                                 <span class="font-caption text-caption text-gray-500" data-waktu>${waktu || nowWib()}</span>
                             </div>
                             <div class="bg-surface-container-low p-4 rounded-2xl text-on-surface space-y-3 border border-primary-100/40">
@@ -423,12 +423,12 @@
                                 <span class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary-600 shrink-0">chat_bubble_outline</span>
                                 <span class="truncate" data-judul></span>
                             </button>
-                            <button type="button" data-action="hapus-sesi" data-session-id="${id}" class="hidden group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-400 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Busak riwayat">
+                            <button type="button" data-action="hapus-sesi" data-session-id="${id}" class="hidden group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-400 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Hapus riwayat">
                                 <span class="material-symbols-outlined text-[16px]">delete</span>
                             </button>
                         </div>
                     `);
-                    node.querySelector('[data-judul]').textContent = judul || 'Obrolan anyar';
+                    node.querySelector('[data-judul]').textContent = judul || 'Obrolan baru';
                     historyList.prepend(node);
                 } else {
                     const title = node.querySelector('[data-judul]');
@@ -482,7 +482,7 @@
                     scrollToBottom();
                 } catch (err) {
                     resetView();
-                    appendReply('Nyuwun pangapunten, riwayat obrolan boten saged dipun-bukak. Sumangga dipun-cobi malih.', []);
+                    appendReply('Mohon maaf, riwayat obrolan tidak dapat dibuka. Silakan coba lagi.', []);
                 } finally {
                     setBusy(false);
                     input.focus();
@@ -493,7 +493,7 @@
                 if (busy) {
                     return;
                 }
-                if (!window.confirm('Busak riwayat obrolan menika?')) {
+                if (!window.confirm('Hapus riwayat obrolan ini?')) {
                     return;
                 }
                 setBusy(true);
@@ -517,10 +517,10 @@
                         newChat();
                     }
                     if (historyList && !historyList.querySelector('[data-session-id]')) {
-                        historyList.innerHTML = '<div class="px-3 py-2 text-gray-400 italic text-xs" data-empty-state>Durung ana riwayat chat</div>';
+                        historyList.innerHTML = '<div class="px-3 py-2 text-gray-400 italic text-xs" data-empty-state>Belum ada riwayat obrolan</div>';
                     }
                 } catch (err) {
-                    window.alert('Gagal mbusak riwayat. Sumangga dipun-cobi malih.');
+                    window.alert('Gagal menghapus riwayat. Silakan coba lagi.');
                 } finally {
                     setBusy(false);
                 }
@@ -558,8 +558,8 @@
 
                     if (!res.ok) {
                         const message = res.status === 429
-                            ? 'Nyuwun pangapunten, panjenengan kirang sakedhik ngirim pitakon. Sumangga dipun-antosi sakedhap malih.'
-                            : 'Nyuwun pangapunten, wonten gangguan teknis. Sumangga dipun-cobi malih.';
+                            ? 'Mohon maaf, Anda mengirim pertanyaan terlalu cepat. Silakan tunggu beberapa saat lagi.'
+                            : 'Mohon maaf, terjadi gangguan teknis. Silakan coba lagi.';
                         appendReply(message, []);
                         return;
                     }
@@ -569,10 +569,10 @@
                         upsertHistoryItem(data.session_id, data.session_title);
                     }
 
-                    appendReply(data.jawaban || 'Nyuwun pangapunten, kula boten saged mangsuli pitakon menika.', data.sumber || []);
+                    appendReply(data.jawaban || 'Mohon maaf, saya belum dapat menjawab pertanyaan tersebut.', data.sumber || []);
                 } catch (err) {
                     typing.remove();
-                    appendReply('Nyuwun pangapunten, sambungan dhateng asisten gagal. Sumangga dipun-priksa sambungan internet panjenengan.', []);
+                    appendReply('Mohon maaf, koneksi ke asisten gagal. Silakan periksa koneksi internet Anda.', []);
                 } finally {
                     setBusy(false);
                     input.focus();

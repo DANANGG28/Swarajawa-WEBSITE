@@ -23,15 +23,38 @@
                     <span class="material-symbols-outlined text-[18px]">search</span> Cari
                 </button>
 
-                <label class="flex flex-col gap-1.5 sm:w-48">
+                <div class="relative flex flex-col gap-1.5 sm:w-52" id="filter-tipe-wrapper">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Tipe Soal</span>
-                    <select name="tipe_soal" class="rounded-full border border-gray-200 bg-gray-50 px-4 py-2.5 font-body text-body outline-none focus:border-primary-500">
-                        <option value="">Kabeh Tipe</option>
+                    <input type="hidden" name="tipe_soal" id="filter-tipe-input" value="{{ request('tipe_soal') }}">
+                    
+                    <button type="button" id="btn-filter-tipe"
+                        class="flex items-center justify-between w-full rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-primary-400 px-4 py-2.5 font-body text-body text-gray-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+                        <span id="filter-tipe-label" class="truncate font-medium text-gray-800">
+                            {{ $tipeList[request('tipe_soal')] ?? 'Semua Tipe' }}
+                        </span>
+                        <span class="inline-flex items-center justify-center shrink-0 w-5 h-5 text-gray-400 ml-2">
+                            <span id="filter-tipe-chevron" class="material-symbols-outlined text-[20px] leading-none transition-transform duration-200">expand_more</span>
+                        </span>
+                    </button>
+
+                    {{-- Dropdown Menu dengan Pembatas Antar Opsi --}}
+                    <div id="filter-tipe-menu" class="hidden absolute top-full left-0 mt-2 w-full min-w-[220px] bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 overflow-hidden divide-y divide-gray-100">
+                        <button type="button" data-val="" class="filter-tipe-item w-full flex items-center justify-between px-4 py-2.5 text-left font-body text-body {{ request('tipe_soal') == '' ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600' }} transition-colors">
+                            <span>Semua Tipe</span>
+                            @if(request('tipe_soal') == '')
+                                <span class="material-symbols-outlined text-[18px] text-primary-600">check</span>
+                            @endif
+                        </button>
                         @foreach ($tipeList as $value => $label)
-                            <option value="{{ $value }}" @selected(request('tipe_soal') === $value)>{{ $label }}</option>
+                            <button type="button" data-val="{{ $value }}" class="filter-tipe-item w-full flex items-center justify-between px-4 py-2.5 text-left font-body text-body {{ request('tipe_soal') === $value ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600' }} transition-colors">
+                                <span>{{ $label }}</span>
+                                @if(request('tipe_soal') === $value)
+                                    <span class="material-symbols-outlined text-[18px] text-primary-600">check</span>
+                                @endif
+                            </button>
                         @endforeach
-                    </select>
-                </label>
+                    </div>
+                </div>
             </form>
             
             <a href="{{ route('guru.soal.create', ['level_materi_id' => $level->id]) }}" class="flex items-center justify-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold px-6 py-2.5 shadow-sm transition-colors whitespace-nowrap">
@@ -53,7 +76,7 @@
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
                             <span class="px-3 py-1.5 rounded-full bg-yellow-300/50 text-tertiary font-caption text-caption font-bold">+{{ $s->bobot_exp }} XP</span>
-                            <form method="POST" action="{{ route('guru.soal.destroy', $s) }}" onsubmit="return confirm('Busak soal iki?')">
+                            <form method="POST" action="{{ route('guru.soal.destroy', $s) }}" onsubmit="return confirm('Hapus soal ini?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="w-9 h-9 rounded-full bg-error-container/60 text-error flex items-center justify-center hover:bg-error-container transition-colors">
                                     <span class="material-symbols-outlined text-[18px]">delete</span>
@@ -64,7 +87,7 @@
                     <details class="group">
                         <summary class="cursor-pointer list-none font-caption text-caption font-bold text-primary-600 flex items-center gap-1">
                             <span class="material-symbols-outlined text-[16px] group-open:rotate-180 transition-transform">edit</span>
-                            <span>Sunting soal iki</span>
+                            <span>Edit soal ini</span>
                         </summary>
                         <div class="mt-4 pt-4 border-t border-gray-100">
                             @include('partials.soal-form', [
@@ -80,7 +103,7 @@
             @empty
                 <div class="bg-surface-container-lowest rounded-2xl p-10 text-center border border-gray-100">
                     <span class="material-symbols-outlined text-[40px] text-gray-500">quiz</span>
-                    <p class="font-body text-body text-gray-500 mt-2">Durung ana soal. Tambah soal anyar ing dhuwur.</p>
+                    <p class="font-body text-body text-gray-500 mt-2">Belum ada soal. Tambah soal baru di atas.</p>
                 </div>
             @endforelse
 
@@ -99,4 +122,43 @@
     </div>
 
     @include('partials.soal-form-script')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btn = document.getElementById('btn-filter-tipe');
+            const menu = document.getElementById('filter-tipe-menu');
+            const chevron = document.getElementById('filter-tipe-chevron');
+            const input = document.getElementById('filter-tipe-input');
+            const form = btn?.closest('form');
+
+            if (btn && menu) {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isHidden = menu.classList.toggle('hidden');
+                    if (!isHidden) {
+                        chevron.classList.add('rotate-180');
+                    } else {
+                        chevron.classList.remove('rotate-180');
+                    }
+                });
+
+                menu.querySelectorAll('.filter-tipe-item').forEach(function (item) {
+                    item.addEventListener('click', function () {
+                        const val = this.getAttribute('data-val');
+                        input.value = val;
+                        menu.classList.add('hidden');
+                        chevron.classList.remove('rotate-180');
+                        form.submit();
+                    });
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                        menu.classList.add('hidden');
+                        chevron.classList.remove('rotate-180');
+                    }
+                });
+            }
+        });
+    </script>
 @endsection
