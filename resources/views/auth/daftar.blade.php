@@ -34,13 +34,40 @@
                         class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 </label>
 
-                <label class="flex flex-col gap-1.5">
+                @php
+                    $currentJk = old('jenis_kelamin', 'L');
+                    $jkOptions = [
+                        'L' => 'Laki-laki',
+                        'P' => 'Perempuan',
+                    ];
+                @endphp
+
+                <div class="relative flex flex-col gap-1.5" id="wrapper-jenis-kelamin">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Jenis Kelamin</span>
-                    <select name="jenis_kelamin" class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
-                        <option value="L" @selected(old('jenis_kelamin') === 'L')>Laki-laki</option>
-                        <option value="P" @selected(old('jenis_kelamin') === 'P')>Perempuan</option>
-                    </select>
-                </label>
+                    <input type="hidden" name="jenis_kelamin" id="input-jenis-kelamin" value="{{ $currentJk }}">
+
+                    <button type="button" id="btn-jenis-kelamin"
+                        class="flex items-center justify-between w-full rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-primary-400 px-4 py-3 font-body text-body text-gray-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+                        <span id="label-jenis-kelamin" class="truncate font-medium text-gray-800">
+                            {{ $jkOptions[$currentJk] ?? 'Laki-laki' }}
+                        </span>
+                        <span class="inline-flex items-center justify-center shrink-0 w-5 h-5 text-gray-400 ml-2">
+                            <span id="chevron-jenis-kelamin" class="material-symbols-outlined text-[20px] leading-none transition-transform duration-200">expand_more</span>
+                        </span>
+                    </button>
+
+                    {{-- Dropdown Menu Jenis Kelamin dengan Pembatas Antar Opsi --}}
+                    <div id="menu-jenis-kelamin" class="hidden absolute top-full left-0 mt-2 w-full bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 overflow-hidden divide-y divide-gray-100">
+                        @foreach ($jkOptions as $val => $text)
+                            @php $isSelected = ($currentJk === $val); @endphp
+                            <button type="button" data-val="{{ $val }}" data-label="{{ $text }}"
+                                class="item-jenis-kelamin w-full flex items-center justify-between px-4 py-2.5 text-left font-body text-body {{ $isSelected ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600' }} transition-colors">
+                                <span>{{ $text }}</span>
+                                <span class="check-icon material-symbols-outlined text-[18px] text-primary-600 {{ $isSelected ? '' : 'hidden' }}">check</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
 
                 <label class="flex flex-col gap-1.5">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Kelas</span>
@@ -84,5 +111,58 @@
             </p>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btn = document.getElementById('btn-jenis-kelamin');
+            const menu = document.getElementById('menu-jenis-kelamin');
+            const chevron = document.getElementById('chevron-jenis-kelamin');
+            const input = document.getElementById('input-jenis-kelamin');
+            const label = document.getElementById('label-jenis-kelamin');
+
+            if (btn && menu && input) {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isHidden = menu.classList.toggle('hidden');
+                    if (!isHidden) {
+                        chevron.classList.add('rotate-180');
+                    } else {
+                        chevron.classList.remove('rotate-180');
+                    }
+                });
+
+                menu.querySelectorAll('.item-jenis-kelamin').forEach(function (item) {
+                    item.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const val = this.getAttribute('data-val');
+                        const labelText = this.getAttribute('data-label');
+
+                        input.value = val;
+                        label.textContent = labelText;
+
+                        menu.querySelectorAll('.item-jenis-kelamin').forEach(function (opt) {
+                            opt.classList.remove('bg-primary-50', 'text-primary-700', 'font-bold');
+                            opt.classList.add('text-gray-700');
+                            opt.querySelector('.check-icon')?.classList.add('hidden');
+                        });
+
+                        this.classList.add('bg-primary-50', 'text-primary-700', 'font-bold');
+                        this.classList.remove('text-gray-700');
+                        this.querySelector('.check-icon')?.classList.remove('hidden');
+
+                        menu.classList.add('hidden');
+                        chevron.classList.remove('rotate-180');
+                    });
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                        menu.classList.add('hidden');
+                        chevron.classList.remove('rotate-180');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
