@@ -19,8 +19,12 @@ class WebDashboardTest extends TestCase
     {
         $this->get('/guru/dashboard')->assertRedirect(route('masuk'));
         $this->get('/superadmin/dashboard')->assertRedirect(route('masuk'));
-        $this->get('/')->assertRedirect(route('masuk'));
         $this->get('/latihan-soal')->assertRedirect(route('masuk'));
+    }
+
+    public function test_guest_sees_landing_page_on_homepage(): void
+    {
+        $this->get('/')->assertOk()->assertSee('Mulai Belajar Gratis');
     }
 
     public function test_guru_can_access_guru_area_but_not_superadmin_area(): void

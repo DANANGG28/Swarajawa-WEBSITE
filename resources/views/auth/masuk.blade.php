@@ -54,8 +54,11 @@
             </form>
 
             <p class="mt-4 text-center font-caption text-caption text-gray-500">
-                Durung duwe akun siswa?
-                <a href="{{ route('daftar') }}" class="text-primary-600 font-bold hover:underline">Daftar ing kene</a>
+                Durung duwe akun?
+                <a href="{{ route('daftar') }}" class="text-primary-600 font-bold hover:underline">Daftar akun siswa</a>
+            </p>
+            <p class="mt-1 text-center font-caption text-caption text-gray-400">
+                Pendaftaran mandiri mung kanggo siswa. Guru lan superadmin didaftarake dening sekolah.
             </p>
         </div>
 
