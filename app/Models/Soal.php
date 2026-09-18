@@ -6,6 +6,7 @@ use Database\Factories\SoalFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Soal extends Model
 {
@@ -65,5 +66,10 @@ class Soal extends Model
     public function getPembuatAttribute(): ?string
     {
         return $this->guru?->nama_lengkap ?? $this->superadmin?->nama_lengkap;
+    }
+
+    public function jawaban(): HasMany
+    {
+        return $this->hasMany(JawabanSiswa::class, 'soal_id');
     }
 }

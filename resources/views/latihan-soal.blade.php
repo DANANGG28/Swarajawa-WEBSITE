@@ -131,10 +131,13 @@
         <!-- HEADER -->
         <header class="fixed top-0 left-72 right-0 h-20 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] px-space-xl flex items-center justify-between">
             <div class="flex items-center flex-1 max-w-md">
-                <div class="flex items-center w-full bg-gray-50 rounded-full px-space-md py-space-xs gap-space-sm border border-gray-200/60 focus-within:border-primary-500 transition-colors">
+                <form action="{{ route('siswa.latihan') }}" method="GET" class="flex items-center w-full bg-gray-50 rounded-full px-space-md py-space-xs gap-space-sm border border-gray-200/60 focus-within:border-primary-500 transition-colors">
+                    @if(request('level_materi_id'))
+                        <input type="hidden" name="level_materi_id" value="{{ request('level_materi_id') }}">
+                    @endif
                     <span class="material-symbols-outlined text-gray-500 text-[20px]">search</span>
-                    <input type="text" placeholder="Cari materi aksara, peribahasa, tata bahasa..." class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-500">
-                </div>
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari materi aksara, peribahasa, tata bahasa..." class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-500">
+                </form>
             </div>
             <div class="flex items-center gap-space-lg">
                 <button type="button" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-50 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors relative">

@@ -73,4 +73,9 @@ class Siswa extends Authenticatable
     {
         return $this->hasMany(ChatSession::class, 'siswa_id')->orderBy('updated_at', 'desc');
     }
+
+    public function jawaban(): HasMany
+    {
+        return $this->hasMany(JawabanSiswa::class, 'siswa_id');
+    }
 }
