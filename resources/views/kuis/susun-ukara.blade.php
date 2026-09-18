@@ -59,7 +59,6 @@
             const placeholder = document.getElementById('placeholder');
 
             const words = SOAL.opsi.map((w, i) => ({ word: typeof w === 'string' ? w : (w.teks ?? w), uid: i }));
-            let placedSequence = []; // nyimpen urutan klik (uid)
 
             function chipButton(item, where) {
                 const b = document.createElement('button');
@@ -71,42 +70,34 @@
 
             function render() {
                 bank.innerHTML = '';
-                words.filter((w) => !placedSequence.includes(w.uid)).forEach((item) => {
+                words.filter((w) => !w.placed).forEach((item) => {
                     const b = chipButton(item, 'bank');
-                    b.addEventListener('click', () => { placedSequence.push(item.uid); render(); });
+                    b.addEventListener('click', () => { item.placed = true; render(); });
                     bank.appendChild(b);
                 });
-                
                 zona.querySelectorAll('[data-chip]').forEach((n) => n.remove());
-                placedSequence.forEach((uid) => {
-                    const item = words.find((w) => w.uid === uid);
+                words.filter((w) => w.placed).forEach((item) => {
                     const b = chipButton(item, 'zona');
                     b.dataset.chip = item.uid;
-                    b.addEventListener('click', () => { 
-                        placedSequence = placedSequence.filter(id => id !== item.uid); 
-                        render(); 
-                    });
+                    b.addEventListener('click', () => { item.placed = false; render(); });
                     zona.appendChild(b);
                 });
-                placeholder.style.display = placedSequence.length > 0 ? 'none' : 'block';
+                placeholder.style.display = words.some((w) => w.placed) ? 'none' : 'block';
             }
 
             document.getElementById('btn-undo')?.addEventListener('click', () => {
-                if (placedSequence.length > 0) {
-                    placedSequence.pop();
-                    render();
-                }
+                const placed = words.filter((w) => w.placed);
+                if (placed.length) { placed[placed.length - 1].placed = false; render(); }
             });
             document.getElementById('btn-reset')?.addEventListener('click', () => {
-                placedSequence = []; 
-                render();
+                words.forEach((w) => { w.placed = false; }); render();
             });
 
             render();
 
             const feedback = document.getElementById('feedback');
             document.getElementById('btn-kirim')?.addEventListener('click', async () => {
-                const answer = placedSequence.map((uid) => words.find(w => w.uid === uid).word);
+                const answer = words.filter((w) => w.placed).map((w) => w.word);
                 if (!answer.length) { alert('Susun tembung dhisik.'); return; }
                 try {
                     const res = await window.postJSON(window.KUIS.jawabUrl, { soal_id: SOAL.id, jawaban: answer });

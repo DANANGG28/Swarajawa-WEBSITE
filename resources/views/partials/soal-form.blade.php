@@ -16,7 +16,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <label class="flex flex-col gap-1.5">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Level Materi</span>
-            <select name="level_materi_id" required class="custom-select rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/30 transition-all cursor-pointer">
+            <select name="level_materi_id" required class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 @foreach ($levels as $level)
                     <option value="{{ $level->id }}" @selected(old('level_materi_id', $soal->level_materi_id ?? '') == $level->id)>
                         Level {{ $level->urutan }} — {{ $level->nama_materi }}
@@ -27,7 +27,7 @@
 
         <label class="flex flex-col gap-1.5">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Tipe Soal</span>
-            <select name="tipe_soal" required data-tipe class="custom-select rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/30 transition-all cursor-pointer">
+            <select name="tipe_soal" required data-tipe class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 @foreach ($tipeList as $value => $label)
                     <option value="{{ $value }}" @selected(old('tipe_soal', $soal->tipe_soal ?? '') === $value)>{{ $label }}</option>
                 @endforeach
@@ -37,7 +37,7 @@
         <label class="flex flex-col gap-1.5">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Bobot EXP</span>
             <input type="number" name="bobot_exp" min="0" max="1000" required value="{{ old('bobot_exp', $soal->bobot_exp ?? 10) }}"
-                class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/30 transition-all">
+                class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
         </label>
     </div>
 
@@ -48,7 +48,7 @@
     
     <label class="flex flex-col gap-1.5">
         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Gambar Pendukung (Opsional)</span>
-        <input type="file" name="file_gambar" accept="image/*" class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/30 transition-all">
+        <input type="file" name="file_gambar" accept="image/*" class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
         @if(isset($soal) && $soal->media_gambar_url)
             <span class="text-caption text-gray-500">Gambar saat ini tersimpan: <a href="{{ Storage::url($soal->media_gambar_url) }}" target="_blank" class="text-primary-600 underline">Lihat Gambar</a></span>
         @endif
@@ -76,11 +76,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label class="flex flex-col gap-1.5">
                 <span class="text-caption text-gray-500">Upload File Audio Manual</span>
-                <input type="file" name="file_audio" accept="audio/*" class="rounded-lg border border-gray-200 bg-white px-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/30 transition-all">
+                <input type="file" name="file_audio" accept="audio/*" class="rounded-full border border-gray-200 bg-white px-4 py-3 font-body text-body outline-none focus:border-primary-500">
             </label>
             <div class="flex flex-col gap-1.5">
                 <span class="text-caption text-gray-500">Atau Buat Otomatis via AI Text-to-Speech</span>
-                <button type="button" id="btn-tts-{{ $prefix }}" class="flex items-center justify-center gap-2 rounded-lg bg-primary-100 hover:bg-primary-200 text-primary-800 font-body text-body font-bold px-4 py-3 transition-colors">
+                <button type="button" id="btn-tts-{{ $prefix }}" class="flex items-center justify-center gap-2 rounded-full bg-primary-100 hover:bg-primary-200 text-primary-800 font-body text-body font-bold px-4 py-3 transition-colors">
                     <span class="material-symbols-outlined text-[20px]">record_voice_over</span> Generate dari Teks
                 </button>
             </div>
@@ -89,7 +89,7 @@
         <label class="flex flex-col gap-1.5 mt-2">
             <span class="text-caption text-gray-500">URL Audio (Otomatis terisi jika upload file / pakai TTS)</span>
             <input type="text" name="media_audio_url" id="audio-url-{{ $prefix }}" value="{{ old('media_audio_url', $soal->media_audio_url ?? '') }}"
-                class="rounded-lg border border-gray-200 bg-white px-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/30 transition-all" placeholder="Path ke file audio...">
+                class="rounded-full border border-gray-200 bg-white px-4 py-3 font-body text-body outline-none focus:border-primary-500" placeholder="Path ke file audio...">
         </label>
 
         <!-- Preview Audio -->
@@ -101,7 +101,7 @@
         </div>
     </div>
 
-    <button type="submit" class="self-start flex items-center gap-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold px-6 py-3 shadow-sm transition-colors mt-2 hover:shadow-md">
+    <button type="submit" class="self-start flex items-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold px-6 py-3 shadow-sm transition-colors mt-2">
         <span class="material-symbols-outlined text-[20px]">save</span>
         <span>{{ $submitLabel }}</span>
     </button>

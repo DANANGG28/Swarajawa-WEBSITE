@@ -16,7 +16,7 @@ Route::get('/', [HomeController::class, 'index'])->name('siswa.dashboard');
 Route::get('/dashboard', [HomeController::class, 'index']);
 
 Route::middleware('web.auth:siswa')->group(function () {
-    Route::get('/latihan-soal', [KuisSesiController::class, 'latihanSoal'])->name('siswa.latihan');
+    Route::get('/latihan-soal', fn () => view('latihan-soal'))->name('siswa.latihan');
     Route::get('/papan-skor', fn () => view('papan-skor'))->name('siswa.papan-skor');
     Route::get('/asisten-ai', fn () => view('asisten-ai'))->name('siswa.asisten');
     Route::get('/profil', fn () => view('profil'))->name('siswa.profil');
