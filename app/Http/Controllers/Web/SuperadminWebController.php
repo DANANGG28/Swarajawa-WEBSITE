@@ -10,10 +10,12 @@ use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Superadmin;
 use App\Services\ProgresService;
+use App\Services\TtsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -281,11 +283,11 @@ class SuperadminWebController extends Controller
     public function levelMateri(): View
     {
         return view('superadmin.level-materi', [
-            'judul' => 'Level Materi',
-            'subjudul' => 'Susun struktur level/materi pembelajaran',
+            'judul' => 'Manajemen Soal & Level',
+            'subjudul' => 'Pilih level materi kanggo ngatur bank soal utawa tambah level anyar',
             'role' => 'superadmin',
             'active' => 'level-materi',
-            'levelList' => LevelMateri::withCount('soal')->orderBy('urutan')->get(),
+            'levels' => LevelMateri::withCount('soal')->orderBy('urutan')->get(),
         ]);
     }
 
@@ -320,24 +322,56 @@ class SuperadminWebController extends Controller
 
     // ------------------------------------------------------------- Soal
 
-    public function soal(Request $request): View
+    public function soal(Request $request): View|RedirectResponse
     {
-        $query = Soal::query()->with(['levelMateri', 'guru']);
-
-        if ($request->filled('level_materi_id')) {
-            $query->where('level_materi_id', $request->integer('level_materi_id'));
+        // Redirect ke pilihan level jika tidak ada level_materi_id
+        if (! $request->filled('level_materi_id')) {
+            return redirect()->route('superadmin.level-materi');
         }
+
+        $levelId = $request->integer('level_materi_id');
+        $level = LevelMateri::findOrFail($levelId);
+
+        $query = Soal::query()
+            ->with('levelMateri')
+            ->where('level_materi_id', $levelId);
 
         if ($request->filled('tipe_soal')) {
             $query->where('tipe_soal', (string) $request->query('tipe_soal'));
         }
 
+        if ($request->filled('q')) {
+            $term = '%'.$request->query('q').'%';
+            $query->where('pertanyaan', 'like', $term);
+        }
+
         return view('superadmin.soal', [
             'judul' => 'Bank Soal',
-            'subjudul' => 'Otoritas tertinggi atas seluruh soal lintas guru',
+            'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
             'role' => 'superadmin',
             'active' => 'soal',
             'soalList' => $query->latest()->paginate(12)->withQueryString(),
+            'level' => $level,
+            'levels' => LevelMateri::orderBy('urutan')->get(),
+            'tipeList' => $this->tipeList(),
+        ]);
+    }
+
+    public function soalCreate(Request $request): View|RedirectResponse
+    {
+        if (! $request->filled('level_materi_id')) {
+            return redirect()->route('superadmin.level-materi');
+        }
+
+        $levelId = $request->integer('level_materi_id');
+        $level = LevelMateri::findOrFail($levelId);
+
+        return view('superadmin.soal-create', [
+            'judul' => 'Tambah Soal Anyar',
+            'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
+            'role' => 'superadmin',
+            'active' => 'soal',
+            'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
             'tipeList' => $this->tipeList(),
         ]);
@@ -349,16 +383,54 @@ class SuperadminWebController extends Controller
         $data['superadmin_id'] = $this->superadmin()->id;
         $data['guru_id'] = null;
 
+        if ($request->hasFile('file_gambar')) {
+            $data['media_gambar_url'] = $request->file('file_gambar')->store('soal_media', 'public');
+        }
+        if ($request->hasFile('file_audio')) {
+            $data['media_audio_url'] = $request->file('file_audio')->store('soal_media', 'public');
+        }
+
         Soal::create($data);
 
-        return back()->with('sukses', 'Soal kasil digawe.');
+        return redirect()->route('superadmin.soal', ['level_materi_id' => $data['level_materi_id']])->with('sukses', 'Soal kasil disimpen.');
     }
 
     public function soalUpdate(Request $request, Soal $soal): RedirectResponse
     {
-        $soal->update($this->validatedSoal($request));
+        $this->authorize('update', $soal);
+
+        $data = $this->validatedSoal($request);
+
+        if ($request->hasFile('file_gambar')) {
+            $data['media_gambar_url'] = $request->file('file_gambar')->store('soal_media', 'public');
+        }
+        if ($request->hasFile('file_audio')) {
+            $data['media_audio_url'] = $request->file('file_audio')->store('soal_media', 'public');
+        }
+
+        $soal->update($data);
 
         return back()->with('sukses', 'Soal kasil dianyari.');
+    }
+
+    public function generateTts(Request $request, TtsService $ttsService)
+    {
+        $request->validate(['text' => 'required|string']);
+
+        $path = $ttsService->generate($request->text);
+
+        if ($path) {
+            return response()->json([
+                'success' => true,
+                'url' => Storage::url($path),
+                'path' => $path,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal generate TTS. Pastikan API Key Azure sudah dikonfigurasi.',
+        ], 500);
     }
 
     public function soalDestroy(Soal $soal): RedirectResponse
@@ -402,6 +474,8 @@ class SuperadminWebController extends Controller
             'kunci_jawaban_raw' => ['required', 'string'],
             'media_audio_url' => ['nullable', 'string', 'max:2048'],
             'bobot_exp' => ['required', 'integer', 'min:0', 'max:1000'],
+            'file_gambar' => ['nullable', 'image', 'max:5120'], // max 5MB
+            'file_audio' => ['nullable', 'mimetypes:audio/*', 'max:10240'], // max 10MB
         ]);
 
         $data['opsi_jawaban'] = $this->decodeJson($data['opsi_jawaban_raw'] ?? null);

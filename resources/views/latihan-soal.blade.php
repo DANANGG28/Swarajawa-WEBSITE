@@ -111,10 +111,6 @@
     </script>
     <style>
         @layer base {
-            html {
-                font-size: 90%;
-                zoom: 90%;
-            }
             html, body { margin: 0; padding: 0; }
             body { overscroll-behavior: none; }
             main > :first-child { margin-top: 0 !important; }

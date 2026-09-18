@@ -34,6 +34,7 @@ class Soal extends Model
         'opsi_jawaban',
         'kunci_jawaban',
         'media_audio_url',
+        'media_gambar_url',
         'bobot_exp',
         'guru_id',
         'superadmin_id',

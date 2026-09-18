@@ -274,8 +274,12 @@ class HomeController extends Controller
         $siswa = AuthContext::currentUser($request);
         $this->gamification->syncStreak($siswa);
 
-        $filterKelas = $request->query('kelas');
-        $leaderboard = $this->gamification->leaderboard($filterKelas, 20);
+        $kelasSiswa = $siswa->kelas;
+        $scope = $request->query('scope') === 'sekolah' ? 'sekolah' : 'kelas';
+        $filterKelas = $scope === 'sekolah' ? null : $kelasSiswa;
+
+        $leaderboard = $this->gamification->leaderboard($filterKelas, 50);
+        $juaraSekolah = $this->gamification->leaderboard(null, 1)[0] ?? null;
 
         $myExp = (int) ($siswa->exp()->value('total_exp') ?? 0);
         $myStreak = (int) ($siswa->strek()->value('current_streak') ?? 0);
@@ -291,8 +295,6 @@ class HomeController extends Controller
         $top3 = $leaderboard[2] ?? null;
         $others = array_slice($leaderboard, 3);
 
-        $kelasList = Siswa::distinct()->pluck('kelas')->filter()->values();
-
         return view('papan-skor', [
             'siswa' => $siswa,
             'myExp' => $myExp,
@@ -302,8 +304,9 @@ class HomeController extends Controller
             'top2' => $top2,
             'top3' => $top3,
             'others' => $others,
-            'kelasList' => $kelasList,
-            'filterKelas' => $filterKelas,
+            'juaraSekolah' => $juaraSekolah,
+            'kelasSiswa' => $kelasSiswa,
+            'scope' => $scope,
         ]);
     }
 

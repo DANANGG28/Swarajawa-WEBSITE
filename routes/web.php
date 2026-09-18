@@ -105,9 +105,12 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
     Route::delete('/level-materi/{levelMateri}', [SuperadminWebController::class, 'levelMateriDestroy'])->name('level-materi.destroy');
 
     Route::get('/soal', [SuperadminWebController::class, 'soal'])->name('soal');
+    Route::get('/soal/tambah', [SuperadminWebController::class, 'soalCreate'])->name('soal.create');
     Route::post('/soal', [SuperadminWebController::class, 'soalStore'])->name('soal.store');
     Route::put('/soal/{soal}', [SuperadminWebController::class, 'soalUpdate'])->name('soal.update');
     Route::delete('/soal/{soal}', [SuperadminWebController::class, 'soalDestroy'])->name('soal.destroy');
+
+    Route::post('/soal/generate-tts', [SuperadminWebController::class, 'generateTts'])->name('soal.tts');
 });
 
 Route::get('/resources/image/guru/{filename}', function (string $filename) {

@@ -5,6 +5,7 @@
     $submitLabel = $isEdit ? 'Simpan Perubahan' : 'Simpan Soal';
     $opsiVal = $isEdit ? json_encode($soal->opsi_jawaban, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : '';
     $kunciVal = $isEdit ? json_encode($soal->kunci_jawaban, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : '';
+    $ttsRoute = $ttsRoute ?? route('guru.soal.tts');
 @endphp
 
 <form method="POST" action="{{ $action }}" class="flex flex-col gap-4" data-soal-form enctype="multipart/form-data">
@@ -121,7 +122,7 @@
         btn.disabled = true;
         
         try {
-            const res = await fetch('{{ route("guru.soal.tts") }}', {
+            const res = await fetch('{{ $ttsRoute }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
