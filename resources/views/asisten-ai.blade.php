@@ -111,10 +111,6 @@
     </script>
     <style>
         @layer base {
-            html {
-                font-size: 90%;
-                zoom: 90%;
-            }
             html, body { margin: 0; padding: 0; }
             body { overscroll-behavior: none; }
             main > :first-child { margin-top: 0 !important; }
@@ -161,7 +157,7 @@
         </header>
 
         <!-- MAIN CONTENT -->
-        <main class="flex-1 pt-20 w-full px-6 py-space-xl bg-background">
+        <main class="flex-1 pt-20 w-full px-6 pb-[16rem] bg-background">
             <div class="flex flex-col w-full gap-space-lg">
 
                 <!-- CHAT CONTAINER CARD -->
@@ -205,6 +201,9 @@
 
                 </div>
 
+                <!-- FIXED COMPOSER (Pitakon Populer + Input) -->
+                <div class="fixed bottom-0 left-72 right-0 z-40 bg-background/95 backdrop-blur-xl border-t border-gray-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] px-6 py-4">
+                    <div class="flex flex-col gap-space-lg w-full">
                 <!-- Popular Suggestion Chips -->
                 <div class="flex flex-col gap-2 w-full">
                     <div class="flex items-center justify-between px-1">
@@ -254,6 +253,8 @@
                         <span class="font-caption text-caption text-gray-400 hidden sm:inline">Enter kangge ngirim</span>
                     </div>
                 </div>
+                    </div>
+                </div>
 
             </div>
         </main>
@@ -289,9 +290,8 @@
                 if (!container) {
                     return;
                 }
-                const last = container.lastElementChild;
-                if (last) {
-                    last.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                if (container.lastElementChild) {
+                    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
                 }
             }
 

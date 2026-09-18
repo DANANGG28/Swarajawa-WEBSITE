@@ -51,10 +51,13 @@ class WebDashboardTest extends TestCase
     public function test_superadmin_can_access_superadmin_area_but_not_guru_area(): void
     {
         $admin = Superadmin::factory()->create();
+        $level = LevelMateri::create(['nama_materi' => 'Dasar', 'deskripsi' => 'x', 'reward_exp' => 100, 'urutan' => 1]);
 
-        foreach (['/superadmin/dashboard', '/superadmin/guru', '/superadmin/siswa', '/superadmin/level-materi', '/superadmin/soal'] as $url) {
+        foreach (['/superadmin/dashboard', '/superadmin/guru', '/superadmin/siswa', '/superadmin/level-materi'] as $url) {
             $this->actingAs($admin, 'superadmin')->get($url)->assertOk();
         }
+
+        $this->actingAs($admin, 'superadmin')->get('/superadmin/soal?level_materi_id='.$level->id)->assertOk();
 
         $this->actingAs($admin, 'superadmin')->get('/guru/dashboard')->assertForbidden();
     }
@@ -133,6 +136,53 @@ class WebDashboardTest extends TestCase
         ])->assertRedirect();
 
         $this->assertDatabaseHas('level_materi', ['nama_materi' => 'Level Anyar']);
+    }
+
+    public function test_superadmin_can_create_soal_via_web_form(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $level = LevelMateri::create(['nama_materi' => 'Dasar', 'deskripsi' => 'x', 'reward_exp' => 100, 'urutan' => 1]);
+
+        $this->actingAs($admin, 'superadmin')->post('/superadmin/soal', [
+            'level_materi_id' => $level->id,
+            'tipe_soal' => Soal::TIPE_PILIHAN_GANDA,
+            'pertanyaan' => 'Pitakon superadmin?',
+            'opsi_jawaban_raw' => json_encode([['label' => 'A', 'teks' => 'Bener']]),
+            'kunci_jawaban_raw' => json_encode(['jawaban' => 'A']),
+            'bobot_exp' => 10,
+        ])->assertRedirect(route('superadmin.soal', ['level_materi_id' => $level->id]));
+
+        $this->assertDatabaseHas('soal', [
+            'pertanyaan' => 'Pitakon superadmin?',
+            'superadmin_id' => $admin->id,
+            'guru_id' => null,
+        ]);
+    }
+
+    public function test_superadmin_soal_and_create_pages_render_for_level(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $level = LevelMateri::create(['nama_materi' => 'Dasar', 'deskripsi' => 'x', 'reward_exp' => 100, 'urutan' => 1]);
+
+        Soal::create([
+            'level_materi_id' => $level->id,
+            'tipe_soal' => Soal::TIPE_PILIHAN_GANDA,
+            'pertanyaan' => 'Pitakon superadmin?',
+            'opsi_jawaban' => [['label' => 'A', 'teks' => 'Bener']],
+            'kunci_jawaban' => ['jawaban' => 'A'],
+            'bobot_exp' => 10,
+            'superadmin_id' => $admin->id,
+        ]);
+
+        $this->actingAs($admin, 'superadmin')->get('/superadmin/soal?level_materi_id='.$level->id)
+            ->assertOk()
+            ->assertSee('Pitakon superadmin?');
+
+        $this->actingAs($admin, 'superadmin')->get('/superadmin/soal/tambah?level_materi_id='.$level->id)
+            ->assertOk()
+            ->assertSee('Tambah Soal Anyar');
+
+        $this->actingAs($admin, 'superadmin')->get('/superadmin/soal')->assertRedirect(route('superadmin.level-materi'));
     }
 
     public function test_siswa_can_access_siswa_area_after_login(): void

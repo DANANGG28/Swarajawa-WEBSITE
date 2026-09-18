@@ -111,10 +111,6 @@
     </script>
     <style>
         @layer base {
-            html {
-                font-size: 90%;
-                zoom: 90%;
-            }
             html, body { margin: 0; padding: 0; }
             body { overscroll-behavior: none; }
             main > :first-child { margin-top: 0 !important; }
@@ -155,7 +151,7 @@
                                 <svg class="h-4 w-4 fill-current text-yellow-300" viewBox="0 0 24 24">
                                     <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"></path>
                                 </svg>
-                                <span>PAPAN SKOR &amp; KATALIS PASINAON • {{ $filterKelas ? 'KELAS '.$filterKelas : ($siswa->kelas ? 'KELAS '.$siswa->kelas : 'KABEH KELAS') }}</span>
+                                <span>PAPAN SKOR &amp; KATALIS PASINAON • {{ $scope === 'sekolah' ? 'PERINGKAT SEKOLAH' : ($kelasSiswa ? 'KELAS '.$kelasSiswa : 'KABEH KELAS') }}</span>
                             </div>
                         </div>
 
@@ -169,22 +165,40 @@
                                 </p>
                             </div>
 
-                            <!-- Tab Filter Pills -->
+                            <!-- Opsi Tampilan: Kelas / Sekolah -->
                             <div class="flex flex-col items-start lg:items-end gap-3">
-                                <div class="inline-flex flex-wrap p-1 bg-white/10 backdrop-blur-md rounded-xl border border-white/15 gap-1">
-                                    <a href="{{ route('siswa.papan-skor') }}" class="px-4 py-2 rounded-lg text-caption font-bold transition-all {{ !$filterKelas ? 'bg-white text-primary-700 shadow-sm' : 'text-primary-fixed hover:text-white' }}">
-                                        Kabeh Siswa
+                                <div class="inline-flex p-1 bg-white/10 backdrop-blur-md rounded-xl border border-white/15 gap-1">
+                                    <a href="{{ route('siswa.papan-skor') }}" class="px-4 py-2 rounded-lg text-caption font-bold transition-all {{ $scope === 'kelas' ? 'bg-white text-primary-700 shadow-sm' : 'text-primary-fixed hover:text-white' }}">
+                                        Kelas {{ $kelasSiswa ?? '-' }}
                                     </a>
-                                    @foreach($kelasList as $k)
-                                        <a href="{{ route('siswa.papan-skor', ['kelas' => $k]) }}" class="px-4 py-2 rounded-lg text-caption font-bold transition-all {{ $filterKelas === $k ? 'bg-white text-primary-700 shadow-sm' : 'text-primary-fixed hover:text-white' }}">
-                                            Kelas {{ $k }}
-                                        </a>
-                                    @endforeach
+                                    <a href="{{ route('siswa.papan-skor', ['scope' => 'sekolah']) }}" class="px-4 py-2 rounded-lg text-caption font-bold transition-all {{ $scope === 'sekolah' ? 'bg-white text-primary-700 shadow-sm' : 'text-primary-fixed hover:text-white' }}">
+                                        Sekolah
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
+
+                <!-- JUARA 1 SEKOLAH -->
+                @if($scope === 'kelas' && $juaraSekolah)
+                    <section class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 text-white p-5 shadow-sm flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-4 min-w-0">
+                            <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+                            </div>
+                            <div class="flex flex-col min-w-0">
+                                <span class="font-label-upper text-label-upper uppercase tracking-wider text-white/80 font-bold">Juara 1 Sekolah</span>
+                                <span class="font-heading text-heading font-extrabold truncate">{{ $juaraSekolah['nama'] }}</span>
+                                <span class="font-caption text-caption text-white/80">{{ $juaraSekolah['kelas'] ? 'Kelas '.$juaraSekolah['kelas'] : 'Siswa' }}</span>
+                            </div>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span class="font-heading text-2xl font-black leading-none">{{ number_format($juaraSekolah['total_exp']) }}</span>
+                            <span class="font-label-upper text-label-upper font-bold text-white/80 block mt-0.5">XP</span>
+                        </div>
+                    </section>
+                @endif
 
                 <!-- PODIUM TOP 3 SECTION -->
                 <section class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col gap-6">
@@ -197,7 +211,7 @@
                             </div>
                             <h2 class="font-heading text-heading font-bold text-on-surface">Jawata Telu Gedhe (Top 3)</h2>
                         </div>
-                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">PERIODE: MINGGU IKI</span>
+                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">{{ $scope === 'sekolah' ? 'SEKOLAH' : 'KELAS '.($kelasSiswa ?? 'KABEH') }}</span>
                     </div>
 
                     <!-- 3 Pillar Podium Grid (Align Bottom) -->
@@ -310,7 +324,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-4">
                         <div>
                             <h3 class="font-heading text-heading font-bold text-on-surface">Daftar Peringkat Siswa Sabanjure</h3>
-                            <p class="font-caption text-caption text-gray-500">Peringkat 4 tekan 10 ing kelas 7A semester ganjil</p>
+                            <p class="font-caption text-caption text-gray-500">Peringkat {{ $scope === 'sekolah' ? 'sekolah' : 'kelas '.$kelasSiswa }} adhedhasar total XP</p>
                         </div>
                         <div class="inline-flex items-center gap-2 bg-gray-50 border border-gray-200/80 px-3 py-1.5 rounded-full self-start sm:self-auto">
                             <svg class="w-4 h-4 text-gray-500 stroke-2 fill-none stroke-currentColor" viewBox="0 0 24 24">
