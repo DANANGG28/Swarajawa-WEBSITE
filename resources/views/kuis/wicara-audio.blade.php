@@ -81,15 +81,46 @@
 
             let recorder = null, chunks = [], recording = false, timer = null, seconds = 0;
 
-            function showResult(res) {
+            async function showResult(res) {
+                let jawabRes = null;
+                try {
+                    jawabRes = await window.postJSON(window.KUIS.jawabUrl, {
+                        soal_id: SOAL.id,
+                        jawaban: { transcript: res.transcript ?? '' }
+                    });
+                } catch(e) { console.error(e); }
+
+                const expText = jawabRes ? ` • +${jawabRes.exp_didapat} XP` : '';
                 feedback.className = 'w-full mt-4 text-left rounded-2xl p-5 border ' + (res.benar ? 'bg-green-500/10 border-green-500/30' : 'bg-error-container/60 border-error/30');
+
+                let nextButtons = '<div class="mt-4 flex flex-wrap items-center gap-3">';
+                if (jawabRes && jawabRes.next_url) {
+                    nextButtons += `<a href="${jawabRes.next_url}" class="rounded-full bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body hover:bg-primary-700 transition shadow-sm">Soal Sabanjure</a>`;
+                }
+                nextButtons += `<a href="{{ route('siswa.latihan') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Daftar Soal</a>`;
+                nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Beranda</a></div>`;
+
+                let levelSelesaiHtml = '';
+                if (jawabRes && jawabRes.level_selesai) {
+                    levelSelesaiHtml = `
+                        <div class="mt-3 p-4 rounded-xl bg-green-500/20 border border-green-500/40 text-green-700">
+                            <div class="font-heading text-heading font-extrabold flex items-center gap-1.5">
+                                <span class="material-symbols-outlined icon-fill">military_tech</span>
+                                Level Rampung! Sampeyan oleh bonus +${jawabRes.reward_exp} EXP!
+                            </div>
+                            <p class="font-body text-body text-green-800 mt-1">Level sabanjure <strong>${jawabRes.level_berikutnya ?? ''}</strong> saiki wis kabuka.</p>
+                        </div>`;
+                }
+
                 feedback.innerHTML = `
                     <div class="flex items-center gap-2 font-heading text-heading font-extrabold ${res.benar ? 'text-green-500' : 'text-error'}">
                         <span class="material-symbols-outlined icon-fill">${res.benar ? 'verified' : 'cancel'}</span>
-                        ${res.benar ? 'Pelafalan bener!' : 'Durung trep'} • Skor ${res.skor ?? 0}/100
+                        ${res.benar ? 'Pelafalan bener!' : 'Durung trep'} • Skor ${res.skor ?? 0}/100${expText}
                     </div>
-                    <p class="font-body text-body text-on-surface-variant mt-1">Kadeteksi: <strong>${res.transcript ?? '-'}</strong></p>
+                    <p class="font-body text-body text-on-surface-variant mt-1">Kadeteksi: <strong>${res.transcript ?? '-'}</strong> • Rekor: ${(jawabRes ? jawabRes.skor_tertinggi : res.skor)}/100</p>
                     <p class="font-body text-body text-on-surface mt-1">${res.balasan_teks ?? ''}</p>
+                    ${levelSelesaiHtml}
+                    ${nextButtons}
                     ${res.mock ? '<p class="font-caption text-caption text-gray-500 mt-2">(Mode mock — API vendor durung dikonfigurasi)</p>' : ''}`;
                 feedback.classList.remove('hidden');
             }

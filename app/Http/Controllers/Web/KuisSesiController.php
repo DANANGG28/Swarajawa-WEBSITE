@@ -15,9 +15,11 @@ use App\Services\Ai\StsService;
 use App\Services\Ai\SttService;
 use App\Services\Ai\TtsService;
 use App\Services\GamificationService;
+use App\Services\JawabanService;
 use App\Services\ProgresService;
 use App\Services\QuizScoringService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +40,7 @@ class KuisSesiController extends Controller
         private readonly StsService $sts,
         private readonly RagService $rag,
         private readonly ProgresService $progres,
+        private readonly JawabanService $jawaban,
     ) {}
 
     public function pilihanGanda(): View
@@ -66,6 +69,30 @@ class KuisSesiController extends Controller
     }
 
     /**
+     * Mulai level: arahkan ke soal pertama yang belum tuntas ing level kasebut.
+     * Otomatis nuduhake tipe kuis sing bener liwat urlForSoal().
+     */
+    public function mulaiLevel(LevelMateri $levelMateri): RedirectResponse
+    {
+        $siswa = $this->siswa();
+
+        if (! $this->progres->canStart($siswa, $levelMateri)) {
+            return redirect()->route('siswa.latihan')
+                ->with('error', 'Materi belum tercapai. Rampungake level sadurunge dhisik.');
+        }
+
+        $soal = $this->jawaban->firstUnfinishedInLevel($siswa, $levelMateri)
+            ?? Soal::where('level_materi_id', $levelMateri->id)->orderBy('id')->first();
+
+        if (! $soal) {
+            return redirect()->route('siswa.latihan')
+                ->with('error', 'Durung ana soal ing level iki.');
+        }
+
+        return redirect()->to($this->urlForSoal($soal));
+    }
+
+    /**
      * Nilai jawaban (semua tipe) + catat EXP & streak.
      * EXP dihitung bertingkat: hanya selisih jika skor baru melebihi rekor sebelumnya.
      */
@@ -77,90 +104,33 @@ class KuisSesiController extends Controller
         ]);
 
         $soal = Soal::query()->with('levelMateri')->findOrFail($data['soal_id']);
-        $hasil = $this->scoring->score($soal, $data['jawaban']);
         $siswa = $this->siswa();
 
-        $jawaban = JawabanSiswa::firstOrNew([
-            'siswa_id' => $siswa->id,
-            'soal_id' => $soal->id,
-        ]);
-
-        $skorLama = $jawaban->exists ? (int) $jawaban->skor_tertinggi : 0;
-        $expLama = $jawaban->exists ? (int) $jawaban->exp_diberikan : 0;
-        $skorBaru = (int) $hasil['skor'];
-
-        $skorTertinggi = max($skorLama, $skorBaru);
-        $targetExp = (int) round($soal->bobot_exp * ($skorTertinggi / 100));
-        $expDidapat = max(0, $targetExp - $expLama);
-
-        $jawaban->skor_tertinggi = $skorTertinggi;
-        $jawaban->exp_diberikan = $expLama + $expDidapat;
-        $jawaban->jumlah_percobaan = ($jawaban->jumlah_percobaan ?? 0) + 1;
-        $jawaban->save();
-
-        // Level completion check: cek apakah seluruh soal di level ini sudah lulus (skor >= 70)
-        $levelMateri = $soal->levelMateri;
-        $levelSelesai = false;
-        $rewardExp = 0;
-        $nextLevel = null;
-
-        if ($levelMateri) {
-            $totalSoalLevel = Soal::where('level_materi_id', $levelMateri->id)->count();
-            $soalIdsLevel = Soal::where('level_materi_id', $levelMateri->id)->pluck('id');
-            $lulusCount = JawabanSiswa::where('siswa_id', $siswa->id)
-                ->whereIn('soal_id', $soalIdsLevel)
-                ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
-                ->count();
-
-            if ($totalSoalLevel > 0 && $lulusCount >= $totalSoalLevel) {
-                $progresLevel = ProgresSiswa::where('siswa_id', $siswa->id)
-                    ->where('level_materi_id', $levelMateri->id)
-                    ->first();
-
-                if ($progresLevel && $progresLevel->status !== ProgresSiswa::STATUS_SELESAI) {
-                    $this->progres->markSelesai($siswa, $levelMateri);
-                    $levelSelesai = true;
-                    $rewardExp = (int) $levelMateri->reward_exp;
-                    $nextLevel = LevelMateri::where('urutan', '>', $levelMateri->urutan)->orderBy('urutan')->first();
-                }
-            }
+        // FR-2: blokir bila level masih terkunci.
+        if ($soal->levelMateri && ! $this->progres->canStart($siswa, $soal->levelMateri)) {
+            return response()->json(['message' => 'Materi belum tercapai.'], 403);
         }
 
-        $gamifikasi = $this->gamification->recordActivity($siswa, $expDidapat, $rewardExp);
+        $hasil = $this->scoring->score($soal, $data['jawaban']);
+        $catatan = $this->jawaban->record($siswa, $soal, $hasil);
 
-        // Cari soal berikutnya dalam level yang belum selesai 100%
-        $nextSoal = null;
-        $nextUrl = null;
-        if ($levelMateri) {
-            $selesaiSoalIds = JawabanSiswa::where('siswa_id', $siswa->id)
-                ->where('skor_tertinggi', '>=', 100)
-                ->pluck('soal_id');
-
-            $nextSoal = Soal::where('level_materi_id', $levelMateri->id)
-                ->where('id', '!=', $soal->id)
-                ->whereNotIn('id', $selesaiSoalIds)
-                ->orderBy('id')
-                ->first();
-
-            if ($nextSoal) {
-                $nextUrl = $this->urlForSoal($nextSoal);
-            }
-        }
+        $nextSoal = $this->jawaban->nextSoal($siswa, $soal->levelMateri, $soal->id);
 
         return response()->json([
             'benar' => $hasil['benar'],
             'skor' => $hasil['skor'],
-            'skor_tertinggi' => $skorTertinggi,
+            'skor_tertinggi' => $catatan['skor_tertinggi'],
             'detail' => $hasil['detail'],
             'kunci_jawaban' => $soal->kunci_jawaban,
-            'exp_didapat' => $expDidapat,
-            'reward_exp' => $rewardExp,
-            'level_selesai' => $levelSelesai,
-            'level_berikutnya' => $nextLevel?->nama_materi,
+            'exp_didapat' => $catatan['exp_didapat'],
+            'reward_exp' => $catatan['reward_exp'],
+            'level_selesai' => $catatan['level_selesai'],
+            'level_berikutnya' => $catatan['level_berikutnya'],
             'next_soal_id' => $nextSoal?->id,
-            'next_url' => $nextUrl,
-            'total_exp' => $gamifikasi['total_exp'],
-            'current_streak' => $gamifikasi['current_streak'],
+            'next_url' => $nextSoal ? $this->urlForSoal($nextSoal) : null,
+            'total_exp' => $catatan['total_exp'],
+            'current_streak' => $catatan['current_streak'],
+            'highest_streak' => $catatan['highest_streak'],
         ]);
     }
 

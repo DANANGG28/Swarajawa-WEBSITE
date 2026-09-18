@@ -167,7 +167,7 @@
                                     Ayo terusake pasinaon Basa lan Budaya Jawa dina iki. Rampungake gladhi soal lan tingkatake EXP kanggo munggah ing papan skor!
                                 </p>
                                 <div class="flex flex-wrap items-center gap-space-md">
-                                    <a href="{{ route('siswa.latihan', ['level_materi_id' => $activeLevel?->id]) }}" class="inline-flex items-center gap-space-xs bg-color-white text-primary-700 hover:bg-surface-container-low transition-all duration-200 px-6 py-3 rounded-full font-body text-body font-bold shadow-sm hover:shadow-md">
+                                    <a href="{{ $activeLevel ? route('kuis.mulai', $activeLevel->id) : route('siswa.latihan') }}" class="inline-flex items-center gap-space-xs bg-color-white text-primary-700 hover:bg-surface-container-low transition-all duration-200 px-6 py-3 rounded-full font-body text-body font-bold shadow-sm hover:shadow-md">
                                         <svg class="w-4 h-4 text-primary-700" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M8 5v14l11-7z"></path>
                                         </svg>
@@ -337,7 +337,7 @@
                                         </div>
                                         <div class="flex flex-col flex-1 min-w-0">
                                             <span class="font-body text-body font-bold text-on-surface truncate">{{ $recentProgress['selesai_soal'] }} saka {{ $recentProgress['total_soal'] }} Rampung</span>
-                                            <a href="{{ route('siswa.latihan', ['level_materi_id' => $recentProgress['level_id']]) }}" class="font-caption text-caption text-secondary font-bold hover:underline inline-flex items-center gap-1 mt-0.5">
+                                            <a href="{{ route('kuis.mulai', $recentProgress['level_id']) }}" class="font-caption text-caption text-secondary font-bold hover:underline inline-flex items-center gap-1 mt-0.5">
                                                 <span>Terusake</span>
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
                                             </a>
@@ -391,7 +391,7 @@
                                                     <span class="font-label-upper text-label-upper font-bold text-green-500">Rata-rata: {{ $lvl->rata_skor }}/100</span>
                                                     <span class="font-caption text-caption text-gray-500">+{{ $lvl->reward_exp }} EXP Bonus</span>
                                                 </div>
-                                                <a href="{{ route('siswa.latihan', ['level_materi_id' => $lvl->id]) }}" class="px-5 py-2 rounded-full font-body text-body font-semibold text-on-surface-variant bg-gray-50 hover:bg-surface-container-high transition">
+                                                <a href="{{ route('kuis.mulai', $lvl->id) }}" class="px-5 py-2 rounded-full font-body text-body font-semibold text-on-surface-variant bg-gray-50 hover:bg-surface-container-high transition">
                                                     Gladhi Maneh
                                                 </a>
                                             </div>
@@ -425,7 +425,7 @@
                                                 </div>
                                             </div>
                                             <div class="flex items-center justify-end self-end md:self-center w-full md:w-auto pt-2 md:pt-0">
-                                                <a href="{{ route('siswa.latihan', ['level_materi_id' => $lvl->id]) }}" class="px-6 py-2.5 rounded-full font-body text-body font-bold text-on-primary bg-primary-600 hover:bg-primary-700 transition shadow-sm">
+                                                <a href="{{ route('kuis.mulai', $lvl->id) }}" class="px-6 py-2.5 rounded-full font-body text-body font-bold text-on-primary bg-primary-600 hover:bg-primary-700 transition shadow-sm">
                                                     Lanjutake Belajar
                                                 </a>
                                             </div>

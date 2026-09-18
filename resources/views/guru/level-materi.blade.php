@@ -2,8 +2,43 @@
 
 @section('konten')
     <div class="flex flex-col gap-6">
-        <section>
+        <section class="bg-surface-container-lowest rounded-2xl shadow-sm border border-gray-100">
+            <details class="group">
+                <summary class="cursor-pointer list-none px-5 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary-600">add_circle</span>
+                        <span class="font-heading text-heading font-bold text-on-surface">Tambah Level Materi Anyar</span>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-500 group-open:rotate-180 transition-transform">expand_more</span>
+                </summary>
+                <form method="POST" action="{{ route('guru.level-materi.store') }}" class="px-5 pb-6 pt-2 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @csrf
+                    <label class="flex flex-col gap-1.5">
+                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Nama Materi</span>
+                        <input type="text" name="nama_materi" required placeholder="Tuladha: Basa Krama Alus" class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex flex-col gap-1.5">
+                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Reward EXP</span>
+                            <input type="number" name="reward_exp" min="0" value="100" required class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+                        </label>
+                        <label class="flex flex-col gap-1.5">
+                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Urutan Level</span>
+                            <input type="number" name="urutan" min="0" value="{{ ($levels->max('urutan') ?? 0) + 1 }}" required class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+                        </label>
+                    </div>
+                    <label class="flex flex-col gap-1.5 sm:col-span-2">
+                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Deskripsi Pasinaon</span>
+                        <textarea name="deskripsi" rows="2" placeholder="Katrangan ringkes ngenani materi pasinaon iki..." class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500"></textarea>
+                    </label>
+                    <button type="submit" class="sm:col-span-2 self-start flex items-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold px-6 py-3 shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">save</span> Simpan Level Materi
+                    </button>
+                </form>
+            </details>
+        </section>
 
+        <section>
             @if ($levels->count() > 0)
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach ($levels as $level)

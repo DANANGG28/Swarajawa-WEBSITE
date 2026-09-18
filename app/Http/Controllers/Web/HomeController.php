@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Exp;
 use App\Models\JawabanSiswa;
 use App\Models\LevelMateri;
 use App\Models\ProgresSiswa;
@@ -174,74 +175,80 @@ class HomeController extends Controller
             $this->progres->initialize($siswa);
         }
 
-        $levels = LevelMateri::query()->withCount('soal')->orderBy('urutan')->get();
-        $progresMap = ProgresSiswa::where('siswa_id', $siswa->id)->get()->keyBy('level_materi_id');
-        $accessibleLevelIds = $progresMap->where('status', '!=', ProgresSiswa::STATUS_TERKUNCI)->pluck('level_materi_id');
-
-        $selectedLevelId = $request->filled('level_materi_id') ? (int) $request->level_materi_id : null;
-
-        $query = Soal::query()->with('levelMateri');
-
-        if ($selectedLevelId) {
-            $query->where('level_materi_id', $selectedLevelId);
-        }
-
-        if ($request->filled('tipe_soal')) {
-            $query->where('tipe_soal', $request->tipe_soal);
-        }
-
+        $levelQuery = LevelMateri::query()->withCount('soal')->orderBy('urutan');
         if ($request->filled('q')) {
-            $query->where('pertanyaan', 'like', '%' . $request->q . '%');
+            $levelQuery->where('nama_materi', 'like', '%'.$request->q.'%');
         }
+        $levels = $levelQuery->get();
 
-        $soalPaginator = $query->orderBy('level_materi_id')->orderBy('id')->paginate(10)->withQueryString();
-
+        $progresMap = ProgresSiswa::where('siswa_id', $siswa->id)->get()->keyBy('level_materi_id');
         $jawabanMap = JawabanSiswa::where('siswa_id', $siswa->id)->get()->keyBy('soal_id');
-        $kuisCtrl = app(KuisSesiController::class);
 
-        $soalList = $soalPaginator->through(function (Soal $soal) use ($jawabanMap, $progresMap, $kuisCtrl) {
-            $jwb = $jawabanMap->get($soal->id);
-            $progresLevel = $progresMap->get($soal->level_materi_id);
-            $isLocked = ! $progresLevel || $progresLevel->status === ProgresSiswa::STATUS_TERKUNCI;
+        $tipeLabels = [
+            Soal::TIPE_PILIHAN_GANDA => 'Pilihan Ganda',
+            Soal::TIPE_SUSUN_KALIMAT => 'Susun Ukara',
+            Soal::TIPE_PENCOCOKAN_ARTI => 'Pencocokan Arti',
+            Soal::TIPE_PUZZLE_PAKAIAN_ADAT => 'Puzzle Busana Adat',
+            Soal::TIPE_MENULIS_AKSARA => 'Tracing Aksara',
+            Soal::TIPE_KUIS_SUARA => 'Kuis Wicara Audio',
+        ];
 
-            $statusBadge = 'anyar';
+        // Siji card saben level materi.
+        $levelCards = $levels->map(function (LevelMateri $level) use ($progresMap, $jawabanMap, $tipeLabels) {
+            $progres = $progresMap->get($level->id);
+            $status = $progres?->status ?? ProgresSiswa::STATUS_TERKUNCI;
+            $isLocked = $status === ProgresSiswa::STATUS_TERKUNCI;
+
+            $soalLevel = Soal::where('level_materi_id', $level->id)->get(['id', 'tipe_soal', 'bobot_exp']);
+            $soalLevelIds = $soalLevel->pluck('id');
+            $total = $soalLevel->count();
+            $jawabanLevel = $jawabanMap->filter(fn ($j) => $soalLevelIds->contains($j->soal_id));
+            $lulus = $jawabanLevel->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
+            $persen = $total > 0 ? (int) round(($lulus / $total) * 100) : 0;
+            $rataSkor = $jawabanLevel->count() > 0 ? (int) round($jawabanLevel->avg('skor_tertinggi')) : 0;
+
             if ($isLocked) {
-                $statusBadge = 'terkunci';
-            } elseif ($jwb && $jwb->skor_tertinggi >= QuizScoringService::PASS_THRESHOLD) {
-                $statusBadge = 'selesai';
-            } elseif ($jwb && $jwb->jumlah_percobaan > 0) {
-                $statusBadge = 'sedang';
+                $badge = 'terkunci';
+            } elseif ($total > 0 && $lulus >= $total) {
+                $badge = 'selesai';
+            } elseif ($jawabanLevel->count() > 0) {
+                $badge = 'sedang';
+            } else {
+                $badge = 'anyar';
             }
 
-            $tipeLabel = match ($soal->tipe_soal) {
-                Soal::TIPE_PILIHAN_GANDA => 'Pilihan Ganda',
-                Soal::TIPE_SUSUN_KALIMAT => 'Susun Ukara',
-                Soal::TIPE_PENCOCOKAN_ARTI => 'Pencocokan Arti',
-                Soal::TIPE_PUZZLE_PAKAIAN_ADAT => 'Puzzle Busana Adat',
-                Soal::TIPE_MENULIS_AKSARA => 'Tracing Aksara',
-                Soal::TIPE_KUIS_SUARA => 'Kuis Wicara Audio',
-                default => 'Latihan',
-            };
+            $tipeList = $soalLevel->pluck('tipe_soal')->unique()
+                ->map(fn ($t) => $tipeLabels[$t] ?? 'Latihan')->values();
 
-            $soal->status_badge = $statusBadge;
-            $soal->skor_tertinggi = $jwb?->skor_tertinggi ?? 0;
-            $soal->exp_diberikan = $jwb?->exp_diberikan ?? 0;
-            $soal->tipe_label = $tipeLabel;
-            $soal->is_locked = $isLocked;
-            $soal->url_kuis = $isLocked ? '#' : $kuisCtrl->urlForSoal($soal);
-
-            return $soal;
+            return (object) [
+                'id' => $level->id,
+                'urutan' => $level->urutan,
+                'nama_materi' => $level->nama_materi,
+                'deskripsi' => $level->deskripsi,
+                'reward_exp' => (int) $level->reward_exp,
+                'total_soal' => $total,
+                'lulus_count' => $lulus,
+                'persen' => $persen,
+                'rata_skor' => $rataSkor,
+                'status' => $status,
+                'badge' => $badge,
+                'is_locked' => $isLocked,
+                'tipe_list' => $tipeList,
+                'mulai_url' => $isLocked ? null : route('kuis.mulai', $level),
+            ];
         });
 
-        // Quick stats
-        $allAccessibleSoalIds = Soal::whereIn('level_materi_id', $accessibleLevelIds)->pluck('id');
-        $totalSoal = $allAccessibleSoalIds->count();
-        $answered = $jawabanMap->whereIn('soal_id', $allAccessibleSoalIds);
+        // Quick stats across accessible levels.
+        $accessibleLevelIds = $progresMap->where('status', '!=', ProgresSiswa::STATUS_TERKUNCI)->pluck('level_materi_id');
+        $accessibleSoalIds = Soal::whereIn('level_materi_id', $accessibleLevelIds)->pluck('id');
+        $answered = $jawabanMap->filter(fn ($j) => $accessibleSoalIds->contains($j->soal_id));
+        $totalSoal = $accessibleSoalIds->count();
         $totalSelesai = $answered->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
         $rataSkor = $answered->count() > 0 ? (int) round($answered->avg('skor_tertinggi')) : 0;
         $totalExpDiperoleh = (int) $answered->sum('exp_diberikan');
 
-        // First available question for "Mulai Latihan Harian Campuran"
+        // Soal pertama kanggo tombol "Mulai Latihan Harian Campuran".
+        $kuisCtrl = app(KuisSesiController::class);
         $firstSoal = Soal::whereIn('level_materi_id', $accessibleLevelIds)
             ->whereNotIn('id', $answered->where('skor_tertinggi', '>=', 100)->pluck('soal_id'))
             ->first() ?? Soal::whereIn('level_materi_id', $accessibleLevelIds)->first();
@@ -249,9 +256,7 @@ class HomeController extends Controller
 
         return view('latihan-soal', [
             'siswa' => $siswa,
-            'levels' => $levels,
-            'selectedLevelId' => $selectedLevelId,
-            'soalList' => $soalList,
+            'levelCards' => $levelCards,
             'totalSoal' => $totalSoal,
             'totalSelesai' => $totalSelesai,
             'rataSkor' => $rataSkor,
@@ -259,5 +264,88 @@ class HomeController extends Controller
             'firstSoalUrl' => $firstSoalUrl,
         ]);
     }
-}
 
+    /**
+     * Halaman papan skor / leaderboard dinamis.
+     */
+    public function papanSkor(Request $request): View
+    {
+        /** @var Siswa $siswa */
+        $siswa = AuthContext::currentUser($request);
+        $this->gamification->syncStreak($siswa);
+
+        $filterKelas = $request->query('kelas');
+        $leaderboard = $this->gamification->leaderboard($filterKelas, 20);
+
+        $myExp = (int) ($siswa->exp()->value('total_exp') ?? 0);
+        $myStreak = (int) ($siswa->strek()->value('current_streak') ?? 0);
+
+        $expQuery = Exp::query();
+        if ($filterKelas) {
+            $expQuery->whereHas('siswa', fn ($q) => $q->where('kelas', $filterKelas));
+        }
+        $myRank = $expQuery->where('total_exp', '>', $myExp)->count() + 1;
+
+        $top1 = $leaderboard[0] ?? null;
+        $top2 = $leaderboard[1] ?? null;
+        $top3 = $leaderboard[2] ?? null;
+        $others = array_slice($leaderboard, 3);
+
+        $kelasList = Siswa::distinct()->pluck('kelas')->filter()->values();
+
+        return view('papan-skor', [
+            'siswa' => $siswa,
+            'myExp' => $myExp,
+            'myStreak' => $myStreak,
+            'myRank' => $myRank,
+            'top1' => $top1,
+            'top2' => $top2,
+            'top3' => $top3,
+            'others' => $others,
+            'kelasList' => $kelasList,
+            'filterKelas' => $filterKelas,
+        ]);
+    }
+
+    /**
+     * Halaman profil siswa dinamis.
+     */
+    public function profil(Request $request): View
+    {
+        /** @var Siswa $siswa */
+        $siswa = AuthContext::currentUser($request);
+        $this->gamification->syncStreak($siswa);
+
+        $totalExp = (int) ($siswa->exp()->value('total_exp') ?? 0);
+        $strek = $siswa->strek()->first();
+        $currentStreak = (int) ($strek?->current_streak ?? 0);
+        $highestStreak = (int) ($strek?->highest_streak ?? 0);
+
+        $myRank = Exp::where('total_exp', '>', $totalExp)->count() + 1;
+
+        $completedLevels = ProgresSiswa::where('siswa_id', $siswa->id)
+            ->where('status', ProgresSiswa::STATUS_SELESAI)
+            ->count();
+        $totalLevels = LevelMateri::count();
+
+        $completedQuestions = JawabanSiswa::where('siswa_id', $siswa->id)
+            ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
+            ->count();
+        $totalQuestions = Soal::count();
+
+        $guruPangampu = $siswa->guru()->get();
+
+        return view('profil', [
+            'siswa' => $siswa,
+            'totalExp' => $totalExp,
+            'currentStreak' => $currentStreak,
+            'highestStreak' => $highestStreak,
+            'myRank' => $myRank,
+            'completedLevels' => $completedLevels,
+            'totalLevels' => $totalLevels,
+            'completedQuestions' => $completedQuestions,
+            'totalQuestions' => $totalQuestions,
+            'guruPangampu' => $guruPangampu,
+        ]);
+    }
+}
