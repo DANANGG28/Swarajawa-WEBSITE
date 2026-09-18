@@ -7,10 +7,10 @@ use Tests\TestCase;
 class ExampleTest extends TestCase
 {
     /**
-     * Tamu yang membuka beranda diarahkan ke halaman login.
+     * Tamu yang membuka beranda melihat landing page publik.
      */
-    public function test_guest_is_redirected_to_login(): void
+    public function test_guest_sees_landing_page(): void
     {
-        $this->get('/')->assertRedirect(route('masuk'));
+        $this->get('/')->assertOk()->assertSee('Mulai Belajar Gratis');
     }
 }

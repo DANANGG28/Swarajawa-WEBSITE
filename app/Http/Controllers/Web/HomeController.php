@@ -159,7 +159,7 @@ class HomeController extends Controller
             ]);
         }
 
-        return redirect()->route('masuk');
+        return view('landing');
     }
 
     /**
