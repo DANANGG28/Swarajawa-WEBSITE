@@ -1,0 +1,482 @@
+[
+ {
+  "judul": "Percakapan Teacher - Student: Speaker A asked speaker B about what he had eaten today. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B about what he had eaten today. Speaker A has a higher status or position than Speaker B. | Teacher: \"Kowe mangan apa dina iki?\" (Ngoko). Student: \"Kula nedha pecel dinten puniki.\" (Krama).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Peer - Peer: Speaker A asks speaker B about what Speaker B's father ate today. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B about what Speaker B's father ate today. Speaker A and Speaker B have equal status or position and have familiar interactions. | Peer: \"Bapakmu dhahar apa dina iki?\" (Ngoko Alus). Peer: \"Bapakku dhahar pecel dina iki.\" (Ngoko Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Older sibling - Younger sibling: Speaker A asks speaker B about what Speaker B learned at school today. Speaker B has a lower status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B about what Speaker B learned at school today. Speaker B has a lower status or position than Speaker A. | Older sibling: \"Kowe sinau apa ing sekolah dina iki?\" (Ngoko). Younger sibling: \"Kulo sinau basa jawa dina iki.\" (Ngoko Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan A friend from the same village who has not met each other for a long time - A friend from the same village who has not met each other for a long time: Speaker A asks speaker B about the news from speaker B. Speaker A and Speaker…",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B about the news from speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions. | A friend from the same village who has not met each other for a long time: \"Piye kabarmu saiki?\" (Ngoko). A friend from the same village who has not met each other for a long time: \"Kabarku apik.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan The school canteen attendant. - Students at school: Speaker A asks speaker B about the university he is going to. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B about the university he is going to. Speaker A has a higher status or position than Speaker B. | The school canteen attendant.: \"Taun ngarep kowe arep mlebu universitas endi?\" (Ngoko). Students at school: \"Kula badhe mlebet jurusan basa jawi wonten Universitas Gadjah Mada.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan People who do not know each other - People who do not know each other: Speaker A asked speaker B about the direction to Gadjah Mada University. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B about the direction to Gadjah Mada University. Speaker A has a higher status or position than Speaker B. | People who do not know each other: \"Kulonuwun, kulo badhe taken, margi tamuju Universitas Gadjah Mada langkung pundi nggeh?\" (Krama). People who do not know each other: \"Sampeyan saged mlampah lurus dumugi perempatan, Universitas Gadjah Mada wonten ing kiwa sampeyan.\" (Krama).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Colleague (lecturer) - Colleague (lecturer): Speaker A asked speaker B about the number of students who entered the Javanese literature department. Speaker A and Speaker B have equal status or position, and they are already accu…",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B about the number of students who entered the Javanese literature department. Speaker A and Speaker B have equal status or position, and they are already accustomed to communicating with each other. | Colleague (lecturer): \"Pak, pinten kathah mahasiswa enggal ingkang kasil mlebet jurusan sastra jawi?\" (Krama). Colleague (lecturer): \"Warsa puniki jurusan nampi 100 siswa enggal, nanging naming 75 ingkang kasil lulus.\" (Krama).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Cleaning staff at school - Teacher at school: Speaker A informs speaker B that the book from speaker B has been returned by him to the office. Speaker A and Speaker B have equal status or position, but they are not yet accustome…",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A informs speaker B that the book from speaker B has been returned by him to the office. Speaker A and Speaker B have equal status or position, but they are not yet accustomed to communicating with each other, yet both still show mutual respect toward one another. | Cleaning staff at school: \"Nuwun sewu, buku njenengan ingkang kantun ing kelas sampun kula sukaaken wonten ing kantor.\" (Krama). Teacher at school: \"Kulo nembe badhe taken njenengan, matur nuwun nggih pak.\" (Krama).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Doctor - Patient: Speaker A asked speaker B about the condition of the back of speaker B's head. Speaker A and Speaker B have equal status or position, but they are not yet accustomed to communicating with each other, yet both s…",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B about the condition of the back of speaker B's head. Speaker A and Speaker B have equal status or position, but they are not yet accustomed to communicating with each other, yet both still show mutual respect toward one another. | Doctor: \"Kalih dinten pungkasan, njenengan ngraosaken sirah perangan wingking kraos nyeri?\" (Krama). Patient: \"Nggih dokter, sakitipun ndamel kula mboten saged nyambut damel.\" (Krama).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Classmate - Classmate: Speaker A asked when Speaker B would go home. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked when Speaker B would go home. Speaker A and Speaker B have equal status or position and have familiar interactions. | Classmate: \"Cah, arep bali kapan?\" (Ngoko). Classmate: \"Koyone dilut meneh.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Batchmate - Batchmate: Speaker A tells speaker B that the father of speaker B met him yesterday. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A tells speaker B that the father of speaker B met him yesterday. Speaker A and Speaker B have equal status or position and have familiar interactions. | Batchmate: \"Wingi aku krawuhan Bapakmu sawise bali sekolah.\" (Ngoko Alus). Batchmate: \"Bapakku nyuwun priksa opo ning kowe?\" (Ngoko Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Schoolmate - Schoolmate: The speaker talked with his schoolmates at a reunion event. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: The speaker talked with his schoolmates at a reunion event. Speaker A and Speaker B have equal status or position and have familiar interactions. | Schoolmate: \"Kowe wis jupuk ijazah durung ning TU?\" (Ngoko). Schoolmate: \"Durung ono wektu tekan saiki.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Project partner - Project partner: Speaker A asked about the teaching place from Speaker B's mother who is a teacher, Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about the teaching place from Speaker B's mother who is a teacher, Speaker A and Speaker B have equal status or position and have familiar interactions. | Project partner: \"Jare konco-konco Ibumu nyambut damel dadi guru, ngasta nandi?\" (Ngoko Alus). Project partner: \"Bener, Ibuku ngasta nang SMP 1.\" (Ngoko Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Close friend - Close friend: Speaker A asks for souvenirs from speaker B, but speaker B forgets to bring souvenirs to speaker A. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks for souvenirs from speaker B, but speaker B forgets to bring souvenirs to speaker A. Speaker A and Speaker B have equal status or position and have familiar interactions. | Close friend: \"Wis bali to seko Amerika, kene njaluk oleh-oleh e?\" (Ngoko). Close friend: \"Dingapuro, lali aku meh gawakke oleh-oleh.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Close friend since elementary school - Close friend since elementary school: Speaker A invited speaker B to go to Jogja, but speaker B could not do it now. Speaker A and Speaker B have equal status or position and have familiar…",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A invited speaker B to go to Jogja, but speaker B could not do it now. Speaker A and Speaker B have equal status or position and have familiar interactions. | Close friend since elementary school: \"Suwi ra ketemu, ayo metu bareng, lungo Jogja.\" (Ngoko). Close friend since elementary school: \"Aku iso-iso wae tapi ojo saiki.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Old friend - Old friend: Speaker A asked Speaker B about the return of Speaker B's father from Sumatra. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked Speaker B about the return of Speaker B's father from Sumatra. Speaker A and Speaker B have equal status or position and have familiar interactions. | Old friend: \"Wong tuamu opo wis kondur seko Sumatera?\" (Ngoko Alus). Old friend: \"Durung, aku ijeh dewekan ning Bandung.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Workmate of the same age - Workmate of the same age: Speaker A tells speaker B to wake up their friend who is next to speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A tells speaker B to wake up their friend who is next to speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions. | Workmate of the same age: \"Tulung gugahke konco ning sebelahmu kuwi.\" (Ngoko). Workmate of the same age: \"Yo, bariki tak gugahe.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan A friend who has been known for 10 years - A friend who has been known for 10 years: Speaker A invited speaker B to work in the factory, but speaker B refused. Speaker A and Speaker B have equal status or position and have famil…",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A invited speaker B to work in the factory, but speaker B refused. Speaker A and Speaker B have equal status or position and have familiar interactions. | A friend who has been known for 10 years: \"Kowe gelem melu aku kerjo ning pabrik ora?\" (Ngoko). A friend who has been known for 10 years: \"Wegah, koyone gaweane abot.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Childhood friend - Childhood friend: Speaker A asks speaker B about past events where speaker A often tells speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B about past events where speaker A often tells speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions. | Childhood friend: \"Kelingan jaman semono kowe kerep tak kongkon ora?\" (Ngoko). Childhood friend: \"Kelingan tapi wegah ngiling-ngiling meneh.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Campus friend - Campus friend: Speaker A asked about the assignment given by the lecturer to speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about the assignment given by the lecturer to speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions. | Campus friend: \"Pak dosen dhawuh garap tugas opo?\" (Ngoko Alus). Campus friend: \"Awak dewe dikongkon gawe makalah.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan The friend being visited - The friend who is visiting: Speaker A offers a drink to speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A offers a drink to speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions. | The friend being visited: \"Arep ngombe opo, tak gawekke disik?\" (Ngoko). The friend who is visiting: \"Aku manut wae arep teh opo kopi.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Class president - Class member: Speaker A asked speaker B about the place where speaker A put the document yesterday. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B about the place where speaker A put the document yesterday. Speaker A and Speaker B have equal status or position and have familiar interactions. | Class president: \"Kowe kelingan panggonanku delehke dokumen wingi ora?\" (Ngoko). Class member: \"Sak elingku, kowe delehke dokumen ning laci mejamu.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Military school training commander - Military school cadet: Speaker A told speaker B to go to Semarang for training and speaker B accepted. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A told speaker B to go to Semarang for training and speaker B accepted. Speaker A has a higher status or position than Speaker B. | Military school training commander: \"Sesuk kowe bakal tak kongkon lunga pelatihan ning Semarang.\" (Ngoko). Military school cadet: \"Ngestoaken dawuh, Komandan.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Batch leader - Batch member: Speaker A tells speaker B to distribute gifts to each class leader. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A tells speaker B to distribute gifts to each class leader. Speaker A and Speaker B have equal status or position and have familiar interactions. | Batch leader: \"Tulung hadiah-hadiah iki diwenehke ning ketua saben kelas.\" (Ngoko). Batch member: \"Yo, lebar iki tak wenehi siji-siji.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Student council president - Student council secretary: Speaker A asked about the assignment he gave to speaker B yesterday. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about the assignment he gave to speaker B yesterday. Speaker A and Speaker B have equal status or position and have familiar interactions. | Student council president: \"Opo wis digarap sing tak kongkon nang kowe wingi?\" (Ngoko). Student council secretary: \"Durung sempet, lebar iki aku lagi arep garap.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan School principal - Student: Speaker A asked about speaker B who was visited by people from the education office. Speaker B has a lower status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about speaker B who was visited by people from the education office. Speaker B has a lower status or position than Speaker A. | School principal: \"Wingi jarene ketekanan petugas soko dinas pendidikan?\" (Ngoko). Student: \"Nggih Pak Leres, griya kula krawuhan petugas saking dinas pendidikan\" (Krama).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Football team member - Football team member: Speaker A tells speaker B not to play roughly. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A tells speaker B not to play roughly. Speaker A and Speaker B have equal status or position and have familiar interactions. | Football team member: \"Anggonmu main ojo grusah-grusuh, sing tenang.\" (Ngoko). Football team member: \"Dingapuro, lebar iki aku anggone main tak sing rodo tenang.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan School student - Cleaning staff at school: Speaker A asks speaker B to sit for a while and take a break in the sweep. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B to sit for a while and take a break in the sweep. Speaker B has a higher status or position than Speaker A. | School student: \"Panjengengan pinarak wonten mriki riyen mawon pak, anggenipun nyapu dilajengaken mangkih malih.\" (Krama Alus). Cleaning staff at school: \"Yo, lebar iki tak leren ndisik le.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Football team captain - Football team member: Speaker A asks speaker B about what the coach told speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B about what the coach told speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions. | Football team captain: \"Mau pelatih ngendika opo ning kowe?\" (Ngoko Alus). Football team member: \"Ngendikane pelatih, anggone main ojo kasar-kasar.\" (Ngoko Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Grandfather - Grandchild: Speaker A gives pocket money to speaker B to provide for going to school. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A gives pocket money to speaker B to provide for going to school. Speaker A has a higher status or position than Speaker B. | Grandfather: \"Iki le tak sangoni dhuwit sithik kanggo mangkat sekolah.\" (Ngoko). Grandchild: \"Matur sembah nuwun mbah kakung artanipun.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Grandmother - Grandchild: Speaker A asked about the day of Speaker B's return to Jakarta. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about the day of Speaker B's return to Jakarta. Speaker A has a higher status or position than Speaker B. | Grandmother: \"Kowe budhal Jakarta dino opo ngger?\" (Ngoko). Grandchild: \"Kadosipun kulo bidhal Jakarta dinten Ahad mbah.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Father - Child: Speaker A asks speaker B to take his cup from the kitchen. Speaker B has a lower status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B to take his cup from the kitchen. Speaker B has a lower status or position than Speaker A. | Father: \"Cah bagus, tulung jupukke cangkir bapak nang pawon.\" (Ngoko). Child: \"Nggih Pak, sekedap kulo pendhetaken tuwungipun rumiyin.\" (Krama).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Mother - Child: Speaker A shows a small photo of herself during dance practice to speaker B. Speaker B has a lower status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A shows a small photo of herself during dance practice to speaker B. Speaker B has a lower status or position than Speaker A. | Mother: \"Iki fotone Ibu jaman cilik mbiyen le, latihan joged ning pendhopo, apik ora?\" (Ngoko). Child: \"Sae sanget Bu, anggenipun gladhen beksan.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Uncle - Nephew: Speaker A asked about the herbal medicine drunk by the father of speaker B. Speaker B has a lower status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about the herbal medicine drunk by the father of speaker B. Speaker B has a lower status or position than Speaker A. | Uncle: \"Jamu sing diombe Bapakmu kae jenenge opo ngger?\" (Ngoko). Nephew: \"Bapak menika ngunjuk usada beras kencur, Paklik.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Aunt - Nephew: Speaker A asks Speaker B about the permission for them to go together which is proposed to Speaker B's father. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks Speaker B about the permission for them to go together which is proposed to Speaker B's father. Speaker A has a higher status or position than Speaker B. | Aunt: \"Kowe uwis sido kandha ning Bapakmu durung le nek arep dolan karo Bulik?\" (Ngoko). Nephew: \"Kulo dereng sanjang kaliyan Bapak, Bulik.\" (Krama).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Cousin - Cousin: Speaker A asked about the number of children owned by buffaloes from speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about the number of children owned by buffaloes from speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions. | Cousin: \"Kebomu kae wis sido manak piro?\" (Ngoko). Cousin: \"Tekan saiki durung manak babar blas, koyone lebar riyoyo sesuk kuwi.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Coach - Pupil: Speaker A advised speaker B to play football more boldly. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A advised speaker B to play football more boldly. Speaker A has a higher status or position than Speaker B. | Coach: \"Ojo wedi karo bal, teko sing kendel anggone main.\" (Ngoko). Pupil: \"Nggih Pak Pelatih, mangkih diwantuni anggenipun main.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Boarding house owner - Boarding house tenant: Speaker A reminded speaker B not to leave any of his belongings in the boarding house. Speaker B has a lower status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A reminded speaker B not to leave any of his belongings in the boarding house. Speaker B has a lower status or position than Speaker A. | Boarding house owner: \"Barang-barange ojo nganti ketinggalan ning kos le.\" (Ngoko). Boarding house tenant: \"Kadosipun sampun mboten wonten ingkang kantun teng kos, Pak.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan A person who is 30 years older - A person who is 30 years younger: Speaker A asked about Speaker B's yard which seemed to have never been cleaned. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about Speaker B's yard which seemed to have never been cleaned. Speaker A has a higher status or position than Speaker B. | A person who is 30 years older: \"Latarmu kae kok koyo kapiran, opo ora tau disaponi?\" (Ngoko). A person who is 30 years younger: \"Leres Pak, sampun dangu mboten dilenggahi dados ketingal kapinten.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan A person who is 20 years older - A person who is 20 years younger: Speaker A asked speaker B about the work of friends of speaker B. Speaker B has a lower status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B about the work of friends of speaker B. Speaker B has a lower status or position than Speaker A. | A person who is 20 years older: \"Konco-koncomu opo wis nyambut gawe kabeh saiki?\" (Ngoko). A person who is 20 years younger: \"Nggih Pak, rencang kulo sampun nyambut damel sedanten.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan A person who is 10 years older - A person who is 10 years younger: Speaker A asked speaker B about the location of his handkerchief. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B about the location of his handkerchief. Speaker A has a higher status or position than Speaker B. | A person who is 10 years older: \"Opo kowe weruh kacuku nandi le?\" (Ngoko). A person who is 10 years younger: \"Menika kadose usap astanipun panjenengan Pak.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Uncle - Nephew: Speaker A asked about the purpose of leaving speaker B because he saw the fishing hook brought by speaker B. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about the purpose of leaving speaker B because he saw the fishing hook brought by speaker B. Speaker A has a higher status or position than Speaker B. | Uncle: \"Arep lungo nandi kok gowo garan pancing?\" (Ngoko). Nephew: \"Kulo ajeng kesah dateng lepen Pakde.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Biological older sibling - Biological younger sibling: Speaker A brought goat blended food to speaker B and asked if his sister had eaten or not. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A brought goat blended food to speaker B and asked if his sister had eaten or not. Speaker A has a higher status or position than Speaker B. | Biological older sibling: \"Uwis mangan durung Dik, iki tak tukokke blendrang wedus?\" (Ngoko). Biological younger sibling: \"Sampun mas, kulo wau nedha sekul goreng.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan An older person in the surrounding environment - A younger person in the surrounding environment: Speaker A asked if Speaker B did not hear the call to prayer that had resounded. Speaker B has a lower status or position than Spe…",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked if Speaker B did not hear the call to prayer that had resounded. Speaker B has a lower status or position than Speaker A. | An older person in the surrounding environment: \"Kok podo iseh ning kene, opo ora krungu suara adzan maghrib?\" (Ngoko). A younger person in the surrounding environment: \"Ngapunten Mas, sampun mireng, niki ajeng sami wangsul.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Same-age cousin - Same-age cousin: Speaker A asked about the return of the father from speaker B. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about the return of the father from speaker B. Speaker A has a higher status or position than Speaker B. | Same-age cousin: \"Bapakmu opo wis kondur seko Semarang?\" (Ngoko Alus). Same-age cousin: \"Uwis mas, Bapak kondur dino seloso wingi.\" (Ngoko Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Close friend - Close friend: Speaker A asks speaker B if they will go with a friend of speaker B or not. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B if they will go with a friend of speaker B or not. Speaker A and Speaker B have equal status or position and have familiar interactions. | Close friend: \"Koncomu kae arep diajak lungo karo awak dewe ora?\" (Ngoko). Close friend: \"Ora iso koyone, omahe adoh.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Older cousin - Younger cousin: Speaker A asked speaker B whether the jathilan art in the south of the village had been completed or not. Speaker A has a higher status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B whether the jathilan art in the south of the village had been completed or not. Speaker A has a higher status or position than Speaker B. | Older cousin: \"Jathilan ning kidul deso kae opo wis bubar dik?\" (Ngoko). Younger cousin: \"Sampun mas, nembe mawon bibaran.\" (Krama Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Friend - Friend: Speaker A asked about his first place of play with speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about his first place of play with speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions. | Friend: \"Kowe kelingan panggonan dolan awak dewe biyen ora?\" (Ngoko). Friend: \"Wis lalu aku, wis suwi ora dolan rono.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Study group partner - Study group partner: Speaker A asks if speaker B has studied for tomorrow's test. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks if speaker B has studied for tomorrow's test. Speaker A and Speaker B have equal status or position and have familiar interactions. | Study group partner: \"Kowe uwis sinau kanggo ulangan sesuk durung?\" (Ngoko). Study group partner: \"Uwis, ning lagi moco buku sithik-sithik, durung jajal garap soal.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Student - Teacher: Speaker A asks the current teaching location from speaker B. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks the current teaching location from speaker B. Speaker B has a higher status or position than Speaker A. | Student: \"Sakmenika ngasta teng pundhi Bu?\" (Krama Alus). Teacher: \"2 tahun kepungkur mulang ning deso le, sedilit meneh wis pensiun.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Peer - Peer: Speaker A tells speaker B to wake up his friend who is next to him because the Friday sermon has been completed. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A tells speaker B to wake up his friend who is next to him because the Friday sermon has been completed. Speaker A and Speaker B have equal status or position and have familiar interactions. | Peer: \"Gugah kanca ning sebelahmu kuwi, kotbahe wis arep rampung.\" (Ngoko). Peer: \"Wong iki rodo angel digugah, opo dibenke wae?\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Coworker - Coworker: Speaker A asked if speaker B was sick yesterday so he did not go to work. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked if speaker B was sick yesterday so he did not go to work. Speaker A and Speaker B have equal status or position and have familiar interactions. | Coworker: \"Kowe wingi ra mangkat opo mergo lara?\" (Ngoko). Coworker: \"Iyo, wetengku rodo lara wingi, kakehan mangan pedes.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Same-age neighbor - Same-age neighbor: Speaker A offers the food he is making to speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A offers the food he is making to speaker B. Speaker A and Speaker B have equal status or position and have familiar interactions. | Same-age neighbor: \"Gelem tak wenehi panganan sing lagi tak gawe ora?\" (Ngoko). Same-age neighbor: \"Gelem-gelem wae, koyone enak.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Student - Teacher: Speaker A asked why Speaker B had only been silent since earlier. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked why Speaker B had only been silent since earlier. Speaker B has a higher status or position than Speaker A. | Student: \"Wonten nunapa Bu, awit kala wau namung jumeneng teng mriku?\" (Krama Alus). Teacher: \"Ora ono opo-opo le, lagi pingin ngadek ning kene wae.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Nephew - Father's older brother: Speaker A asks speaker B if his grandfather has woken up or not. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B if his grandfather has woken up or not. Speaker A has a lower status or position than Speaker B. | Nephew: \"Pakdhe, nunapa Simbah sampun wungu sare?\" (Krama Alus). Father's older brother: \"Durung le, simbah dereng wungu, koyone simbah sayah.\" (Ngoko Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Subordinate - Superior: Speaker A asked speaker B about who would take care of the goods held by him. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B about who would take care of the goods held by him. Speaker A has a lower status or position than Speaker B. | Subordinate: \"Sinten ingkang badhe ngreksa barang punika Pak?\" (Krama Alus). Superior: \"Koyone ora ono sek bakal njaga, benke ning kono wae.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan The general public - Official: Speaker A asked if Speaker B would make a new policy. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked if Speaker B would make a new policy. Speaker B has a higher status or position than Speaker A. | The general public: \"Nunapa estu Bapak badhe ndamel kebijakan enggal?\" (Krama Alus). Official: \"Sido koyone ngger, kebijakan kuwi wigati kanggo dilakoni.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Grandchild - Grandfather: Speaker A asked speaker B if his grandmother was still bathing or not. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked speaker B if his grandmother was still bathing or not. Speaker B has a higher status or position than Speaker A. | Grandchild: \"Simbah Putri nunapa tasih siram, Mbah Kakung?\" (Krama Alus). Grandfather: \"Yo ngger, mbah putrimu ijeh adus ning kali.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Grandchild - Grandmother: Speaker A gives him speaker B's glasses. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A gives him speaker B's glasses. Speaker A has a lower status or position than Speaker B. | Grandchild: \"Monggo Mbah Putri, kacatingalipun.\" (Krama Alus). Grandmother: \"Matur nuwun yo le, awit mau tak goleki ra ketemu.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Child - Father: Speaker A informs speaker B that a guest is coming. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A informs speaker B that a guest is coming. Speaker B has a higher status or position than Speaker A. | Child: \"Nyuwun ngapunten Pak, Bapak krawuhan tamu wonten ngajeng.\" (Krama Alus). Father: \"Owalah yo, lebar iki tak temoni dhayohe.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Child - Mother: Speaker A offers new slippers to speaker B. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A offers new slippers to speaker B. Speaker B has a higher status or position than Speaker A. | Child: \"Ibuk nunapa kersa samparan enggal?\" (Krama Alus). Mother: \"Gelem-gelem wae nduk, mumpung dlamakane Ibu wis rusak.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Nephew - Uncle: Speaker A asked if speaker B had clurite that was still in good condition. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked if speaker B had clurite that was still in good condition. Speaker B has a higher status or position than Speaker A. | Nephew: \"Paklik nunapa kagungan arit ingkang tasih sae?\" (Krama Alus). Uncle: \"Ono, teko dijupuk kono, ning pawon.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Nephew - Aunt: Speaker A asked if speaker B had cooked rice or not. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked if speaker B had cooked rice or not. Speaker A has a lower status or position than Speaker B. | Nephew: \"Bulik nunapa sampun mbethak sekul?\" (Krama Alus). Aunt: \"Uwis ngger, jupuk piring kono nek arep mangan.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Student - Lecturer: Speaker A asked if he could meet speaker B after finishing college. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked if he could meet speaker B after finishing college. Speaker A has a lower status or position than Speaker B. | Student: \"Pak Dosen mangkih bibaran kuliah nunapa kula angsal kepanggih jenengan?\" (Krama Alus). Lecturer: \"Yo iso, teko moro ning ruang dosen.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Student - Professor: Speaker A offers to show the exit direction to speaker B. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A offers to show the exit direction to speaker B. Speaker B has a higher status or position than Speaker A. | Student: \"Menawi ajeng medhal, monggo kula dherekaken miyos wingking.\" (Krama Alus). Professor: \"Matur nuwun ngger, tak melu kowe wae.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Villager - Religious leader: Speaker A asked why Speaker B had not attended a religious event in the village for a long time. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked why Speaker B had not attended a religious event in the village for a long time. Speaker A has a lower status or position than Speaker B. | Villager: \"Kok sampun dangu mboten nate ngaos teng desa mriki Pak?\" (Krama Alus). Religious leader: \"Iyo, lha aku ora tau diundang mrene.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan The general public - Regent: Speaker A asks speaker B whether the letter he wrote has been read or not. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asks speaker B whether the letter he wrote has been read or not. Speaker B has a higher status or position than Speaker A. | The general public: \"Pak Bupati nunapa sampun maos seratan kula kala wingi?\" (Krama Alus). Regent: \"Uwis, lagi wingi tak waca tulisanmu, apik tenan.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan The general public - Governor: Speaker A asked about the vehicle that Speaker B was riding in when heading to the location. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked about the vehicle that Speaker B was riding in when heading to the location. Speaker A has a lower status or position than Speaker B. | The general public: \"Pak Gubernur nitih nunapa nalika tindak dateng mriki?\" (Krama Alus). Governor: \"Aku mau numpak andong, mbayare yo murah, ming selikur ewu.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan The general public - Community leaders: Speaker A offers herbal medicine if speaker B still feels pain in his stomach. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A offers herbal medicine if speaker B still feels pain in his stomach. Speaker B has a higher status or position than Speaker A. | The general public: \"Pak Kaum nunopo tasih gerah padharanipun, menika kula betaaken jamu kangge obat.\" (Krama Alus). Community leaders: \"Matur nuwun, ijeh rada lara ket wingi durung mari-mari.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Student - Professor: Speaker A asked Speaker B for his opinion on whether it is better to take a S3 in Europe or America to Speaker B. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked Speaker B for his opinion on whether it is better to take a S3 in Europe or America to Speaker B. Speaker A has a lower status or position than Speaker B. | Student: \"Miturut penggalihipun Bapak, langkung sae minangka kula bidal S3 dateng Eropa nunapa Amerika nggih?\" (Krama Alus). Professor: \"Koyone luwih apik nek kowe neruske S3 ning Amerika wae.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Members of the youth organization - Youth organization elders: Speaker A asked if the documents he gave yesterday to Speaker B had been submitted to Mr. RT. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked if the documents he gave yesterday to Speaker B had been submitted to Mr. RT. Speaker B has a higher status or position than Speaker A. | Members of the youth organization: \"Dokumen kala wingi nunapa sampun dicaosaken dateng Pak RT nggih, Pak?\" (Krama Alus). Youth organization elders: \"Uwis, wingi dokumene wis tak cawiske ning pak RT.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Art enthusiasts - Older artists: Speaker A praised the painting made by speaker B. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A praised the painting made by speaker B. Speaker B has a higher status or position than Speaker A. | Art enthusiasts: \"Wangkingan ingkang didamel kaliyan jenengan langkung sae sanget, Pak.\" (Krama Alus). Older artists: \"Yo, kuwi mergo aku wis biasa gaweni keris koyo ngono iku.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan The general public - Mayor: Speaker A praised Speaker B's expensive clothes. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A praised Speaker B's expensive clothes. Speaker A has a lower status or position than Speaker B. | The general public: \"Rasukanipun jenengan ketawis awis sanget, Pak.\" (Krama Alus). Mayor: \"Owalah iki klambi warisan Bapakku mbiyen, le.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Law students - Judge: Speaker A emphasized that the victim of the case had died to speaker B. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A emphasized that the victim of the case had died to speaker B. Speaker B has a higher status or position than Speaker A. | Law students: \"Korban wonten ing masalah menika ngantos sampun seda.\" (Krama Alus). Judge: \"Yen ngono tegese pelaku iki kudu tak wenehi ukuman kang abot.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Assistant lecturer - Lecturer: Speaker A asked if Speaker B had checked the assignments he collected yesterday. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked if Speaker B had checked the assignments he collected yesterday. Speaker A has a lower status or position than Speaker B. | Assistant lecturer: \"Nyuwun ngapunten Pak, nunapa Bapak sampun mriksani ayahan kula kala wingi nggih?\" (Krama Alus). Lecturer: \"Durung, lagi mengko sore, gawean wingi bakal tak deleng siji-siji.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Forum members - Forum chairs: Speaker A advises Speaker B not to scold other forum members. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A advises Speaker B not to scold other forum members. Speaker B has a higher status or position than Speaker A. | Forum members: \"Sampun mas, ampun didukani sedoyo.\" (Krama Alus). Forum chairs: \"Kudu tak senen, ben ora podo tuman anggone kleru.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Presidential aide - President: Speaker A gave a drink of wedang uwuh to speaker B. Speaker B has a higher status or position than Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A gave a drink of wedang uwuh to speaker B. Speaker B has a higher status or position than Speaker A. | Presidential aide: \"Monggo unjukanipun Pak Presiden, wedang uwuh khas Ngayogyakarta.\" (Krama Alus). President: \"Enak tenan, adem-adem disuguhi wedang uwuh.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Wife - Husband: Speaker A asked if there was anything in the heart of speaker B. Speaker A has a lower status or position than Speaker B.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asked if there was anything in the heart of speaker B. Speaker A has a lower status or position than Speaker B. | Wife: \"Panjenengan nunapa wonten ingkang nembe dados penggalih, Kangmas?\" (Krama Alus). Husband: \"Ora ono opo-opo, lagi ora kepenak wae awake.\" (Ngoko).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Stranger - Stranger: Speaker A greets Speaker B, who is a stranger of the same age. Speaker A and Speaker B have equal status but want to show mutual respect to each other.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A greets Speaker B, who is a stranger of the same age. Speaker A and Speaker B have equal status but want to show mutual respect to each other. | Stranger: \"Nuwun sewu mas, kulo saget nyelang korek e sampeyan kangge nyumet rokok?\" (Ngoko Alus). Stranger: \"Oh, saget mas. Monggo.\" (Ngoko Alus).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ },
+ {
+  "judul": "Percakapan Echelon 2 official (Director) - Echelon 1 official (Director General): Speaker A asking Speaker B about the meeting results. Speaker B has a higher status than Speaker A, but Speaker B still shows respect to Speaker A.",
+  "kategori": "unggah-ungguh-conversation",
+  "konten": "Konteks: Speaker A asking Speaker B about the meeting results. Speaker B has a higher status than Speaker A, but Speaker B still shows respect to Speaker A. | Echelon 2 official (Director): \"Ngapunten, Pak, menawi laporan asil rembugan kaliyan Bapak Menteri Pendidikan, punapa sampun panjenengan waos?\" (Krama Alus). Echelon 1 official (Director General): \"Sampun, nembe kula waos, lan wonten sawetawis koreksi alit, utaminipun babagan kawicaksanan beasiswa kanggé siswa berprestasi.\" (Krama).",
+  "sumber": "JavaneseHonorifics/Unggah-Ungguh (CC-BY-NC 4.0) — https://huggingface.co/datasets/JavaneseHonorifics/Unggah-Ungguh"
+ }
+]

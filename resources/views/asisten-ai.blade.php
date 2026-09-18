@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Asisten Tanya Basa AI - Sinau Jowo Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
@@ -120,9 +121,25 @@
             main > :last-child { margin-bottom: 0 !important; }
         }
         ::-webkit-scrollbar { display: none; }
+        .typing-dot { animation: typingBounce 1.2s infinite ease-in-out; }
+        .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
     </style>
 </head>
 <body class="bg-background font-body text-on-surface antialiased">
+    @php
+        $siswaUser = \App\Support\AuthContext::currentUser(request()) ?? auth('siswa')->user();
+        $userNama = $siswaUser?->nama_lengkap ?? 'Siswa';
+        $userWords = array_values(array_filter(explode(' ', trim($userNama))));
+        $userInisial = count($userWords) >= 2
+            ? mb_strtoupper(mb_substr($userWords[0], 0, 1) . mb_substr($userWords[count($userWords) - 1], 0, 1))
+            : mb_strtoupper(mb_substr($userNama, 0, 2));
+    @endphp
+
     <!-- ASIDE SIDEBAR COMPONENT -->
     <x-sidebar active="asisten" />
 
@@ -162,202 +179,51 @@
                         </div>
                     </div>
 
-                    <!-- Bot Welcome Message -->
-                    <div class="flex items-start gap-4 w-full">
-                        <div class="w-10 h-10 rounded-xl bg-primary-700 flex items-center justify-center text-white shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined text-2xl">neurology</span>
-                        </div>
-                        <div class="flex flex-col gap-1 flex-1 min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="font-body text-body font-bold text-on-surface">Kanca Sinau Jawa AI</span>
-                                <span class="font-caption text-caption text-gray-500">10:14 WIB</span>
+                    <!-- DAFTAR PESAN OBROLAN -->
+                    <div id="chat-messages" class="flex flex-col gap-6 w-full">
+                        <!-- Bot Welcome Message -->
+                        <div class="flex items-start gap-4 w-full">
+                            <div class="w-10 h-10 rounded-xl bg-primary-700 flex items-center justify-center text-white shrink-0 shadow-sm">
+                                <span class="material-symbols-outlined text-2xl">neurology</span>
                             </div>
-                            <div class="bg-surface-container-low p-4 rounded-2xl text-on-surface space-y-2 border border-primary-100/40">
-                                <p class="font-body text-body leading-relaxed">
-                                    Sugeng rawuh, Andi Prasetyo! Kula minangka <strong class="text-primary-700">Kanca Sinau Jawa</strong>. Kula siyaga mbiyantu panjenengan nyinau tatakrama, unggah-ungguh basa (Ngoko Lugu, Ngoko Alus, Krama Lugu, Krama Alus), aksara Jawa, tembung saroja, paribasan, ngantos tegese crita pawayangan adhedhasar buku standar paramasastra Jawa.
-                                </p>
-                                <p class="font-body text-body text-on-surface-variant leading-relaxed">
-                                    Wonten babagan pasinaon basa ingkang taksih ndadosaken bingung ing pamulangan dinten punika? Sumangga nyuwun pirsa!
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- User Message 1 -->
-                    <div class="flex items-start justify-end gap-4 w-full">
-                        <div class="flex flex-col items-end gap-1 max-w-3xl lg:max-w-4xl">
-                            <div class="flex items-center gap-2">
-                                <span class="font-caption text-caption text-gray-500">10:15 WIB</span>
-                                <span class="font-body text-body font-bold text-on-surface">Andi Prasetyo (Siswa)</span>
-                                <div class="w-8 h-8 rounded-full bg-primary-700 text-white font-bold text-xs flex items-center justify-center">
-                                    AP
+                            <div class="flex flex-col gap-1 flex-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-body text-body font-bold text-on-surface">Kanca Sinau Jawa AI</span>
+                                    <span class="font-caption text-caption text-gray-500">saiki</span>
                                 </div>
-                            </div>
-                            <div class="bg-primary-600 text-white p-4 rounded-2xl shadow-sm leading-relaxed">
-                                <p class="font-body text-body">
-                                    Kula badhe nyuwun pirsa, punapa bentenipun tembung <em>"Dhahar"</em>, <em>"Nedha"</em>, kaliyan <em>"Mangan"</em> wonten ing unggah-ungguh basa? Kados pundi tuladha panggunaanipun ing ukara?
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bot Response 1 -->
-                    <div class="flex items-start gap-4 w-full">
-                        <div class="w-10 h-10 rounded-xl bg-primary-700 flex items-center justify-center text-white shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined text-2xl">neurology</span>
-                        </div>
-                        <div class="flex flex-col gap-3 flex-1 min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="font-body text-body font-bold text-on-surface">Kanca Sinau Jawa AI</span>
-                                <span class="font-caption text-caption text-gray-500">10:15 WIB</span>
-                            </div>
-
-                            <div class="bg-surface-container-low p-5 rounded-2xl text-on-surface flex flex-col gap-4 border border-primary-100/40">
-                                <div>
+                                <div class="bg-surface-container-low p-4 rounded-2xl text-on-surface space-y-2 border border-primary-100/40">
                                     <p class="font-body text-body leading-relaxed">
-                                        Pitakon ingkang sae sanget, Mas Andi! Wonten ing unggah-ungguh basa Jawa, tembung kangge ngandharaken pakaryan nglebetaken tetedhan wonten ing cangkem dipunperang manut trap-trapaning tata krama kurmat:
+                                        Sugeng rawuh, {{ $userNama }}! Kula minangka <strong class="text-primary-700">Kanca Sinau Jawa</strong>. Kula siyaga mbiyantu panjenengan nyinau tata krama, unggah-ungguh basa (Ngoko, Ngoko Alus, Krama, Krama Alus), aksara Jawa, tembung saroja, paribasan, ngantos babagan budaya Jawa.
+                                    </p>
+                                    <p class="font-body text-body text-on-surface-variant leading-relaxed">
+                                        Sumangga nyuwun pirsa babagan basa utawa budaya Jawa ingkang taksih ndadosaken bingung!
                                     </p>
                                 </div>
-
-                                <!-- 3 Grid Cards -->
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 w-full">
-                                    <!-- Undha-Usuk 1 -->
-                                    <div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between gap-2 shadow-sm border border-gray-100">
-                                        <div class="flex flex-col gap-0.5">
-                                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Undha-Usuk 1</span>
-                                            <span class="font-heading text-heading font-bold text-primary-700">Mangan</span>
-                                            <span class="font-caption text-caption text-on-surface-variant font-bold">Ngoko Lugu</span>
-                                        </div>
-                                        <p class="font-caption text-caption text-on-surface-variant">
-                                            Kangge nyritakaken awake dhewe utawa tiyang ingkang sapantaran/luwih enom.
-                                        </p>
-                                        <div class="pt-2 bg-surface-container-low p-2 rounded text-on-surface">
-                                            <span class="font-caption text-caption font-bold text-primary-700 block mb-0.5">Tuladha:</span>
-                                            <p class="font-caption text-caption italic text-on-surface-variant">"Aku mangan sega liwet ing pawon."</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Undha-Usuk 2 -->
-                                    <div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between gap-2 shadow-sm border border-gray-100">
-                                        <div class="flex flex-col gap-0.5">
-                                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Undha-Usuk 2</span>
-                                            <span class="font-heading text-heading font-bold text-primary-700">Nedha</span>
-                                            <span class="font-caption text-caption text-on-surface-variant font-bold">Krama Madya / Andhap</span>
-                                        </div>
-                                        <p class="font-caption text-caption text-on-surface-variant">
-                                            Kangge awake dhewe nalika matur marang tiyang sepuh, utawi basa krama lugu.
-                                        </p>
-                                        <div class="pt-2 bg-surface-container-low p-2 rounded text-on-surface">
-                                            <span class="font-caption text-caption font-bold text-primary-700 block mb-0.5">Tuladha:</span>
-                                            <p class="font-caption text-caption italic text-on-surface-variant">"Kula nembe nedha sekul goreng, Pak."</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Undha-Usuk 3 -->
-                                    <div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between gap-2 shadow-sm border border-gray-100">
-                                        <div class="flex flex-col gap-0.5">
-                                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Undha-Usuk 3</span>
-                                            <span class="font-heading text-heading font-bold text-primary-700">Dhahar</span>
-                                            <span class="font-caption text-caption text-on-surface-variant font-bold">Krama Inggil (Pakurmatan)</span>
-                                        </div>
-                                        <p class="font-caption text-caption text-on-surface-variant">
-                                            Mligi kangge ngurmati tiyang sanes/sepuh (Bapak, Ibu, Simbah, Bapak/Ibu Guru).
-                                        </p>
-                                        <div class="pt-2 bg-surface-container-low p-2 rounded text-on-surface">
-                                            <span class="font-caption text-caption font-bold text-primary-700 block mb-0.5">Tuladha:</span>
-                                            <p class="font-caption text-caption italic text-on-surface-variant">"Bapak Guru saweg dhahar wonten kantor."</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Warning info box -->
-                                <div class="bg-primary-fixed/40 p-4 rounded-xl flex items-start gap-3 border border-primary-300/30">
-                                    <span class="material-symbols-outlined text-primary-700 text-xl shrink-0" style="font-variation-settings: 'FILL' 1;">info</span>
-                                    <p class="font-body text-body text-on-surface leading-relaxed">
-                                        <strong class="text-primary-700">Weling Wigati:</strong> Sampun ngantos ngagem tembung <em>"Dhahar"</em> kangge ngandharaken pakaryanipun piyambak (conto lepat: <em>"Kula sampun dhahar"</em>). Kedahipun matur: <em>"Kula sampun nedha"</em>.
-                                    </p>
-                                </div>
-
-                                <!-- Audio Player & Source Footer -->
-                                <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-                                    <button type="button" class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-high hover:bg-primary-700 hover:text-white text-primary-700 rounded-full font-body text-body font-bold transition-all shadow-sm" onclick="alert('Muter pelafalan baku TTS Azure...')">
-                                        <span class="material-symbols-outlined text-lg">volume_up</span>
-                                        <span>Rungokake Swara (TTS Azure)</span>
-                                    </button>
-                                    <div class="flex items-center gap-1.5 text-gray-500 font-caption text-caption">
-                                        <span class="material-symbols-outlined text-sm">menu_book</span>
-                                        <span>Sumber Korpus: Paramasastra Jawa & Tata Bahasa Baku Basa Jawa SMP Kelas 7</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- User Message 2 -->
-                    <div class="flex items-start justify-end gap-4 w-full">
-                        <div class="flex flex-col items-end gap-1 max-w-3xl lg:max-w-4xl">
-                            <div class="flex items-center gap-2">
-                                <span class="font-caption text-caption text-gray-500">10:17 WIB</span>
-                                <span class="font-body text-body font-bold text-on-surface">Andi Prasetyo (Siswa)</span>
-                                <div class="w-8 h-8 rounded-full bg-primary-700 text-white font-bold text-xs flex items-center justify-center">
-                                    AP
-                                </div>
-                            </div>
-                            <div class="bg-primary-600 text-white p-4 rounded-2xl shadow-sm leading-relaxed">
-                                <p class="font-body text-body">
-                                    Matur nuwun cethanipun! Nyuwun pirsa malih, yen kangge kucing utawa kewan sanesipun, punapa pareng ngagem tembung <em>"nedha"</em> supados langkung alus?
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bot Response 2 -->
-                    <div class="flex items-start gap-4 w-full">
-                        <div class="w-10 h-10 rounded-xl bg-primary-700 flex items-center justify-center text-white shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined text-2xl">neurology</span>
-                        </div>
-                        <div class="flex flex-col gap-1 flex-1 min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="font-body text-body font-bold text-on-surface">Kanca Sinau Jawa AI</span>
-                                <span class="font-caption text-caption text-gray-500">10:17 WIB</span>
-                            </div>
-                            <div class="bg-surface-container-low p-4 rounded-2xl text-on-surface space-y-3 border border-primary-100/40">
-                                <p class="font-body text-body leading-relaxed">
-                                    <strong class="text-error font-bold">Boten pareng, Mas Andi.</strong> Wonten paugeran basa Jawa, sedaya solah bawa utawa pakaryanipun kewan (kados ta kucing, jaran, maesa) tansah ngginakaken <strong class="text-primary-700">Basa Ngoko Lugu</strong>.
-                                </p>
-                                <p class="font-body text-body text-on-surface-variant leading-relaxed">
-                                    Tembung <em>"nedha"</em> punapa malih <em>"dhahar"</em> mligi dipuncawisaken kangge titah manungsa minangka wujud tata krama pakurmatan. Sanadyan kita remen utawa ngopeni kucing punika kanthi asih, ukaranipun tetep ngagem:
-                                </p>
-                                <div class="p-3 bg-surface-container-lowest rounded-xl font-body text-body text-primary-700 font-bold border border-gray-100">
-                                    "Kucingku lagi mangan pindhang ing latar." (Bener)
-                                    <br>
-                                    <span class="font-caption text-caption text-error font-medium">"Kucing kula nembe nedha / dhahar" (Salah kaprah miturut tata basa).</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Popular Suggestion Chips -->
                 <div class="flex flex-col gap-2 w-full">
                     <div class="flex items-center justify-between px-1">
                         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Pitakon Populer Pasinaon</span>
-                        <button type="button" class="font-caption text-caption text-primary-600 cursor-pointer hover:underline">Tuduhna liyane</button>
                     </div>
                     <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-                        <button type="button" class="whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100" onclick="const i = document.getElementById('chat-input-field'); if(i){ i.value='Krama Inggil tembung \'Turu\' punapa nggih?'; i.focus(); }">
+                        <button type="button" data-prompt="Krama Inggil tembung 'Turu' punapa nggih?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
                             <span class="material-symbols-outlined text-base text-primary-600">help_outline</span>
                             <span>Krama Inggil tembung "Turu"?</span>
                         </button>
-                        <button type="button" class="whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100" onclick="const i = document.getElementById('chat-input-field'); if(i){ i.value='Bentenipun Aksara Murda kaliyan Aksara Swara kados pundi?'; i.focus(); }">
+                        <button type="button" data-prompt="Bentenipun Aksara Murda kaliyan Aksara Swara kados pundi?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
                             <span class="material-symbols-outlined text-base text-primary-600">spellcheck</span>
                             <span>Bedane Aksara Murda & Swara</span>
                         </button>
-                        <button type="button" class="whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100" onclick="const i = document.getElementById('chat-input-field'); if(i){ i.value='Punapa tegesipun paribasan \'Becik ketitik, ala ketara\'?'; i.focus(); }">
+                        <button type="button" data-prompt="Punapa tegesipun paribasan 'Becik ketitik, ala ketara'?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
                             <span class="material-symbols-outlined text-base text-primary-600">auto_awesome</span>
                             <span>Tegese Paribasan "Becik Ketitik"</span>
                         </button>
-                        <button type="button" class="whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100" onclick="const i = document.getElementById('chat-input-field'); if(i){ i.value='Kados pundi caranipun nyuwun idin marang Guru ingkang leres miturut krama alus?'; i.focus(); }">
+                        <button type="button" data-prompt="Kados pundi caranipun nyuwun idin marang Guru ingkang leres miturut krama alus?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
                             <span class="material-symbols-outlined text-base text-primary-600">record_voice_over</span>
                             <span>Unggah-ungguh marang Guru</span>
                         </button>
@@ -371,14 +237,11 @@
                             <button type="button" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high hover:text-primary-600 transition-colors" title="Unggah dokumen / gambar soal aksara">
                                 <span class="material-symbols-outlined text-xl">attach_file</span>
                             </button>
-                            <button type="button" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface-variant hover:bg-primary-fixed hover:text-primary-700 transition-colors" title="Matur nganggo swara (STT Wicara)">
-                                <span class="material-symbols-outlined text-xl">mic</span>
-                            </button>
                         </div>
                         <div class="flex-1 min-w-0 bg-surface-container-low rounded-xl px-4 py-1.5 flex items-center border border-primary-100/50">
-                            <input type="text" id="chat-input-field" placeholder="Ketik pitakon babagan basa utawa budaya Jawa ing kene..." class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-400 py-1">
+                            <input type="text" id="chat-input-field" placeholder="Ketik pitakon babagan basa utawa budaya Jawa ing kene..." autocomplete="off" class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-400 py-1">
                         </div>
-                        <button type="button" class="shrink-0 inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full font-body text-body font-bold transition-all shadow-md">
+                        <button type="button" id="chat-send-btn" class="shrink-0 inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-body text-body font-bold transition-all shadow-md">
                             <span>Kirim Pitakon</span>
                             <span class="material-symbols-outlined text-lg">send</span>
                         </button>
@@ -386,14 +249,385 @@
                     <div class="flex items-center justify-between px-1 pt-1 border-t border-gray-100/60">
                         <div class="flex items-center gap-1.5 text-gray-500">
                             <span class="material-symbols-outlined text-sm text-green-500">verified</span>
-                            <span class="font-caption text-caption text-on-surface-variant">Asisten Tanya Basa njawab adhedhasar basis data korpus resmi sekolah. Ora ngarang wangsulan ing sanjabane materi pasinaon.</span>
+                            <span class="font-caption text-caption text-on-surface-variant">Asisten Tanya Basa njawab adhedhasar basis data korpus resmi sekolah. Ora ngarang wangsulan ing sanjabane materi.</span>
                         </div>
-                        <span class="font-caption text-caption text-gray-400 hidden sm:inline">Shift + Enter kangge garis anyar</span>
+                        <span class="font-caption text-caption text-gray-400 hidden sm:inline">Enter kangge ngirim</span>
                     </div>
                 </div>
 
             </div>
         </main>
     </div>
+
+    <script>
+        window.AsistenAI = (function () {
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrf = csrfMeta ? csrfMeta.content : null;
+            const chatUrl = @json(route('kuis.chat'));
+            const sesiUrlTemplate = @json(route('kuis.chat.sesi.show', ['chatSession' => 'SESSION_ID']));
+            const sesiDeleteTemplate = @json(route('kuis.chat.sesi.destroy', ['chatSession' => 'SESSION_ID']));
+            const userInitial = @json($userInisial);
+            const container = document.getElementById('chat-messages');
+            const input = document.getElementById('chat-input-field');
+            const sendBtn = document.getElementById('chat-send-btn');
+            const historyList = document.getElementById('sidebar-chat-history');
+            const welcomeHtml = container ? container.innerHTML : '';
+            let activeSessionId = null;
+            let busy = false;
+
+            function nowWib() {
+                return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+            }
+
+            function fromTemplate(html) {
+                const tpl = document.createElement('template');
+                tpl.innerHTML = html.trim();
+                return tpl.content.firstElementChild;
+            }
+
+            function scrollToBottom() {
+                if (!container) {
+                    return;
+                }
+                const last = container.lastElementChild;
+                if (last) {
+                    last.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
+            }
+
+            function userBubble(text, waktu) {
+                const node = fromTemplate(`
+                    <div class="flex items-start justify-end gap-4 w-full">
+                        <div class="flex flex-col items-end gap-1 max-w-3xl lg:max-w-4xl">
+                            <div class="flex items-center gap-2">
+                                <span class="font-caption text-caption text-gray-500" data-waktu>${waktu || nowWib()}</span>
+                                <span class="font-body text-body font-bold text-on-surface">Panjenengan</span>
+                                <div class="w-8 h-8 rounded-full bg-primary-700 text-white font-bold text-xs flex items-center justify-center">${userInitial}</div>
+                            </div>
+                            <div class="bg-primary-600 text-white p-4 rounded-2xl shadow-sm leading-relaxed">
+                                <p class="font-body text-body" data-text></p>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                node.querySelector('[data-text]').textContent = text;
+                return node;
+            }
+
+            function botBubble(waktu) {
+                const node = fromTemplate(`
+                    <div class="flex items-start gap-4 w-full">
+                        <div class="w-10 h-10 rounded-xl bg-primary-700 flex items-center justify-center text-white shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined text-2xl">neurology</span>
+                        </div>
+                        <div class="flex flex-col gap-1 flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-body text-body font-bold text-on-surface">Kanca Sinau Jawa AI</span>
+                                <span class="font-caption text-caption text-gray-500" data-waktu>${waktu || nowWib()}</span>
+                            </div>
+                            <div class="bg-surface-container-low p-4 rounded-2xl text-on-surface space-y-3 border border-primary-100/40">
+                                <p class="font-body text-body leading-relaxed whitespace-pre-wrap" data-text></p>
+                                <div class="hidden flex-col gap-1 pt-2 border-t border-gray-100" data-sources></div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                return node;
+            }
+
+            function typingIndicator() {
+                return fromTemplate(`
+                    <div class="flex items-start gap-4 w-full" data-typing>
+                        <div class="w-10 h-10 rounded-xl bg-primary-700 flex items-center justify-center text-white shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined text-2xl">neurology</span>
+                        </div>
+                        <div class="bg-surface-container-low px-5 py-4 rounded-2xl border border-primary-100/40 flex items-center gap-1.5">
+                            <span class="typing-dot w-2 h-2 rounded-full bg-primary-500"></span>
+                            <span class="typing-dot w-2 h-2 rounded-full bg-primary-500"></span>
+                            <span class="typing-dot w-2 h-2 rounded-full bg-primary-500"></span>
+                        </div>
+                    </div>
+                `);
+            }
+
+            function renderSources(node, sources) {
+                if (!Array.isArray(sources) || sources.length === 0) {
+                    return;
+                }
+                const wrap = node.querySelector('[data-sources]');
+                const title = document.createElement('div');
+                title.className = 'flex items-center gap-1.5 text-gray-500 font-caption text-caption';
+                title.innerHTML = '<span class="material-symbols-outlined text-sm">menu_book</span><span data-judul></span>';
+                title.querySelector('[data-judul]').textContent = 'Sumber korpus: ' + sources.map(function (s) {
+                    return s.judul;
+                }).filter(Boolean).join('; ');
+                wrap.appendChild(title);
+                wrap.classList.remove('hidden');
+                wrap.classList.add('flex');
+            }
+
+            function appendReply(text, sources, waktu) {
+                const node = botBubble(waktu);
+                node.querySelector('[data-text]').textContent = text;
+                renderSources(node, sources);
+                container.appendChild(node);
+                scrollToBottom();
+            }
+
+            function setBusy(state) {
+                busy = state;
+                sendBtn.disabled = state;
+                input.disabled = state;
+            }
+
+            function sessionNode(id) {
+                return historyList ? historyList.querySelector('[data-session-id="' + id + '"]') : null;
+            }
+
+            function setActiveHighlight(id) {
+                if (!historyList) {
+                    return;
+                }
+                historyList.querySelectorAll('[data-session-id]').forEach(function (node) {
+                    const isActive = String(node.dataset.sessionId) === String(id);
+                    node.classList.toggle('bg-surface-container-low', isActive);
+                    const title = node.querySelector('[data-judul], .truncate');
+                    if (title) {
+                        title.classList.toggle('font-bold', isActive);
+                        title.classList.toggle('text-primary-700', isActive);
+                    }
+                });
+            }
+
+            function removeEmptyState() {
+                if (!historyList) {
+                    return;
+                }
+                const empty = historyList.querySelector('[data-empty-state]');
+                if (empty) {
+                    empty.remove();
+                }
+            }
+
+            function upsertHistoryItem(id, judul) {
+                if (!historyList) {
+                    return;
+                }
+                removeEmptyState();
+                let node = sessionNode(id);
+
+                if (!node) {
+                    node = fromTemplate(`
+                        <div class="group flex items-center gap-1 rounded-xl hover:bg-surface-container-high transition-colors" data-session-id="${id}">
+                            <button type="button" data-action="load-sesi" data-session-id="${id}" class="flex-1 min-w-0 flex items-center gap-2 px-3 py-2 text-left text-on-surface-variant hover:text-on-surface transition-colors truncate">
+                                <span class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary-600 shrink-0">chat_bubble_outline</span>
+                                <span class="truncate" data-judul></span>
+                            </button>
+                            <button type="button" data-action="hapus-sesi" data-session-id="${id}" class="hidden group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-400 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Busak riwayat">
+                                <span class="material-symbols-outlined text-[16px]">delete</span>
+                            </button>
+                        </div>
+                    `);
+                    node.querySelector('[data-judul]').textContent = judul || 'Obrolan anyar';
+                    historyList.prepend(node);
+                } else {
+                    const title = node.querySelector('[data-judul]');
+                    if (title && judul) {
+                        title.textContent = judul;
+                    }
+                }
+
+                setActiveHighlight(id);
+            }
+
+            function resetView() {
+                if (container) {
+                    container.innerHTML = welcomeHtml;
+                }
+            }
+
+            function newChat() {
+                activeSessionId = null;
+                resetView();
+                setActiveHighlight(null);
+                if (input) {
+                    input.focus();
+                }
+            }
+
+            async function loadSession(id) {
+                if (busy) {
+                    return;
+                }
+                setBusy(true);
+                try {
+                    const res = await fetch(sesiUrlTemplate.replace('SESSION_ID', id), {
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin',
+                    });
+                    if (!res.ok) {
+                        throw new Error('gagal');
+                    }
+                    const data = await res.json();
+                    activeSessionId = data.id;
+                    resetView();
+                    (data.messages || []).forEach(function (m) {
+                        if (m.role === 'user') {
+                            container.appendChild(userBubble(m.pesan, m.waktu));
+                        } else {
+                            appendReply(m.pesan, m.sumber || [], m.waktu);
+                        }
+                    });
+                    setActiveHighlight(data.id);
+                    scrollToBottom();
+                } catch (err) {
+                    resetView();
+                    appendReply('Nyuwun pangapunten, riwayat obrolan boten saged dipun-bukak. Sumangga dipun-cobi malih.', []);
+                } finally {
+                    setBusy(false);
+                    input.focus();
+                }
+            }
+
+            async function deleteSession(id) {
+                if (busy) {
+                    return;
+                }
+                if (!window.confirm('Busak riwayat obrolan menika?')) {
+                    return;
+                }
+                setBusy(true);
+                try {
+                    const res = await fetch(sesiDeleteTemplate.replace('SESSION_ID', id), {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrf,
+                        },
+                        credentials: 'same-origin',
+                    });
+                    if (!res.ok) {
+                        throw new Error('gagal');
+                    }
+                    const node = sessionNode(id);
+                    if (node) {
+                        node.remove();
+                    }
+                    if (String(activeSessionId) === String(id)) {
+                        newChat();
+                    }
+                    if (historyList && !historyList.querySelector('[data-session-id]')) {
+                        historyList.innerHTML = '<div class="px-3 py-2 text-gray-400 italic text-xs" data-empty-state>Durung ana riwayat chat</div>';
+                    }
+                } catch (err) {
+                    window.alert('Gagal mbusak riwayat. Sumangga dipun-cobi malih.');
+                } finally {
+                    setBusy(false);
+                }
+            }
+
+            async function ask(question) {
+                const text = (question || '').trim();
+                if (text === '' || busy) {
+                    return;
+                }
+
+                container.appendChild(userBubble(text));
+                scrollToBottom();
+                input.value = '';
+                setBusy(true);
+
+                const typing = typingIndicator();
+                container.appendChild(typing);
+                scrollToBottom();
+
+                try {
+                    const res = await fetch(chatUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrf,
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ pertanyaan: text, session_id: activeSessionId }),
+                    });
+
+                    const data = await res.json().catch(function () { return {}; });
+                    typing.remove();
+
+                    if (!res.ok) {
+                        const message = res.status === 429
+                            ? 'Nyuwun pangapunten, panjenengan kirang sakedhik ngirim pitakon. Sumangga dipun-antosi sakedhap malih.'
+                            : 'Nyuwun pangapunten, wonten gangguan teknis. Sumangga dipun-cobi malih.';
+                        appendReply(message, []);
+                        return;
+                    }
+
+                    if (data.session_id) {
+                        activeSessionId = data.session_id;
+                        upsertHistoryItem(data.session_id, data.session_title);
+                    }
+
+                    appendReply(data.jawaban || 'Nyuwun pangapunten, kula boten saged mangsuli pitakon menika.', data.sumber || []);
+                } catch (err) {
+                    typing.remove();
+                    appendReply('Nyuwun pangapunten, sambungan dhateng asisten gagal. Sumangga dipun-priksa sambungan internet panjenengan.', []);
+                } finally {
+                    setBusy(false);
+                    input.focus();
+                }
+            }
+
+            function init() {
+                if (!container) {
+                    return;
+                }
+
+                sendBtn.addEventListener('click', function () {
+                    ask(input.value);
+                });
+
+                input.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault();
+                        ask(input.value);
+                    }
+                });
+
+                document.querySelectorAll('.suggestion-chip').forEach(function (chip) {
+                    chip.addEventListener('click', function () {
+                        ask(chip.dataset.prompt);
+                    });
+                });
+
+                document.addEventListener('click', function (event) {
+                    const trigger = event.target.closest('[data-action]');
+                    if (!trigger) {
+                        return;
+                    }
+
+                    const action = trigger.dataset.action;
+                    const id = trigger.dataset.sessionId;
+
+                    if (action === 'chat-baru') {
+                        event.preventDefault();
+                        newChat();
+                    } else if (action === 'load-sesi' && id) {
+                        event.preventDefault();
+                        loadSession(id);
+                    } else if (action === 'hapus-sesi' && id) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        deleteSession(id);
+                    }
+                });
+            }
+
+            init();
+
+            return { ask: ask, newChat: newChat, loadSession: loadSession, deleteSession: deleteSession };
+        })();
+    </script>
 </body>
 </html>

@@ -68,4 +68,9 @@ class Siswa extends Authenticatable
             ->withPivot(['kelas', 'mata_pelajaran'])
             ->withTimestamps();
     }
+
+    public function chatSessions(): HasMany
+    {
+        return $this->hasMany(ChatSession::class, 'siswa_id')->orderBy('updated_at', 'desc');
+    }
 }
