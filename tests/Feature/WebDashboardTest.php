@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Guru;
 use App\Models\LevelMateri;
+use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Superadmin;
@@ -25,10 +26,26 @@ class WebDashboardTest extends TestCase
     public function test_guru_can_access_guru_area_but_not_superadmin_area(): void
     {
         $guru = Guru::factory()->create();
+        $level = LevelMateri::create(['nama_materi' => 'Dasar', 'deskripsi' => 'x', 'reward_exp' => 100, 'urutan' => 1]);
 
         $this->actingAs($guru, 'guru')->get('/guru/dashboard')->assertOk();
-        $this->actingAs($guru, 'guru')->get('/guru/soal')->assertOk();
+        $this->actingAs($guru, 'guru')->get('/guru/level-materi')->assertOk();
+        $this->actingAs($guru, 'guru')->get('/guru/soal?level_materi_id='.$level->id)->assertOk();
         $this->actingAs($guru, 'guru')->get('/superadmin/dashboard')->assertForbidden();
+    }
+
+    public function test_guru_can_create_level_materi_via_web_form(): void
+    {
+        $guru = Guru::factory()->create();
+
+        $this->actingAs($guru, 'guru')->post('/guru/level-materi', [
+            'nama_materi' => 'Level Anyar Guru',
+            'deskripsi' => 'Deskripsi',
+            'reward_exp' => 120,
+            'urutan' => 1,
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('level_materi', ['nama_materi' => 'Level Anyar Guru']);
     }
 
     public function test_superadmin_can_access_superadmin_area_but_not_guru_area(): void
@@ -133,5 +150,80 @@ class WebDashboardTest extends TestCase
 
         $this->actingAs($guru, 'guru')->get('/latihan-soal')->assertForbidden();
         $this->actingAs($guru, 'guru')->get('/papan-skor')->assertForbidden();
+    }
+
+    public function test_siswa_web_dashboard_shows_real_levels_and_can_answer(): void
+    {
+        $level = LevelMateri::create(['nama_materi' => 'Dasar', 'deskripsi' => 'x', 'reward_exp' => 100, 'urutan' => 1]);
+        $soal = Soal::create([
+            'level_materi_id' => $level->id,
+            'tipe_soal' => Soal::TIPE_PILIHAN_GANDA,
+            'pertanyaan' => 'Salam esuk?',
+            'opsi_jawaban' => [['label' => 'A', 'teks' => 'Sugeng enjing']],
+            'kunci_jawaban' => ['jawaban' => 'A'],
+            'bobot_exp' => 10,
+        ]);
+        // Soal kalih supados level mboten langsung rampung.
+        Soal::create([
+            'level_materi_id' => $level->id,
+            'tipe_soal' => Soal::TIPE_PILIHAN_GANDA,
+            'pertanyaan' => 'Salam dalu?',
+            'opsi_jawaban' => [['label' => 'A', 'teks' => 'Sugeng dalu']],
+            'kunci_jawaban' => ['jawaban' => 'A'],
+            'bobot_exp' => 10,
+        ]);
+
+        $siswa = Siswa::factory()->create(['nama_lengkap' => 'Uji Siswa', 'kelas' => '7A']);
+        $siswa->exp()->create(['total_exp' => 0]);
+        $siswa->strek()->create(['current_streak' => 0, 'highest_streak' => 0]);
+        ProgresSiswa::create(['siswa_id' => $siswa->id, 'level_materi_id' => $level->id, 'status' => ProgresSiswa::STATUS_BERJALAN]);
+
+        // Beranda menampilkan nama & level dinamis.
+        $this->actingAs($siswa, 'siswa')->get('/')
+            ->assertOk()
+            ->assertSee('Uji Siswa')
+            ->assertSee('Dasar');
+
+        // Daftar latihan menampilkan card level (bukan card per soal).
+        $this->actingAs($siswa, 'siswa')->get('/latihan-soal')
+            ->assertOk()
+            ->assertSee('LEVEL 1')
+            ->assertSee('Dasar')
+            ->assertSee('Mulai Kuis')
+            ->assertDontSee('Salam esuk?');
+
+        // Klik level -> langsung diarahkan ke soal pertama level kasebut.
+        $this->actingAs($siswa, 'siswa')->get("/kuis/mulai/{$level->id}")
+            ->assertRedirect()
+            ->assertRedirectContains('/kuis/pilihan-ganda')
+            ->assertRedirectContains('soal_id='.$soal->id);
+
+        // Jawab soal lewat endpoint web -> EXP bertambah.
+        $this->actingAs($siswa, 'siswa')->postJson('/kuis/jawab', ['soal_id' => $soal->id, 'jawaban' => 'A'])
+            ->assertOk()
+            ->assertJson(['skor' => 100, 'exp_didapat' => 10, 'total_exp' => 10]);
+
+        $this->assertDatabaseHas('jawaban_siswa', ['siswa_id' => $siswa->id, 'soal_id' => $soal->id, 'skor_tertinggi' => 100]);
+    }
+
+    public function test_locked_level_cannot_be_started(): void
+    {
+        $level = LevelMateri::create(['nama_materi' => 'Terkunci', 'deskripsi' => 'x', 'reward_exp' => 100, 'urutan' => 1]);
+        Soal::create([
+            'level_materi_id' => $level->id,
+            'tipe_soal' => Soal::TIPE_PILIHAN_GANDA,
+            'pertanyaan' => 'Pitakon?',
+            'opsi_jawaban' => [['label' => 'A', 'teks' => 'A']],
+            'kunci_jawaban' => ['jawaban' => 'A'],
+            'bobot_exp' => 10,
+        ]);
+
+        $siswa = Siswa::factory()->create();
+        $siswa->exp()->create(['total_exp' => 0]);
+        $siswa->strek()->create(['current_streak' => 0, 'highest_streak' => 0]);
+        ProgresSiswa::create(['siswa_id' => $siswa->id, 'level_materi_id' => $level->id, 'status' => ProgresSiswa::STATUS_TERKUNCI]);
+
+        $this->actingAs($siswa, 'siswa')->get("/kuis/mulai/{$level->id}")
+            ->assertRedirect(route('siswa.latihan'));
     }
 }

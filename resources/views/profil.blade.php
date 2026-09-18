@@ -177,28 +177,18 @@
                         <div class="flex flex-col sm:flex-row items-start gap-5 -mt-14 z-10">
                             <div class="relative w-28 h-28 rounded-2xl bg-surface-container-lowest p-1 shadow-md shrink-0">
                                 <div class="w-full h-full rounded-xl bg-primary-700 text-white font-bold text-3xl flex items-center justify-center">
-                                    AP
+                                    {{ mb_strtoupper(mb_substr($siswa->nama_lengkap, 0, 2)) }}
                                 </div>
                                 <span class="absolute bottom-2 right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-surface-container-lowest" title="Aktif Sinau"></span>
                             </div>
                             <div class="flex flex-col min-w-0 pt-16 sm:pt-16">
                                 <div class="flex items-center gap-2">
-                                    <h1 class="font-heading text-display text-on-surface font-extrabold tracking-tight text-2xl">Andi Prasetyo</h1>
+                                    <h1 class="font-heading text-display text-on-surface font-extrabold tracking-tight text-2xl">{{ $siswa->nama_lengkap }}</h1>
                                     <span class="material-symbols-outlined text-primary-600 text-xl" title="Siswa Terverifikasi">verified</span>
                                 </div>
-                                <div class="font-caption text-caption text-gray-500 mt-0.5">NISN: 0092817421 • KELAS 7A • SMPN 1 SURABAYA</div>
+                                <div class="font-caption text-caption text-gray-500 mt-0.5">NIS: {{ $siswa->nis ?? '-' }} • KELAS {{ $siswa->kelas ? $siswa->kelas : 'SISWA' }} • SINAU JOWO</div>
                                 <p class="font-body text-body text-on-surface-variant mt-1 italic max-w-xl">“Siswa sregep nyinau unggah-ungguh basa lan aksara Jawa.”</p>
                             </div>
-                        </div>
-                        <div class="flex items-center gap-3 self-start sm:self-end">
-                            <button type="button" class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface font-body text-body font-semibold shadow-sm transition-all border border-primary-100">
-                                <span class="material-symbols-outlined text-base text-primary-600">badge</span>
-                                <span>Cithak Piagam</span>
-                            </button>
-                            <button type="button" class="flex items-center gap-1.5 px-5 py-2 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-body font-semibold shadow-md transition-all">
-                                <span class="material-symbols-outlined text-base">edit</span>
-                                <span>Sunting Profil</span>
-                            </button>
                         </div>
                     </div>
 
@@ -212,10 +202,10 @@
                             <div class="flex flex-col">
                                 <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Total Poin Sinau</span>
                                 <div class="flex items-baseline gap-1">
-                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">1,450</span>
+                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">{{ number_format($totalExp) }}</span>
                                     <span class="font-body text-body font-bold text-primary-600">XP</span>
                                 </div>
-                                <span class="font-caption text-caption text-gray-500">Tingkat 2 • Madya</span>
+                                <span class="font-caption text-caption text-gray-500">Tingkat: {{ $totalExp >= 1000 ? 'Wasasis (Mahir)' : ($totalExp >= 300 ? 'Madya' : 'Pratama') }}</span>
                             </div>
                         </div>
                         <!-- Stat 2: Class Rank -->
@@ -226,10 +216,9 @@
                             <div class="flex flex-col">
                                 <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Peringkat Pasinaon</span>
                                 <div class="flex items-baseline gap-1">
-                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">#2</span>
-                                    <span class="font-body text-body font-bold text-on-surface-variant">/ 32 Siswa</span>
+                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">#{{ $myRank }}</span>
                                 </div>
-                                <span class="font-caption text-caption text-green-500 font-semibold">Top 15% Sak-Sekolah</span>
+                                <span class="font-caption text-caption text-green-500 font-semibold">{{ $completedLevels }} Level Rampung</span>
                             </div>
                         </div>
                         <!-- Stat 3: Daily Streak -->
@@ -240,9 +229,9 @@
                             <div class="flex flex-col">
                                 <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Streak Konsistensi</span>
                                 <div class="flex items-baseline gap-1">
-                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">5 Dina</span>
+                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">{{ $currentStreak }} Dina</span>
                                 </div>
-                                <span class="font-caption text-caption text-gray-500">Rekor paling dhuwur: 12 Dina</span>
+                                <span class="font-caption text-caption text-gray-500">Rekor paling dhuwur: {{ $highestStreak }} Dina</span>
                             </div>
                         </div>
                     </div>
@@ -277,13 +266,14 @@
                             <p class="font-body text-body text-on-surface-variant mt-0.5">Lencana otomatis kagayuh nalika ngrampungake tracing aksara, wicara krama, lan kuis kabudayan.</p>
                         </div>
                         <!-- Badge Completion Counter Bar -->
+                        @php $persenLevel = $totalLevels > 0 ? (int) round(($completedLevels / $totalLevels) * 100) : 0; @endphp
                         <div class="flex flex-col w-full md:w-80 bg-surface-container-low p-3 rounded-xl border border-primary-100/50">
                             <div class="flex justify-between items-center mb-1">
-                                <span class="font-caption text-caption text-gray-500 font-semibold">Progres Pengumpulan</span>
-                                <span class="font-caption text-caption font-bold text-primary-700">5 saka 12 Lencana (42%)</span>
+                                <span class="font-caption text-caption text-gray-500 font-semibold">Progres Pasinaon</span>
+                                <span class="font-caption text-caption font-bold text-primary-700">{{ $completedLevels }} saka {{ $totalLevels }} Level ({{ $persenLevel }}%)</span>
                             </div>
                             <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-full bg-primary-600 rounded-full w-[42%]"></div>
+                                <div class="h-full bg-primary-600 rounded-full transition-all" style="width: {{ $persenLevel }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -293,7 +283,7 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="material-symbols-outlined text-green-500 text-lg">verified</span>
-                                <h2 class="font-heading text-heading text-on-surface font-bold">Lencana Sing Wis Dikantongi (5)</h2>
+                                <h2 class="font-heading text-heading text-on-surface font-bold">Lencana Sing Wis Dikantongi ({{ $completedLevels }})</h2>
                             </div>
                             <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">KASIL DIGAYUH • STATUS AKTIF</span>
                         </div>
@@ -489,54 +479,54 @@
                             <div class="flex flex-col gap-2 text-body font-body">
                                 <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
                                     <span class="text-gray-500">Jeneng Jangkep</span>
-                                    <span class="font-bold text-on-surface">Andi Prasetyo</span>
+                                    <span class="font-bold text-on-surface">{{ $siswa->nama_lengkap }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Nomor Induk Siswa Nasional (NISN)</span>
-                                    <span class="font-bold text-on-surface">0092817421</span>
+                                    <span class="text-gray-500">Nomor Induk Siswa (NIS)</span>
+                                    <span class="font-bold text-on-surface">{{ $siswa->nis ?? '-' }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Sekolah</span>
-                                    <span class="font-bold text-on-surface">SMP Negeri 1 Surabaya</span>
+                                    <span class="text-gray-500">Jenis Kelamin</span>
+                                    <span class="font-bold text-on-surface">{{ $siswa->jenis_kelamin === 'L' ? 'Laki-laki (L)' : 'Perempuan (P)' }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Rombel / Kelas</span>
-                                    <span class="font-bold text-on-surface">Kelas 7A (Reguler)</span>
+                                    <span class="text-gray-500">Kelas</span>
+                                    <span class="font-bold text-on-surface">{{ $siswa->kelas ? 'Kelas '.$siswa->kelas : '-' }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
                                     <span class="text-gray-500">Email Akun Belajar</span>
-                                    <span class="font-bold text-on-surface">andi.prasetyo@smpn1sub.sch.id</span>
+                                    <span class="font-bold text-on-surface">{{ $siswa->email }}</span>
+                                </div>
+                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
+                                    <span class="text-gray-500">No. Telepon</span>
+                                    <span class="font-bold text-on-surface">{{ $siswa->no_telpon ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Data Wali & Guru Pamong -->
+                        <!-- Data Guru Pangampu -->
                         <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-4 border border-gray-100">
                             <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
                                 <span class="material-symbols-outlined text-primary-600">family_restroom</span>
-                                <h2 class="font-heading text-heading text-on-surface font-bold">Wali Murid & Guru Pangampu</h2>
+                                <h2 class="font-heading text-heading text-on-surface font-bold">Guru Pangampu</h2>
                             </div>
                             <div class="flex flex-col gap-2 text-body font-body">
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Guru Basa Jawa (Pangampu)</span>
-                                    <span class="font-bold text-on-surface">Bu Sri Handayani, S.Pd.</span>
-                                </div>
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">NIP Guru Pangampu</span>
-                                    <span class="font-bold text-on-surface">19830412 200801 2 015</span>
-                                </div>
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Jeneng Wali Murid</span>
-                                    <span class="font-bold text-on-surface">Bambang Prasetyo</span>
-                                </div>
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Kontak Notifikasi Wali (WhatsApp)</span>
-                                    <span class="font-bold text-on-surface">+62 812-3344-9081</span>
-                                </div>
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Status Integrasi Rapor</span>
-                                    <span class="font-bold text-green-500">Koneksi Aktif (Dapodik)</span>
-                                </div>
+                                @forelse($guruPangampu as $g)
+                                    <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
+                                        <span class="text-gray-500">Guru Pangampu{{ $g->pivot->mata_pelajaran ? ' ('.$g->pivot->mata_pelajaran.')' : '' }}</span>
+                                        <span class="font-bold text-on-surface">{{ $g->nama_lengkap }}</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
+                                        <span class="text-gray-500">NIP</span>
+                                        <span class="font-bold text-on-surface">{{ $g->nip ?? '-' }}</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
+                                        <span class="text-gray-500">Kelas Diampu</span>
+                                        <span class="font-bold text-on-surface">{{ $g->pivot->kelas ? 'Kelas '.$g->pivot->kelas : '-' }}</span>
+                                    </div>
+                                @empty
+                                    <div class="py-3 text-gray-500 text-center">Durung ana guru pangampu sing kacathet kanggo siswa iki.</div>
+                                @endforelse
                             </div>
                         </div>
                     </div>

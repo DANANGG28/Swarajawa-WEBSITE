@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\LevelMateri;
+use App\Models\ProgresSiswa;
+use App\Models\Siswa;
 use App\Models\Soal;
+use App\Services\TtsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
-use App\Services\TtsService;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class GuruWebController extends Controller
 {
@@ -59,16 +61,43 @@ class GuruWebController extends Controller
         $guru = $this->guru();
 
         return view('guru.level-materi', [
-            'judul' => 'Manajemen Soal',
-            'subjudul' => 'Pilih level materi untuk mengelola soal',
+            'judul' => 'Manajemen Soal & Level',
+            'subjudul' => 'Pilih level materi kanggo ngatur bank soal utawa tambah level anyar',
             'role' => 'guru',
             'active' => 'soal',
+            'levelList' => LevelMateri::withCount(['soal' => function ($query) {
+                $query->where('guru_id', $this->guru()->id);
+            }])
+                ->orderBy('urutan')
+                ->get(),
             'levels' => LevelMateri::withCount(['soal' => function ($query) {
                 $query->where('guru_id', $this->guru()->id);
             }])
                 ->orderBy('urutan')
                 ->get(),
         ]);
+    }
+
+    public function levelMateriStore(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'nama_materi' => ['required', 'string', 'max:255'],
+            'deskripsi' => ['nullable', 'string'],
+            'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
+            'urutan' => ['required', 'integer', 'min:0'],
+        ]);
+
+        $level = LevelMateri::create($data);
+
+        $siswaIds = Siswa::pluck('id');
+        foreach ($siswaIds as $sId) {
+            ProgresSiswa::firstOrCreate(
+                ['siswa_id' => $sId, 'level_materi_id' => $level->id],
+                ['status' => ProgresSiswa::STATUS_TERKUNCI]
+            );
+        }
+
+        return back()->with('sukses', 'Level materi kasil digawe.');
     }
 
     /**
@@ -79,7 +108,7 @@ class GuruWebController extends Controller
         $guru = $this->guru();
 
         // Redirect ke pilihan level jika tidak ada level_materi_id
-        if (!$request->filled('level_materi_id')) {
+        if (! $request->filled('level_materi_id')) {
             return redirect()->route('guru.level-materi');
         }
 
@@ -96,7 +125,7 @@ class GuruWebController extends Controller
         }
 
         if ($request->filled('q')) {
-            $term = '%' . $request->query('q') . '%';
+            $term = '%'.$request->query('q').'%';
             $query->where('pertanyaan', 'like', $term);
         }
 
@@ -114,7 +143,7 @@ class GuruWebController extends Controller
 
     public function soalCreate(Request $request): View|RedirectResponse
     {
-        if (!$request->filled('level_materi_id')) {
+        if (! $request->filled('level_materi_id')) {
             return redirect()->route('guru.level-materi');
         }
 
@@ -181,20 +210,20 @@ class GuruWebController extends Controller
     public function generateTts(Request $request, TtsService $ttsService)
     {
         $request->validate(['text' => 'required|string']);
-        
+
         $path = $ttsService->generate($request->text);
-        
+
         if ($path) {
             return response()->json([
                 'success' => true,
                 'url' => Storage::url($path),
-                'path' => $path
+                'path' => $path,
             ]);
         }
-        
+
         return response()->json([
             'success' => false,
-            'message' => 'Gagal generate TTS. Pastikan API Key Azure sudah dikonfigurasi.'
+            'message' => 'Gagal generate TTS. Pastikan API Key Azure sudah dikonfigurasi.',
         ], 500);
     }
 

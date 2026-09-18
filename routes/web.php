@@ -16,10 +16,10 @@ Route::get('/', [HomeController::class, 'index'])->name('siswa.dashboard');
 Route::get('/dashboard', [HomeController::class, 'index']);
 
 Route::middleware('web.auth:siswa')->group(function () {
-    Route::get('/latihan-soal', fn () => view('latihan-soal'))->name('siswa.latihan');
-    Route::get('/papan-skor', fn () => view('papan-skor'))->name('siswa.papan-skor');
+    Route::get('/latihan-soal', [HomeController::class, 'latihanSoal'])->name('siswa.latihan');
+    Route::get('/papan-skor', [HomeController::class, 'papanSkor'])->name('siswa.papan-skor');
     Route::get('/asisten-ai', fn () => view('asisten-ai'))->name('siswa.asisten');
-    Route::get('/profil', fn () => view('profil'))->name('siswa.profil');
+    Route::get('/profil', [HomeController::class, 'profil'])->name('siswa.profil');
 });
 
 /*
@@ -39,6 +39,7 @@ Route::post('/keluar', [AuthWebController::class, 'keluar'])->name('keluar');
 |--------------------------------------------------------------------------
 */
 Route::middleware('web.auth:siswa')->prefix('kuis')->group(function () {
+    Route::get('/mulai/{levelMateri}', [KuisSesiController::class, 'mulaiLevel'])->name('kuis.mulai');
     Route::get('/pilihan-ganda', [KuisSesiController::class, 'pilihanGanda'])->name('kuis.pilihan-ganda');
     Route::get('/susun-ukara', [KuisSesiController::class, 'susunUkara'])->name('kuis.susun-ukara');
     Route::get('/wicara-audio', [KuisSesiController::class, 'wicaraAudio'])->name('kuis.wicara-audio');
@@ -64,6 +65,7 @@ Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(functio
     Route::get('/dashboard', [GuruWebController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/level-materi', [GuruWebController::class, 'levelMateri'])->name('level-materi');
+    Route::post('/level-materi', [GuruWebController::class, 'levelMateriStore'])->name('level-materi.store');
     Route::get('/soal', [GuruWebController::class, 'soal'])->name('soal');
     Route::get('/soal/tambah', [GuruWebController::class, 'soalCreate'])->name('soal.create');
     Route::post('/soal', [GuruWebController::class, 'soalStore'])->name('soal.store');
@@ -109,9 +111,10 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
 });
 
 Route::get('/resources/image/guru/{filename}', function (string $filename) {
-    $path = resource_path('image/guru/' . $filename);
-    if (!file_exists($path)) {
+    $path = resource_path('image/guru/'.$filename);
+    if (! file_exists($path)) {
         abort(404);
     }
+
     return response()->file($path);
 })->name('guru.image');

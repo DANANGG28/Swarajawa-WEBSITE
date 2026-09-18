@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
+use App\Models\JawabanSiswa;
+use App\Models\LevelMateri;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
@@ -13,8 +15,11 @@ use App\Services\Ai\StsService;
 use App\Services\Ai\SttService;
 use App\Services\Ai\TtsService;
 use App\Services\GamificationService;
+use App\Services\JawabanService;
+use App\Services\ProgresService;
 use App\Services\QuizScoringService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +39,8 @@ class KuisSesiController extends Controller
         private readonly SttService $stt,
         private readonly StsService $sts,
         private readonly RagService $rag,
+        private readonly ProgresService $progres,
+        private readonly JawabanService $jawaban,
     ) {}
 
     public function pilihanGanda(): View
@@ -62,7 +69,32 @@ class KuisSesiController extends Controller
     }
 
     /**
+     * Mulai level: arahkan ke soal pertama yang belum tuntas ing level kasebut.
+     * Otomatis nuduhake tipe kuis sing bener liwat urlForSoal().
+     */
+    public function mulaiLevel(LevelMateri $levelMateri): RedirectResponse
+    {
+        $siswa = $this->siswa();
+
+        if (! $this->progres->canStart($siswa, $levelMateri)) {
+            return redirect()->route('siswa.latihan')
+                ->with('error', 'Materi belum tercapai. Rampungake level sadurunge dhisik.');
+        }
+
+        $soal = $this->jawaban->firstUnfinishedInLevel($siswa, $levelMateri)
+            ?? Soal::where('level_materi_id', $levelMateri->id)->orderBy('id')->first();
+
+        if (! $soal) {
+            return redirect()->route('siswa.latihan')
+                ->with('error', 'Durung ana soal ing level iki.');
+        }
+
+        return redirect()->to($this->urlForSoal($soal));
+    }
+
+    /**
      * Nilai jawaban (semua tipe) + catat EXP & streak.
+     * EXP dihitung bertingkat: hanya selisih jika skor baru melebihi rekor sebelumnya.
      */
     public function jawab(Request $request): JsonResponse
     {
@@ -72,19 +104,33 @@ class KuisSesiController extends Controller
         ]);
 
         $soal = Soal::query()->with('levelMateri')->findOrFail($data['soal_id']);
-        $hasil = $this->scoring->score($soal, $data['jawaban']);
+        $siswa = $this->siswa();
 
-        $expDidapat = (int) round($soal->bobot_exp * ($hasil['skor'] / 100));
-        $gamifikasi = $this->gamification->recordActivity($this->siswa(), $expDidapat);
+        // FR-2: blokir bila level masih terkunci.
+        if ($soal->levelMateri && ! $this->progres->canStart($siswa, $soal->levelMateri)) {
+            return response()->json(['message' => 'Materi belum tercapai.'], 403);
+        }
+
+        $hasil = $this->scoring->score($soal, $data['jawaban']);
+        $catatan = $this->jawaban->record($siswa, $soal, $hasil);
+
+        $nextSoal = $this->jawaban->nextSoal($siswa, $soal->levelMateri, $soal->id);
 
         return response()->json([
             'benar' => $hasil['benar'],
             'skor' => $hasil['skor'],
+            'skor_tertinggi' => $catatan['skor_tertinggi'],
             'detail' => $hasil['detail'],
             'kunci_jawaban' => $soal->kunci_jawaban,
-            'exp_didapat' => $expDidapat,
-            'total_exp' => $gamifikasi['total_exp'],
-            'current_streak' => $gamifikasi['current_streak'],
+            'exp_didapat' => $catatan['exp_didapat'],
+            'reward_exp' => $catatan['reward_exp'],
+            'level_selesai' => $catatan['level_selesai'],
+            'level_berikutnya' => $catatan['level_berikutnya'],
+            'next_soal_id' => $nextSoal?->id,
+            'next_url' => $nextSoal ? $this->urlForSoal($nextSoal) : null,
+            'total_exp' => $catatan['total_exp'],
+            'current_streak' => $catatan['current_streak'],
+            'highest_streak' => $catatan['highest_streak'],
         ]);
     }
 
@@ -206,16 +252,47 @@ class KuisSesiController extends Controller
     {
         $siswa = $this->siswa();
         $this->gamification->syncStreak($siswa);
+        $accessibleLevelIds = $this->levelIds($siswa->id);
 
         $query = Soal::query()
             ->with('levelMateri')
-            ->whereIn('level_materi_id', $this->levelIds($siswa->id))
-            ->where('tipe_soal', $tipe)
-            ->orderBy('level_materi_id')
-            ->orderBy('id');
+            ->whereIn('level_materi_id', $accessibleLevelIds)
+            ->where('tipe_soal', $tipe);
 
-        $soal = (clone $query)->first();
+        if (request()->filled('level_materi_id')) {
+            $levelId = (int) request('level_materi_id');
+            if ($accessibleLevelIds->contains($levelId)) {
+                $query->where('level_materi_id', $levelId);
+            }
+        }
+
         $total = (clone $query)->count();
+        $soal = null;
+
+        if (request()->filled('soal_id')) {
+            $requestedId = (int) request('soal_id');
+            $soal = (clone $query)->where('id', $requestedId)->first();
+        }
+
+        if (! $soal) {
+            $selesaiSoalIds = JawabanSiswa::where('siswa_id', $siswa->id)
+                ->where('skor_tertinggi', '>=', 100)
+                ->pluck('soal_id');
+
+            $soal = (clone $query)
+                ->whereNotIn('id', $selesaiSoalIds)
+                ->orderBy('level_materi_id')
+                ->orderBy('id')
+                ->first();
+
+            if (! $soal) {
+                $soal = (clone $query)
+                    ->orderBy('level_materi_id')
+                    ->orderBy('id')
+                    ->first();
+            }
+        }
+
         $nomor = $soal ? (clone $query)->where('id', '<=', $soal->id)->count() : 0;
 
         return view($view, [
@@ -229,6 +306,19 @@ class KuisSesiController extends Controller
             'progress' => ['nomor' => $nomor, 'total' => $total],
             'soal' => $soal ? $this->payload($soal) : null,
         ]);
+    }
+
+    public function urlForSoal(Soal $soal): string
+    {
+        $params = ['soal_id' => $soal->id, 'level_materi_id' => $soal->level_materi_id];
+
+        return match ($soal->tipe_soal) {
+            Soal::TIPE_PILIHAN_GANDA => route('kuis.pilihan-ganda', $params),
+            Soal::TIPE_SUSUN_KALIMAT => route('kuis.susun-ukara', $params),
+            Soal::TIPE_MENULIS_AKSARA => route('kuis.tracing-aksara', $params),
+            Soal::TIPE_KUIS_SUARA => route('kuis.wicara-audio', $params),
+            default => route('kuis.pilihan-ganda', $params),
+        };
     }
 
     /**

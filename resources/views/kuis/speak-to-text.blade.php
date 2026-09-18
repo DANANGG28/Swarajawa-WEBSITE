@@ -81,12 +81,34 @@
 
             function showResult(res) {
                 feedback.className = 'mt-4 rounded-2xl p-5 border ' + (res.benar ? 'bg-green-500/10 border-green-500/30' : 'bg-error-container/60 border-error/30');
+
+                let nextButtons = '<div class="mt-4 flex flex-wrap items-center gap-3">';
+                if (res.next_url) {
+                    nextButtons += `<a href="${res.next_url}" class="rounded-full bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body hover:bg-primary-700 transition shadow-sm">Soal Sabanjure</a>`;
+                }
+                nextButtons += `<a href="{{ route('siswa.latihan') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Daftar Soal</a>`;
+                nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Beranda</a></div>`;
+
+                let levelSelesaiHtml = '';
+                if (res.level_selesai) {
+                    levelSelesaiHtml = `
+                        <div class="mt-3 p-4 rounded-xl bg-green-500/20 border border-green-500/40 text-green-700">
+                            <div class="font-heading text-heading font-extrabold flex items-center gap-1.5">
+                                <span class="material-symbols-outlined icon-fill">military_tech</span>
+                                Level Rampung! Sampeyan oleh bonus +${res.reward_exp} EXP!
+                            </div>
+                            <p class="font-body text-body text-green-800 mt-1">Level sabanjure <strong>${res.level_berikutnya ?? ''}</strong> saiki wis kabuka.</p>
+                        </div>`;
+                }
+
                 feedback.innerHTML = `
                     <div class="flex items-center gap-2 font-heading text-heading font-extrabold ${res.benar ? 'text-green-500' : 'text-error'}">
                         <span class="material-symbols-outlined icon-fill">${res.benar ? 'verified' : 'cancel'}</span>
                         ${res.benar ? 'Bener!' : 'Durung trep'} • Skor ${res.skor}/100 • +${res.exp_didapat ?? 0} XP
                     </div>
-                    <p class="font-body text-body text-on-surface-variant mt-1">Kunci: <strong>${res.detail?.kunci ?? ''}</strong></p>`;
+                    <p class="font-body text-body text-on-surface-variant mt-1">Kunci: <strong>${res.detail?.kunci ?? ''}</strong> • Rekor: ${res.skor_tertinggi}/100 • Total EXP ${res.total_exp} • Streak ${res.current_streak} dina</p>
+                    ${levelSelesaiHtml}
+                    ${nextButtons}`;
                 feedback.classList.remove('hidden');
             }
 

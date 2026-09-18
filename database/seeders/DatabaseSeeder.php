@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
             SuperadminSeeder::class,
             GuruSeeder::class,
             LevelMateriSeeder::class,
+            SoalSeeder::class,
             SiswaSeeder::class,
             KorpusSeeder::class,
-            SoalSeeder::class,
         ]);
     }
 }

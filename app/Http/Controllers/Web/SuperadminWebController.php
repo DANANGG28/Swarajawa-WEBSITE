@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\LevelMateri;
+use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Superadmin;
@@ -12,6 +13,8 @@ use App\Services\ProgresService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class SuperadminWebController extends Controller
@@ -105,10 +108,10 @@ class SuperadminWebController extends Controller
 
         if ($request->hasFile('foto')) {
             $folder = resource_path('image/guru');
-            if (!\Illuminate\Support\Facades\File::isDirectory($folder)) {
-                \Illuminate\Support\Facades\File::makeDirectory($folder, 0755, true, true);
+            if (! File::isDirectory($folder)) {
+                File::makeDirectory($folder, 0755, true, true);
             }
-            $filename = time() . '_' . \Illuminate\Support\Str::slug($request->nama_lengkap) . '.' . $request->file('foto')->getClientOriginalExtension();
+            $filename = time().'_'.Str::slug($request->nama_lengkap).'.'.$request->file('foto')->getClientOriginalExtension();
             $request->file('foto')->move($folder, $filename);
             $data['foto'] = $filename;
         }
@@ -133,13 +136,13 @@ class SuperadminWebController extends Controller
 
         if ($request->hasFile('foto')) {
             $folder = resource_path('image/guru');
-            if (!\Illuminate\Support\Facades\File::isDirectory($folder)) {
-                \Illuminate\Support\Facades\File::makeDirectory($folder, 0755, true, true);
+            if (! File::isDirectory($folder)) {
+                File::makeDirectory($folder, 0755, true, true);
             }
-            if ($guru->foto && \Illuminate\Support\Facades\File::exists($folder . '/' . $guru->foto)) {
-                \Illuminate\Support\Facades\File::delete($folder . '/' . $guru->foto);
+            if ($guru->foto && File::exists($folder.'/'.$guru->foto)) {
+                File::delete($folder.'/'.$guru->foto);
             }
-            $filename = time() . '_' . \Illuminate\Support\Str::slug($request->nama_lengkap ?? $guru->nama_lengkap) . '.' . $request->file('foto')->getClientOriginalExtension();
+            $filename = time().'_'.Str::slug($request->nama_lengkap ?? $guru->nama_lengkap).'.'.$request->file('foto')->getClientOriginalExtension();
             $request->file('foto')->move($folder, $filename);
             $data['foto'] = $filename;
         }
@@ -155,8 +158,8 @@ class SuperadminWebController extends Controller
 
     public function guruDestroy(Guru $guru): RedirectResponse
     {
-        if ($guru->foto && \Illuminate\Support\Facades\File::exists(resource_path('image/guru/' . $guru->foto))) {
-            \Illuminate\Support\Facades\File::delete(resource_path('image/guru/' . $guru->foto));
+        if ($guru->foto && File::exists(resource_path('image/guru/'.$guru->foto))) {
+            File::delete(resource_path('image/guru/'.$guru->foto));
         }
 
         $guru->delete();
@@ -288,7 +291,15 @@ class SuperadminWebController extends Controller
 
     public function levelMateriStore(Request $request): RedirectResponse
     {
-        LevelMateri::create($this->validatedLevel($request));
+        $level = LevelMateri::create($this->validatedLevel($request));
+
+        $siswaIds = Siswa::pluck('id');
+        foreach ($siswaIds as $sId) {
+            ProgresSiswa::firstOrCreate(
+                ['siswa_id' => $sId, 'level_materi_id' => $level->id],
+                ['status' => ProgresSiswa::STATUS_TERKUNCI]
+            );
+        }
 
         return back()->with('sukses', 'Level materi kasil digawe.');
     }

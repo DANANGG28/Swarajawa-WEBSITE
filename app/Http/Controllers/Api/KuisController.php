@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LevelMateri;
 use App\Models\Soal;
 use App\Services\GamificationService;
+use App\Services\JawabanService;
 use App\Services\ProgresService;
 use App\Services\QuizScoringService;
 use Illuminate\Http\JsonResponse;
@@ -17,6 +18,7 @@ class KuisController extends Controller
         private readonly QuizScoringService $scoring,
         private readonly GamificationService $gamification,
         private readonly ProgresService $progres,
+        private readonly JawabanService $jawaban,
     ) {}
 
     /**
@@ -32,25 +34,27 @@ class KuisController extends Controller
         $siswa = $request->user();
         $soal = Soal::query()->with('levelMateri')->findOrFail($data['soal_id']);
 
-        if (! $this->progres->canStart($siswa, $soal->levelMateri)) {
+        if ($soal->levelMateri && ! $this->progres->canStart($siswa, $soal->levelMateri)) {
             return response()->json(['message' => 'Materi belum tercapai.'], 403);
         }
 
         $hasil = $this->scoring->score($soal, $data['jawaban']);
-
-        $expDidapat = (int) round($soal->bobot_exp * ($hasil['skor'] / 100));
-        $gamifikasi = $this->gamification->recordActivity($siswa, $expDidapat);
+        $catatan = $this->jawaban->record($siswa, $soal, $hasil);
 
         return response()->json([
             'message' => $hasil['benar'] ? 'Jawaban benar!' : 'Jawaban belum tepat.',
             'benar' => $hasil['benar'],
             'skor' => $hasil['skor'],
+            'skor_tertinggi' => $catatan['skor_tertinggi'],
             'detail' => $hasil['detail'],
             'kunci_jawaban' => $soal->kunci_jawaban,
-            'exp_didapat' => $expDidapat,
-            'total_exp' => $gamifikasi['total_exp'],
-            'current_streak' => $gamifikasi['current_streak'],
-            'highest_streak' => $gamifikasi['highest_streak'],
+            'exp_didapat' => $catatan['exp_didapat'],
+            'reward_exp' => $catatan['reward_exp'],
+            'level_selesai' => $catatan['level_selesai'],
+            'level_berikutnya' => $catatan['level_berikutnya'],
+            'total_exp' => $catatan['total_exp'],
+            'current_streak' => $catatan['current_streak'],
+            'highest_streak' => $catatan['highest_streak'],
         ]);
     }
 

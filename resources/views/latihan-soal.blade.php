@@ -131,10 +131,10 @@
         <!-- HEADER -->
         <header class="fixed top-0 left-72 right-0 h-20 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] px-space-xl flex items-center justify-between">
             <div class="flex items-center flex-1 max-w-md">
-                <div class="flex items-center w-full bg-gray-50 rounded-full px-space-md py-space-xs gap-space-sm border border-gray-200/60 focus-within:border-primary-500 transition-colors">
+                <form action="{{ route('siswa.latihan') }}" method="GET" class="flex items-center w-full bg-gray-50 rounded-full px-space-md py-space-xs gap-space-sm border border-gray-200/60 focus-within:border-primary-500 transition-colors">
                     <span class="material-symbols-outlined text-gray-500 text-[20px]">search</span>
-                    <input type="text" placeholder="Cari materi aksara, peribahasa, tata bahasa..." class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-500">
-                </div>
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari level materi..." class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-500">
+                </form>
             </div>
             <div class="flex items-center gap-space-lg">
                 <button type="button" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-50 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors relative">
@@ -157,7 +157,7 @@
                                 <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2L1 21h22L12 2zm0 3.8L19.5 19h-15L12 5.8z"></path>
                                 </svg>
-                                <span>PUSAT EVALUASI & TANTANGAN SISWA • KELAS 7A</span>
+                                <span>PUSAT EVALUASI & TANTANGAN SISWA • {{ $siswa->kelas ? 'KELAS '.$siswa->kelas : 'SINAU JOWO' }}</span>
                             </div>
                             <h1 class="font-display text-display text-on-primary font-bold text-2xl lg:text-3xl">
                                 Latihan Soal & Asesmen Basa Jawa
@@ -176,8 +176,8 @@
                                         <polyline points="10 9 9 9 8 9"></polyline>
                                     </svg>
                                     <span class="font-caption text-caption text-primary-fixed">Total Soal:</span>
-                                    <span class="font-heading text-heading text-on-primary font-bold">86</span>
-                                    <span class="font-caption text-caption text-primary-fixed">/ 120 Soal</span>
+                                    <span class="font-heading text-heading text-on-primary font-bold">{{ $totalSelesai }}</span>
+                                    <span class="font-caption text-caption text-primary-fixed">/ {{ $totalSoal }} Soal</span>
                                 </div>
                                 <div class="h-4 w-[1px] bg-white/20 hidden sm:block"></div>
                                 <div class="flex items-center gap-space-xs">
@@ -185,7 +185,7 @@
                                         <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
                                     </svg>
                                     <span class="font-caption text-caption text-primary-fixed">Rata-rata Skor:</span>
-                                    <span class="font-heading text-heading text-yellow-300 font-bold">92%</span>
+                                    <span class="font-heading text-heading text-yellow-300 font-bold">{{ $rataSkor }}%</span>
                                 </div>
                                 <div class="h-4 w-[1px] bg-white/20 hidden sm:block"></div>
                                 <div class="flex items-center gap-space-xs">
@@ -193,280 +193,115 @@
                                         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
                                     </svg>
                                     <span class="font-caption text-caption text-primary-fixed">Bonus EXP:</span>
-                                    <span class="font-heading text-heading text-orange-300 font-bold">+450 XP</span>
-                                    <span class="font-caption text-caption text-primary-fixed">Dina Iki</span>
+                                    <span class="font-heading text-heading text-orange-300 font-bold">+{{ $totalExpDiperoleh }} XP</span>
+                                    <span class="font-caption text-caption text-primary-fixed">Diperoleh</span>
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-md lg:flex-col lg:items-end">
-                            <button class="inline-flex items-center justify-center gap-space-sm rounded-full bg-color-white font-body text-body font-bold text-primary-700 shadow-md transition-all hover:bg-surface-bright hover:shadow-lg px-6 py-3" type="button">
+                            <a href="{{ $firstSoalUrl }}" class="inline-flex items-center justify-center gap-space-sm rounded-full bg-color-white font-body text-body font-bold text-primary-700 shadow-md transition-all hover:bg-surface-bright hover:shadow-lg px-6 py-3">
                                 <svg class="h-4 w-4 fill-current text-primary-700" viewBox="0 0 24 24">
                                     <path d="M8 5v14l11-7z"></path>
                                 </svg>
                                 <span>Mulai Latihan Harian Campuran</span>
-                            </button>
+                            </a>
                             <span class="font-caption text-caption text-primary-fixed text-center lg:text-right mt-1">
-                                Mode adaptif cerdas • Menyesuaikan kelemahan materi
+                                Mode adaptif cerdas • Nyesuaikake materi
                             </span>
                         </div>
                     </div>
                 </section>
 
-                <!-- SESI LATIHAN INTERAKTIF (5 layar kuis) -->
+                <!-- JALUR PASINAON: Siji card saben level materi -->
                 <section class="flex flex-col gap-space-sm">
                     <div class="flex items-center justify-between">
-                        <span class="font-label-upper text-label-upper tracking-wider text-gray-500 uppercase font-bold">SESI LATIHAN INTERAKTIF</span>
-                        <a href="{{ url('/masuk') }}" class="font-caption text-caption text-primary-700 font-semibold hover:underline">Mlebu kanggo miwiti</a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-gutter">
-                        @php
-                            $sesi = [
-                                ['href' => url('/kuis/pilihan-ganda'), 'ikon' => 'quiz', 'judul' => 'Pilihan Ganda', 'sub' => 'FR-3 Evaluasi basa'],
-                                ['href' => url('/kuis/susun-ukara'), 'ikon' => 'segment', 'judul' => 'Susun Ukara', 'sub' => 'FR-4 Alih basa'],
-                                ['href' => url('/kuis/wicara-audio'), 'ikon' => 'graphic_eq', 'judul' => 'Kuis Wicara', 'sub' => 'FR-8 STS/STT'],
-                                ['href' => url('/kuis/speak-to-text'), 'ikon' => 'keyboard_voice', 'judul' => 'Speak to Text', 'sub' => 'FR-7 STT'],
-                                ['href' => url('/kuis/tracing-aksara'), 'ikon' => 'draw', 'judul' => 'Tracing Aksara', 'sub' => 'FR-22 Kanvas'],
-                            ];
-                        @endphp
-                        @foreach ($sesi as $item)
-                            <a href="{{ $item['href'] }}" class="group flex items-center gap-3 rounded-2xl bg-surface-container-lowest p-4 shadow-sm hover:shadow-md border border-gray-100 transition-all">
-                                <span class="w-11 h-11 rounded-xl bg-primary-fixed flex items-center justify-center text-primary-700 shrink-0">
-                                    <span class="material-symbols-outlined text-[22px]">{{ $item['ikon'] }}</span>
-                                </span>
-                                <span class="flex flex-col min-w-0">
-                                    <span class="font-heading text-body font-bold text-on-surface truncate">{{ $item['judul'] }}</span>
-                                    <span class="font-caption text-caption text-gray-500 truncate">{{ $item['sub'] }}</span>
-                                </span>
-                            </a>
-                        @endforeach
-                    </div>
-                </section>
-
-                <!-- Filter & Tab Navigasi Kategori Soal -->
-                <section class="flex flex-col gap-space-sm">
-                    <div class="flex items-center justify-between">
-                        <span class="font-label-upper text-label-upper tracking-wider text-gray-500 uppercase font-bold">PILIHAN KATEGORI & MATERI</span>
-                        <button type="button" class="font-caption text-caption text-primary-700 font-semibold hover:underline">Reset Pilihan</button>
-                    </div>
-                    <!-- Horizontal Scrollable Pills -->
-                    <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-                        <button class="rounded-full bg-primary-600 px-5 py-2 font-body text-body font-semibold text-on-primary whitespace-nowrap shadow-sm" type="button">
-                            Kabeh Soal (6)
-                        </button>
-                        <button class="rounded-full bg-surface-container px-5 py-2 font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap" type="button">
-                            Unggah-Ungguh Basa (Level 1)
-                        </button>
-                        <button class="rounded-full bg-surface-container px-5 py-2 font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap" type="button">
-                            Sandhangan Swara & Aksara (Level 2)
-                        </button>
-                        <button class="rounded-full bg-surface-container px-5 py-2 font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap" type="button">
-                            Busana Adat (Level 3)
-                        </button>
-                        <button class="rounded-full bg-surface-container px-5 py-2 font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap" type="button">
-                            Paribasan & Cerita Rakyat (Level 4)
-                        </button>
-                        <button class="rounded-full bg-surface-container px-5 py-2 font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap flex items-center gap-1.5 text-orange-500" type="button">
-                            <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
-                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                            </svg>
-                            <span>Kuis Kilat 5 Menit</span>
-                        </button>
-                    </div>
-                </section>
-
-                <!-- MAIN CONTENT GRID: List of Quizzes -->
-                <section class="flex flex-col gap-space-md w-full">
-                    <!-- Kuis 1: Pambagyaharja & Salam Pasrawungan -->
-                    <div class="flex flex-col gap-space-sm rounded-[20px] bg-surface-container-lowest p-6 shadow-sm transition-all hover:shadow-md border border-gray-100">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
-                            <div class="flex items-center gap-2">
-                                <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 1 <span class="mx-1">•</span> <span class="text-green-500 font-bold">RAMPUNG</span></span>
-                                <span class="font-caption text-caption text-gray-500">• Pilihan Ganda</span>
-                            </div>
-                            <div class="flex items-center gap-1 text-green-500">
-                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
-                                </svg>
-                                <span class="font-label-upper text-label-upper text-green-500 font-semibold">SKOR 100/100</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
-                            <div class="flex flex-col max-w-xl">
-                                <h3 class="font-heading text-heading font-bold text-on-surface">Pambagyaharja & Salam Pasrawungan</h3>
-                                <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">
-                                    Gladhi ngenani tatacara ngaturake pambagyaharja, uluk salam nalika ketemu kanca, guru, sarta sesepuh desa.
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-space-md shrink-0">
-                                <div class="flex flex-col items-end">
-                                    <span class="font-caption text-caption text-gray-500">Ganjaran</span>
-                                    <span class="font-heading text-heading text-primary-700 font-bold">+50 XP</span>
-                                </div>
-                                <button class="rounded-full bg-surface-container-high px-5 py-2 font-body text-body font-semibold text-on-surface hover:bg-surface-dim transition-colors" type="button">
-                                    Latihan Maneh
-                                </button>
-                            </div>
-                        </div>
+                        <span class="font-label-upper text-label-upper tracking-wider text-gray-500 uppercase font-bold">JALUR PASINAON BERJENJANG</span>
+                        <span class="font-caption text-caption text-gray-500">Pilih level kanggo miwiti gladhi</span>
                     </div>
 
-                    <!-- Kuis 2: Bedane Ngoko Alus lan Krama Inggil -->
-                    <div class="flex flex-col gap-space-sm rounded-[20px] bg-surface-container-lowest p-6 shadow-sm transition-all hover:shadow-md border border-gray-100">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
-                            <div class="flex items-center gap-2">
-                                <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 1 <span class="mx-1">•</span> <span class="text-green-500 font-bold">RAMPUNG</span></span>
-                                <span class="font-caption text-caption text-gray-500">• Rakit Ukara & Pilihan</span>
-                            </div>
-                            <div class="flex items-center gap-1 text-green-500">
-                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
-                                </svg>
-                                <span class="font-label-upper text-label-upper text-green-500 font-semibold">SKOR 92/100</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
-                            <div class="flex flex-col max-w-xl">
-                                <h3 class="font-heading text-heading font-bold text-on-surface">Bedane Ngoko Alus lan Krama Inggil</h3>
-                                <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">
-                                    Asesmen panggunaan tembung kriya (tindak, dhahar, siram) tumrap awake dhewe lawan marang tiyang sepuh.
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-space-md shrink-0">
-                                <div class="flex flex-col items-end">
-                                    <span class="font-caption text-caption text-gray-500">Ganjaran</span>
-                                    <span class="font-heading text-heading text-primary-700 font-bold">+60 XP</span>
-                                </div>
-                                <button class="rounded-full bg-surface-container-high px-5 py-2 font-body text-body font-semibold text-on-surface hover:bg-surface-dim transition-colors" type="button">
-                                    Latihan Maneh
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+                        @forelse($levelCards as $lvl)
+                            @php
+                                $badge = $lvl->badge;
+                                $border = $badge === 'sedang'
+                                    ? 'border-primary-600/40 ring-2 ring-primary-600/20'
+                                    : ($badge === 'terkunci' ? 'border-gray-200 opacity-75' : 'border-gray-100');
+                            @endphp
 
-                    <!-- Kuis 3: Wulu, Suku, Taling, Tarung (Sandhangan Swara) - In Progress -->
-                    <div class="flex flex-col gap-space-sm rounded-[20px] bg-surface-container-lowest p-6 shadow-sm ring-2 ring-primary-600/30 transition-all hover:shadow-md border border-gray-100">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
-                            <div class="flex items-center gap-2">
-                                <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 2 <span class="mx-1">•</span> <span class="text-orange-500 font-bold">SEDANG DILAKONI</span></span>
-                                <span class="font-caption text-caption text-gray-500">• Identifikasi Aksara</span>
-                            </div>
-                            <span class="font-label-upper text-label-upper text-primary-700 font-bold">8 / 12 PITAKON (68%)</span>
-                        </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
-                            <div class="flex flex-col max-w-xl">
-                                <h3 class="font-heading text-heading font-bold text-on-surface">Wulu, Suku, Taling, Tarung (Sandhangan Swara)</h3>
-                                <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">
-                                    Bedakake swara jejeg lan swara miring ing panulisan aksara legena kanthi sandhangan swara jangkep.
-                                </p>
-                                <!-- Progress Bar -->
-                                <div class="w-full max-w-xs bg-surface-container-high h-2 rounded-full overflow-hidden mt-3">
-                                    <div class="bg-primary-600 h-full w-[68%] rounded-full"></div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-space-md shrink-0">
-                                <div class="flex flex-col items-end">
-                                    <span class="font-caption text-caption text-gray-500">Ganjaran</span>
-                                    <span class="font-heading text-heading text-primary-700 font-bold">+70 XP</span>
-                                </div>
-                                <button class="rounded-full bg-primary-600 px-5 py-2 font-body text-body font-semibold text-on-primary hover:bg-primary-700 transition-colors shadow-sm" type="button">
-                                    Terusake Garap
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                            @if($lvl->is_locked)
+                                <div class="flex flex-col gap-4 rounded-[24px] bg-surface-container-lowest p-6 shadow-sm border {{ $border }}">
+                            @else
+                                <a href="{{ $lvl->mulai_url }}" class="group flex flex-col gap-4 rounded-[24px] bg-surface-container-lowest p-6 shadow-sm hover:shadow-md transition-all border {{ $border }}">
+                            @endif
+                                    {{-- Header: level & status (teks polos, tanpa pill) --}}
+                                    <div class="flex items-start justify-between gap-4">
+                                        <div class="flex flex-col min-w-0">
+                                            <span class="font-label-upper text-label-upper uppercase tracking-wider font-bold text-gray-500">
+                                                LEVEL {{ $lvl->urutan }} <span class="mx-1">•</span>
+                                                @if($badge === 'selesai')
+                                                    <span class="text-green-500">RAMPUNG</span>
+                                                @elseif($badge === 'sedang')
+                                                    <span class="text-orange-500">SEDANG DILAKONI</span>
+                                                @elseif($badge === 'terkunci')
+                                                    <span class="text-gray-500">TERKUNCI</span>
+                                                @else
+                                                    <span class="text-primary-700">ANYAR</span>
+                                                @endif
+                                            </span>
+                                            <h3 class="font-heading text-heading font-bold mt-1 {{ $badge === 'terkunci' ? 'text-gray-500' : 'text-on-surface' }}">
+                                                {{ $lvl->nama_materi }}
+                                            </h3>
+                                            <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed line-clamp-2">
+                                                {{ $lvl->deskripsi ?? 'Materi pasinaon Basa lan Budaya Jawa.' }}
+                                            </p>
+                                        </div>
+                                        @if($badge === 'selesai')
+                                            <span class="material-symbols-outlined icon-fill text-green-500 shrink-0">verified</span>
+                                        @elseif($badge === 'terkunci')
+                                            <span class="material-symbols-outlined text-gray-400 shrink-0">lock</span>
+                                        @else
+                                            <span class="material-symbols-outlined text-primary-600 shrink-0 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                        @endif
+                                    </div>
 
-                    <!-- Kuis 4: Evaluasi Wicara: Nyuwun Pangapunten Dhateng Tiyang Sepuh -->
-                    <div class="flex flex-col gap-space-sm rounded-[20px] bg-surface-container-low p-6 shadow-sm transition-all hover:shadow-md border border-primary-100">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
-                            <div class="flex items-center gap-2">
-                                <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 2 <span class="mx-1">•</span> <span class="text-primary-700 font-bold">ANYAR</span></span>
-                                <span class="font-caption text-caption text-primary-700 font-medium flex items-center gap-1">
-                                    <svg class="h-3.5 w-3.5 text-primary-700" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                    </svg>
-                                    <span>Kuis Wicara Audio STT</span>
-                                </span>
-                            </div>
-                            <span class="font-label-upper text-label-upper text-gray-500 font-semibold">DURASI: 10 MENIT</span>
-                        </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
-                            <div class="flex flex-col max-w-xl">
-                                <h3 class="font-heading text-heading font-bold text-on-surface">Evaluasi Wicara: Nyuwun Pangapunten Dhateng Tiyang Sepuh</h3>
-                                <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">
-                                    Unggahke swaramu nalika matur sungkem nyuwun pangapunten mawi basa Krama Alus ingkang sae lan leres.
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-space-md shrink-0">
-                                <div class="flex flex-col items-end">
-                                    <span class="font-caption text-caption text-gray-500">Ganjaran</span>
-                                    <span class="font-heading text-heading text-orange-500 font-bold">+80 XP</span>
-                                </div>
-                                <button class="rounded-full bg-primary-600 px-5 py-2 font-body text-body font-semibold text-on-primary hover:bg-primary-700 transition-colors shadow-sm" type="button">
-                                    Mulai Kuis
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                                    {{-- Tipe soal sing ana ing level (teks polos) --}}
+                                    @if($lvl->tipe_list->isNotEmpty())
+                                        <span class="font-caption text-caption text-gray-500">{{ $lvl->tipe_list->implode(' • ') }}</span>
+                                    @endif
 
-                    <!-- Kuis 5: Goresan Sandhangan Panyangga & Sigeg -->
-                    <div class="flex flex-col gap-space-sm rounded-[20px] bg-surface-container-lowest p-6 shadow-sm transition-all hover:shadow-md border border-gray-100">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
-                            <div class="flex items-center gap-2">
-                                <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 2 <span class="mx-1">•</span> <span class="text-tertiary font-bold">PRAKTIK GORESAN</span></span>
-                                <span class="font-caption text-caption text-gray-500">• Tracing Kanvas Baku</span>
-                            </div>
-                            <span class="font-label-upper text-label-upper text-gray-500 font-semibold">6 AKSARA GORESAN</span>
-                        </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
-                            <div class="flex flex-col max-w-xl">
-                                <h3 class="font-heading text-heading font-bold text-on-surface">Goresan Sandhangan Panyigeg: Wignyan, Layar, Cecak</h3>
-                                <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">
-                                    Gladhi nulis tanda panyigeg aksara ing kanvas interaktif mawi presisi toleransi interpolasi vektor.
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-space-md shrink-0">
-                                <div class="flex flex-col items-end">
-                                    <span class="font-caption text-caption text-gray-500">Ganjaran</span>
-                                    <span class="font-heading text-heading text-primary-700 font-bold">+75 XP</span>
-                                </div>
-                                <button class="rounded-full bg-surface-container-high px-5 py-2 font-body text-body font-semibold text-on-surface hover:bg-surface-dim transition-colors" type="button">
-                                    Mulai Kanvas
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                                    {{-- Progress --}}
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-1 h-2.5 bg-surface-container-high rounded-full overflow-hidden">
+                                            <div class="h-full rounded-full {{ $badge === 'selesai' ? 'bg-green-500' : 'bg-primary-600' }} transition-all" style="width: {{ $lvl->persen }}%"></div>
+                                        </div>
+                                        <span class="font-caption text-caption font-bold text-on-surface-variant whitespace-nowrap">{{ $lvl->lulus_count }}/{{ $lvl->total_soal }} Soal ({{ $lvl->persen }}%)</span>
+                                    </div>
 
-                    <!-- Kuis 6: Makna Filosofis Blangkon & Jarik Sidomukti (Locked) -->
-                    <div class="flex flex-col gap-space-sm rounded-[20px] bg-surface-container-highest/60 p-6 opacity-85 transition-all border border-gray-200">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
-                            <div class="flex items-center gap-2">
-                                <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 3 <span class="mx-1">•</span> TERKUNCI</span>
-                                <span class="font-caption text-caption text-gray-500">• Evaluasi Busana Adat</span>
-                            </div>
-                            <div class="flex items-center gap-1 text-gray-500">
-                                <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24">
-                                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path>
-                                </svg>
-                                <span class="font-label-upper text-label-upper font-semibold">TERKUNCI</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
-                            <div class="flex flex-col max-w-xl">
-                                <h3 class="font-heading text-heading font-bold text-gray-500">Makna Filosofis Blangkon & Jarik Sidomukti</h3>
-                                <p class="font-caption text-caption text-gray-500 mt-1 leading-relaxed">
-                                    Rampungake kabeh evaluasi Sandhangan Swara Level 2 dhisik kanggo mbukak tes pemahaman rasukan adat iki.
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-space-md shrink-0">
-                                <div class="flex flex-col items-end">
-                                    <span class="font-caption text-caption text-gray-500">Ganjaran</span>
-                                    <span class="font-heading text-heading text-gray-500 font-bold">+100 XP</span>
+                                    {{-- Footer: reward + aksi --}}
+                                    <div class="flex items-center justify-between gap-3 pt-1">
+                                        <span class="font-label-upper text-label-upper font-bold text-tertiary">+{{ $lvl->reward_exp }} EXP</span>
+                                        @if($lvl->is_locked)
+                                            <span class="rounded-full bg-gray-200 px-5 py-2 font-body text-body font-semibold text-gray-500 cursor-not-allowed">Terkunci</span>
+                                        @elseif($badge === 'selesai')
+                                            <span class="rounded-full bg-surface-container-high px-5 py-2 font-body text-body font-semibold text-on-surface group-hover:bg-surface-dim transition-colors">Latihan Maneh</span>
+                                        @elseif($badge === 'sedang')
+                                            <span class="rounded-full bg-primary-600 px-5 py-2 font-body text-body font-semibold text-on-primary group-hover:bg-primary-700 transition-colors shadow-sm">Terusake</span>
+                                        @else
+                                            <span class="rounded-full bg-primary-600 px-5 py-2 font-body text-body font-semibold text-on-primary group-hover:bg-primary-700 transition-colors shadow-sm">Mulai Kuis</span>
+                                        @endif
+                                    </div>
+                            @if($lvl->is_locked)
                                 </div>
-                                <button class="rounded-full bg-gray-200 px-5 py-2 font-body text-body font-semibold text-gray-500 cursor-not-allowed" disabled type="button">
-                                    Terkunci
-                                </button>
+                            @else
+                                </a>
+                            @endif
+                        @empty
+                            <div class="lg:col-span-2 bg-surface-container-lowest rounded-2xl p-10 text-center border border-gray-100 shadow-sm text-gray-500">
+                                <span class="material-symbols-outlined text-[48px] text-gray-400">layers</span>
+                                <p class="font-heading text-heading font-bold text-on-surface mt-2">Durung ana level materi sing kasedhiya.</p>
+                                <p class="font-body text-body mt-1">Takon bapak/ibu guru kanggo nambahake level lan soal anyar.</p>
                             </div>
-                        </div>
+                        @endforelse
                     </div>
                 </section>
             </div>
