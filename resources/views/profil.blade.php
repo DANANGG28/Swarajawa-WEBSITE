@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil, Setelan & Koleksi Badge Siswa - Sinau Jowo Web</title>
+    <title>Profil, Pengaturan & Koleksi Badge Siswa - Sinau Jowo Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400..800;1,400..800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -175,7 +175,7 @@
                                 <div class="w-full h-full rounded-xl bg-primary-700 text-white font-bold text-3xl flex items-center justify-center">
                                     {{ mb_strtoupper(mb_substr($siswa->nama_lengkap, 0, 2)) }}
                                 </div>
-                                <span class="absolute bottom-2 right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-surface-container-lowest" title="Aktif Sinau"></span>
+                                <span class="absolute bottom-2 right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-surface-container-lowest" title="Aktif Belajar"></span>
                             </div>
                             <div class="flex flex-col min-w-0 pt-16 sm:pt-16">
                                 <div class="flex items-center gap-2">
@@ -183,7 +183,7 @@
                                     <span class="material-symbols-outlined text-primary-600 text-xl" title="Siswa Terverifikasi">verified</span>
                                 </div>
                                 <div class="font-caption text-caption text-gray-500 mt-0.5">NIS: {{ $siswa->nis ?? '-' }} • KELAS {{ $siswa->kelas ? $siswa->kelas : 'SISWA' }} • SINAU JOWO</div>
-                                <p class="font-body text-body text-on-surface-variant mt-1 italic max-w-xl">“Siswa sregep nyinau unggah-ungguh basa lan aksara Jawa.”</p>
+                                <p class="font-body text-body text-on-surface-variant mt-1 italic max-w-xl">“Siswa rajin mempelajari tata krama bahasa dan aksara Jawa.”</p>
                             </div>
                         </div>
                     </div>
@@ -196,12 +196,12 @@
                                 <span class="material-symbols-outlined text-2xl">stars</span>
                             </div>
                             <div class="flex flex-col">
-                                <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Total Poin Sinau</span>
+                                <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Total Poin Belajar</span>
                                 <div class="flex items-baseline gap-1">
                                     <span class="font-stat-number text-stat-number text-on-surface font-extrabold">{{ number_format($totalExp) }}</span>
                                     <span class="font-body text-body font-bold text-primary-600">XP</span>
                                 </div>
-                                <span class="font-caption text-caption text-gray-500">Tingkat: {{ $totalExp >= 1000 ? 'Wasasis (Mahir)' : ($totalExp >= 300 ? 'Madya' : 'Pratama') }}</span>
+                                <span class="font-caption text-caption text-gray-500">Tingkat: {{ $totalExp >= 1000 ? 'Wasasis (Mahir)' : ($totalExp >= 300 ? 'Madya' : 'Pratama (Pemula)') }}</span>
                             </div>
                         </div>
                         <!-- Stat 2: Class Rank -->
@@ -210,11 +210,11 @@
                                 <span class="material-symbols-outlined text-2xl">military_tech</span>
                             </div>
                             <div class="flex flex-col">
-                                <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Peringkat Pasinaon</span>
+                                <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Peringkat Pembelajaran</span>
                                 <div class="flex items-baseline gap-1">
                                     <span class="font-stat-number text-stat-number text-on-surface font-extrabold">#{{ $myRank }}</span>
                                 </div>
-                                <span class="font-caption text-caption text-green-500 font-semibold">{{ $completedLevels }} Level Rampung</span>
+                                <span class="font-caption text-caption text-green-500 font-semibold">{{ $completedLevels }} Level Selesai</span>
                             </div>
                         </div>
                         <!-- Stat 3: Daily Streak -->
@@ -225,9 +225,9 @@
                             <div class="flex flex-col">
                                 <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Streak Konsistensi</span>
                                 <div class="flex items-baseline gap-1">
-                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">{{ $currentStreak }} Dina</span>
+                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">{{ $currentStreak }} Hari</span>
                                 </div>
-                                <span class="font-caption text-caption text-gray-500">Rekor paling dhuwur: {{ $highestStreak }} Dina</span>
+                                <span class="font-caption text-caption text-gray-500">Rekor tertinggi: {{ $highestStreak }} Hari</span>
                             </div>
                         </div>
                     </div>
@@ -245,7 +245,7 @@
                     </button>
                     <button type="button" id="tab-btn-audio" onclick="switchProfileTab('audio')" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-all whitespace-nowrap">
                         <span class="material-symbols-outlined text-base">graphic_eq</span>
-                        <span>Setelan Pasinaon & Swara AI</span>
+                        <span>Pengaturan Pembelajaran & Suara AI</span>
                     </button>
                     <button type="button" id="tab-btn-keamanan" onclick="switchProfileTab('keamanan')" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-all whitespace-nowrap">
                         <span class="material-symbols-outlined text-base">lock</span>
@@ -258,15 +258,15 @@
                     <!-- Badge Summary Header Card -->
                     <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 border border-gray-100">
                         <div class="flex flex-col">
-                            <h2 class="font-heading text-heading text-on-surface font-bold">Koleksi Piagam & Lencana Sinau</h2>
-                            <p class="font-body text-body text-on-surface-variant mt-0.5">Lencana otomatis kagayuh nalika ngrampungake tracing aksara, wicara krama, lan kuis kabudayan.</p>
+                            <h2 class="font-heading text-heading text-on-surface font-bold">Koleksi Piagam & Lencana Belajar</h2>
+                            <p class="font-body text-body text-on-surface-variant mt-0.5">Lencana otomatis diraih ketika menyelesaikan penelusuran aksara, percakapan krama, dan kuis kebudayaan.</p>
                         </div>
                         <!-- Badge Completion Counter Bar -->
                         @php $persenLevel = $totalLevels > 0 ? (int) round(($completedLevels / $totalLevels) * 100) : 0; @endphp
                         <div class="flex flex-col w-full md:w-80 bg-surface-container-low p-3 rounded-xl border border-primary-100/50">
                             <div class="flex justify-between items-center mb-1">
-                                <span class="font-caption text-caption text-gray-500 font-semibold">Progres Pasinaon</span>
-                                <span class="font-caption text-caption font-bold text-primary-700">{{ $completedLevels }} saka {{ $totalLevels }} Level ({{ $persenLevel }}%)</span>
+                                <span class="font-caption text-caption text-gray-500 font-semibold">Progres Pembelajaran</span>
+                                <span class="font-caption text-caption font-bold text-primary-700">{{ $completedLevels }} dari {{ $totalLevels }} Level ({{ $persenLevel }}%)</span>
                             </div>
                             <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
                                 <div class="h-full bg-primary-600 rounded-full transition-all" style="width: {{ $persenLevel }}%"></div>
@@ -279,9 +279,9 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="material-symbols-outlined text-green-500 text-lg">verified</span>
-                                <h2 class="font-heading text-heading text-on-surface font-bold">Lencana Sing Wis Dikantongi ({{ $completedLevels }})</h2>
+                                <h2 class="font-heading text-heading text-on-surface font-bold">Lencana yang Telah Diraih ({{ $completedLevels }})</h2>
                             </div>
-                            <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">KASIL DIGAYUH • STATUS AKTIF</span>
+                            <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">BERHASIL DIRAIH • STATUS AKTIF</span>
                         </div>
 
                         <!-- 3-Column Grid with Distinct Geometric Clip-Path Badge Containers (§5.12 Compliant) -->
@@ -297,9 +297,9 @@
                                         </svg>
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 1 <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">RAMPUNG</span></span>
+                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 1 <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
                                         <h3 class="font-heading text-heading text-on-surface font-bold truncate mt-0.5">Jawara Hanacaraka</h3>
-                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Sukses nulis lan ngapalake 14 aksara nglegena dhasar kanthi presisi dhuwur.</p>
+                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Sukses menulis dan menghafal 14 aksara nglegena dasar dengan presisi tinggi.</p>
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-2 bg-surface-container-low p-2 rounded-xl flex items-center justify-between text-caption font-caption text-gray-500 border border-primary-100/30">
@@ -318,9 +318,9 @@
                                         </svg>
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">WICARA KRAMA <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">RAMPUNG</span></span>
+                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">WICARA KRAMA <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
                                         <h3 class="font-heading text-heading text-on-surface font-bold truncate mt-0.5">Tatas Unggah-Ungguh</h3>
-                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Nuntasake pacelathon Krama Inggil marang guru lan tiyang sepuh skor 92%.</p>
+                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Menuntaskan percakapan Krama Inggil kepada guru dan orang tua dengan skor 92%.</p>
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-2 bg-surface-container-low p-2 rounded-xl flex items-center justify-between text-caption font-caption text-gray-500 border border-primary-100/30">
@@ -339,9 +339,9 @@
                                         </svg>
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">AKSARA JAWA <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">RAMPUNG</span></span>
+                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">AKSARA JAWA <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
                                         <h3 class="font-heading text-heading text-on-surface font-bold truncate mt-0.5">Prajurit Sandhangan</h3>
-                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Paham panggunaan Wulu, Suku, Taling, lan Tarung ing 20 ukara latihan.</p>
+                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Paham penggunaan Wulu, Suku, Taling, dan Tarung dalam 20 kalimat latihan.</p>
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-2 bg-surface-container-low p-2 rounded-xl flex items-center justify-between text-caption font-caption text-gray-500 border border-primary-100/30">
@@ -360,9 +360,9 @@
                                         </svg>
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">BUDAYA JAWA <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">RAMPUNG</span></span>
+                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">BUDAYA JAWA <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
                                         <h3 class="font-heading text-heading text-on-surface font-bold truncate mt-0.5">Busana Gagrag Anyar</h3>
-                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Ngrampungake tebak busana adat: Jarik, Beskap, lan Blangkon Jawa Wetan.</p>
+                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Menyelesaikan tebak busana adat: Jarik, Beskap, dan Blangkon Jawa Timur.</p>
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-2 bg-surface-container-low p-2 rounded-xl flex items-center justify-between text-caption font-caption text-gray-500 border border-primary-100/30">
@@ -381,13 +381,13 @@
                                         </svg>
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">AI STT RECOGNITION <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">RAMPUNG</span></span>
+                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">AI STT RECOGNITION <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
                                         <h3 class="font-heading text-heading text-on-surface font-bold truncate mt-0.5">Wicara Prigel</h3>
-                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Latihan pelafalan swara Jawa mawa kecerdasan buatan kaping 10 berturut-turut.</p>
+                                        <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed">Latihan pelafalan suara Jawa dengan kecerdasan buatan sebanyak 10 kali berturut-turut.</p>
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-2 bg-surface-container-low p-2 rounded-xl flex items-center justify-between text-caption font-caption text-gray-500 border border-primary-100/30">
-                                    <span>Evaluasi Swara AI</span>
+                                    <span>Evaluasi Suara AI</span>
                                     <span class="text-primary-700 font-bold">+220 XP</span>
                                 </div>
                             </div>
@@ -400,9 +400,9 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="material-symbols-outlined text-gray-500 text-lg">lock</span>
-                                <h2 class="font-heading text-heading text-on-surface font-bold">Lencana Sing Isih Kunci (7)</h2>
+                                <h2 class="font-heading text-heading text-on-surface font-bold">Lencana yang Masih Terkunci (7)</h2>
                             </div>
-                            <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">SYARAT GAYUH • TINGKAT LANJUT</span>
+                            <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">SYARAT PEROLEHAN • TINGKAT LANJUT</span>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -413,14 +413,14 @@
                                         <span class="material-symbols-outlined text-2xl">lock</span>
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 3 <span class="mx-0.5">•</span> KUNCI</span>
+                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">LEVEL 3 <span class="mx-0.5">•</span> TERKUNCI</span>
                                         <h3 class="font-heading text-heading text-on-surface-variant font-bold truncate mt-0.5">Empu Aksara Murda & Swara</h3>
-                                        <p class="font-caption text-caption text-gray-500 mt-1 leading-relaxed">Rampungake piwulangan aksara murda, swara, lan rekan kanthi biji minimal 85.</p>
+                                        <p class="font-caption text-caption text-gray-500 mt-1 leading-relaxed">Selesaikan pembelajaran aksara murda, swara, dan rekan dengan nilai minimal 85.</p>
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-2 bg-surface-container-low p-2 rounded-xl text-caption font-caption text-gray-500 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-xs">info</span>
-                                    <span>Syarat: Tuntasake Bab 3 Dhisik</span>
+                                    <span>Syarat: Tuntaskan Bab 3 Terlebih Dahulu</span>
                                 </div>
                             </div>
 
@@ -431,14 +431,14 @@
                                         <span class="material-symbols-outlined text-2xl">lock</span>
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">PARIBASAN <span class="mx-0.5">•</span> KUNCI</span>
+                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">PARIBASAN <span class="mx-0.5">•</span> TERKUNCI</span>
                                         <h3 class="font-heading text-heading text-on-surface-variant font-bold truncate mt-0.5">Pujangga Paribasan</h3>
-                                        <p class="font-caption text-caption text-gray-500 mt-1 leading-relaxed">Bisa ngrampungake kuis unen-unen, bebasan, lan saloka kanthi skor sampurna 100.</p>
+                                        <p class="font-caption text-caption text-gray-500 mt-1 leading-relaxed">Dapat menyelesaikan kuis peribahasa, bebasan, dan saloka dengan skor sempurna 100.</p>
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-2 bg-surface-container-low p-2 rounded-xl text-caption font-caption text-gray-500 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-xs">info</span>
-                                    <span>Syarat: Skor Kuis Paribasan &gt; 95</span>
+                                    <span>Syarat: Skor Kuis Peribahasa &gt; 95</span>
                                 </div>
                             </div>
 
@@ -449,14 +449,14 @@
                                         <span class="material-symbols-outlined text-2xl">lock</span>
                                     </div>
                                     <div class="flex flex-col min-w-0">
-                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">KONSISTENSI <span class="mx-0.5">•</span> KUNCI</span>
+                                        <span class="font-label-upper text-label-upper text-gray-500 uppercase font-semibold">KONSISTENSI <span class="mx-0.5">•</span> TERKUNCI</span>
                                         <h3 class="font-heading text-heading text-on-surface-variant font-bold truncate mt-0.5">Gathutkaca Streak Master</h3>
-                                        <p class="font-caption text-caption text-gray-500 mt-1 leading-relaxed">Gayuh streak sinau aktif tanpa pedhot sajrone 15 dina berturut-turut.</p>
+                                        <p class="font-caption text-caption text-gray-500 mt-1 leading-relaxed">Raih streak belajar aktif tanpa henti selama 15 hari berturut-turut.</p>
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-2 bg-surface-container-low p-2 rounded-xl text-caption font-caption text-gray-500 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-xs">info</span>
-                                    <span>Syarat: 10 Dina maneh (Saiki 5/15)</span>
+                                    <span>Syarat: 10 Hari lagi (Saat ini 5/15)</span>
                                 </div>
                             </div>
                         </div>
@@ -474,7 +474,7 @@
                             </div>
                             <div class="flex flex-col gap-2 text-body font-body">
                                 <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Jeneng Jangkep</span>
+                                    <span class="text-gray-500">Nama Lengkap</span>
                                     <span class="font-bold text-on-surface">{{ $siswa->nama_lengkap }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
@@ -504,12 +504,12 @@
                         <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-4 border border-gray-100">
                             <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
                                 <span class="material-symbols-outlined text-primary-600">family_restroom</span>
-                                <h2 class="font-heading text-heading text-on-surface font-bold">Guru Pangampu</h2>
+                                <h2 class="font-heading text-heading text-on-surface font-bold">Guru Pengampu</h2>
                             </div>
                             <div class="flex flex-col gap-2 text-body font-body">
                                 @forelse($guruPangampu as $g)
                                     <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                        <span class="text-gray-500">Guru Pangampu{{ $g->pivot->mata_pelajaran ? ' ('.$g->pivot->mata_pelajaran.')' : '' }}</span>
+                                        <span class="text-gray-500">Guru Pengampu{{ $g->pivot->mata_pelajaran ? ' ('.$g->pivot->mata_pelajaran.')' : '' }}</span>
                                         <span class="font-bold text-on-surface">{{ $g->nama_lengkap }}</span>
                                     </div>
                                     <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
@@ -521,7 +521,7 @@
                                         <span class="font-bold text-on-surface">{{ $g->pivot->kelas ? 'Kelas '.$g->pivot->kelas : '-' }}</span>
                                     </div>
                                 @empty
-                                    <div class="py-3 text-gray-500 text-center">Durung ana guru pangampu sing kacathet kanggo siswa iki.</div>
+                                    <div class="py-3 text-gray-500 text-center">Belum ada guru pengampu yang tercatat untuk siswa ini.</div>
                                 @endforelse
                             </div>
                         </div>
@@ -536,13 +536,13 @@
                             <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary-600">record_voice_over</span>
-                                    <h2 class="font-heading text-heading text-on-surface font-bold">Setelan Wicara & Swara (AI TTS & STT)</h2>
+                                    <h2 class="font-heading text-heading text-on-surface font-bold">Pengaturan Wicara & Suara (AI TTS & STT)</h2>
                                 </div>
                                 <span class="font-label-upper text-label-upper text-primary-600 font-bold uppercase">AZURE & GOOGLE SPEECH</span>
                             </div>
                             <!-- Voice Model Selector -->
                             <div class="flex flex-col gap-1.5">
-                                <label class="font-body text-body font-bold text-on-surface">Model Swara Pangucap (Text-to-Speech)</label>
+                                <label class="font-body text-body font-bold text-on-surface">Model Suara Pengucap (Text-to-Speech)</label>
                                 <div class="grid grid-cols-2 gap-3">
                                     <button type="button" class="p-3 rounded-xl bg-primary-600 text-white font-body text-body font-bold flex items-center justify-between shadow-sm">
                                         <div class="flex items-center gap-2">
@@ -561,11 +561,11 @@
                             </div>
                             <!-- Speed Selector -->
                             <div class="flex flex-col gap-1.5">
-                                <label class="font-body text-body font-bold text-on-surface">Kacepetan Swara (Playback Speed)</label>
+                                <label class="font-body text-body font-bold text-on-surface">Kecepatan Suara (Playback Speed)</label>
                                 <div class="grid grid-cols-3 gap-3">
-                                    <button type="button" class="py-2 rounded-xl bg-surface-container-low text-on-surface font-body text-body font-medium hover:bg-surface-container text-center border border-gray-100">0.8x (Alon)</button>
+                                    <button type="button" class="py-2 rounded-xl bg-surface-container-low text-on-surface font-body text-body font-medium hover:bg-surface-container text-center border border-gray-100">0.8x (Lambat)</button>
                                     <button type="button" class="py-2 rounded-xl bg-primary-600 text-white font-body text-body font-bold text-center shadow-sm">1.0x (Standar)</button>
-                                    <button type="button" class="py-2 rounded-xl bg-surface-container-low text-on-surface font-body text-body font-medium hover:bg-surface-container text-center border border-gray-100">1.2x (Cepet)</button>
+                                    <button type="button" class="py-2 rounded-xl bg-surface-container-low text-on-surface font-body text-body font-medium hover:bg-surface-container text-center border border-gray-100">1.2x (Cepat)</button>
                                 </div>
                             </div>
                             <!-- Mic Sensitivity Test -->
@@ -574,11 +574,11 @@
                                     <span class="font-body text-body font-bold text-on-surface">Tes Mikrofon STT Siswa</span>
                                     <span class="font-caption text-caption text-green-500 font-bold">Aktif & Siap</span>
                                 </div>
-                                <p class="font-caption text-caption text-gray-500">Pencet kanggo mriksa sensitivitas mikrofon sadurunge miwiti kuis wicara unggah-ungguh.</p>
+                                <p class="font-caption text-caption text-gray-500">Klik untuk memeriksa sensitivitas mikrofon sebelum memulai kuis wicara tata krama.</p>
                                 <div class="flex items-center gap-4 mt-1">
                                     <button type="button" class="px-4 py-2 rounded-full bg-primary-600 text-white font-body text-caption font-bold flex items-center gap-1 shadow-sm">
                                         <span class="material-symbols-outlined text-sm">mic</span>
-                                        <span>Coba Swara</span>
+                                        <span>Coba Suara</span>
                                     </button>
                                     <div class="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
                                         <div class="w-2/3 h-full bg-green-500 rounded-full"></div>
@@ -592,7 +592,7 @@
                             <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary-600">tune</span>
-                                    <h2 class="font-heading text-heading text-on-surface font-bold">Setelan Kanvas & Asisten AI</h2>
+                                    <h2 class="font-heading text-heading text-on-surface font-bold">Pengaturan Kanvas & Asisten AI</h2>
                                 </div>
                                 <span class="font-label-upper text-label-upper text-primary-600 font-bold uppercase">FR-6 & FR-13</span>
                             </div>
@@ -605,14 +605,14 @@
                                         <span class="material-symbols-outlined text-base">check</span>
                                     </button>
                                     <button type="button" class="p-3 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-body text-body font-medium flex items-center justify-between transition-all border border-gray-100">
-                                        <span>Ketat (Presisi Luhur)</span>
+                                        <span>Ketat (Presisi Tinggi)</span>
                                     </button>
                                 </div>
                             </div>
                             <!-- Toggle Reminders -->
                             <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl border border-gray-100">
                                 <div class="flex flex-col">
-                                    <span class="font-body text-body font-bold text-on-surface">Pangeling Sinau Saben Dina</span>
+                                    <span class="font-body text-body font-bold text-on-surface">Pengingat Belajar Setiap Hari</span>
                                     <span class="font-caption text-caption text-gray-500">Notifikasi otomatis jam 19.00 WIB</span>
                                 </div>
                                 <div class="w-12 h-6 bg-primary-600 rounded-full flex items-center justify-end px-1 cursor-pointer">
@@ -622,8 +622,8 @@
                             <!-- Toggle RAG Smart Hints -->
                             <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl border border-gray-100">
                                 <div class="flex flex-col">
-                                    <span class="font-body text-body font-bold text-on-surface">Saran Pitakon Asisten Tanya Basa</span>
-                                    <span class="font-caption text-caption text-gray-500">Rekomendasi pitakonan otomatis adhedhasar bab</span>
+                                    <span class="font-body text-body font-bold text-on-surface">Saran Pertanyaan Asisten Tanya Bahasa</span>
+                                    <span class="font-caption text-caption text-gray-500">Rekomendasi pertanyaan otomatis berdasarkan bab</span>
                                 </div>
                                 <div class="w-12 h-6 bg-primary-600 rounded-full flex items-center justify-end px-1 cursor-pointer">
                                     <div class="w-4 h-4 bg-white rounded-full"></div>
@@ -638,21 +638,21 @@
                     <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-4 max-w-2xl border border-gray-100">
                         <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
                             <span class="material-symbols-outlined text-primary-600">lock</span>
-                            <h2 class="font-heading text-heading text-on-surface font-bold">Keamanan & Sandi Akun Siswa</h2>
+                            <h2 class="font-heading text-heading text-on-surface font-bold">Keamanan & Kata Sandi Akun Siswa</h2>
                         </div>
                         <div class="flex flex-col gap-4">
                             <div class="flex flex-col gap-1">
-                                <label class="font-body text-body font-bold text-on-surface">Sandi Saiki</label>
+                                <label class="font-body text-body font-bold text-on-surface">Kata Sandi Saat Ini</label>
                                 <input type="password" value="••••••••••••" readonly class="bg-surface-container-low rounded-xl px-4 py-2.5 font-body text-body text-on-surface outline-none border border-gray-200/60">
                             </div>
                             <div class="flex flex-col gap-1">
-                                <label class="font-body text-body font-bold text-on-surface">Ganti Sandi Anyar</label>
-                                <input type="password" placeholder="Lebokake sandi anyar minimal 8 karakter" class="bg-surface-container-low rounded-xl px-4 py-2.5 font-body text-body text-on-surface outline-none border border-gray-200/60 focus:border-primary-500">
+                                <label class="font-body text-body font-bold text-on-surface">Ganti Kata Sandi Baru</label>
+                                <input type="password" placeholder="Masukkan kata sandi baru minimal 8 karakter" class="bg-surface-container-low rounded-xl px-4 py-2.5 font-body text-body text-on-surface outline-none border border-gray-200/60 focus:border-primary-500">
                             </div>
                             <div class="flex items-center justify-between pt-2">
-                                <span class="font-caption text-caption text-gray-500">Pungkasan dianyari: 12 Agustus 2024</span>
+                                <span class="font-caption text-caption text-gray-500">Terakhir diperbarui: 12 Agustus 2024</span>
                                 <button type="button" class="px-6 py-2.5 rounded-full bg-primary-600 text-white font-body text-body font-semibold shadow-md hover:bg-primary-700 transition-all">
-                                    Simpen Sandi Anyar
+                                    Simpan Kata Sandi Baru
                                 </button>
                             </div>
                         </div>

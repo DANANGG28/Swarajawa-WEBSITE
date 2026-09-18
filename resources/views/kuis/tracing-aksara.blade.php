@@ -18,21 +18,21 @@
     @if (! $soal)
         <div class="bg-surface-container-lowest rounded-2xl p-10 text-center border border-gray-100 shadow-sm">
             <span class="material-symbols-outlined text-[48px] text-gray-500">draw</span>
-            <h2 class="font-heading text-heading font-bold text-on-surface mt-3">Durung ana soal tracing aksara</h2>
-            <p class="font-body text-body text-gray-500 mt-1">Rampungake level sadurunge utawa takon guru kanggo nambah soal.</p>
-            <a href="{{ url('/latihan-soal') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Bali menyang Latihan</a>
+            <h2 class="font-heading text-heading font-bold text-on-surface mt-3">Belum ada soal tracing aksara</h2>
+            <p class="font-body text-body text-gray-500 mt-1">Selesaikan level sebelumnya atau hubungi guru untuk menambah soal.</p>
+            <a href="{{ url('/latihan-soal') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Kembali ke Latihan</a>
         </div>
     @else
         <div class="flex flex-col gap-6">
             <section class="bg-surface-container-lowest rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
-                    <div class="font-label-upper text-label-upper uppercase tracking-wider text-primary-600 font-bold mb-1">Latihan Nulis Aksara (FR-22 Tracing)</div>
-                    <h1 class="font-display text-display font-extrabold text-on-surface leading-snug">Tlusuri wujud aksara kanthi nggaris ing kanvas!</h1>
-                    <p class="font-caption text-caption text-gray-500 mt-1">Aksara: <strong class="text-on-surface">{{ $soal['aksara'] ?? '-' }}</strong> • {{ $soal['petunjuk'] ?? 'Tlusuri bayangan aksara.' }}</p>
+                    <div class="font-label-upper text-label-upper uppercase tracking-wider text-primary-600 font-bold mb-1">Latihan Menulis Aksara (FR-22 Tracing)</div>
+                    <h1 class="font-display text-display font-extrabold text-on-surface leading-snug">Telusuri bentuk aksara dengan menggambar pada kanvas!</h1>
+                    <p class="font-caption text-caption text-gray-500 mt-1">Aksara: <strong class="text-on-surface">{{ $soal['aksara'] ?? '-' }}</strong> • {{ $soal['petunjuk'] ?? 'Telusuri bayangan aksara.' }}</p>
                 </div>
                 <button id="btn-tts" type="button" class="self-start md:self-center inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary-fixed/50 hover:bg-primary-fixed border border-primary-400/30 text-on-surface font-body text-body font-semibold transition-colors">
                     <span class="material-symbols-outlined text-primary-600">volume_up</span>
-                    Pangucapan: <strong class="text-primary-700">/{{ $soal['aksara'] ?? 'aksara' }}/</strong>
+                    Pengucapan: <strong class="text-primary-700">/{{ $soal['aksara'] ?? 'aksara' }}/</strong>
                 </button>
             </section>
 
@@ -69,7 +69,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-2.5">
                     <div class="flex items-center gap-2">
                         <button id="btn-reset" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gray-50 hover:bg-surface-container-high border border-gray-200 text-on-surface font-body text-body font-semibold transition-colors">
-                            <span class="material-symbols-outlined text-[18px] text-primary-600">refresh</span> Busek Goresan
+                            <span class="material-symbols-outlined text-[18px] text-primary-600">refresh</span> Hapus Goresan
                         </button>
                         <button id="btn-grid" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gray-50 hover:bg-surface-container-high border border-gray-200 text-on-surface font-body text-body font-semibold transition-colors">
                             <span class="material-symbols-outlined text-[18px] text-primary-600">grid_4x4</span> Garis Panduan
@@ -91,7 +91,7 @@
                     <div class="w-full bg-surface-container-high h-3 rounded-full overflow-hidden">
                         <div id="akurasi-bar" class="bg-primary-600 h-full rounded-full transition-all duration-700" style="width:0%"></div>
                     </div>
-                    <p class="font-caption text-caption text-gray-500 mt-2">Skor diitung saka kemiripan asli sadurunge animasi snap (penilaian tetep jujur).</p>
+                    <p class="font-caption text-caption text-gray-500 mt-2">Skor dihitung dari kemiripan asli sebelum animasi snap (penilaian tetap jujur).</p>
                 </div>
 
                 <div id="feedback" class="hidden rounded-2xl p-5 border"></div>
@@ -104,7 +104,7 @@
     @include('partials.kuis-xp', ['soal' => $soal])
     <button id="btn-kirim" type="button" @disabled(! $soal)
         class="flex items-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-on-primary font-body text-body font-bold px-8 py-3 shadow-sm transition-colors">
-        <span>Priksa &amp; Kirim Wangsulan</span>
+        <span>Periksa &amp; Kirim Jawaban</span>
         <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
     </button>
 @endsection
@@ -250,7 +250,7 @@
             // Submit
             const feedback = document.getElementById('feedback');
             document.getElementById('btn-kirim')?.addEventListener('click', async () => {
-                if (!strokes.length) { alert('Goresake aksara dhisik ing kanvas.'); return; }
+                if (!strokes.length) { alert('Goreskan aksara terlebih dahulu pada kanvas.'); return; }
                 const payload = strokes.map((s) => s.map((p) => [Number(p.x.toFixed(4)), Number(p.y.toFixed(4))]));
                 try {
                     const res = await window.postJSON(window.KUIS.jawabUrl, { soal_id: SOAL.id, jawaban: { strokes: payload } });
@@ -258,7 +258,7 @@
 
                     let nextButtons = '<div class="mt-4 flex flex-wrap items-center gap-3">';
                     if (res.next_url) {
-                        nextButtons += `<a href="${res.next_url}" class="rounded-full bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body hover:bg-primary-700 transition shadow-sm">Soal Sabanjure</a>`;
+                        nextButtons += `<a href="${res.next_url}" class="rounded-full bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body hover:bg-primary-700 transition shadow-sm">Soal Selanjutnya</a>`;
                     }
                     nextButtons += `<a href="{{ route('siswa.latihan') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Daftar Soal</a>`;
                     nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Beranda</a></div>`;
@@ -269,9 +269,9 @@
                             <div class="mt-3 p-4 rounded-xl bg-green-500/20 border border-green-500/40 text-green-700">
                                 <div class="font-heading text-heading font-extrabold flex items-center gap-1.5">
                                     <span class="material-symbols-outlined icon-fill">military_tech</span>
-                                    Level Rampung! Sampeyan oleh bonus +${res.reward_exp} EXP!
+                                    Level Selesai! Anda mendapatkan bonus +${res.reward_exp} EXP!
                                 </div>
-                                <p class="font-body text-body text-green-800 mt-1">Level sabanjure <strong>${res.level_berikutnya ?? ''}</strong> saiki wis kabuka.</p>
+                                <p class="font-body text-body text-green-800 mt-1">Level selanjutnya <strong>${res.level_berikutnya ?? ''}</strong> sekarang sudah terbuka.</p>
                             </div>`;
                     }
 
@@ -280,7 +280,7 @@
                             <span class="material-symbols-outlined icon-fill">${res.benar ? 'verified' : 'cancel'}</span>
                             Skor kemiripan: ${res.skor}/100 • +${res.exp_didapat} XP
                         </div>
-                        <p class="font-body text-body text-on-surface-variant mt-1">Ambang lulus ${res.detail?.ambang_lulus ?? 70} • Rekor: ${res.skor_tertinggi}/100 • Total EXP ${res.total_exp} • Streak ${res.current_streak} dina</p>
+                        <p class="font-body text-body text-on-surface-variant mt-1">Ambang lulus ${res.detail?.ambang_lulus ?? 70} • Rekor: ${res.skor_tertinggi}/100 • Total EXP ${res.total_exp} • Streak ${res.current_streak} hari</p>
                         ${levelSelesaiHtml}
                         ${nextButtons}`;
                     feedback.classList.remove('hidden');

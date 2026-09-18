@@ -61,12 +61,12 @@
                                 <span class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary-600 shrink-0">chat_bubble_outline</span>
                                 <span class="truncate" data-judul>{{ $sesi->judul }}</span>
                             </button>
-                            <button type="button" data-action="hapus-sesi" data-session-id="{{ $sesi->id }}" class="hidden group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-400 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Busak riwayat">
+                            <button type="button" data-action="hapus-sesi" data-session-id="{{ $sesi->id }}" class="hidden group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-400 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Hapus riwayat">
                                 <span class="material-symbols-outlined text-[16px]">delete</span>
                             </button>
                         </div>
                     @empty
-                        <div class="px-3 py-2 text-gray-400 italic text-xs" data-empty-state>Durung ana riwayat chat</div>
+                        <div class="px-3 py-2 text-gray-400 italic text-xs" data-empty-state>Belum ada riwayat chat</div>
                     @endforelse
                 </div>
             </div>
@@ -90,7 +90,7 @@
             @csrf
             <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-50 hover:bg-surface-container-high text-on-surface-variant hover:text-error font-body text-body font-semibold transition-colors">
                 <span class="material-symbols-outlined text-[20px]">logout</span>
-                <span>Metu</span>
+                <span>Keluar</span>
             </button>
         </form>
     </div>

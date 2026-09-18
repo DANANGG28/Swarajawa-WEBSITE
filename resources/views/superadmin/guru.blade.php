@@ -4,7 +4,7 @@
     <a href="{{ route('superadmin.guru.create') }}"
        class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-body font-bold shadow-md hover:shadow-lg transition-all">
         <span class="material-symbols-outlined text-[20px]">person_add</span>
-        <span>Daftarake Guru Anyar</span>
+        <span>Daftarkan Guru Baru</span>
     </a>
 @endsection
 
@@ -16,14 +16,14 @@
             <form method="GET" action="{{ route('superadmin.guru') }}" class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
-                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama lengkap utawa NIP guru..."
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama lengkap atau NIP guru..."
                            class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-2.5 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <button type="submit"
                             class="flex items-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold px-6 py-2.5 shadow-sm transition-all">
                         <span class="material-symbols-outlined text-[18px]">search</span>
-                        <span>Saring</span>
+                        <span>Filter</span>
                     </button>
                     @if (request('q'))
                         <a href="{{ route('superadmin.guru') }}"
@@ -53,7 +53,7 @@
                         {{-- Info Profil Guru --}}
                         <div class="flex items-center gap-4 min-w-0">
                             {{-- Avatar / Foto Guru dengan Fitur Klik Zoom --}}
-                            <div title="Klik kanggo ndeleng foto luwih gedhe"
+                            <div title="Klik untuk melihat foto lebih besar"
                                  onclick="openPhotoModal('{{ $g->foto_url ?? '' }}', '{{ addslashes($g->nama_lengkap) }}', '{{ $g->nip }}', '{{ $g->status_pegawaian ?: '-' }}', '{{ \Illuminate\Support\Str::of($g->nama_lengkap)->substr(0, 2) }}')"
                                  class="group relative w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center font-heading font-extrabold text-base shrink-0 uppercase shadow-sm cursor-pointer hover:scale-105 active:scale-95 transition-all">
                                 @if ($g->foto_url)
@@ -70,7 +70,7 @@
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <h3 class="font-heading text-heading font-bold text-on-surface truncate">{{ $g->nama_lengkap }}</h3>
                                     <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-gray-700 font-label-upper text-[11px] font-bold uppercase">
-                                        {{ $g->jenis_kelamin === 'L' ? 'Lanang' : 'Wadon' }}
+                                        {{ $g->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2 text-gray-500 font-caption text-caption flex-wrap mt-0.5">
@@ -96,22 +96,22 @@
                         <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
                             {{-- Tombol Edit (Icon Pensil Saja) --}}
                             <a href="{{ route('superadmin.guru.edit', $g) }}"
-                               title="Sunting Akun Guru"
+                               title="Edit Akun Guru"
                                class="w-10 h-10 rounded-full bg-primary-50 hover:bg-primary-600 text-primary-700 hover:text-white flex items-center justify-center transition-all shadow-sm border border-primary-100">
                                 <span class="material-symbols-outlined text-[19px]">edit</span>
                             </a>
 
                             {{-- Tombol Detail Akun (Icon Saja) --}}
                             <a href="{{ route('superadmin.guru.show', $g) }}"
-                               title="Deleng Detail Akun"
+                               title="Lihat Detail Akun"
                                class="w-10 h-10 rounded-full bg-surface-container-high hover:bg-primary-600 text-on-surface hover:text-white flex items-center justify-center transition-all shadow-sm">
                                 <span class="material-symbols-outlined text-[19px]">visibility</span>
                             </a>
 
                             {{-- Tombol Hapus (Icon Saja) --}}
-                            <form method="POST" action="{{ route('superadmin.guru.destroy', $g) }}" onsubmit="return confirm('Apa panjenengan yakin pengin mbusak akun guru {{ $g->nama_lengkap }}?')">
+                            <form method="POST" action="{{ route('superadmin.guru.destroy', $g) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun guru {{ $g->nama_lengkap }}?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" title="Busak Akun" class="w-10 h-10 rounded-full bg-error-container/50 text-error flex items-center justify-center hover:bg-error-container transition-colors">
+                                <button type="submit" title="Hapus Akun" class="w-10 h-10 rounded-full bg-error-container/50 text-error flex items-center justify-center hover:bg-error-container transition-colors">
                                     <span class="material-symbols-outlined text-[19px]">delete</span>
                                 </button>
                             </form>
@@ -124,14 +124,14 @@
                         <span class="material-symbols-outlined text-[36px]">group_off</span>
                     </div>
                     <div class="flex flex-col gap-1">
-                        <h4 class="font-heading text-heading font-bold text-on-surface">Durung Ana Akun Guru</h4>
-                        <p class="font-body text-body text-gray-500">Ora ana data guru sing cocog karo saringan utawa durung didaftarake.</p>
+                        <h4 class="font-heading text-heading font-bold text-on-surface">Belum Ada Akun Guru</h4>
+                        <p class="font-body text-body text-gray-500">Tidak ada data guru yang cocok dengan filter atau belum didaftarkan.</p>
                     </div>
                     <div class="pt-2">
                         <a href="{{ route('superadmin.guru.create') }}"
                            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary-600 text-white font-body text-body font-bold shadow-sm hover:bg-primary-700 transition-all">
                             <span class="material-symbols-outlined text-[18px]">person_add</span>
-                            <span>Daftarake Guru Anyar Saiki</span>
+                            <span>Daftarkan Guru Baru Sekarang</span>
                         </a>
                     </div>
                 </div>
@@ -174,7 +174,7 @@
             {{-- Modal Footer --}}
             <div class="px-6 py-3.5 bg-surface-container-low/40 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                 <span id="modalTeacherStatus" class="font-label-upper font-bold uppercase text-primary-700">Status Pegawai</span>
-                <span class="font-caption">Klik area njaba kanggo nutup</span>
+                <span class="font-caption">Klik area luar untuk menutup</span>
             </div>
         </div>
     </div>

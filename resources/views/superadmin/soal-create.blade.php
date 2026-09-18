@@ -14,7 +14,7 @@
         <section class="bg-surface-container-lowest rounded-2xl shadow-sm border border-gray-100">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-600">add_circle</span>
-                <h3 class="font-heading text-heading font-bold text-on-surface">Tambah Soal Anyar</h3>
+                <h3 class="font-heading text-heading font-bold text-on-surface">Tambah Soal Baru</h3>
             </div>
             <div class="px-5 pb-6 pt-4">
                 @include('partials.soal-form', [

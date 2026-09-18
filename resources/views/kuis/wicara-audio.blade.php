@@ -4,9 +4,9 @@
     @if (! $soal)
         <div class="bg-surface-container-lowest rounded-2xl p-10 text-center border border-gray-100 shadow-sm">
             <span class="material-symbols-outlined text-[48px] text-gray-500">mic</span>
-            <h2 class="font-heading text-heading font-bold text-on-surface mt-3">Durung ana soal kuis wicara</h2>
-            <p class="font-body text-body text-gray-500 mt-1">Rampungake level sadurunge utawa takon guru kanggo nambah soal.</p>
-            <a href="{{ url('/latihan-soal') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Bali menyang Latihan</a>
+            <h2 class="font-heading text-heading font-bold text-on-surface mt-3">Belum ada soal kuis wicara</h2>
+            <p class="font-body text-body text-gray-500 mt-1">Selesaikan level sebelumnya atau hubungi guru untuk menambah soal.</p>
+            <a href="{{ url('/latihan-soal') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Kembali ke Latihan</a>
         </div>
     @else
         <div class="flex flex-col gap-6">
@@ -22,7 +22,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-4 border-t border-gray-100">
                     <button type="button" id="btn-tts" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold shadow-sm transition-colors">
                         <span class="material-symbols-outlined text-[18px]">volume_up</span>
-                        Rungokna Tuladha (Azure TTS)
+                        Dengarkan Contoh (Azure TTS)
                     </button>
                     <span class="font-caption text-caption text-gray-500">Pipeline: Google STT → Modul Pemrosesan → Azure TTS</span>
                 </div>
@@ -32,7 +32,7 @@
                 <div class="w-full flex items-center justify-between mb-2">
                     <span class="inline-flex items-center gap-1.5 font-caption text-caption font-bold text-gray-500">
                         <span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
-                        <span id="status-mic">Status Mikrofon: Siap Nyemak</span>
+                        <span id="status-mic">Status Mikrofon: Siap Merekam</span>
                     </span>
                     <span id="timer" class="font-caption text-caption font-bold text-primary-700 bg-primary-fixed/50 px-2.5 py-1 rounded-md">00:00 / 00:10</span>
                 </div>
@@ -41,7 +41,7 @@
                     <div class="absolute w-32 h-32 rounded-full bg-primary-400/30 mic-pulse-ring pointer-events-none"></div>
                     <button id="btn-mic" type="button" class="relative z-10 w-24 h-24 rounded-full bg-gradient-to-tr from-primary-700 via-primary-600 to-primary-500 text-on-primary flex flex-col items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
                         <span class="material-symbols-outlined text-[30px]">mic</span>
-                        <span id="mic-label" class="font-caption text-caption font-bold uppercase">Nerekam</span>
+                        <span id="mic-label" class="font-caption text-caption font-bold uppercase">Rekam</span>
                     </button>
                 </div>
 
@@ -51,7 +51,7 @@
                     @endfor
                 </div>
 
-                <p class="font-caption text-caption text-gray-500 mt-2">Pencet tombol mic kanggo miwiti, pencet maneh kanggo mungkasi. Yen mikrofon ora kasedhiya, sistem nganggo mode demo.</p>
+                <p class="font-caption text-caption text-gray-500 mt-2">Tekan tombol mic untuk memulai, tekan lagi untuk mengakhiri. Jika mikrofon tidak tersedia, sistem menggunakan mode demo.</p>
 
                 <div id="feedback" class="hidden w-full mt-4 text-left rounded-2xl p-5 border"></div>
             </section>
@@ -95,7 +95,7 @@
 
                 let nextButtons = '<div class="mt-4 flex flex-wrap items-center gap-3">';
                 if (jawabRes && jawabRes.next_url) {
-                    nextButtons += `<a href="${jawabRes.next_url}" class="rounded-full bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body hover:bg-primary-700 transition shadow-sm">Soal Sabanjure</a>`;
+                    nextButtons += `<a href="${jawabRes.next_url}" class="rounded-full bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body hover:bg-primary-700 transition shadow-sm">Soal Selanjutnya</a>`;
                 }
                 nextButtons += `<a href="{{ route('siswa.latihan') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Daftar Soal</a>`;
                 nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Beranda</a></div>`;
@@ -106,27 +106,27 @@
                         <div class="mt-3 p-4 rounded-xl bg-green-500/20 border border-green-500/40 text-green-700">
                             <div class="font-heading text-heading font-extrabold flex items-center gap-1.5">
                                 <span class="material-symbols-outlined icon-fill">military_tech</span>
-                                Level Rampung! Sampeyan oleh bonus +${jawabRes.reward_exp} EXP!
+                                Level Selesai! Anda mendapatkan bonus +${jawabRes.reward_exp} EXP!
                             </div>
-                            <p class="font-body text-body text-green-800 mt-1">Level sabanjure <strong>${jawabRes.level_berikutnya ?? ''}</strong> saiki wis kabuka.</p>
+                            <p class="font-body text-body text-green-800 mt-1">Level selanjutnya <strong>${jawabRes.level_berikutnya ?? ''}</strong> sekarang sudah terbuka.</p>
                         </div>`;
                 }
 
                 feedback.innerHTML = `
                     <div class="flex items-center gap-2 font-heading text-heading font-extrabold ${res.benar ? 'text-green-500' : 'text-error'}">
                         <span class="material-symbols-outlined icon-fill">${res.benar ? 'verified' : 'cancel'}</span>
-                        ${res.benar ? 'Pelafalan bener!' : 'Durung trep'} • Skor ${res.skor ?? 0}/100${expText}
+                        ${res.benar ? 'Pelafalan benar!' : 'Belum tepat'} • Skor ${res.skor ?? 0}/100${expText}
                     </div>
-                    <p class="font-body text-body text-on-surface-variant mt-1">Kadeteksi: <strong>${res.transcript ?? '-'}</strong> • Rekor: ${(jawabRes ? jawabRes.skor_tertinggi : res.skor)}/100</p>
+                    <p class="font-body text-body text-on-surface-variant mt-1">Terdeteksi: <strong>${res.transcript ?? '-'}</strong> • Rekor: ${(jawabRes ? jawabRes.skor_tertinggi : res.skor)}/100</p>
                     <p class="font-body text-body text-on-surface mt-1">${res.balasan_teks ?? ''}</p>
                     ${levelSelesaiHtml}
                     ${nextButtons}
-                    ${res.mock ? '<p class="font-caption text-caption text-gray-500 mt-2">(Mode mock — API vendor durung dikonfigurasi)</p>' : ''}`;
+                    ${res.mock ? '<p class="font-caption text-caption text-gray-500 mt-2">(Mode mock — API vendor belum dikonfigurasi)</p>' : ''}`;
                 feedback.classList.remove('hidden');
             }
 
             async function kirimAudio(base64) {
-                statusMic.textContent = 'Ngolah swara...';
+                statusMic.textContent = 'Memproses suara...';
                 try {
                     const res = await window.postJSON(window.KUIS.stsUrl, {
                         audio: base64,
@@ -136,7 +136,7 @@
                 } catch (e) {
                     alert(e.message);
                 } finally {
-                    statusMic.textContent = 'Status Mikrofon: Siap Nyemak';
+                    statusMic.textContent = 'Status Mikrofon: Siap Merekam';
                 }
             }
 
@@ -144,7 +144,7 @@
                 recording = false;
                 clearInterval(timer);
                 waveform.classList.add('hidden');
-                micLabel.textContent = 'Nerekam';
+                micLabel.textContent = 'Rekam';
                 btnMic.classList.remove('bg-error');
                 if (recorder && recorder.state !== 'inactive') recorder.stop();
             }
@@ -166,7 +166,7 @@
                     recording = true;
                     seconds = 0;
                     waveform.classList.remove('hidden');
-                    micLabel.textContent = 'Mungkasi';
+                    micLabel.textContent = 'Berhenti';
                     btnMic.classList.add('bg-error');
                     statusMic.textContent = 'Status Mikrofon: Merekam...';
                     timer = setInterval(() => {
@@ -175,7 +175,7 @@
                         if (seconds >= 10) stopRecording();
                     }, 1000);
                 } catch (e) {
-                    alert('Mikrofon ora kasedhiya. Nganggo "Coba Mode Demo".');
+                    alert('Mikrofon tidak tersedia. Gunakan "Coba Mode Demo".');
                 }
             }
 
@@ -198,7 +198,7 @@
                     if (res.audio_base64) {
                         new Audio('data:' + res.mime + ';base64,' + res.audio_base64).play();
                     } else {
-                        alert('Mode mock: audio TTS durung kasedhiya (API Azure durung dikonfigurasi).');
+                        alert('Mode mock: audio TTS belum tersedia (API Azure belum dikonfigurasi).');
                     }
                 } catch (e) { alert(e.message); }
             });

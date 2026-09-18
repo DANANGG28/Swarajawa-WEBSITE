@@ -151,17 +151,17 @@
                                 <svg class="h-4 w-4 fill-current text-yellow-300" viewBox="0 0 24 24">
                                     <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"></path>
                                 </svg>
-                                <span>PAPAN SKOR &amp; KATALIS PASINAON • {{ $scope === 'sekolah' ? 'PERINGKAT SEKOLAH' : ($kelasSiswa ? 'KELAS '.$kelasSiswa : 'KABEH KELAS') }}</span>
+                                <span>PAPAN SKOR &amp; KATALIS PEMBELAJARAN • {{ $scope === 'sekolah' ? 'PERINGKAT SEKOLAH' : ($kelasSiswa ? 'KELAS '.$kelasSiswa : 'SEMUA KELAS') }}</span>
                             </div>
                         </div>
 
                         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                             <div class="max-w-2xl">
                                 <h1 class="font-display text-display text-on-primary font-bold text-2xl lg:text-3xl mb-2">
-                                    Papan Peringkat Siswa Basa Jawa
+                                    Papan Peringkat Siswa Bahasa Jawa
                                 </h1>
                                 <p class="font-body text-body text-primary-fixed leading-relaxed">
-                                    Deleng capaian poin (XP), streak pasinaon, lan urutan sinau siswa adhedhasar rekaman aktif ing sistem.
+                                    Lihat capaian poin (XP), streak pembelajaran, dan urutan belajar siswa berdasarkan catatan aktif di sistem.
                                 </p>
                             </div>
 
@@ -209,9 +209,9 @@
                                     <path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" stroke-linecap="round" stroke-linejoin="round"></path>
                                 </svg>
                             </div>
-                            <h2 class="font-heading text-heading font-bold text-on-surface">Jawata Telu Gedhe (Top 3)</h2>
+                            <h2 class="font-heading text-heading font-bold text-on-surface">Tiga Besar (Top 3)</h2>
                         </div>
-                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">{{ $scope === 'sekolah' ? 'SEKOLAH' : 'KELAS '.($kelasSiswa ?? 'KABEH') }}</span>
+                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">{{ $scope === 'sekolah' ? 'SEKOLAH' : 'KELAS '.($kelasSiswa ?? 'SEMUA') }}</span>
                     </div>
 
                     <!-- 3 Pillar Podium Grid (Align Bottom) -->
@@ -231,14 +231,14 @@
                                     </div>
                                     <span class="font-heading text-body font-bold text-on-surface leading-tight">{{ $top2['nama'] }}</span>
                                     @if($isMe2)
-                                        <span class="font-caption text-caption font-bold text-primary-600">(Kowe)</span>
+                                        <span class="font-caption text-caption font-bold text-primary-600">(Anda)</span>
                                     @else
                                         <span class="font-caption text-caption text-gray-500">{{ $top2['kelas'] ? 'Kelas '.$top2['kelas'] : 'Siswa' }}</span>
                                     @endif
                                     <span class="font-heading text-heading text-primary-700 font-extrabold mt-0.5">{{ number_format($top2['total_exp']) }} XP</span>
                                 </div>
                             @else
-                                <div class="flex flex-col items-center mb-3 text-gray-400 font-caption">Durung ana</div>
+                                <div class="flex flex-col items-center mb-3 text-gray-400 font-caption">Belum ada</div>
                             @endif
                             <!-- Balok Pillar Rank 2 -->
                             <div class="w-full h-36 bg-[#F7B98A] rounded-t-2xl flex flex-col justify-between items-center py-4 shadow-sm border-t-2 border-white/40">
@@ -268,14 +268,14 @@
                                     </div>
                                     <span class="font-heading text-heading font-extrabold text-on-surface leading-tight">{{ $top1['nama'] }}</span>
                                     @if($isMe1)
-                                        <span class="font-caption text-caption font-bold text-primary-600">(Kowe)</span>
+                                        <span class="font-caption text-caption font-bold text-primary-600">(Anda)</span>
                                     @else
                                         <span class="font-caption text-caption text-gray-500">{{ $top1['kelas'] ? 'Kelas '.$top1['kelas'] : 'Siswa' }}</span>
                                     @endif
                                     <span class="font-heading text-heading text-primary font-black mt-0.5">{{ number_format($top1['total_exp']) }} XP</span>
                                 </div>
                             @else
-                                <div class="flex flex-col items-center mb-3 text-gray-400 font-caption">Durung ana</div>
+                                <div class="flex flex-col items-center mb-3 text-gray-400 font-caption">Belum ada</div>
                             @endif
                             <!-- Balok Pillar Rank 1 -->
                             <div class="w-full h-48 bg-[#5443C9] rounded-t-2xl flex flex-col justify-between items-center py-4 shadow-md border-t-2 border-yellow-300">
@@ -300,14 +300,14 @@
                                     </div>
                                     <span class="font-heading text-body font-bold text-on-surface leading-tight">{{ $top3['nama'] }}</span>
                                     @if($isMe3)
-                                        <span class="font-caption text-caption font-bold text-primary-600">(Kowe)</span>
+                                        <span class="font-caption text-caption font-bold text-primary-600">(Anda)</span>
                                     @else
                                         <span class="font-caption text-caption font-medium text-gray-500">{{ $top3['kelas'] ? 'Kelas '.$top3['kelas'] : 'Siswa' }}</span>
                                     @endif
                                     <span class="font-heading text-heading text-primary-700 font-extrabold mt-0.5">{{ number_format($top3['total_exp']) }} XP</span>
                                 </div>
                             @else
-                                <div class="flex flex-col items-center mb-3 text-gray-400 font-caption">Durung ana</div>
+                                <div class="flex flex-col items-center mb-3 text-gray-400 font-caption">Belum ada</div>
                             @endif
                             <!-- Balok Pillar Rank 3 -->
                             <div class="w-full h-28 bg-[#F6D98B] rounded-t-2xl flex flex-col justify-between items-center py-4 shadow-sm border-t-2 border-white/40">
@@ -323,14 +323,14 @@
                 <section class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col gap-5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-4">
                         <div>
-                            <h3 class="font-heading text-heading font-bold text-on-surface">Daftar Peringkat Siswa Sabanjure</h3>
-                            <p class="font-caption text-caption text-gray-500">Peringkat {{ $scope === 'sekolah' ? 'sekolah' : 'kelas '.$kelasSiswa }} adhedhasar total XP</p>
+                            <h3 class="font-heading text-heading font-bold text-on-surface">Daftar Peringkat Siswa Selanjutnya</h3>
+                            <p class="font-caption text-caption text-gray-500">Peringkat {{ $scope === 'sekolah' ? 'sekolah' : 'kelas '.$kelasSiswa }} berdasarkan total XP</p>
                         </div>
                         <div class="inline-flex items-center gap-2 bg-gray-50 border border-gray-200/80 px-3 py-1.5 rounded-full self-start sm:self-auto">
                             <svg class="w-4 h-4 text-gray-500 stroke-2 fill-none stroke-currentColor" viewBox="0 0 24 24">
                                 <path d="M3 4h18M7 12h10m-7 8h4" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
-                            <span class="font-caption text-caption font-semibold text-on-surface-variant">Urutake: Total XP</span>
+                            <span class="font-caption text-caption font-semibold text-on-surface-variant">Urutkan: Total XP</span>
                         </div>
                     </div>
 
@@ -361,7 +361,7 @@
                                                     {{ $init }}
                                                 </div>
                                                 <div class="flex flex-col">
-                                                    <span class="font-bold text-on-surface">{{ $item['nama'] }} {{ $isMe ? '(Kowe)' : '' }}</span>
+                                                    <span class="font-bold text-on-surface">{{ $item['nama'] }} {{ $isMe ? '(Anda)' : '' }}</span>
                                                     <span class="font-caption text-caption text-gray-500">Siswa Aktif</span>
                                                 </div>
                                             </div>
@@ -371,7 +371,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="py-8 text-center text-gray-500">Durung ana siswa liyane ing papan skor.</td>
+                                        <td colspan="4" class="py-8 text-center text-gray-500">Belum ada siswa lainnya di papan skor.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -387,10 +387,10 @@
                             </div>
                             <div class="flex flex-col">
                                 <div class="flex items-center gap-2">
-                                    <span class="font-heading font-bold text-on-surface text-body">{{ $siswa->nama_lengkap }} (Posisi Sampeyan)</span>
-                                    <span class="font-label-upper text-label-upper font-bold bg-primary-600 text-white px-2 py-0.5 rounded-full">Kowe</span>
+                                    <span class="font-heading font-bold text-on-surface text-body">{{ $siswa->nama_lengkap }} (Posisi Anda)</span>
+                                    <span class="font-label-upper text-label-upper font-bold bg-primary-600 text-white px-2 py-0.5 rounded-full">Anda</span>
                                 </div>
-                                <span class="font-caption text-caption text-gray-500">{{ $siswa->kelas ? 'Kelas '.$siswa->kelas : 'Siswa' }} • Streak {{ $myStreak }} Dina</span>
+                                <span class="font-caption text-caption text-gray-500">{{ $siswa->kelas ? 'Kelas '.$siswa->kelas : 'Siswa' }} • Streak {{ $myStreak }} Hari</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">

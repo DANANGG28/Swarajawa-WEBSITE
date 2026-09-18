@@ -15,25 +15,83 @@
     @endif
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <label class="flex flex-col gap-1.5">
+        {{-- Custom Dropdown Level Materi --}}
+        <div class="relative flex flex-col gap-1.5" id="custom-level-wrapper-{{ $prefix }}">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Level Materi</span>
-            <select name="level_materi_id" required class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+            <select name="level_materi_id" required id="select-level-{{ $prefix }}" class="hidden">
                 @foreach ($levels as $level)
                     <option value="{{ $level->id }}" @selected(old('level_materi_id', $soal->level_materi_id ?? '') == $level->id)>
                         Level {{ $level->urutan }} — {{ $level->nama_materi }}
                     </option>
                 @endforeach
             </select>
-        </label>
 
-        <label class="flex flex-col gap-1.5">
+            @php
+                $selectedLevelId = old('level_materi_id', $soal->level_materi_id ?? ($levels->first()->id ?? ''));
+                $selectedLevel = $levels->firstWhere('id', $selectedLevelId) ?? $levels->first();
+                $selectedLevelText = $selectedLevel ? 'Level '.$selectedLevel->urutan.' — '.$selectedLevel->nama_materi : 'Pilih Level';
+            @endphp
+
+            <button type="button" id="btn-level-{{ $prefix }}"
+                class="flex items-center justify-between w-full rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-primary-400 px-4 py-3 font-body text-body text-gray-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+                <span id="label-level-{{ $prefix }}" class="truncate font-medium text-gray-800">
+                    {{ $selectedLevelText }}
+                </span>
+                <span class="inline-flex items-center justify-center shrink-0 w-5 h-5 text-gray-400 ml-2">
+                    <span id="chevron-level-{{ $prefix }}" class="material-symbols-outlined text-[20px] leading-none transition-transform duration-200">expand_more</span>
+                </span>
+            </button>
+
+            {{-- Dropdown Menu Level Materi dengan Pembatas --}}
+            <div id="menu-level-{{ $prefix }}" class="hidden absolute top-full left-0 mt-2 w-full bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 overflow-hidden divide-y divide-gray-100 max-h-60 overflow-y-auto">
+                @foreach ($levels as $level)
+                    @php $isLvlSelected = ($selectedLevelId == $level->id); @endphp
+                    <button type="button" data-val="{{ $level->id }}" data-text="Level {{ $level->urutan }} — {{ $level->nama_materi }}"
+                        class="opt-level-item-{{ $prefix }} w-full flex items-center justify-between px-4 py-2.5 text-left font-body text-body {{ $isLvlSelected ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600' }} transition-colors">
+                        <span>Level {{ $level->urutan }} — {{ $level->nama_materi }}</span>
+                        <span class="check-icon material-symbols-outlined text-[18px] text-primary-600 {{ $isLvlSelected ? '' : 'hidden' }}">check</span>
+                    </button>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Custom Dropdown Tipe Soal --}}
+        <div class="relative flex flex-col gap-1.5" id="custom-tipe-wrapper-{{ $prefix }}">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Tipe Soal</span>
-            <select name="tipe_soal" required data-tipe class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+            
+            {{-- Real select retained for form submission & soal-form-script.blade.php compatibility --}}
+            <select name="tipe_soal" required data-tipe id="select-tipe-{{ $prefix }}" class="hidden">
                 @foreach ($tipeList as $value => $label)
                     <option value="{{ $value }}" @selected(old('tipe_soal', $soal->tipe_soal ?? '') === $value)>{{ $label }}</option>
                 @endforeach
             </select>
-        </label>
+
+            @php
+                $currentTipe = old('tipe_soal', $soal->tipe_soal ?? array_key_first($tipeList));
+            @endphp
+
+            <button type="button" id="btn-tipe-{{ $prefix }}"
+                class="flex items-center justify-between w-full rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-primary-400 px-4 py-3 font-body text-body text-gray-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+                <span id="label-tipe-{{ $prefix }}" class="truncate font-medium text-gray-800">
+                    {{ $tipeList[$currentTipe] ?? 'Pilih Tipe Soal' }}
+                </span>
+                <span class="inline-flex items-center justify-center shrink-0 w-5 h-5 text-gray-400 ml-2">
+                    <span id="chevron-tipe-{{ $prefix }}" class="material-symbols-outlined text-[20px] leading-none transition-transform duration-200">expand_more</span>
+                </span>
+            </button>
+
+            {{-- Dropdown Menu Tipe Soal dengan Pembatas --}}
+            <div id="menu-tipe-{{ $prefix }}" class="hidden absolute top-full left-0 mt-2 w-full bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 overflow-hidden divide-y divide-gray-100">
+                @foreach ($tipeList as $value => $label)
+                    @php $isSelected = ($currentTipe === $value); @endphp
+                    <button type="button" data-val="{{ $value }}" data-label="{{ $label }}"
+                        class="opt-tipe-item-{{ $prefix }} w-full flex items-center justify-between px-4 py-2.5 text-left font-body text-body {{ $isSelected ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600' }} transition-colors">
+                        <span>{{ $label }}</span>
+                        <span class="check-icon material-symbols-outlined text-[18px] text-primary-600 {{ $isSelected ? '' : 'hidden' }}">check</span>
+                    </button>
+                @endforeach
+            </div>
+        </div>
 
         <label class="flex flex-col gap-1.5">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Bobot EXP</span>
@@ -152,4 +210,111 @@
         btn.innerHTML = originalHtml;
         btn.disabled = false;
     });
+
+    // Custom Dropdown logic for Tipe Soal & Level Materi (prefix: {{ $prefix }})
+    (function() {
+        // Tipe Soal Dropdown
+        const btnTipe = document.getElementById('btn-tipe-{{ $prefix }}');
+        const menuTipe = document.getElementById('menu-tipe-{{ $prefix }}');
+        const chevronTipe = document.getElementById('chevron-tipe-{{ $prefix }}');
+        const selectTipe = document.getElementById('select-tipe-{{ $prefix }}');
+        const labelTipe = document.getElementById('label-tipe-{{ $prefix }}');
+
+        if (btnTipe && menuTipe && selectTipe) {
+            btnTipe.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.querySelectorAll('[id^="menu-tipe-"], [id^="menu-level-"]').forEach(m => {
+                    if (m !== menuTipe) m.classList.add('hidden');
+                });
+                const isHidden = menuTipe.classList.toggle('hidden');
+                if (!isHidden) {
+                    chevronTipe.classList.add('rotate-180');
+                } else {
+                    chevronTipe.classList.remove('rotate-180');
+                }
+            });
+
+            menuTipe.querySelectorAll('.opt-tipe-item-{{ $prefix }}').forEach(function(opt) {
+                opt.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const val = this.getAttribute('data-val');
+                    const label = this.getAttribute('data-label');
+
+                    selectTipe.value = val;
+                    labelTipe.textContent = label;
+
+                    menuTipe.querySelectorAll('.opt-tipe-item-{{ $prefix }}').forEach(o => {
+                        o.classList.remove('bg-primary-50', 'text-primary-700', 'font-bold');
+                        o.classList.add('text-gray-700');
+                        o.querySelector('.check-icon')?.classList.add('hidden');
+                    });
+                    this.classList.add('bg-primary-50', 'text-primary-700', 'font-bold');
+                    this.classList.remove('text-gray-700');
+                    this.querySelector('.check-icon')?.classList.remove('hidden');
+
+                    menuTipe.classList.add('hidden');
+                    chevronTipe.classList.remove('rotate-180');
+
+                    // Notify dynamic form builder in soal-form-script.blade.php
+                    selectTipe.dispatchEvent(new Event('change'));
+                });
+            });
+        }
+
+        // Level Materi Dropdown
+        const btnLevel = document.getElementById('btn-level-{{ $prefix }}');
+        const menuLevel = document.getElementById('menu-level-{{ $prefix }}');
+        const chevronLevel = document.getElementById('chevron-level-{{ $prefix }}');
+        const selectLevel = document.getElementById('select-level-{{ $prefix }}');
+        const labelLevel = document.getElementById('label-level-{{ $prefix }}');
+
+        if (btnLevel && menuLevel && selectLevel) {
+            btnLevel.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.querySelectorAll('[id^="menu-tipe-"], [id^="menu-level-"]').forEach(m => {
+                    if (m !== menuLevel) m.classList.add('hidden');
+                });
+                const isHidden = menuLevel.classList.toggle('hidden');
+                if (!isHidden) {
+                    chevronLevel.classList.add('rotate-180');
+                } else {
+                    chevronLevel.classList.remove('rotate-180');
+                }
+            });
+
+            menuLevel.querySelectorAll('.opt-level-item-{{ $prefix }}').forEach(function(opt) {
+                opt.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const val = this.getAttribute('data-val');
+                    const text = this.getAttribute('data-text');
+
+                    selectLevel.value = val;
+                    labelLevel.textContent = text;
+
+                    menuLevel.querySelectorAll('.opt-level-item-{{ $prefix }}').forEach(o => {
+                        o.classList.remove('bg-primary-50', 'text-primary-700', 'font-bold');
+                        o.classList.add('text-gray-700');
+                        o.querySelector('.check-icon')?.classList.add('hidden');
+                    });
+                    this.classList.add('bg-primary-50', 'text-primary-700', 'font-bold');
+                    this.classList.remove('text-gray-700');
+                    this.querySelector('.check-icon')?.classList.remove('hidden');
+
+                    menuLevel.classList.add('hidden');
+                    chevronLevel.classList.remove('rotate-180');
+                });
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (menuTipe && !btnTipe?.contains(e.target) && !menuTipe?.contains(e.target)) {
+                menuTipe.classList.add('hidden');
+                chevronTipe?.classList.remove('rotate-180');
+            }
+            if (menuLevel && !btnLevel?.contains(e.target) && !menuLevel?.contains(e.target)) {
+                menuLevel.classList.add('hidden');
+                chevronLevel?.classList.remove('rotate-180');
+            }
+        });
+    })();
 </script>

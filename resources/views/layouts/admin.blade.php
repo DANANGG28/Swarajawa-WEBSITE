@@ -56,7 +56,7 @@
                     <span class="material-symbols-outlined icon-fill text-[24px]">check_circle</span>
                 </div>
                 <div class="flex-1 min-w-0 pt-0.5">
-                    <h5 class="font-heading text-sm font-bold text-green-700 leading-tight">Kasil (Berhasil)</h5>
+                    <h5 class="font-heading text-sm font-bold text-green-700 leading-tight">Berhasil</h5>
                     <p class="font-body text-xs text-on-surface-variant mt-0.5 leading-relaxed">{{ session('sukses') }}</p>
                 </div>
                 <button type="button" onclick="dismissToast('toastNotification')" title="Tutup Notifikasi" class="w-7 h-7 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center justify-center transition-colors shrink-0">
@@ -75,7 +75,7 @@
                     <span class="material-symbols-outlined icon-fill text-[24px]">error</span>
                 </div>
                 <div class="flex-1 min-w-0 pt-0.5">
-                    <h5 class="font-heading text-sm font-bold text-error leading-tight">Ana Kaluputan (Error)</h5>
+                    <h5 class="font-heading text-sm font-bold text-error leading-tight">Terjadi Kesalahan</h5>
                     <p class="font-body text-xs text-on-surface-variant mt-0.5 leading-relaxed">{{ $errors->first() }}</p>
                 </div>
                 <button type="button" onclick="dismissToast('toastErrorNotification')" title="Tutup Notifikasi" class="w-7 h-7 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center justify-center transition-colors shrink-0">

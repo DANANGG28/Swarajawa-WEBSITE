@@ -156,10 +156,10 @@
                                 <span>PUSAT EVALUASI & TANTANGAN SISWA • {{ $siswa->kelas ? 'KELAS '.$siswa->kelas : 'SINAU JOWO' }}</span>
                             </div>
                             <h1 class="font-display text-display text-on-primary font-bold text-2xl lg:text-3xl">
-                                Latihan Soal & Asesmen Basa Jawa
+                                Latihan Soal & Asesmen Bahasa Jawa
                             </h1>
                             <p class="font-body text-body text-primary-fixed leading-relaxed">
-                                Pilih format latihan pasinaon favoritmu: tes pilihan ganda, kuis wicara (STT/TTS), tracing aksara Jawa ing kanvas, utawa puzzle busana adat kanthi panuntun terstruktur.
+                                Pilih format latihan pembelajaran favoritmu: tes pilihan ganda, kuis wicara (STT/TTS), penelusuran aksara Jawa di kanvas, atau puzzle busana adat dengan panduan terstruktur.
                             </p>
                             <!-- Quick Stats Meta Bar -->
                             <div class="mt-space-sm flex flex-wrap items-center gap-space-lg text-on-primary">
@@ -202,17 +202,17 @@
                                 <span>Mulai Latihan Harian Campuran</span>
                             </a>
                             <span class="font-caption text-caption text-primary-fixed text-center lg:text-right mt-1">
-                                Mode adaptif cerdas • Nyesuaikake materi
+                                Mode adaptif cerdas • Menyesuaikan materi
                             </span>
                         </div>
                     </div>
                 </section>
 
-                <!-- JALUR PASINAON: Siji card saben level materi -->
+                <!-- JALUR PEMBELAJARAN: Satu kartu setiap level materi -->
                 <section class="flex flex-col gap-space-sm">
                     <div class="flex items-center justify-between">
-                        <span class="font-label-upper text-label-upper tracking-wider text-gray-500 uppercase font-bold">JALUR PASINAON BERJENJANG</span>
-                        <span class="font-caption text-caption text-gray-500">Pilih level kanggo miwiti gladhi</span>
+                        <span class="font-label-upper text-label-upper tracking-wider text-gray-500 uppercase font-bold">JALUR PEMBELAJARAN BERJENJANG</span>
+                        <span class="font-caption text-caption text-gray-500">Pilih level untuk memulai latihan</span>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
@@ -220,7 +220,7 @@
                             @php
                                 $badge = $lvl->badge;
                                 $border = $badge === 'sedang'
-                                    ? 'border-primary-600/40 ring-2 ring-primary-600/20'
+                                     ? 'border-primary-600/40 ring-2 ring-primary-600/20'
                                     : ($badge === 'terkunci' ? 'border-gray-200 opacity-75' : 'border-gray-100');
                             @endphp
 
@@ -235,20 +235,20 @@
                                             <span class="font-label-upper text-label-upper uppercase tracking-wider font-bold text-gray-500">
                                                 LEVEL {{ $lvl->urutan }} <span class="mx-1">•</span>
                                                 @if($badge === 'selesai')
-                                                    <span class="text-green-500">RAMPUNG</span>
+                                                    <span class="text-green-500">SELESAI</span>
                                                 @elseif($badge === 'sedang')
-                                                    <span class="text-orange-500">SEDANG DILAKONI</span>
+                                                    <span class="text-orange-500">SEDANG BERJALAN</span>
                                                 @elseif($badge === 'terkunci')
                                                     <span class="text-gray-500">TERKUNCI</span>
                                                 @else
-                                                    <span class="text-primary-700">ANYAR</span>
+                                                    <span class="text-primary-700">BARU</span>
                                                 @endif
                                             </span>
                                             <h3 class="font-heading text-heading font-bold mt-1 {{ $badge === 'terkunci' ? 'text-gray-500' : 'text-on-surface' }}">
                                                 {{ $lvl->nama_materi }}
                                             </h3>
                                             <p class="font-caption text-caption text-on-surface-variant mt-1 leading-relaxed line-clamp-2">
-                                                {{ $lvl->deskripsi ?? 'Materi pasinaon Basa lan Budaya Jawa.' }}
+                                                {{ $lvl->deskripsi ?? 'Materi pembelajaran Bahasa dan Budaya Jawa.' }}
                                             </p>
                                         </div>
                                         @if($badge === 'selesai')
@@ -260,7 +260,7 @@
                                         @endif
                                     </div>
 
-                                    {{-- Tipe soal sing ana ing level (teks polos) --}}
+                                    {{-- Tipe soal yang ada di level (teks polos) --}}
                                     @if($lvl->tipe_list->isNotEmpty())
                                         <span class="font-caption text-caption text-gray-500">{{ $lvl->tipe_list->implode(' • ') }}</span>
                                     @endif
@@ -279,9 +279,9 @@
                                         @if($lvl->is_locked)
                                             <span class="rounded-full bg-gray-200 px-5 py-2 font-body text-body font-semibold text-gray-500 cursor-not-allowed">Terkunci</span>
                                         @elseif($badge === 'selesai')
-                                            <span class="rounded-full bg-surface-container-high px-5 py-2 font-body text-body font-semibold text-on-surface group-hover:bg-surface-dim transition-colors">Latihan Maneh</span>
+                                            <span class="rounded-full bg-surface-container-high px-5 py-2 font-body text-body font-semibold text-on-surface group-hover:bg-surface-dim transition-colors">Latihan Lagi</span>
                                         @elseif($badge === 'sedang')
-                                            <span class="rounded-full bg-primary-600 px-5 py-2 font-body text-body font-semibold text-on-primary group-hover:bg-primary-700 transition-colors shadow-sm">Terusake</span>
+                                            <span class="rounded-full bg-primary-600 px-5 py-2 font-body text-body font-semibold text-on-primary group-hover:bg-primary-700 transition-colors shadow-sm">Lanjutkan</span>
                                         @else
                                             <span class="rounded-full bg-primary-600 px-5 py-2 font-body text-body font-semibold text-on-primary group-hover:bg-primary-700 transition-colors shadow-sm">Mulai Kuis</span>
                                         @endif
@@ -294,8 +294,8 @@
                         @empty
                             <div class="lg:col-span-2 bg-surface-container-lowest rounded-2xl p-10 text-center border border-gray-100 shadow-sm text-gray-500">
                                 <span class="material-symbols-outlined text-[48px] text-gray-400">layers</span>
-                                <p class="font-heading text-heading font-bold text-on-surface mt-2">Durung ana level materi sing kasedhiya.</p>
-                                <p class="font-body text-body mt-1">Takon bapak/ibu guru kanggo nambahake level lan soal anyar.</p>
+                                <p class="font-heading text-heading font-bold text-on-surface mt-2">Belum ada level materi yang tersedia.</p>
+                                <p class="font-body text-body mt-1">Hubungi bapak/ibu guru untuk menambahkan level dan soal baru.</p>
                             </div>
                         @endforelse
                     </div>

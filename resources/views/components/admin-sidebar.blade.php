@@ -16,7 +16,7 @@
 
     $user = \App\Support\AuthContext::currentUser(request());
     $nama = $user?->nama_lengkap ?? 'Pengguna';
-    $peran = $role === 'superadmin' ? 'Superadmin' : 'Guru Basa Jawa';
+    $peran = $role === 'superadmin' ? 'Superadmin' : 'Guru Bahasa Jawa';
     $inisial = collect(explode(' ', $nama))->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->implode('');
 @endphp
 
@@ -59,7 +59,7 @@
             @csrf
             <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-50 hover:bg-surface-container-high text-on-surface-variant hover:text-error font-body text-body font-semibold transition-colors">
                 <span class="material-symbols-outlined text-[20px]">logout</span>
-                <span>Metu</span>
+                <span>Keluar</span>
             </button>
         </form>
     </div>

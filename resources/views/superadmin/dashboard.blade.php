@@ -138,8 +138,8 @@
                                         <div class="w-12 h-12 rounded-2xl bg-gray-100 text-gray-400 flex items-center justify-center">
                                             <span class="material-symbols-outlined text-[28px]">layers_clear</span>
                                         </div>
-                                        <span class="font-heading font-bold text-on-surface text-sm">Durung Ana Level Materi</span>
-                                        <p class="font-body text-xs text-gray-500">Materi kuis durung didaftarake.</p>
+                                        <span class="font-heading font-bold text-on-surface text-sm">Belum Ada Level Materi</span>
+                                        <p class="font-body text-xs text-gray-500">Materi kuis belum didaftarkan.</p>
                                     </div>
                                 </td>
                             </tr>
