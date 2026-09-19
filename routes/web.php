@@ -44,6 +44,8 @@ Route::middleware('web.auth:siswa')->prefix('kuis')->group(function () {
     Route::get('/susun-ukara', [KuisSesiController::class, 'susunUkara'])->name('kuis.susun-ukara');
     Route::get('/wicara-audio', [KuisSesiController::class, 'wicaraAudio'])->name('kuis.wicara-audio');
     Route::get('/speak-to-text', [KuisSesiController::class, 'speakToText'])->name('kuis.speak-to-text');
+    Route::get('/latihan-ngomong', [KuisSesiController::class, 'latihanNgomong'])->name('kuis.latihan-ngomong');
+    Route::post('/latihan-ngomong/jawab', [KuisSesiController::class, 'latihanNgomongJawab'])->name('kuis.latihan-ngomong.jawab');
     Route::get('/tracing-aksara', [KuisSesiController::class, 'tracingAksara'])->name('kuis.tracing-aksara');
 
     Route::post('/jawab', [KuisSesiController::class, 'jawab'])->name('kuis.jawab');

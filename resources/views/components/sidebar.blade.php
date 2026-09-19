@@ -12,6 +12,7 @@
     $nav = [
         ['key' => 'beranda', 'label' => 'Beranda / Pembelajaran', 'ikon' => 'menu_book', 'url' => url('/'), 'alias' => []],
         ['key' => 'latihan', 'label' => 'Latihan Soal & Kuis', 'ikon' => 'stylus_note', 'url' => url('/latihan-soal'), 'alias' => []],
+        ['key' => 'ngomong', 'label' => 'Latihan Ngomong', 'ikon' => 'record_voice_over', 'url' => url('/kuis/latihan-ngomong'), 'alias' => []],
         ['key' => 'papan-skor', 'label' => 'Papan Skor', 'ikon' => 'leaderboard', 'url' => url('/papan-skor'), 'alias' => ['skor']],
         ['key' => 'asisten', 'label' => 'Asisten Tanya Bahasa', 'ikon' => 'smart_toy', 'url' => url('/asisten-ai'), 'alias' => ['asisten-ai']],
         ['key' => 'profil', 'label' => 'Profil & Pengaturan', 'ikon' => 'manage_accounts', 'url' => url('/profil'), 'alias' => ['profile']],

@@ -23,6 +23,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -163,6 +164,61 @@ class KuisSesiController extends Controller
         ]);
 
         return response()->json($this->sts->respond($data['audio'], $data['teks_referensi'], $data['mock_transcript'] ?? null));
+    }
+
+    public function latihanNgomong(): View
+    {
+        return $this->render('kuis.latihan-ngomong', Soal::TIPE_KUIS_SUARA, 'Latihan Ngomong');
+    }
+
+    /**
+     * Latihan Ngomong (tidak dinilai, tanpa EXP) — feedback via RagService.
+     */
+    public function latihanNgomongJawab(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'soal_id' => ['required', 'integer', 'exists:soal,id'],
+            'audio' => ['required', 'string'],
+            'mock_transcript' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $soal = Soal::query()->with('levelMateri')->findOrFail($data['soal_id']);
+        $siswa = $this->siswa();
+
+        if ($soal->levelMateri && ! $this->progres->canStart($siswa, $soal->levelMateri)) {
+            return response()->json(['message' => 'Materi belum tercapai.'], 403);
+        }
+
+        try {
+            $kunci = $soal->kunci_jawaban ?? [];
+            $referensi = (string) ($kunci['teks'] ?? $kunci['jawaban'] ?? '');
+
+            $hasilStt = $this->stt->transcribe($data['audio'], 'jav', $data['mock_transcript'] ?? null);
+
+            $prompt = "Kalimat referensi (yang seharusnya diucapkan siswa): \"{$referensi}\"\n"
+                ."Hasil transkripsi ucapan siswa: \"{$hasilStt['text']}\"\n\n"
+                .'Berikan feedback singkat (maksimal 2-3 kalimat) dalam Bahasa Jawa ngoko yang ramah, '
+                .'tentang bagian mana yang kurang tepat (kata yang hilang, tertukar, atau kemungkinan pelafalan '
+                .'yang kurang jelas berdasarkan perbedaan teks). Jika hasil transkripsi sudah sangat mendekati '
+                .'kalimat referensi, beri pujian singkat saja tanpa mengarang kekurangan. '
+                .'Wangsulana mung teks feedback wae, tanpa pambuka utawa panutup tambahan.';
+
+            $feedback = $this->rag->askDirect($prompt)
+                ?? 'Nyuwun pangapunten, kula dereng saged paring pamrayoga. Sumangga dipuncobi malih.';
+
+            $tts = $this->tts->synthesize($feedback);
+
+            return response()->json([
+                'mock' => (bool) ($hasilStt['mock'] || $tts['mock']),
+                'transkripsi' => $hasilStt['text'],
+                'feedback_text' => $feedback,
+                'audio_url' => $tts['audio_url'],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Latihan Ngomong (web) gagal: '.$e->getMessage());
+
+            return response()->json(['message' => 'Gagal memproses audio, coba lagi.'], 500);
+        }
     }
 
     public function chat(Request $request): JsonResponse

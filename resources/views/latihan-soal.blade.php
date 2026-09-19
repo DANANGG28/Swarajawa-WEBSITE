@@ -300,6 +300,27 @@
                         @endforelse
                     </div>
                 </section>
+
+                <!-- LATIHAN NGOMONG: latihan bebas tanpa EXP -->
+                <section class="flex flex-col gap-space-sm">
+                    <span class="font-label-upper text-label-upper tracking-wider text-gray-500 uppercase font-bold">LATIHAN BEBAS</span>
+                    <div class="flex flex-col gap-4 rounded-[24px] bg-secondary-fixed/30 p-6 shadow-sm border border-secondary/30 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex items-start gap-4">
+                            <span class="material-symbols-outlined text-[36px] text-secondary">record_voice_over</span>
+                            <div>
+                                <h3 class="font-heading text-heading font-bold text-on-surface">Latihan Ngomong</h3>
+                                <p class="font-body text-body text-on-surface-variant mt-1 leading-relaxed max-w-xl">
+                                    Ucapkan kalimat contoh, lalu dapatkan masukan pelafalan dari AI. Cocok untuk latihan bebas —
+                                    <strong>tidak memengaruhi EXP maupun skor</strong>.
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{{ route('kuis.latihan-ngomong') }}" class="inline-flex shrink-0 items-center justify-center gap-space-sm rounded-full bg-secondary px-6 py-3 font-body text-body font-bold text-on-secondary shadow-sm transition-colors hover:opacity-90">
+                            <span class="material-symbols-outlined text-[18px]">mic</span>
+                            <span>Mulai Latihan Ngomong</span>
+                        </a>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
