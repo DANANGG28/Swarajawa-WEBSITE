@@ -22,12 +22,12 @@
 <!-- Text Column (7 Cols) -->
 <div class="lg:col-span-7 flex flex-col items-start gap-space-md">
 <!-- Top Badge -->
-<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-tint text-primary font-label-md text-label-md shadow-sm">
+{{-- <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-tint text-primary font-label-md text-label-md shadow-sm">
 <svg aria-hidden="true" class="w-4 h-4 fill-primary" viewBox="0 0 24 24">
 <path d="M12 2l2.9 6.88 7.42.61-5.63 4.9 1.69 7.33L12 17.88 5.62 21.72l1.69-7.33-5.63-4.9 7.42-.61L12 2z"></path>
 </svg>
 <span class="">Platform Belajar Bahasa Jawa Digital No. 1</span>
-</div>
+</div> --}}
 <!-- Headline -->
 <h1 class="font-display-hero text-display-hero-mobile md:text-display-hero text-on-surface tracking-tight">
             Lestarikan <span class="text-primary underline decoration-secondary-container decoration-wavy decoration-2">Bahasa Jawa</span> dengan Menyenangkan.
@@ -70,17 +70,17 @@
 <!-- Header Card Bar -->
 <div class="flex items-center justify-between">
 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary-tint text-tertiary font-label-sm text-label-sm">
-<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+{{-- <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
 <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm0 14.54L4.82 13.6 3 14.59 12 19.5l9-4.91-1.82-.99L12 17.54z"></path>
-</svg>
-<span class="">Tingkat Krama Inggil (Sopan)</span>
+</svg> --}}
+{{-- <span class="">Tingkat Krama Inggil (Sopan)</span> --}}
 </div>
-<div class="flex items-center gap-1.5 font-label-sm text-label-sm text-secondary font-bold">
+{{-- <div class="flex items-center gap-1.5 font-label-sm text-label-sm text-secondary font-bold">
 <svg class="w-4 h-4 fill-secondary" viewBox="0 0 24 24">
 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
 </svg>
 <span class="">+15 XP</span>
-</div>
+</div> --}}
 </div>
 <!-- Speaker Audio Prompt Simulation -->
 <div class="flex items-center gap-space-md p-space-md rounded-lg bg-surface-container-low">
@@ -174,9 +174,9 @@
 <!-- FITUR UTAMA PASINAON (Bento Grid) -->
 <section class="max-w-[1200px] mx-auto px-margin py-20 w-full">
 <div class="text-center max-w-2xl mx-auto mb-14">
-<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-tint text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider mb-3">
+{{-- <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-tint text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider mb-3">
         Metode Modern &amp; Interaktif
-      </div>
+      </div> --}}
 <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
         Belajar Bahasa Jawa Tanpa Rasa Bosan
       </h2>

@@ -17,7 +17,7 @@
                     </div>
                     <div>
                         <h3 class="font-heading text-heading font-bold text-on-surface">Pemutar Suara Contoh</h3>
-                        <p class="font-caption text-caption text-gray-500">Azure TTS • jv-ID</p>
+                        <p class="font-caption text-caption text-gray-500">edge-tts • jv-ID-DimasNeural</p>
                     </div>
                 </div>
                 <div class="mt-4 p-6 rounded-xl bg-primary-fixed/40 border border-primary-400/30 text-center">

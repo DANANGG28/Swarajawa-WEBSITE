@@ -209,6 +209,32 @@ class RagService
      */
     private function generate(string $question, Collection $docs): ?string
     {
+        return $this->chat([
+            ['role' => 'system', 'content' => $this->systemPrompt()],
+            ['role' => 'user', 'content' => $this->userPrompt($question, $docs)],
+        ], 0.2);
+    }
+
+    /**
+     * Panggil LLM langsung tanpa retrieval/guardrail korpus.
+     *
+     * Dipakai mode bandingkan-dua-teks (Latihan Ngomong, tidak dinilai) yang
+     * tidak cocok dengan guardrail chatbot bebas — prompt-nya bisa salah
+     * ditolak bila dilewatkan jalur `ask()` (lihat setup-tts-stt-live.md §6).
+     */
+    public function askDirect(string $prompt, float $temperature = 0.4): ?string
+    {
+        return $this->chat([
+            ['role' => 'system', 'content' => $this->feedbackSystemPrompt()],
+            ['role' => 'user', 'content' => $prompt],
+        ], $temperature);
+    }
+
+    /**
+     * @param  array<int, array{role: string, content: string}>  $messages
+     */
+    private function chat(array $messages, float $temperature = 0.2): ?string
+    {
         $baseUrl = config('ai.base_url');
 
         if (blank($baseUrl)) {
@@ -221,11 +247,8 @@ class RagService
                 ->timeout((int) config('ai.timeout', 30))
                 ->post(rtrim((string) $baseUrl, '/').'/chat/completions', [
                     'model' => config('ai.model'),
-                    'temperature' => 0.2,
-                    'messages' => [
-                        ['role' => 'system', 'content' => $this->systemPrompt()],
-                        ['role' => 'user', 'content' => $this->userPrompt($question, $docs)],
-                    ],
+                    'temperature' => $temperature,
+                    'messages' => $messages,
                 ]);
 
             if (! $response->successful()) {
@@ -238,6 +261,15 @@ class RagService
         } catch (Throwable) {
             return null;
         }
+    }
+
+    private function feedbackSystemPrompt(): string
+    {
+        return 'Panjenengan menika tutor basa Jawa kanggo siswa SMP/SMA. Tugasipun paring pamrayoga '
+            .'(feedback) babagan pangucapan siswa kanthi mbandingaken kalimat referensi lan asil '
+            .'transkripsi. Wangsulana kanthi ringkes 2-3 ukara ing basa Jawa ngoko, ramah, lan ngajeni. '
+            .'Aja nambahake pambuka utawa panutup, lan aja nyebut token khusus apa wae. '
+            .'Yen asil transkripsi wis meh padha karo referensi, cukup paring pujian singkat.';
     }
 
     private function systemPrompt(): string
