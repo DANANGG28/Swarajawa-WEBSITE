@@ -306,7 +306,12 @@ class SoalSeeder extends Seeder
 
             ['level' => 5, 'oleh' => 'guru2', 'tipe' => Soal::TIPE_KUIS_SUARA, 'bobot' => 20,
                 'pertanyaan' => 'Unenana "Roro Jonggrang".',
-                'opsi' => ['instruksi' => 'Unenana jeneng paraga crita rakyat kanthi cetha.'],
+                'opsi' => [
+                    'instruksi' => 'Unenana jeneng paraga crita rakyat kanthi cetha.',
+                    'respons_benar' => 'Pinter! Pangucapanmu wis bener.',
+                    'respons_hampir_benar' => 'Hampir bener, coba dibaleni maneh kanthi cetha ya.',
+                    'respons_salah' => 'Durung pas. Sing bener yaiku "Roro Jonggrang". Ayo dicoba maneh.',
+                ],
                 'kunci' => ['teks' => 'roro jonggrang']],
         ];
 

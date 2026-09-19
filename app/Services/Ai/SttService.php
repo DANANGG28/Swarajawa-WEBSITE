@@ -2,84 +2,122 @@
 
 namespace App\Services\Ai;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Speech-to-Text Bahasa Jawa (Google Cloud Speech-to-Text, `jv-ID`) — FR-7.
+ * Speech-to-Text Bahasa Jawa (ElevenLabs Scribe, `scribe_v2`) — FR-7.
  *
- * Mode mock dipakai saat GOOGLE_SPEECH_KEY kosong. Untuk kebutuhan demo/uji,
- * klien boleh mengirim `mock_transcript` agar alur penilaian tetap teruji.
+ * Kode bahasa Jawa di ElevenLabs adalah `jav` (ISO 639-3), bukan `jv-ID`
+ * (format BCP-47) — jangan tertukar.
+ *
+ * Mode mock dipakai saat ELEVENLABS_API_KEY kosong / API gagal. Untuk demo
+ * & pengujian, klien boleh mengirim `mock_transcript` agar alur penilaian
+ * tetap teruji (PRD §9 mitigasi).
  */
 class SttService
 {
     public function isConfigured(): bool
     {
-        return filled(config('services.google_speech.key'));
+        return filled(config('services.elevenlabs.api_key'));
     }
 
     /**
-     * @return array{mock: bool, language: string, transcript: ?string, confidence: ?float, error: ?string}
+     * Transkripsi audio base64 (kompatibel dengan endpoint speech yang ada).
+     *
+     * @return array{mock: bool, language: string, transcript: ?string, text: ?string, confidence: ?float, error: ?string}
      */
     public function transcribe(string $audioBase64, ?string $language = null, ?string $mockTranscript = null): array
     {
-        $language ??= config('services.google_speech.language', 'jv-ID');
+        $language ??= config('services.elevenlabs.language', 'jav');
 
         if (! $this->isConfigured()) {
-            return [
-                'mock' => true,
-                'language' => $language,
-                'transcript' => $mockTranscript,
-                'confidence' => $mockTranscript !== null ? 1.0 : null,
-                'error' => null,
-            ];
+            return $this->mock($language, $mockTranscript);
         }
 
-        $key = config('services.google_speech.key');
-        $endpoint = "https://speech.googleapis.com/v1/speech:recognize?key={$key}";
+        $audioBase64 = preg_replace('/^data:[^;]+;base64,/', '', $audioBase64) ?? $audioBase64;
+        $decoded = base64_decode($audioBase64, true);
+
+        if ($decoded === false || $decoded === '') {
+            return $this->mock($language, $mockTranscript, 'Audio base64 tidak valid.');
+        }
+
+        $tmpPath = tempnam(sys_get_temp_dir(), 'sinau_stt_');
+
+        if ($tmpPath === false) {
+            return $this->mock($language, $mockTranscript, 'Gagal membuat berkas sementara.');
+        }
+
+        file_put_contents($tmpPath, $decoded);
 
         try {
-            $response = Http::timeout(20)->post($endpoint, [
-                'config' => [
-                    'languageCode' => $language,
-                    'enableAutomaticPunctuation' => true,
-                ],
-                'audio' => [
-                    'content' => $audioBase64,
-                ],
+            return $this->transcribeFile($tmpPath, $language, $mockTranscript);
+        } finally {
+            @unlink($tmpPath);
+        }
+    }
+
+    /**
+     * Transkripsi berkas audio (UploadedFile atau path lokal).
+     *
+     * @return array{mock: bool, language: string, transcript: ?string, text: ?string, confidence: ?float, error: ?string}
+     */
+    public function transcribeFile(UploadedFile|string $audio, string $languageCode = 'jav', ?string $mockTranscript = null): array
+    {
+        if (! $this->isConfigured()) {
+            return $this->mock($languageCode, $mockTranscript);
+        }
+
+        $filePath = $audio instanceof UploadedFile ? $audio->getRealPath() : $audio;
+        $fileName = $audio instanceof UploadedFile ? $audio->getClientOriginalName() : basename($audio);
+
+        try {
+            $response = Http::withHeaders([
+                'xi-api-key' => config('services.elevenlabs.api_key'),
+            ])->timeout(60)->attach(
+                'file', fopen($filePath, 'r'), $fileName
+            )->post('https://api.elevenlabs.io/v1/speech-to-text', [
+                'model_id' => config('services.elevenlabs.stt_model', 'scribe_v2'),
+                'language_code' => $languageCode,
             ]);
 
             if ($response->failed()) {
-                Log::warning('Google STT gagal', ['status' => $response->status()]);
+                Log::warning('ElevenLabs STT gagal', ['status' => $response->status()]);
 
-                return [
-                    'mock' => true,
-                    'language' => $language,
-                    'transcript' => $mockTranscript,
-                    'confidence' => null,
-                    'error' => 'Google STT gagal: '.$response->status(),
-                ];
+                return $this->mock($languageCode, $mockTranscript, 'ElevenLabs STT gagal: '.$response->status());
             }
 
-            $alternative = $response->json('results.0.alternatives.0');
+            $data = $response->json();
+            $text = (string) ($data['text'] ?? '');
 
             return [
                 'mock' => false,
-                'language' => $language,
-                'transcript' => $alternative['transcript'] ?? null,
-                'confidence' => isset($alternative['confidence']) ? (float) $alternative['confidence'] : null,
+                'language' => $data['language_code'] ?? $languageCode,
+                'transcript' => $text,
+                'text' => $text,
+                'confidence' => isset($data['language_probability']) ? (float) $data['language_probability'] : null,
                 'error' => null,
             ];
         } catch (\Throwable $e) {
-            Log::warning('Google STT exception', ['message' => $e->getMessage()]);
+            Log::warning('ElevenLabs STT exception', ['message' => $e->getMessage()]);
 
-            return [
-                'mock' => true,
-                'language' => $language,
-                'transcript' => $mockTranscript,
-                'confidence' => null,
-                'error' => $e->getMessage(),
-            ];
+            return $this->mock($languageCode, $mockTranscript, $e->getMessage());
         }
+    }
+
+    /**
+     * @return array{mock: bool, language: string, transcript: ?string, text: ?string, confidence: ?float, error: ?string}
+     */
+    private function mock(string $language, ?string $mockTranscript, ?string $error = null): array
+    {
+        return [
+            'mock' => true,
+            'language' => $language,
+            'transcript' => $mockTranscript,
+            'text' => $mockTranscript,
+            'confidence' => $mockTranscript !== null ? 1.0 : null,
+            'error' => $error,
+        ];
     }
 }

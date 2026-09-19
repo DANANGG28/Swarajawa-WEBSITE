@@ -22,9 +22,9 @@
                 <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-4 border-t border-gray-100">
                     <button type="button" id="btn-tts" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold shadow-sm transition-colors">
                         <span class="material-symbols-outlined text-[18px]">volume_up</span>
-                        Dengarkan Contoh (Azure TTS)
+                        Dengarkan Contoh (edge-tts)
                     </button>
-                    <span class="font-caption text-caption text-gray-500">Pipeline: Google STT → Modul Pemrosesan → Azure TTS</span>
+                    <span class="font-caption text-caption text-gray-500">Pipeline: ElevenLabs STT → Fuzzy Matching → edge-tts</span>
                 </div>
             </section>
 
@@ -198,7 +198,7 @@
                     if (res.audio_base64) {
                         new Audio('data:' + res.mime + ';base64,' + res.audio_base64).play();
                     } else {
-                        alert('Mode mock: audio TTS belum tersedia (API Azure belum dikonfigurasi).');
+                        alert('Mode mock: audio TTS belum tersedia (edge-tts gagal dijalankan).');
                     }
                 } catch (e) { alert(e.message); }
             });

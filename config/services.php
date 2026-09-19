@@ -37,22 +37,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Sinau Jowo — AI Speech & RAG vendors (PRD §6C, §10.2)
+    | Sinau Jowo — AI Speech vendors (setup-tts-stt-live.md)
     |--------------------------------------------------------------------------
-    | Semua kredensial opsional. Bila kosong, service terkait otomatis
-    | memakai mode mock deterministik agar demo tetap berjalan tanpa key.
+    | TTS memakai edge-tts (tanpa API key) & STT memakai ElevenLabs Scribe.
+    | Bila kredensial STT kosong / edge-tts gagal, service otomatis memakai
+    | mode mock deterministik agar demo tetap berjalan (PRD §9 mitigasi).
     */
 
-    'azure_speech' => [
-        'key' => env('AZURE_SPEECH_KEY'),
-        'region' => env('AZURE_SPEECH_REGION', 'southeastasia'),
-        'voice_default' => env('AZURE_SPEECH_VOICE', 'jv-ID-SitiNeural'),
-        'voice_male' => env('AZURE_SPEECH_VOICE_MALE', 'jv-ID-DimasNeural'),
+    'elevenlabs' => [
+        'api_key' => env('ELEVENLABS_API_KEY'),
+        'stt_model' => env('ELEVENLABS_STT_MODEL', 'scribe_v2'),
+        'language' => env('ELEVENLABS_STT_LANGUAGE', 'jav'),
     ],
 
-    'google_speech' => [
-        'key' => env('GOOGLE_SPEECH_KEY'),
-        'language' => env('GOOGLE_SPEECH_LANGUAGE', 'jv-ID'),
+    'edge_tts' => [
+        'binary' => env('EDGE_TTS_BINARY', 'edge-tts'),
+        'voice_default' => env('EDGE_TTS_VOICE', 'jv-ID-DimasNeural'),
+        'voice_dimas' => env('EDGE_TTS_VOICE_DIMAS', 'jv-ID-DimasNeural'),
+        'voice_siti' => env('EDGE_TTS_VOICE_SITI', 'jv-ID-SitiNeural'),
     ],
 
     'gemini' => [

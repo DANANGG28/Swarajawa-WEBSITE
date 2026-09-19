@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\MateriController;
 use App\Http\Controllers\Api\ProgresController;
 use App\Http\Controllers\Api\SiswaController;
 use App\Http\Controllers\Api\SoalController;
+use App\Http\Controllers\Api\SpeakingExerciseController;
 use App\Http\Controllers\Api\SpeechController;
 use App\Http\Controllers\Api\SuperadminDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,9 @@ Route::middleware('auth.any')->group(function () {
             Route::post('stt', [SpeechController::class, 'stt']);
             Route::post('sts', [SpeechController::class, 'sts']);
         });
+
+        Route::post('soal/{soal}/quiz-suara', [SpeakingExerciseController::class, 'quizSuara']);
+        Route::post('soal/{soal}/latihan-ngomong', [SpeakingExerciseController::class, 'latihanNgomong']);
     });
 
     Route::middleware('role:guru,superadmin')->group(function () {

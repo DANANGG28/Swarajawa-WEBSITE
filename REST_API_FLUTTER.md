@@ -426,6 +426,53 @@ Mengecek ketersediaan server API.
 
 ---
 
+### E. Speaking Practice — Quiz Suara & Latihan Ngomong
+Provider: **STT ElevenLabs Scribe** (`jav`) & **TTS edge-tts** (`jv-ID-DimasNeural`). Bila `ELEVENLABS_API_KEY` kosong, STT berjalan mode mock deterministik.
+
+**Quiz Suara (dinilai, masuk EXP; fuzzy matching non-LLM)** — `POST /soal/{soal_id}/quiz-suara`
+
+* **Auth Needed:** Yes (Siswa)
+* **Request Body:** `multipart/form-data`
+```json
+{
+  "audio": "<berkas audio: mp3/wav/m4a/webm/ogg/flac, maks 10MB>",
+  "mock_transcript": "(opsional) roro jonggrang"
+}
+```
+* **Response `200 OK`:**
+```json
+{
+  "transkripsi": "roro jonggrang",
+  "skor": 100,
+  "kategori": "benar",
+  "benar": true,
+  "teks_respons": "Pinter! Pangucapanmu wis bener.",
+  "audio_url": "/storage/tts/xxxx.mp3",
+  "exp_didapat": 20,
+  "skor_tertinggi": 100,
+  "total_exp": 120,
+  "current_streak": 3,
+  "highest_streak": 5
+}
+```
+
+**Latihan Ngomong (tidak dinilai, tanpa EXP; feedback via RagService/Gemini)** — `POST /soal/{soal_id}/latihan-ngomong`
+
+* **Auth Needed:** Yes (Siswa)
+* **Request Body:** `multipart/form-data` sama seperti Quiz Suara.
+* **Response `200 OK`:**
+```json
+{
+  "transkripsi": "roro jonggrang",
+  "feedback_text": "Pangucapanmu wis cedhak. Coba luwih cetha ing tembung pungkasan ya.",
+  "audio_url": "/storage/tts/xxxx.mp3"
+}
+```
+
+> Kedua endpoint memfilter tipe soal `kuis_suara` dan menolak (403) bila level materi masih terkunci (FR-2). Teks respons `respons_benar`/`respons_hampir_benar`/`respons_salah` disiapkan guru di dalam `opsi_jawaban` JSON.
+
+---
+
 ## 7. Panduan Integrasi di Flutter
 
 ### Contoh Service Http / Dio Client (Flutter)

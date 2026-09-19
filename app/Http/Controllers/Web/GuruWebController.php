@@ -223,7 +223,7 @@ class GuruWebController extends Controller
 
         return response()->json([
             'success' => false,
-            'message' => 'Gagal generate TTS. Pastikan API Key Azure sudah dikonfigurasi.',
+            'message' => 'Gagal generate TTS. Pastikan edge-tts terpasang di server (lihat setup-edge-tts.sh).',
         ], 500);
     }
 
