@@ -332,7 +332,7 @@ class KuisSesiController extends Controller
 
         if (! $soal) {
             $selesaiSoalIds = JawabanSiswa::where('siswa_id', $siswa->id)
-                ->where('skor_tertinggi', '>=', 100)
+                ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
                 ->pluck('soal_id');
 
             $soal = (clone $query)
@@ -411,7 +411,9 @@ class KuisSesiController extends Controller
             ],
             'opsi' => $opsi,
             'teks_referensi' => $soal->tipe_soal === Soal::TIPE_KUIS_SUARA ? ($kunci['teks'] ?? null) : null,
-            'aksara' => is_array($opsi) ? ($opsi['aksara'] ?? null) : null,
+            'aksara' => is_array($opsi) ? ($opsi['aksara'] ?? $soal->soal_aksara) : $soal->soal_aksara,
+            'soal_aksara' => $soal->soal_aksara,
+            'soal_latin' => $soal->soal_latin,
             'petunjuk' => is_array($opsi) ? ($opsi['petunjuk'] ?? null) : null,
             'paths' => $soal->tipe_soal === Soal::TIPE_MENULIS_AKSARA ? ($kunci['paths'] ?? null) : null,
         ];

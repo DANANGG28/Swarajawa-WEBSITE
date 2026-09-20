@@ -31,6 +31,8 @@ class Soal extends Model
         'level_materi_id',
         'tipe_soal',
         'pertanyaan',
+        'soal_latin',
+        'soal_aksara',
         'opsi_jawaban',
         'kunci_jawaban',
         'media_audio_url',

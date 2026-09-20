@@ -6,9 +6,10 @@
     $opsiVal = $isEdit ? json_encode($soal->opsi_jawaban, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : '';
     $kunciVal = $isEdit ? json_encode($soal->kunci_jawaban, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : '';
     $ttsRoute = $ttsRoute ?? route('guru.soal.tts');
+    $previewRoute = $previewRoute ?? route('guru.soal.preview');
 @endphp
 
-<form method="POST" action="{{ $action }}" class="flex flex-col gap-4" data-soal-form enctype="multipart/form-data">
+<form method="POST" action="{{ $action }}" class="flex flex-col gap-4" data-soal-form data-preview-route="{{ $previewRoute }}" data-prefix="{{ $prefix }}" enctype="multipart/form-data">
     @csrf
     @if ($isEdit)
         @method('PUT')
@@ -117,6 +118,10 @@
     <textarea name="opsi_jawaban_raw" data-opsi class="hidden">{{ old('opsi_jawaban_raw', $opsiVal) }}</textarea>
     <textarea name="kunci_jawaban_raw" data-kunci class="hidden">{{ old('kunci_jawaban_raw', $kunciVal) }}</textarea>
 
+    <!-- Hidden inputs khusus tracing aksara (diisi oleh live preview) -->
+    <input type="hidden" name="soal_latin" data-soal-latin value="{{ old('soal_latin', $soal->soal_latin ?? '') }}">
+    <input type="hidden" name="soal_aksara" data-soal-aksara value="{{ old('soal_aksara', $soal->soal_aksara ?? '') }}">
+
     <!-- Dynamic Form Builder Container -->
     <div id="dynamic-form-builder-{{ $prefix }}" class="flex flex-col gap-4 p-5 border border-gray-200 rounded-xl bg-white shadow-sm mt-2">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-2">
@@ -165,6 +170,24 @@
         <span>{{ $submitLabel }}</span>
     </button>
 </form>
+
+{{-- Modal konfirmasi Aksara Jawa (FR-22): guru melihat & menyetujui sebelum simpan --}}
+<div id="aksara-confirm-{{ $prefix }}" class="hidden fixed inset-0 z-[100] items-center justify-center bg-black/50 p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="material-symbols-outlined text-primary-600">spellcheck</span>
+            <h3 class="font-heading text-heading font-bold text-on-surface">Konfirmasi Aksara Jawa</h3>
+        </div>
+        <p class="font-caption text-caption text-gray-500 mb-4">Priksa asil konversi sadurunge disimpen — manungsa dadi verifikator pungkasan.</p>
+        <div class="rounded-2xl border border-gray-100 bg-surface-container-low p-6 text-center">
+            <div data-aksara-confirm-text class="font-javanese text-4xl leading-loose text-on-surface break-words"></div>
+        </div>
+        <div class="flex justify-end gap-2 mt-5">
+            <button type="button" data-aksara-cancel class="rounded-full bg-gray-100 hover:bg-gray-200 text-on-surface px-5 py-2.5 font-body text-body font-bold transition-colors">Batal</button>
+            <button type="button" data-aksara-approve class="rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary px-5 py-2.5 font-body text-body font-bold transition-colors">Setuju &amp; Simpan</button>
+        </div>
+    </div>
+</div>
 
 <script>
     document.getElementById('btn-tts-{{ $prefix }}')?.addEventListener('click', async function() {

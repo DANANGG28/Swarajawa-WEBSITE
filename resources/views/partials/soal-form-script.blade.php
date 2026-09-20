@@ -18,8 +18,8 @@
                 kunci: { urutan: [1, 2] },
             },
             menulis_aksara: {
-                opsi: { aksara: 'ha', petunjuk: 'Telusuri bayangan aksara.' },
-                kunci: { paths: [[[0.3, 0.3], [0.5, 0.5], [0.7, 0.3]]] },
+                opsi: { aksara: '', petunjuk: 'Telusuri bayangan aksara.' },
+                kunci: { paths: [] },
             },
             kuis_suara: {
                 opsi: { instruksi: 'Ucapkan kalimat dengan jelas.' },
@@ -280,42 +280,166 @@
                     container.appendChild(kunciDiv);
                 }
                 else if (tipeSoal === 'menulis_aksara') {
-                    if (!opsi.aksara) opsi = TEMPLATES.menulis_aksara.opsi;
-                    if (!kunci.paths) kunci = TEMPLATES.menulis_aksara.kunci;
+                    if (!opsi.petunjuk) opsi.petunjuk = 'Telusuri bayangan aksara.';
+                    if (!Array.isArray(kunci.paths)) kunci.paths = [];
 
-                    const row1 = document.createElement('div');
-                    row1.className = 'flex flex-col gap-1.5';
-                    row1.innerHTML = '<span class="font-bold text-caption text-gray-700">Aksara</span>';
-                    row1.appendChild(createInput(opsi.aksara, (val) => opsi.aksara = val, 'Contoh: ha'));
-                    
-                    const row2 = document.createElement('div');
-                    row2.className = 'flex flex-col gap-1.5 mt-2';
-                    row2.innerHTML = '<span class="font-bold text-caption text-gray-700">Petunjuk</span>';
-                    row2.appendChild(createInput(opsi.petunjuk, (val) => opsi.petunjuk = val, 'Instruksi untuk siswa'));
-                    
-                    const row3 = document.createElement('div');
-                    row3.className = 'flex flex-col gap-1.5 mt-2';
-                    row3.innerHTML = '<span class="font-bold text-caption text-primary-700">Paths (Koordinat JSON)</span><p class="text-[12px] text-gray-500">Karena kompleksitas garis (banyak titik kordinat), tempelkan array path berformat JSON di sini.</p>';
-                    
+                    const previewRoute = form.dataset.previewRoute;
+
+                    const helpText = document.createElement('p');
+                    helpText.className = 'text-caption text-gray-500 mb-1';
+                    helpText.textContent = 'Ketik teks Latin, sistem mengonversi otomatis ke Aksara Jawa. Periksa preview lalu setujui sebelum menyimpan.';
+                    container.appendChild(helpText);
+
+                    // Textarea Latin
+                    const latinWrap = document.createElement('div');
+                    latinWrap.className = 'flex flex-col gap-1.5';
+                    latinWrap.innerHTML = '<span class="font-bold text-caption text-gray-700">Teks Latin (soal_latin)</span>';
+                    const latinArea = document.createElement('textarea');
+                    latinArea.rows = 2;
+                    latinArea.placeholder = 'Contoh: hana caraka';
+                    latinArea.className = 'rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500';
+                    latinArea.value = form.querySelector('[data-soal-latin]')?.value || '';
+                    latinWrap.appendChild(latinArea);
+                    container.appendChild(latinWrap);
+
+                    // Toggle switch
+                    const toggleRow = document.createElement('div');
+                    toggleRow.className = 'grid grid-cols-1 sm:grid-cols-3 gap-3';
+                    const buildToggle = (name, label, checked, hint) => {
+                        const wrap = document.createElement('label');
+                        wrap.className = 'flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 cursor-pointer';
+                        const text = document.createElement('span');
+                        text.className = 'flex flex-col';
+                        text.innerHTML = `<span class="font-body text-caption font-bold text-gray-700">${label}</span><span class="text-[11px] text-gray-500">${hint}</span>`;
+                        const input = document.createElement('input');
+                        input.type = 'checkbox';
+                        input.name = name;
+                        input.value = '1';
+                        input.checked = checked;
+                        input.className = 'w-5 h-5 rounded text-primary-600 focus:ring-primary-500 cursor-pointer shrink-0';
+                        wrap.append(text, input);
+                        return { wrap, input };
+                    };
+                    const toggles = [
+                        buildToggle('ketik_pepet_mode', 'Mode Ketik Pêpêt', false, 'x = pêpêt (sxga → sega)'),
+                        buildToggle('ignore_space', 'Abaikan Spasi', false, 'Buang spasi pada hasil'),
+                        buildToggle('aksara_swara_mode', 'Aksara Swara', true, 'Vokal awal pakai aksara swara'),
+                    ];
+                    toggles.forEach((t) => toggleRow.appendChild(t.wrap));
+                    container.appendChild(toggleRow);
+
+                    // Live preview
+                    const previewWrap = document.createElement('div');
+                    previewWrap.className = 'flex flex-col gap-1.5';
+                    previewWrap.innerHTML = '<span class="font-bold text-caption text-primary-700">Live Preview Aksara Jawa</span>';
+                    const previewBox = document.createElement('div');
+                    previewBox.className = 'rounded-2xl border border-primary-200 bg-primary-50/40 px-4 py-5 text-center min-h-[76px] flex items-center justify-center';
+                    const previewText = document.createElement('span');
+                    previewText.className = 'font-javanese text-3xl leading-loose text-on-surface break-words';
+                    previewText.textContent = opsi.aksara || '…';
+                    previewBox.appendChild(previewText);
+                    const previewStatus = document.createElement('span');
+                    previewStatus.className = 'text-[11px] text-gray-400';
+                    previewStatus.textContent = 'Preview diperbarui otomatis saat mengetik.';
+                    previewWrap.append(previewBox, previewStatus);
+                    container.appendChild(previewWrap);
+
+                    // Template paths (lanjutan)
+                    const pathsWrap = document.createElement('details');
+                    pathsWrap.className = 'rounded-xl border border-gray-200 bg-gray-50/60 p-3';
+                    pathsWrap.innerHTML = '<summary class="cursor-pointer font-caption text-caption font-bold text-gray-600">Lanjutan: Template Paths (JSON)</summary><p class="text-[12px] text-gray-500 mt-2">Dihitung otomatis dari bentuk aksara (JS) untuk penilaian tracing. Boleh disunting bila perlu.</p>';
                     const pathArea = document.createElement('textarea');
-                    pathArea.rows = 5;
-                    pathArea.className = 'rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-mono text-[12px] outline-none focus:border-primary-500';
-                    pathArea.value = JSON.stringify(kunci.paths, null, 2);
+                    pathArea.rows = 4;
+                    pathArea.className = 'mt-2 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 font-mono text-[12px] outline-none focus:border-primary-500';
+                    pathArea.value = JSON.stringify(kunci.paths || [], null, 2);
                     pathArea.addEventListener('input', (e) => {
-                        try { 
-                            kunci.paths = JSON.parse(e.target.value); 
-                            updateData(); 
-                            pathArea.classList.remove('border-error');
-                            pathArea.classList.add('border-gray-200');
-                        } 
-                        catch (err) { 
-                            pathArea.classList.remove('border-gray-200');
-                            pathArea.classList.add('border-error');
-                        }
+                        try { kunci.paths = JSON.parse(e.target.value || '[]'); updateData(); pathArea.classList.remove('border-error'); }
+                        catch (err) { pathArea.classList.add('border-error'); }
                     });
-                    row3.appendChild(pathArea);
+                    pathsWrap.appendChild(pathArea);
+                    container.appendChild(pathsWrap);
 
-                    container.append(row1, row2, row3);
+                    // Petunjuk (opsi)
+                    const petunjukWrap = document.createElement('div');
+                    petunjukWrap.className = 'flex flex-col gap-1.5';
+                    petunjukWrap.innerHTML = '<span class="font-bold text-caption text-gray-700">Petunjuk (opsional)</span>';
+                    petunjukWrap.appendChild(createInput(opsi.petunjuk || '', (val) => { opsi.petunjuk = val; }, 'Instruksi untuk siswa'));
+                    container.appendChild(petunjukWrap);
+
+                    // Hidden inputs + preview logic
+                    const hiddenLatin = form.querySelector('[data-soal-latin]');
+                    const hiddenAksara = form.querySelector('[data-soal-aksara]');
+                    let timer = null;
+                    let lastBuiltAksara = null;
+
+                    const waitForAksaraBuilder = () => new Promise((resolve) => {
+                        if (window.AksaraTracing) { resolve(window.AksaraTracing); return; }
+                        let tries = 0;
+                        const t = setInterval(() => {
+                            if (window.AksaraTracing) { clearInterval(t); resolve(window.AksaraTracing); }
+                            else if (++tries > 100) { clearInterval(t); resolve(null); }
+                        }, 50);
+                    });
+
+                    const runPreview = async () => {
+                        const latin = latinArea.value;
+                        if (hiddenLatin) hiddenLatin.value = latin;
+                        if (!previewRoute) return;
+                        if (!latin.trim()) {
+                            previewText.textContent = '…';
+                            if (hiddenAksara) hiddenAksara.value = '';
+                            opsi.aksara = '';
+                            updateData();
+                            return;
+                        }
+                        previewStatus.textContent = 'Ngolah…';
+                        try {
+                            const res = await fetch(previewRoute, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                },
+                                credentials: 'same-origin',
+                                body: JSON.stringify({
+                                    soal_latin: latin,
+                                    ketik_pepet_mode: toggles[0].input.checked,
+                                    ignore_space: toggles[1].input.checked,
+                                    aksara_swara_mode: toggles[2].input.checked,
+                                }),
+                            });
+                            const data = await res.json();
+                            previewText.textContent = data.aksara || '…';
+                            if (hiddenAksara) hiddenAksara.value = data.aksara || '';
+                            opsi.aksara = data.aksara || '';
+
+                            // Hitung template paths (garis tengah) di client via JS.
+                            if (data.aksara && data.aksara !== lastBuiltAksara) {
+                                const builder = await waitForAksaraBuilder();
+                                if (builder) {
+                                    try {
+                                        const strokes = await builder.buildAksaraTemplate(data.aksara);
+                                        if (strokes && strokes.length) {
+                                            kunci.paths = builder.strokesToArrays(strokes);
+                                            pathArea.value = JSON.stringify(kunci.paths, null, 2);
+                                            lastBuiltAksara = data.aksara;
+                                        }
+                                    } catch (err) { /* biarkan paths lama */ }
+                                }
+                            }
+
+                            updateData();
+                            previewStatus.textContent = 'Preview diperbarui otomatis saat mengetik.';
+                        } catch (e) {
+                            previewStatus.textContent = 'Gagal memuat preview.';
+                        }
+                    };
+
+                    const schedulePreview = () => { clearTimeout(timer); timer = setTimeout(runPreview, 400); };
+                    latinArea.addEventListener('input', schedulePreview);
+                    toggles.forEach((t) => t.input.addEventListener('change', runPreview));
+                    if (latinArea.value.trim()) runPreview();
                 }
                 else if (tipeSoal === 'kuis_suara') {
                     if (!opsi.instruksi) opsi = TEMPLATES.kuis_suara.opsi;
@@ -358,6 +482,32 @@
                     apply(false); // Force default if empty
                 }
             }, 50);
+
+            // Konfirmasi sebelum simpan (khusus menulis_aksara)
+            let aksaraApproved = false;
+            const prefix = form.dataset.prefix || 'soal';
+            form.addEventListener('submit', (e) => {
+                if (tipe.value !== 'menulis_aksara' || aksaraApproved) return;
+
+                const aksara = form.querySelector('[data-soal-aksara]')?.value || '';
+                if (!aksara.trim()) return; // biarkan validasi server menangani
+
+                e.preventDefault();
+                const modal = document.getElementById('aksara-confirm-' + prefix);
+                if (!modal) { aksaraApproved = true; form.submit(); return; }
+
+                modal.querySelector('[data-aksara-confirm-text]').textContent = aksara;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+
+                const close = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
+                modal.querySelector('[data-aksara-cancel]').onclick = close;
+                modal.querySelector('[data-aksara-approve]').onclick = () => {
+                    aksaraApproved = true;
+                    close();
+                    form.requestSubmit();
+                };
+            });
         });
     })();
 </script>

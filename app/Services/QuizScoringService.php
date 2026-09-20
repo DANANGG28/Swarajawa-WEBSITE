@@ -132,13 +132,23 @@ class QuizScoringService
     private function scoreMenulisAksara(Soal $soal, mixed $jawaban): array
     {
         $kunci = $soal->kunci_jawaban ?? [];
-        $template = $kunci['paths'] ?? $kunci['strokes'] ?? [];
+
+        // Template goresan referensi (paths) dihitung di sisi klien (JS) saat
+        // soal dibuat, lalu disimpan di kunci_jawaban. Bila belum tersimpan
+        // (soal lama), pakai template yang dikirim klien bersama jawaban.
+        $template = $kunci['paths']
+            ?? $kunci['strokes']
+            ?? [];
+
+        if ((! is_array($template) || $template === []) && is_array($jawaban) && isset($jawaban['template']) && is_array($jawaban['template'])) {
+            $template = $jawaban['template'];
+        }
 
         $strokes = is_array($jawaban) && isset($jawaban['strokes'])
             ? $jawaban['strokes']
             : (is_array($jawaban) ? $jawaban : []);
 
-        $similarity = DollarRecognizer::similarity($strokes, is_array($template) ? $template : []);
+        $similarity = DollarRecognizer::traceCoverage($strokes, is_array($template) ? $template : []);
         $skor = (int) round($similarity * 100);
         $benar = $skor >= self::PASS_THRESHOLD;
 

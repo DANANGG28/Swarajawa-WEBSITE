@@ -97,6 +97,7 @@
                                 'soal' => $s,
                                 'prefix' => 'edit-'.$s->id,
                                 'ttsRoute' => route('superadmin.soal.tts'),
+                                'previewRoute' => route('superadmin.soal.preview'),
                             ])
                         </div>
                     </details>

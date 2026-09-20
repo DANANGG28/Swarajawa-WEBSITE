@@ -24,6 +24,7 @@
                     'soal' => null,
                     'prefix' => 'create',
                     'ttsRoute' => route('superadmin.soal.tts'),
+                    'previewRoute' => route('superadmin.soal.preview'),
                 ])
             </div>
         </section>

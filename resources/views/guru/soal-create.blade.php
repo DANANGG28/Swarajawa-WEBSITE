@@ -23,6 +23,7 @@
                     'tipeList' => $tipeList,
                     'soal' => null,
                     'prefix' => 'create',
+                    'previewRoute' => route('guru.soal.preview'),
                 ])
             </div>
         </section>

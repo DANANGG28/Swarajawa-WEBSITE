@@ -15,9 +15,11 @@ class DollarRecognizer
 
     public const SQUARE_SIZE = 250.0;
 
-    public const ANGLE_RANGE = 45.0;
+    /** Rentang sudut pencarian: 45° dalam radian (rotateBy memakai radian). */
+    public const ANGLE_RANGE = 0.7853981633974483;
 
-    public const ANGLE_PRECISION = 2.0;
+    /** Presisi pencarian sudut: 2° dalam radian. */
+    public const ANGLE_PRECISION = 0.03490658503988659;
 
     public static function halfDiagonal(): float
     {
@@ -25,8 +27,78 @@ class DollarRecognizer
     }
 
     /**
-     * Bandingkan goresan siswa dengan template, hasilkan skor 0..1.
+     * Skor cakupan bentuk (order-independent) untuk aksara multi-goresan.
      *
+     * Rata-rata jarak tiap titik goresan ke titik template terdekat (dua arah),
+     * dinormalisasi dengan toleransi. Lebih toleran terhadap urutan/proses
+     * menggambar dibanding pencocokan $1 satu-goresan.
+     *
+     * @param  array<int, array<int, array{0: float|int, 1: float|int}>>  $candidateStrokes
+     * @param  array<int, array<int, array{0: float|int, 1: float|int}>>  $templateStrokes
+     */
+    public static function traceCoverage(array $candidateStrokes, array $templateStrokes, float $tolerance = 0.3): float
+    {
+        $candidate = self::flatten($candidateStrokes);
+        $template = self::flatten($templateStrokes);
+
+        if (count($candidate) < 2 || count($template) < 2) {
+            return 0.0;
+        }
+
+        $avg = (self::meanNearest($candidate, $template) + self::meanNearest($template, $candidate)) / 2.0;
+
+        return max(0.0, min(1.0, 1.0 - ($avg / max(1e-6, $tolerance))));
+    }
+
+    /**
+     * @param  array<int, array<int, array{0: float|int, 1: float|int}>>  $strokes
+     * @return array<int, array{0: float, 1: float}>
+     */
+    private static function flatten(array $strokes): array
+    {
+        $points = [];
+        foreach ($strokes as $stroke) {
+            if (! is_array($stroke)) {
+                continue;
+            }
+            foreach ($stroke as $point) {
+                if (is_array($point) && count($point) >= 2) {
+                    $points[] = [(float) $point[0], (float) $point[1]];
+                }
+            }
+        }
+
+        return $points;
+    }
+
+    /**
+     * @param  array<int, array{0: float, 1: float}>  $source
+     * @param  array<int, array{0: float, 1: float}>  $target
+     */
+    private static function meanNearest(array $source, array $target): float
+    {
+        if ($source === [] || $target === []) {
+            return 0.0;
+        }
+
+        $sum = 0.0;
+        foreach ($source as $p) {
+            $best = PHP_FLOAT_MAX;
+            foreach ($target as $q) {
+                $dx = $p[0] - $q[0];
+                $dy = $p[1] - $q[1];
+                $d = $dx * $dx + $dy * $dy;
+                if ($d < $best) {
+                    $best = $d;
+                }
+            }
+            $sum += sqrt($best);
+        }
+
+        return $sum / count($source);
+    }
+
+    /**
      * @param  array<int, array<int, array{0: float|int, 1: float|int}>>  $candidateStrokes
      * @param  array<int, array<int, array{0: float|int, 1: float|int}>>  $templateStrokes
      */

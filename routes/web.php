@@ -70,6 +70,7 @@ Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(functio
     Route::post('/level-materi', [GuruWebController::class, 'levelMateriStore'])->name('level-materi.store');
     Route::get('/soal', [GuruWebController::class, 'soal'])->name('soal');
     Route::get('/soal/tambah', [GuruWebController::class, 'soalCreate'])->name('soal.create');
+    Route::post('/soal/preview-aksara', [GuruWebController::class, 'previewAksara'])->name('soal.preview');
     Route::post('/soal', [GuruWebController::class, 'soalStore'])->name('soal.store');
     Route::put('/soal/{soal}', [GuruWebController::class, 'soalUpdate'])->name('soal.update');
     Route::delete('/soal/{soal}', [GuruWebController::class, 'soalDestroy'])->name('soal.destroy');
@@ -108,6 +109,7 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
 
     Route::get('/soal', [SuperadminWebController::class, 'soal'])->name('soal');
     Route::get('/soal/tambah', [SuperadminWebController::class, 'soalCreate'])->name('soal.create');
+    Route::post('/soal/preview-aksara', [SuperadminWebController::class, 'previewAksara'])->name('soal.preview');
     Route::post('/soal', [SuperadminWebController::class, 'soalStore'])->name('soal.store');
     Route::put('/soal/{soal}', [SuperadminWebController::class, 'soalUpdate'])->name('soal.update');
     Route::delete('/soal/{soal}', [SuperadminWebController::class, 'soalDestroy'])->name('soal.destroy');

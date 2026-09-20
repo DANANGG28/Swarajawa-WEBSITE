@@ -9,8 +9,10 @@ use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Superadmin;
+use App\Services\Aksara\AksaraJawaConverterService;
 use App\Services\ProgresService;
 use App\Services\TtsService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -377,9 +379,9 @@ class SuperadminWebController extends Controller
         ]);
     }
 
-    public function soalStore(Request $request): RedirectResponse
+    public function soalStore(Request $request, AksaraJawaConverterService $converter): RedirectResponse
     {
-        $data = $this->validatedSoal($request);
+        $data = $this->validatedSoal($request, $converter);
         $data['superadmin_id'] = $this->superadmin()->id;
         $data['guru_id'] = null;
 
@@ -395,11 +397,11 @@ class SuperadminWebController extends Controller
         return redirect()->route('superadmin.soal', ['level_materi_id' => $data['level_materi_id']])->with('sukses', 'Soal kasil disimpen.');
     }
 
-    public function soalUpdate(Request $request, Soal $soal): RedirectResponse
+    public function soalUpdate(Request $request, Soal $soal, AksaraJawaConverterService $converter): RedirectResponse
     {
         $this->authorize('update', $soal);
 
-        $data = $this->validatedSoal($request);
+        $data = $this->validatedSoal($request, $converter);
 
         if ($request->hasFile('file_gambar')) {
             $data['media_gambar_url'] = $request->file('file_gambar')->store('soal_media', 'public');
@@ -411,6 +413,26 @@ class SuperadminWebController extends Controller
         $soal->update($data);
 
         return back()->with('sukses', 'Soal kasil dianyari.');
+    }
+
+    /**
+     * Live preview Latin → Aksara Jawa (tidak menyimpan apa pun).
+     */
+    public function previewAksara(Request $request, AksaraJawaConverterService $converter): JsonResponse
+    {
+        $data = $request->validate([
+            'soal_latin' => ['nullable', 'string', 'max:500'],
+            'ketik_pepet_mode' => ['nullable', 'boolean'],
+            'ignore_space' => ['nullable', 'boolean'],
+            'aksara_swara_mode' => ['nullable', 'boolean'],
+        ]);
+
+        return response()->json($converter->preview(
+            (string) ($data['soal_latin'] ?? ''),
+            (bool) ($data['ketik_pepet_mode'] ?? false),
+            (bool) ($data['ignore_space'] ?? false),
+            (bool) ($data['aksara_swara_mode'] ?? true),
+        ));
     }
 
     public function generateTts(Request $request, TtsService $ttsService)
@@ -464,12 +486,17 @@ class SuperadminWebController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatedSoal(Request $request): array
+    private function validatedSoal(Request $request, AksaraJawaConverterService $converter): array
     {
         $data = $request->validate([
             'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
             'tipe_soal' => ['required', 'in:pilihan_ganda,susun_kalimat,pencocokan_arti,puzzle_pakaian_adat,menulis_aksara,kuis_suara'],
             'pertanyaan' => ['required', 'string'],
+            'soal_latin' => ['nullable', 'string', 'max:500'],
+            'soal_aksara' => ['nullable', 'string'],
+            'ketik_pepet_mode' => ['nullable', 'boolean'],
+            'ignore_space' => ['nullable', 'boolean'],
+            'aksara_swara_mode' => ['nullable', 'boolean'],
             'opsi_jawaban_raw' => ['nullable', 'string'],
             'kunci_jawaban_raw' => ['required', 'string'],
             'media_audio_url' => ['nullable', 'string', 'max:2048'],
@@ -482,7 +509,46 @@ class SuperadminWebController extends Controller
         $data['kunci_jawaban'] = $this->decodeJson($data['kunci_jawaban_raw']) ?? [];
         unset($data['opsi_jawaban_raw'], $data['kunci_jawaban_raw']);
 
+        $this->applyTracingPayload($data, $converter);
+
         return $data;
+    }
+
+    /**
+     * Untuk tipe menulis_aksara, bangun ulang kunci di server dari teks Latin
+     * + toggle, supaya hasil konversi konsisten dan tidak bergantung pada klien.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function applyTracingPayload(array &$data, AksaraJawaConverterService $converter): void
+    {
+        if (($data['tipe_soal'] ?? null) !== Soal::TIPE_MENULIS_AKSARA) {
+            unset($data['ketik_pepet_mode'], $data['ignore_space'], $data['aksara_swara_mode'], $data['soal_aksara']);
+
+            return;
+        }
+
+        $latin = trim((string) ($data['soal_latin'] ?? ''));
+
+        if ($latin !== '') {
+            $payload = $converter->buildTracingSoalPayload(
+                $latin,
+                (bool) ($data['ketik_pepet_mode'] ?? false),
+                (bool) ($data['ignore_space'] ?? false),
+                (bool) ($data['aksara_swara_mode'] ?? true),
+            );
+
+            $data['soal_latin'] = $payload['soal_latin'];
+            $data['soal_aksara'] = $payload['soal_aksara'];
+
+            $clientPaths = $data['kunci_jawaban']['paths'] ?? [];
+
+            $data['kunci_jawaban'] = array_merge($payload['kunci_jawaban'], [
+                'paths' => is_array($clientPaths) ? $clientPaths : [],
+            ]);
+        }
+
+        unset($data['ketik_pepet_mode'], $data['ignore_space'], $data['aksara_swara_mode']);
     }
 
     /**
