@@ -77,7 +77,7 @@ class AksaraSoalTest extends TestCase
         ]);
 
         $this->actingAs($guru, 'guru')
-            ->get(route('guru.soal', ['level_materi_id' => $level->id]))
+            ->get(route('guru.soal.edit', $soal))
             ->assertOk()
             ->assertSee('data-soal-latin', false)
             ->assertSee("\u{A9A4}", false);
