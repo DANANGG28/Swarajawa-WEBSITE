@@ -96,6 +96,7 @@
                                 'tipeList' => $tipeList,
                                 'soal' => $s,
                                 'prefix' => 'edit-'.$s->id,
+                                'previewRoute' => route('guru.soal.preview'),
                             ])
                         </div>
                     </details>

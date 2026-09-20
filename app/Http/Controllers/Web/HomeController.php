@@ -108,7 +108,7 @@ class HomeController extends Controller
 
             // Tantangan hari ini (soal aktif yang belum 100%)
             $selesaiSoalIds = JawabanSiswa::where('siswa_id', $siswa->id)
-                ->where('skor_tertinggi', '>=', 100)
+                ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
                 ->pluck('soal_id');
 
             $tantangan = Soal::with('levelMateri')
@@ -250,7 +250,7 @@ class HomeController extends Controller
         // Soal pertama kanggo tombol "Mulai Latihan Harian Campuran".
         $kuisCtrl = app(KuisSesiController::class);
         $firstSoal = Soal::whereIn('level_materi_id', $accessibleLevelIds)
-            ->whereNotIn('id', $answered->where('skor_tertinggi', '>=', 100)->pluck('soal_id'))
+            ->whereNotIn('id', $answered->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->pluck('soal_id'))
             ->first() ?? Soal::whereIn('level_materi_id', $accessibleLevelIds)->first();
         $firstSoalUrl = $firstSoal ? $kuisCtrl->urlForSoal($firstSoal) : route('kuis.pilihan-ganda');
 

@@ -6,6 +6,7 @@ use App\Models\Guru;
 use App\Models\LevelMateri;
 use App\Models\Soal;
 use App\Models\Superadmin;
+use App\Services\Aksara\AksaraJawaConverter;
 use Illuminate\Database\Seeder;
 
 class SoalSeeder extends Seeder
@@ -168,29 +169,27 @@ class SoalSeeder extends Seeder
 
             ['level' => 3, 'oleh' => 'superadmin', 'tipe' => Soal::TIPE_MENULIS_AKSARA, 'bobot' => 25,
                 'pertanyaan' => 'Tulisen aksara "ha" kanthi nggaris ing kanvas.',
-                'opsi' => ['aksara' => 'ha', 'petunjuk' => 'Tlusuri bayangan aksara saka ndhuwur tumuju ngisor.'],
-                'kunci' => ['paths' => [$this->circlePath(0.5, 0.5, 0.28)]]],
+                'latin' => 'ha',
+                'opsi' => ['aksara' => $this->aksaraFor('ha'), 'petunjuk' => 'Tlusuri bayangan aksara saka ndhuwur tumuju ngisor.'],
+                'kunci' => ['aksara' => $this->aksaraFor('ha'), 'latin' => 'ha', 'paths' => []]],
 
             ['level' => 3, 'oleh' => 'superadmin', 'tipe' => Soal::TIPE_MENULIS_AKSARA, 'bobot' => 25,
                 'pertanyaan' => 'Tulisen aksara "na" kanthi nggaris ing kanvas.',
-                'opsi' => ['aksara' => 'na', 'petunjuk' => 'Garis vertikal banjur mlengkung ing ngisor.'],
-                'kunci' => ['paths' => [
-                    $this->linePath([0.35, 0.2], [0.35, 0.8]),
-                    $this->linePath([0.35, 0.5], [0.7, 0.5]),
-                ]]],
+                'latin' => 'na',
+                'opsi' => ['aksara' => $this->aksaraFor('na'), 'petunjuk' => 'Garis vertikal banjur mlengkung ing ngisor.'],
+                'kunci' => ['aksara' => $this->aksaraFor('na'), 'latin' => 'na', 'paths' => []]],
 
             ['level' => 3, 'oleh' => 'superadmin', 'tipe' => Soal::TIPE_MENULIS_AKSARA, 'bobot' => 25,
                 'pertanyaan' => 'Tulisen aksara "ka" kanthi nggaris ing kanvas.',
-                'opsi' => ['aksara' => 'ka', 'petunjuk' => 'Garis vertikal lan garis miring ing sisih tengen.'],
-                'kunci' => ['paths' => [
-                    $this->linePath([0.5, 0.15], [0.5, 0.85]),
-                    $this->linePath([0.5, 0.35], [0.8, 0.65]),
-                ]]],
+                'latin' => 'ka',
+                'opsi' => ['aksara' => $this->aksaraFor('ka'), 'petunjuk' => 'Garis vertikal lan garis miring ing sisih tengen.'],
+                'kunci' => ['aksara' => $this->aksaraFor('ka'), 'latin' => 'ka', 'paths' => []]],
 
             ['level' => 3, 'oleh' => 'superadmin', 'tipe' => Soal::TIPE_MENULIS_AKSARA, 'bobot' => 25,
                 'pertanyaan' => 'Tulisen aksara "ca" kanthi nggaris ing kanvas.',
-                'opsi' => ['aksara' => 'ca', 'petunjuk' => 'Bentuk mlengkung kaya gelung.'],
-                'kunci' => ['paths' => [$this->arcPath(0.5, 0.55, 0.3, 200, 340)]]],
+                'latin' => 'ca',
+                'opsi' => ['aksara' => $this->aksaraFor('ca'), 'petunjuk' => 'Bentuk mlengkung kaya gelung.'],
+                'kunci' => ['aksara' => $this->aksaraFor('ca'), 'latin' => 'ca', 'paths' => []]],
 
             ['level' => 3, 'oleh' => 'superadmin', 'tipe' => Soal::TIPE_PILIHAN_GANDA, 'bobot' => 10,
                 'pertanyaan' => 'Aksara murda digunakake kanggo ...',
@@ -332,6 +331,8 @@ class SoalSeeder extends Seeder
                 ['level_materi_id' => $level->id, 'pertanyaan' => $item['pertanyaan']],
                 [
                     'tipe_soal' => $item['tipe'],
+                    'soal_latin' => $item['latin'] ?? null,
+                    'soal_aksara' => isset($item['latin']) ? $this->aksaraFor($item['latin']) : null,
                     'opsi_jawaban' => $item['opsi'],
                     'kunci_jawaban' => $item['kunci'],
                     'bobot_exp' => $item['bobot'],
@@ -342,56 +343,8 @@ class SoalSeeder extends Seeder
         }
     }
 
-    /**
-     * Path lingkaran tertutup (normalisasi 0..1).
-     *
-     * @return array<int, array{0: float, 1: float}>
-     */
-    private function circlePath(float $cx, float $cy, float $r, int $n = 24): array
+    private function aksaraFor(string $latin): string
     {
-        $points = [];
-        for ($i = 0; $i <= $n; $i++) {
-            $angle = 2 * M_PI * $i / $n;
-            $points[] = [round($cx + $r * cos($angle), 4), round($cy + $r * sin($angle), 4)];
-        }
-
-        return $points;
-    }
-
-    /**
-     * Path garis lurus (normalisasi 0..1).
-     *
-     * @param  array{0: float, 1: float}  $from
-     * @param  array{0: float, 1: float}  $to
-     * @return array<int, array{0: float, 1: float}>
-     */
-    private function linePath(array $from, array $to, int $n = 16): array
-    {
-        $points = [];
-        for ($i = 0; $i <= $n; $i++) {
-            $t = $i / $n;
-            $points[] = [
-                round($from[0] + ($to[0] - $from[0]) * $t, 4),
-                round($from[1] + ($to[1] - $from[1]) * $t, 4),
-            ];
-        }
-
-        return $points;
-    }
-
-    /**
-     * Path busur (normalisasi 0..1).
-     *
-     * @return array<int, array{0: float, 1: float}>
-     */
-    private function arcPath(float $cx, float $cy, float $r, float $startDeg, float $endDeg, int $n = 20): array
-    {
-        $points = [];
-        for ($i = 0; $i <= $n; $i++) {
-            $angle = deg2rad($startDeg + ($endDeg - $startDeg) * ($i / $n));
-            $points[] = [round($cx + $r * cos($angle), 4), round($cy + $r * sin($angle), 4)];
-        }
-
-        return $points;
+        return (new AksaraJawaConverter)->convert($latin);
     }
 }

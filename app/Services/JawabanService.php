@@ -98,7 +98,7 @@ class JawabanService
     public function firstUnfinishedInLevel(Siswa $siswa, LevelMateri $levelMateri): ?Soal
     {
         $selesaiSoalIds = JawabanSiswa::where('siswa_id', $siswa->id)
-            ->where('skor_tertinggi', '>=', 100)
+            ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
             ->pluck('soal_id');
 
         return Soal::where('level_materi_id', $levelMateri->id)
@@ -117,7 +117,7 @@ class JawabanService
         }
 
         $selesaiSoalIds = JawabanSiswa::where('siswa_id', $siswa->id)
-            ->where('skor_tertinggi', '>=', 100)
+            ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
             ->pluck('soal_id');
 
         return Soal::where('level_materi_id', $levelMateri->id)

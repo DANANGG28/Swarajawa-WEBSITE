@@ -6,6 +6,7 @@
 <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
 <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400..800;1,400..800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+@vite('resources/js/aksara-tracing-canvas.js')
 <script src="https://cdn.tailwindcss.com"></script>
 <script id="tailwind-config">
 tailwind.config = {
@@ -108,6 +109,13 @@ tailwind.config = {
 };
 </script>
 <style>
+    @font-face {
+        font-family: 'Noto Sans Javanese';
+        src: url('{{ asset('fonts/NotoSansJavanese.ttf') }}') format('truetype');
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: swap;
+    }
     @layer base {
         html, body { margin: 0; padding: 0; }
         body { overscroll-behavior: none; }
@@ -115,6 +123,7 @@ tailwind.config = {
     ::-webkit-scrollbar { display: none; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
     .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+    .font-javanese { font-family: 'Noto Sans Javanese', 'Manrope', sans-serif; }
     @keyframes wave-pulse { 0%,100% { height: 8px; } 50% { height: 40px; } }
     .wave-bar { animation: wave-pulse 1.2s ease-in-out infinite; }
     .wave-bar:nth-child(2){animation-delay:.15s} .wave-bar:nth-child(3){animation-delay:.3s}
