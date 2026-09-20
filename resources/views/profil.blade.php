@@ -155,121 +155,166 @@
         </header>
 
         <!-- MAIN CONTENT -->
-        <main class="flex-1 pt-20 w-full px-margin-desktop py-space-xl bg-background">
-            <div class="flex flex-col w-full gap-space-lg">
+        <main class="flex-1 pt-24 w-full px-4 sm:px-8 py-6 bg-background max-w-6xl mx-auto">
+            <!-- UNIFIED SINGLE PROFILE CARD (§1 & §5.10) -->
+            <div class="w-full bg-surface-container-lowest rounded-[28px] shadow-sm border border-gray-100 overflow-hidden flex flex-col">
 
-                <!-- Profile Hero / Header Card -->
-                <section class="w-full bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden flex flex-col border border-gray-100">
-                    <!-- Top Decorative Banner -->
-                    <div class="w-full bg-gradient-to-r from-primary-700 via-primary-600 to-primary-500 relative flex items-end px-8 h-28">
-                        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                        <div class="absolute right-6 top-4 flex items-center gap-1.5 text-white/80 text-caption font-caption">
-                            <span class="material-symbols-outlined text-sm">school</span>
+                <!-- 1. Profile Hero Banner & Identity Header (Purple Gradient with Pure White Text & Verified) -->
+                <div class="w-full bg-gradient-to-r from-primary-700 via-primary-600 to-primary-500 relative p-6 sm:p-8 text-white overflow-hidden">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+
+                    <!-- Sub-header bar -->
+                    <div class="relative z-10 flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-2 text-white/90 font-label-upper text-label-upper uppercase tracking-wider font-semibold">
+                            <span class="material-symbols-outlined text-[18px]">school</span>
+                            <span>Portal Belajar Siswa • Sinau Jowo</span>
+                        </div>
+                        <div class="hidden sm:flex items-center gap-1.5 text-white/80 text-caption font-caption">
+                            <span class="material-symbols-outlined text-sm">event</span>
                             <span>Semester Ganjil 2024/2025</span>
                         </div>
                     </div>
-                    <!-- Main Profile Content Area -->
-                    <div class="px-8 pb-6 pt-0 relative flex flex-col md:flex-row md:items-end justify-between gap-4">
-                        <div class="flex flex-col sm:flex-row items-start gap-5 -mt-14 z-10">
-                            <div class="relative w-28 h-28 rounded-2xl bg-surface-container-lowest p-1 shadow-md shrink-0">
-                                <div class="w-full h-full rounded-xl bg-primary-700 text-white font-bold text-3xl flex items-center justify-center">
-                                    {{ mb_strtoupper(mb_substr($siswa->nama_lengkap, 0, 2)) }}
-                                </div>
-                                <span class="absolute bottom-2 right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-surface-container-lowest" title="Aktif Belajar"></span>
+
+                    <!-- Identity & Action Row -->
+                    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="flex flex-col sm:flex-row items-center sm:items-center gap-5 text-center sm:text-left">
+                            <!-- Avatar -->
+                            <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white/20 p-1.5 shadow-lg shrink-0 border-2 border-white/40 backdrop-blur-sm">
+                                @if($siswa->foto_url)
+                                    <img src="{{ $siswa->foto_url }}" alt="{{ $siswa->nama_lengkap }}" class="w-full h-full object-cover rounded-xl" />
+                                @elseif($siswa->foto && file_exists(storage_path('image/siswa/'.$siswa->foto)))
+                                    <img src="{{ route('siswa.image', $siswa->foto) }}" alt="{{ $siswa->nama_lengkap }}" class="w-full h-full object-cover rounded-xl" />
+                                @else
+                                    <div class="w-full h-full rounded-xl bg-white/25 text-white font-bold text-3xl flex items-center justify-center font-heading">
+                                        {{ mb_strtoupper(mb_substr($siswa->nama_lengkap, 0, 2)) }}
+                                    </div>
+                                @endif
+                                <span class="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white shadow-sm" title="Aktif Belajar"></span>
                             </div>
-                            <div class="flex flex-col min-w-0 pt-16 sm:pt-16">
-                                <div class="flex items-center gap-2">
-                                    <h1 class="font-heading text-display text-on-surface font-extrabold tracking-tight text-2xl">{{ $siswa->nama_lengkap }}</h1>
-                                    <span class="material-symbols-outlined text-primary-600 text-xl" title="Siswa Terverifikasi">verified</span>
+
+                            <!-- Text Details (Username Andi Prasetyo, Verified Icon & Badge in Pure White) -->
+                            <div class="flex flex-col min-w-0">
+                                <div class="flex items-center justify-center sm:justify-start gap-2.5 flex-wrap">
+                                    <h1 class="font-heading text-display text-white font-extrabold tracking-tight text-2xl sm:text-3xl leading-tight drop-shadow-sm">
+                                        {{ $siswa->nama_lengkap }}
+                                    </h1>
+                                    <span class="material-symbols-outlined text-white text-2xl shrink-0 drop-shadow-sm" style="font-variation-settings: 'FILL' 1;" title="Siswa Terverifikasi">verified</span>
                                 </div>
-                                <div class="font-caption text-caption text-gray-500 mt-0.5">NIS: {{ $siswa->nis ?? '-' }} • KELAS {{ $siswa->kelas ? $siswa->kelas : 'SISWA' }} • SINAU JOWO</div>
-                                <p class="font-body text-body text-on-surface-variant mt-1 italic max-w-xl">“Siswa rajin mempelajari tata krama bahasa dan aksara Jawa.”</p>
+                                <div class="font-caption text-caption text-white/90 mt-1 font-semibold flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                    <span>NIS: {{ $siswa->nis ?? '-' }}</span>
+                                    <span>•</span>
+                                    <span>KELAS {{ $siswa->kelas ? $siswa->kelas : 'SISWA' }}</span>
+                                    <span>•</span>
+                                    <span>SINAU JOWO</span>
+                                </div>
+                                <p class="font-body text-body text-white/85 mt-1.5 max-w-xl leading-relaxed">
+                                    “Siswa rajin mempelajari tata krama bahasa dan aksara Jawa.”
+                                </p>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- 3-Column Key Performance Stats Metrics -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-8 pb-6 pt-2 border-t border-gray-100">
+                        <!-- Tombol Lengkapi / Edit Data Diri (High-contrast White Pill Button) -->
+                        @php
+                            $isDataLengkap = !empty($siswa->foto) && !empty($siswa->nis) && !empty($siswa->no_telpon) && !empty($siswa->jenis_kelamin);
+                        @endphp
+                        <div class="flex items-center justify-center sm:justify-start gap-3 shrink-0 self-center md:self-center">
+                            <a href="{{ route('siswa.profil.data') }}"
+                               class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-body text-sm font-bold bg-white text-primary-700 hover:bg-white/95 hover:text-primary-800 shadow-md hover:shadow-lg transition-all duration-200"
+                               title="{{ $isDataLengkap ? 'Ubah atau perbarui data diri Anda' : 'Lengkapi foto profil dan data diri Anda' }}">
+                                <span class="material-symbols-outlined text-[20px] text-primary-700">{{ $isDataLengkap ? 'edit_square' : 'assignment_ind' }}</span>
+                                <span>{{ $isDataLengkap ? 'Edit Data Diri' : 'Lengkapi Data Diri' }}</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Key 3-Column Performance Stats Metrics (§5.10) -->
+                <div class="px-6 sm:px-8 py-6 border-b border-gray-100">
+                    <div class="bg-surface-container-low p-4 sm:p-5 rounded-2xl border border-primary-100/50 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0 md:divide-x md:divide-gray-200/80">
                         <!-- Stat 1: EXP -->
-                        <div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-primary-700 shrink-0">
+                        <div class="flex items-center gap-4 md:px-5">
+                            <div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-primary-700 shrink-0 shadow-sm">
                                 <span class="material-symbols-outlined text-2xl">stars</span>
                             </div>
-                            <div class="flex flex-col">
+                            <div class="flex flex-col min-w-0">
                                 <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Total Poin Belajar</span>
-                                <div class="flex items-baseline gap-1">
-                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">{{ number_format($totalExp) }}</span>
+                                <div class="flex items-baseline gap-1 mt-0.5">
+                                    <span class="font-stat-number text-stat-number text-black-900 font-extrabold text-2xl">{{ number_format($totalExp) }}</span>
                                     <span class="font-body text-body font-bold text-primary-600">XP</span>
                                 </div>
-                                <span class="font-caption text-caption text-gray-500">Tingkat: {{ $totalExp >= 1000 ? 'Wasasis (Mahir)' : ($totalExp >= 300 ? 'Madya' : 'Pratama (Pemula)') }}</span>
+                                <span class="font-caption text-caption text-gray-500 truncate">Tingkat: {{ $totalExp >= 1000 ? 'Wasasis (Mahir)' : ($totalExp >= 300 ? 'Madya' : 'Pratama (Pemula)') }}</span>
                             </div>
                         </div>
+
                         <!-- Stat 2: Class Rank -->
-                        <div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-yellow-300/40 flex items-center justify-center text-tertiary shrink-0">
+                        <div class="flex items-center gap-4 md:px-5">
+                            <div class="w-12 h-12 rounded-xl bg-yellow-300/40 flex items-center justify-center text-amber-800 shrink-0 shadow-sm">
                                 <span class="material-symbols-outlined text-2xl">military_tech</span>
                             </div>
-                            <div class="flex flex-col">
+                            <div class="flex flex-col min-w-0">
                                 <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Peringkat Pembelajaran</span>
-                                <div class="flex items-baseline gap-1">
-                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">#{{ $myRank }}</span>
+                                <div class="flex items-baseline gap-1 mt-0.5">
+                                    <span class="font-stat-number text-stat-number text-black-900 font-extrabold text-2xl">#{{ $myRank }}</span>
                                 </div>
-                                <span class="font-caption text-caption text-green-500 font-semibold">{{ $completedLevels }} Level Selesai</span>
+                                <span class="font-caption text-caption text-green-600 font-semibold truncate">{{ $completedLevels }} Level Selesai</span>
                             </div>
                         </div>
+
                         <!-- Stat 3: Daily Streak -->
-                        <div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-orange-300/40 flex items-center justify-center text-orange-500 shrink-0">
+                        <div class="flex items-center gap-4 md:px-5">
+                            <div class="w-12 h-12 rounded-xl bg-orange-300/40 flex items-center justify-center text-orange-600 shrink-0 shadow-sm">
                                 <span class="material-symbols-outlined text-2xl">local_fire_department</span>
                             </div>
-                            <div class="flex flex-col">
+                            <div class="flex flex-col min-w-0">
                                 <span class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider font-bold">Streak Konsistensi</span>
-                                <div class="flex items-baseline gap-1">
-                                    <span class="font-stat-number text-stat-number text-on-surface font-extrabold">{{ $currentStreak }} Hari</span>
+                                <div class="flex items-baseline gap-1 mt-0.5">
+                                    <span class="font-stat-number text-stat-number text-black-900 font-extrabold text-2xl">{{ $currentStreak }} Hari</span>
                                 </div>
-                                <span class="font-caption text-caption text-gray-500">Rekor tertinggi: {{ $highestStreak }} Hari</span>
+                                <span class="font-caption text-caption text-gray-500 truncate">Rekor tertinggi: {{ $highestStreak }} Hari</span>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
-                <!-- Section Tabs Switcher -->
-                <div class="flex items-center gap-2 bg-surface-container-lowest p-2 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
-                    <button type="button" id="tab-btn-badge" onclick="switchProfileTab('badge')" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-body text-body font-bold bg-primary-600 text-white shadow-sm transition-all whitespace-nowrap">
-                        <span class="material-symbols-outlined text-base">workspace_premium</span>
+                <!-- 4. Section Tabs Bar (§5.11 Underline Style) -->
+                <div class="px-6 sm:px-8 border-b border-gray-200 flex items-center gap-6 sm:gap-8 overflow-x-auto bg-surface-container-lowest pt-2">
+                    <button type="button" id="tab-btn-badge" onclick="switchProfileTab('badge')"
+                            class="pb-3.5 font-heading text-sm font-bold text-primary-600 border-b-2 border-primary-600 flex items-center gap-2 whitespace-nowrap transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
                         <span>Koleksi Badge & Piagam</span>
                     </button>
-                    <button type="button" id="tab-btn-akademik" onclick="switchProfileTab('akademik')" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-all whitespace-nowrap">
-                        <span class="material-symbols-outlined text-base">school</span>
+                    <button type="button" id="tab-btn-akademik" onclick="switchProfileTab('akademik')"
+                            class="pb-3.5 font-heading text-sm font-medium text-gray-500 hover:text-black-900 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">school</span>
                         <span>Rincian Profil & Akademik</span>
                     </button>
-                    <button type="button" id="tab-btn-audio" onclick="switchProfileTab('audio')" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-all whitespace-nowrap">
-                        <span class="material-symbols-outlined text-base">graphic_eq</span>
-                        <span>Pengaturan Pembelajaran & Suara AI</span>
-                    </button>
-                    <button type="button" id="tab-btn-keamanan" onclick="switchProfileTab('keamanan')" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-body text-body font-medium text-on-surface-variant hover:bg-surface-container-high transition-all whitespace-nowrap">
-                        <span class="material-symbols-outlined text-base">lock</span>
-                        <span>Keamanan Akun</span>
+                    <button type="button" id="tab-btn-audio" onclick="switchProfileTab('audio')"
+                            class="pb-3.5 font-heading text-sm font-medium text-gray-500 hover:text-black-900 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">graphic_eq</span>
+                        <span>Pengaturan Belajar & Suara AI</span>
                     </button>
                 </div>
+
+                <!-- 5. Tab Panels Container (Inside the Single Card) -->
+                <div class="p-6 sm:p-8 flex flex-col gap-6">
 
                 <!-- TAB PANEL 1: Koleksi Badge & Piagam -->
                 <div id="panel-badge" class="flex flex-col gap-6">
                     <!-- Badge Summary Header Card -->
-                    <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 border border-gray-100">
-                        <div class="flex flex-col">
-                            <h2 class="font-heading text-heading text-on-surface font-bold">Koleksi Piagam & Lencana Belajar</h2>
-                            <p class="font-body text-body text-on-surface-variant mt-0.5">Lencana otomatis diraih ketika menyelesaikan penelusuran aksara, percakapan krama, dan kuis kebudayaan.</p>
+                    <div class="bg-surface-container-low p-5 sm:p-6 rounded-2xl border border-primary-100/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex flex-col min-w-0">
+                            <h2 class="font-heading text-heading text-black-900 font-bold">Koleksi Piagam & Lencana Belajar</h2>
+                            <p class="font-body text-body text-gray-500 mt-0.5">Lencana otomatis diraih ketika menyelesaikan penelusuran aksara, percakapan krama, dan kuis kebudayaan.</p>
                         </div>
                         <!-- Badge Completion Counter Bar -->
                         @php $persenLevel = $totalLevels > 0 ? (int) round(($completedLevels / $totalLevels) * 100) : 0; @endphp
-                        <div class="flex flex-col w-full md:w-80 bg-surface-container-low p-3 rounded-xl border border-primary-100/50">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="font-caption text-caption text-gray-500 font-semibold">Progres Pembelajaran</span>
-                                <span class="font-caption text-caption font-bold text-primary-700">{{ $completedLevels }} dari {{ $totalLevels }} Level ({{ $persenLevel }}%)</span>
+                        <div class="flex flex-col w-full md:w-80 bg-white p-3.5 rounded-xl border border-gray-100 shadow-sm shrink-0">
+                            <div class="flex justify-between items-center mb-1.5 text-xs">
+                                <span class="text-gray-500 font-semibold">Progres Pembelajaran</span>
+                                <span class="font-bold text-primary-600">{{ $completedLevels }} dari {{ $totalLevels }} Level ({{ $persenLevel }}%)</span>
                             </div>
-                            <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-full bg-primary-600 rounded-full transition-all" style="width: {{ $persenLevel }}%"></div>
+                            <div class="w-full h-2 bg-gray-200/80 rounded-full overflow-hidden">
+                                <div class="h-full bg-primary-600 rounded-full transition-all duration-500" style="width: {{ $persenLevel }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -467,62 +512,82 @@
                 <div id="panel-akademik" class="hidden flex-col gap-6">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Data Siswa Card -->
-                        <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-4 border border-gray-100">
-                            <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
-                                <span class="material-symbols-outlined text-primary-600">person</span>
-                                <h2 class="font-heading text-heading text-on-surface font-bold">Data Pribadi Siswa</h2>
+                        <div class="bg-surface-container-low/50 p-6 rounded-2xl flex flex-col gap-4 border border-gray-100">
+                            <div class="flex items-center justify-between border-b border-gray-200/80 pb-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary-600">person</span>
+                                    <h2 class="font-heading text-heading text-black-900 font-bold">Data Pribadi Siswa</h2>
+                                </div>
+                                <a href="{{ route('siswa.profil.data') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-50 text-primary-700 hover:bg-primary-100 font-semibold text-xs transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">edit_square</span>
+                                    <span>Edit Data Diri</span>
+                                </a>
                             </div>
-                            <div class="flex flex-col gap-2 text-body font-body">
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Nama Lengkap</span>
-                                    <span class="font-bold text-on-surface">{{ $siswa->nama_lengkap }}</span>
+                            <div class="flex flex-col gap-2.5 text-body font-body text-xs sm:text-sm">
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Nama Lengkap</span>
+                                    <span class="font-bold text-black-900">{{ $siswa->nama_lengkap }}</span>
                                 </div>
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Nomor Induk Siswa (NIS)</span>
-                                    <span class="font-bold text-on-surface">{{ $siswa->nis ?? '-' }}</span>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Nomor Induk Siswa (NIS)</span>
+                                    <span class="font-bold text-black-900">{{ $siswa->nis ?? '-' }}</span>
                                 </div>
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Jenis Kelamin</span>
-                                    <span class="font-bold text-on-surface">{{ $siswa->jenis_kelamin === 'L' ? 'Laki-laki (L)' : 'Perempuan (P)' }}</span>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Jenis Kelamin</span>
+                                    <span class="font-bold text-black-900">{{ $siswa->jenis_kelamin === 'L' ? 'Laki-laki (L)' : ($siswa->jenis_kelamin === 'P' ? 'Perempuan (P)' : '-') }}</span>
                                 </div>
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Kelas</span>
-                                    <span class="font-bold text-on-surface">{{ $siswa->kelas ? 'Kelas '.$siswa->kelas : '-' }}</span>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Kelas</span>
+                                    <span class="font-bold text-black-900">{{ $siswa->kelas ? 'Kelas '.$siswa->kelas : '-' }}</span>
                                 </div>
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">Email Akun Belajar</span>
-                                    <span class="font-bold text-on-surface">{{ $siswa->email }}</span>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Email Akun Belajar</span>
+                                    <span class="font-bold text-black-900">{{ $siswa->email }}</span>
                                 </div>
-                                <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                    <span class="text-gray-500">No. Telepon</span>
-                                    <span class="font-bold text-on-surface">{{ $siswa->no_telpon ?? '-' }}</span>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">No. Telepon</span>
+                                    <span class="font-bold text-black-900">{{ $siswa->no_telpon ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Data Guru Pangampu -->
-                        <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-4 border border-gray-100">
-                            <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
-                                <span class="material-symbols-outlined text-primary-600">family_restroom</span>
-                                <h2 class="font-heading text-heading text-on-surface font-bold">Guru Pengampu</h2>
+                        <!-- Data Informasi Akademik & Sekolah (Pengganti Guru Pengampu) -->
+                        <div class="bg-surface-container-low/50 p-6 rounded-2xl flex flex-col gap-4 border border-gray-100">
+                            <div class="flex items-center justify-between border-b border-gray-200/80 pb-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary-600">school</span>
+                                    <h2 class="font-heading text-heading text-black-900 font-bold">Informasi Akademik & Sekolah</h2>
+                                </div>
+                                <span class="font-label-upper text-label-upper text-primary-600 font-bold uppercase text-xs">Aktif</span>
                             </div>
-                            <div class="flex flex-col gap-2 text-body font-body">
-                                @forelse($guruPangampu as $g)
-                                    <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                        <span class="text-gray-500">Guru Pengampu{{ $g->pivot->mata_pelajaran ? ' ('.$g->pivot->mata_pelajaran.')' : '' }}</span>
-                                        <span class="font-bold text-on-surface">{{ $g->nama_lengkap }}</span>
-                                    </div>
-                                    <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                        <span class="text-gray-500">NIP</span>
-                                        <span class="font-bold text-on-surface">{{ $g->nip ?? '-' }}</span>
-                                    </div>
-                                    <div class="flex justify-between py-2 bg-surface-container-low px-4 rounded-xl">
-                                        <span class="text-gray-500">Kelas Diampu</span>
-                                        <span class="font-bold text-on-surface">{{ $g->pivot->kelas ? 'Kelas '.$g->pivot->kelas : '-' }}</span>
-                                    </div>
-                                @empty
-                                    <div class="py-3 text-gray-500 text-center">Belum ada guru pengampu yang tercatat untuk siswa ini.</div>
-                                @endforelse
+                            <div class="flex flex-col gap-2.5 text-body font-body text-xs sm:text-sm">
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Asal Sekolah</span>
+                                    <span class="font-bold text-black-900">Sinau Jowo Academy</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Kurikulum & Muatan</span>
+                                    <span class="font-bold text-black-900">Bahasa, Sastra & Aksara Jawa</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Tahun Ajaran</span>
+                                    <span class="font-bold text-black-900">2024 / 2025</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Semester Aktif</span>
+                                    <span class="font-bold text-black-900">Semester Ganjil</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Status Pembelajaran</span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200/60">
+                                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                        <span>Siswa Aktif Belajar</span>
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center py-2.5 bg-white px-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-gray-500 font-medium">Terdaftar Sejak</span>
+                                    <span class="font-bold text-black-900">{{ $siswa->created_at ? $siswa->created_at->translatedFormat('d F Y') : '12 Agustus 2024' }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -532,11 +597,11 @@
                 <div id="panel-audio" class="hidden flex-col gap-6">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Voice AI Settings -->
-                        <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-4 border border-gray-100">
-                            <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div class="bg-surface-container-low/50 p-6 rounded-2xl flex flex-col gap-4 border border-gray-100">
+                            <div class="flex items-center justify-between border-b border-gray-200/80 pb-3">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary-600">record_voice_over</span>
-                                    <h2 class="font-heading text-heading text-on-surface font-bold">Pengaturan Wicara & Suara (AI TTS & STT)</h2>
+                                    <h2 class="font-heading text-heading text-black-900 font-bold">Pengaturan Wicara & Suara (AI TTS & STT)</h2>
                                 </div>
                                 <span class="font-label-upper text-label-upper text-primary-600 font-bold uppercase">AZURE & GOOGLE SPEECH</span>
                             </div>
@@ -551,7 +616,7 @@
                                         </div>
                                         <span class="material-symbols-outlined text-base">check</span>
                                     </button>
-                                    <button type="button" class="p-3 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-body text-body font-medium flex items-center justify-between transition-all border border-gray-100">
+                                    <button type="button" class="p-3 rounded-xl bg-white hover:bg-surface-container-low text-on-surface font-body text-body font-medium flex items-center justify-between transition-all border border-gray-100 shadow-sm">
                                         <div class="flex items-center gap-2">
                                             <span class="material-symbols-outlined text-base">face</span>
                                             <span>Dimas Neural (Pria)</span>
@@ -563,16 +628,16 @@
                             <div class="flex flex-col gap-1.5">
                                 <label class="font-body text-body font-bold text-on-surface">Kecepatan Suara (Playback Speed)</label>
                                 <div class="grid grid-cols-3 gap-3">
-                                    <button type="button" class="py-2 rounded-xl bg-surface-container-low text-on-surface font-body text-body font-medium hover:bg-surface-container text-center border border-gray-100">0.8x (Lambat)</button>
+                                    <button type="button" class="py-2 rounded-xl bg-white text-on-surface font-body text-body font-medium hover:bg-surface-container-low text-center border border-gray-100 shadow-sm">0.8x (Lambat)</button>
                                     <button type="button" class="py-2 rounded-xl bg-primary-600 text-white font-body text-body font-bold text-center shadow-sm">1.0x (Standar)</button>
-                                    <button type="button" class="py-2 rounded-xl bg-surface-container-low text-on-surface font-body text-body font-medium hover:bg-surface-container text-center border border-gray-100">1.2x (Cepat)</button>
+                                    <button type="button" class="py-2 rounded-xl bg-white text-on-surface font-body text-body font-medium hover:bg-surface-container-low text-center border border-gray-100 shadow-sm">1.2x (Cepat)</button>
                                 </div>
                             </div>
                             <!-- Mic Sensitivity Test -->
-                            <div class="bg-surface-container-low p-4 rounded-xl flex flex-col gap-2 border border-primary-100/40">
+                            <div class="bg-white p-4 rounded-xl flex flex-col gap-2 border border-gray-100 shadow-sm">
                                 <div class="flex items-center justify-between">
-                                    <span class="font-body text-body font-bold text-on-surface">Tes Mikrofon STT Siswa</span>
-                                    <span class="font-caption text-caption text-green-500 font-bold">Aktif & Siap</span>
+                                    <span class="font-body text-body font-bold text-black-900">Tes Mikrofon STT Siswa</span>
+                                    <span class="font-caption text-caption text-green-600 font-bold">Aktif & Siap</span>
                                 </div>
                                 <p class="font-caption text-caption text-gray-500">Klik untuk memeriksa sensitivitas mikrofon sebelum memulai kuis wicara tata krama.</p>
                                 <div class="flex items-center gap-4 mt-1">
@@ -580,7 +645,7 @@
                                         <span class="material-symbols-outlined text-sm">mic</span>
                                         <span>Coba Suara</span>
                                     </button>
-                                    <div class="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="flex-1 h-2 bg-gray-200/80 rounded-full overflow-hidden">
                                         <div class="w-2/3 h-full bg-green-500 rounded-full"></div>
                                     </div>
                                 </div>
@@ -588,11 +653,11 @@
                         </div>
 
                         <!-- Tracing & Learning Assistant Settings -->
-                        <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-4 border border-gray-100">
-                            <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div class="bg-surface-container-low/50 p-6 rounded-2xl flex flex-col gap-4 border border-gray-100">
+                            <div class="flex items-center justify-between border-b border-gray-200/80 pb-3">
                                 <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary-600">tune</span>
-                                    <h2 class="font-heading text-heading text-on-surface font-bold">Pengaturan Kanvas & Asisten AI</h2>
+                                    <h2 class="font-heading text-heading text-black-900 font-bold">Pengaturan Kanvas & Asisten AI</h2>
                                 </div>
                                 <span class="font-label-upper text-label-upper text-primary-600 font-bold uppercase">FR-6 & FR-13</span>
                             </div>
@@ -631,44 +696,53 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> <!-- End of panel-audio -->
 
-                <!-- TAB PANEL 4: Keamanan Akun (Initially Hidden) -->
-                <div id="panel-keamanan" class="hidden flex-col gap-6">
-                    <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-4 max-w-2xl border border-gray-100">
-                        <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
-                            <span class="material-symbols-outlined text-primary-600">lock</span>
-                            <h2 class="font-heading text-heading text-on-surface font-bold">Keamanan & Kata Sandi Akun Siswa</h2>
-                        </div>
-                        <div class="flex flex-col gap-4">
-                            <div class="flex flex-col gap-1">
-                                <label class="font-body text-body font-bold text-on-surface">Kata Sandi Saat Ini</label>
-                                <input type="password" value="••••••••••••" readonly class="bg-surface-container-low rounded-xl px-4 py-2.5 font-body text-body text-on-surface outline-none border border-gray-200/60">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="font-body text-body font-bold text-on-surface">Ganti Kata Sandi Baru</label>
-                                <input type="password" placeholder="Masukkan kata sandi baru minimal 8 karakter" class="bg-surface-container-low rounded-xl px-4 py-2.5 font-body text-body text-on-surface outline-none border border-gray-200/60 focus:border-primary-500">
-                            </div>
-                            <div class="flex items-center justify-between pt-2">
-                                <span class="font-caption text-caption text-gray-500">Terakhir diperbarui: 12 Agustus 2024</span>
-                                <button type="button" class="px-6 py-2.5 rounded-full bg-primary-600 text-white font-body text-body font-semibold shadow-md hover:bg-primary-700 transition-all">
-                                    Simpan Kata Sandi Baru
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+                </div> <!-- End of Tab Panels Container -->
+            </div> <!-- End of Single Unified Profile Card -->
         </main>
     </div>
 
-    <!-- Tab Switcher Script -->
+    <!-- Floating Toast Notifications (Pojok Kanan Bawah) -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full">
+        @if (session('sukses'))
+            <div id="toastNotification"
+                 class="pointer-events-auto bg-surface-container-lowest border border-green-500/40 rounded-2xl p-4 shadow-[0_10px_35px_rgba(0,0,0,0.15)] flex items-start gap-3.5 overflow-hidden relative transition-all duration-300">
+                <div class="w-10 h-10 rounded-xl bg-green-500/15 text-green-600 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[24px]">check_circle</span>
+                </div>
+                <div class="flex-1 min-w-0 pt-0.5">
+                    <h5 class="font-heading text-sm font-bold text-green-700 leading-tight">Berhasil</h5>
+                    <p class="font-body text-xs text-on-surface-variant mt-0.5 leading-relaxed">{{ session('sukses') }}</p>
+                </div>
+                <button type="button" onclick="dismissToast('toastNotification')" title="Tutup Notifikasi" class="w-7 h-7 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center justify-center transition-colors shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+        @endif
+        @if (session('error') || $errors->any())
+            <div id="toastErrorNotification"
+                 class="pointer-events-auto bg-surface-container-lowest border border-red-500/40 rounded-2xl p-4 shadow-[0_10px_35px_rgba(0,0,0,0.15)] flex items-start gap-3.5 overflow-hidden relative transition-all duration-300">
+                <div class="w-10 h-10 rounded-xl bg-red-500/15 text-red-600 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[24px]">error</span>
+                </div>
+                <div class="flex-1 min-w-0 pt-0.5">
+                    <h5 class="font-heading text-sm font-bold text-red-700 leading-tight">Terjadi Kesalahan</h5>
+                    <p class="font-body text-xs text-on-surface-variant mt-0.5 leading-relaxed">{{ session('error') ?? $errors->first() }}</p>
+                </div>
+                <button type="button" onclick="dismissToast('toastErrorNotification')" title="Tutup Notifikasi" class="w-7 h-7 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center justify-center transition-colors shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+        @endif
+    </div>
+
+    <!-- Tab Switcher & Toast Script -->
     <script>
         function switchProfileTab(tabName) {
-            const panels = ['badge', 'akademik', 'audio', 'keamanan'];
-            const activeClasses = ['bg-primary-600', 'text-white', 'font-bold', 'shadow-sm'];
-            const inactiveClasses = ['text-on-surface-variant', 'hover:bg-surface-container-high', 'font-medium'];
+            const panels = ['badge', 'akademik', 'audio'];
+            const activeClasses = ['text-primary-600', 'border-primary-600', 'font-bold'];
+            const inactiveClasses = ['text-gray-500', 'border-transparent', 'font-medium'];
 
             panels.forEach(p => {
                 const panelEl = document.getElementById('panel-' + p);
@@ -688,6 +762,22 @@
                 }
             });
         }
+
+        function dismissToast(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateX(100%)';
+                setTimeout(() => el.remove(), 300);
+            }
+        }
+
+        @if(session('sukses') || session('error') || $errors->any())
+        setTimeout(() => {
+            dismissToast('toastNotification');
+            dismissToast('toastErrorNotification');
+        }, 5000);
+        @endif
     </script>
 </body>
 </html>

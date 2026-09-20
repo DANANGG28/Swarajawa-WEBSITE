@@ -30,7 +30,7 @@ class Guru extends Authenticatable
 
     public function getFotoUrlAttribute(): ?string
     {
-        if ($this->foto && file_exists(resource_path('image/guru/' . $this->foto))) {
+        if ($this->foto && (file_exists(storage_path('image/guru/' . $this->foto)) || file_exists(resource_path('image/guru/' . $this->foto)))) {
             return route('guru.image', $this->foto);
         }
 

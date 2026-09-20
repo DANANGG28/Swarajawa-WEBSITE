@@ -58,25 +58,31 @@ class GuruWebController extends Controller
     /**
      * FR-12: Pilih level materi untuk manajemen soal.
      */
-    public function levelMateri(): View
+    public function levelMateri(Request $request): View
     {
         $guru = $this->guru();
 
+        $query = LevelMateri::withCount(['soal' => function ($query) use ($guru) {
+            $query->where('guru_id', $guru->id);
+        }])->orderBy('urutan');
+
+        if ($request->filled('q')) {
+            $term = '%'.$request->query('q').'%';
+            $query->where(function ($q) use ($term) {
+                $q->where('nama_materi', 'like', $term)
+                  ->orWhere('deskripsi', 'like', $term);
+            });
+        }
+
+        $levels = $query->paginate(5)->withQueryString();
+
         return view('guru.level-materi', [
-            'judul' => 'Manajemen Soal & Level',
-            'subjudul' => 'Pilih level materi kanggo ngatur bank soal utawa tambah level anyar',
+            'judul' => 'Daftar Level Materi',
+            'subjudul' => 'Pilih level materi kanggo ngatur utawa nambah butir soal',
             'role' => 'guru',
             'active' => 'soal',
-            'levelList' => LevelMateri::withCount(['soal' => function ($query) {
-                $query->where('guru_id', $this->guru()->id);
-            }])
-                ->orderBy('urutan')
-                ->get(),
-            'levels' => LevelMateri::withCount(['soal' => function ($query) {
-                $query->where('guru_id', $this->guru()->id);
-            }])
-                ->orderBy('urutan')
-                ->get(),
+            'levelList' => $levels,
+            'levels' => $levels,
         ]);
     }
 
@@ -99,7 +105,7 @@ class GuruWebController extends Controller
             );
         }
 
-        return back()->with('sukses', 'Level materi kasil digawe.');
+        return back()->with('sukses', 'Level materi berhasil dibuat.');
     }
 
     /**
@@ -163,6 +169,25 @@ class GuruWebController extends Controller
         ]);
     }
 
+    public function soalEdit(Soal $soal): View
+    {
+        $this->authorize('update', $soal);
+
+        $soal->load('levelMateri');
+        $level = $soal->levelMateri ?? LevelMateri::findOrFail($soal->level_materi_id);
+
+        return view('guru.edit-soal', [
+            'judul' => 'Sunting Soal',
+            'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
+            'role' => 'guru',
+            'active' => 'soal',
+            'level' => $level,
+            'levels' => LevelMateri::orderBy('urutan')->get(),
+            'soal' => $soal,
+            'tipeList' => $this->tipeList(),
+        ]);
+    }
+
     public function soalStore(Request $request, AksaraJawaConverterService $converter): RedirectResponse
     {
         $guru = $this->guru();
@@ -179,7 +204,7 @@ class GuruWebController extends Controller
 
         Soal::create($data);
 
-        return redirect()->route('guru.soal', ['level_materi_id' => $data['level_materi_id']])->with('sukses', 'Soal kasil disimpen.');
+        return redirect()->route('guru.soal', ['level_materi_id' => $data['level_materi_id']])->with('sukses', 'Soal berhasil disimpan.');
     }
 
     public function soalUpdate(Request $request, Soal $soal, AksaraJawaConverterService $converter): RedirectResponse
@@ -197,7 +222,7 @@ class GuruWebController extends Controller
 
         $soal->update($data);
 
-        return back()->with('sukses', 'Soal kasil dianyari.');
+        return redirect()->route('guru.soal', ['level_materi_id' => $soal->level_materi_id])->with('sukses', 'Soal berhasil diperbarui.');
     }
 
     public function soalDestroy(Soal $soal): RedirectResponse
@@ -206,7 +231,7 @@ class GuruWebController extends Controller
 
         $soal->delete();
 
-        return back()->with('sukses', 'Soal kasil dibusak.');
+        return back()->with('sukses', 'Soal berhasil dihapus.');
     }
 
     public function generateTts(Request $request, TtsService $ttsService)
@@ -297,7 +322,7 @@ class GuruWebController extends Controller
     private function applyTracingPayload(array &$data, AksaraJawaConverterService $converter): void
     {
         if (($data['tipe_soal'] ?? null) !== Soal::TIPE_MENULIS_AKSARA) {
-            unset($data['ketik_pepet_mode'], $data['ignore_space'], $data['aksara_swara_mode'], $data['soal_aksara']);
+            unset($data['ketik_pepet_mode'], $data['ignore_space'], $data['aksara_swara_mode'], $data['soal_aksara'], $data['soal_latin']);
 
             return;
         }

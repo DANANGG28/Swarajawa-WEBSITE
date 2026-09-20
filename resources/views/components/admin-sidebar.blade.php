@@ -3,16 +3,17 @@
 @php
     $nav = $role === 'superadmin'
         ? [
-            ['key' => 'dashboard', 'label' => 'Dashboard', 'ikon' => 'dashboard', 'url' => route('superadmin.dashboard')],
-            ['key' => 'guru', 'label' => 'Akun Guru', 'ikon' => 'supervisor_account', 'url' => route('superadmin.guru')],
-            ['key' => 'siswa', 'label' => 'Akun Siswa', 'ikon' => 'groups', 'url' => route('superadmin.siswa')],
-            ['key' => 'level-materi', 'label' => 'Level Materi', 'ikon' => 'stairs', 'url' => route('superadmin.level-materi')],
-            ['key' => 'soal', 'label' => 'Bank Soal', 'ikon' => 'quiz', 'url' => route('superadmin.soal')],
+            ['key' => 'dashboard', 'label' => 'Dashboard', 'ikon' => 'dashboard', 'url' => route('superadmin.dashboard'), 'alias' => []],
+            ['key' => 'guru', 'label' => 'Akun Guru', 'ikon' => 'supervisor_account', 'url' => route('superadmin.guru'), 'alias' => []],
+            ['key' => 'siswa', 'label' => 'Akun Siswa', 'ikon' => 'groups', 'url' => route('superadmin.siswa'), 'alias' => []],
+            ['key' => 'level-materi', 'label' => 'Level Materi', 'ikon' => 'stairs', 'url' => route('superadmin.level-materi'), 'alias' => ['soal']],
         ]
         : [
-            ['key' => 'dashboard', 'label' => 'Pemantauan Siswa', 'ikon' => 'monitoring', 'url' => route('guru.dashboard')],
-            ['key' => 'soal', 'label' => 'Manajemen Soal', 'ikon' => 'quiz', 'url' => route('guru.soal')],
+            ['key' => 'dashboard', 'label' => 'Pemantauan Siswa', 'ikon' => 'monitoring', 'url' => route('guru.dashboard'), 'alias' => []],
+            ['key' => 'soal', 'label' => 'Manajemen Soal', 'ikon' => 'quiz', 'url' => route('guru.soal'), 'alias' => ['level-materi']],
         ];
+
+    $isItemActive = fn ($item) => $active === $item['key'] || in_array($active, $item['alias'] ?? [], true);
 
     $user = \App\Support\AuthContext::currentUser(request());
     $nama = $user?->nama_lengkap ?? 'Pengguna';
@@ -32,8 +33,11 @@
         <div class="px-space-md py-space-sm">
             <nav class="flex flex-col gap-2">
                 @foreach ($nav as $item)
+                    @php
+                        $isActive = $isItemActive($item);
+                    @endphp
                     <a href="{{ $item['url'] }}"
-                        class="flex items-center gap-space-md px-4 py-3 rounded-xl transition-all duration-200 {{ $active === $item['key'] ? 'bg-primary-600 text-on-primary font-heading shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface' }}">
+                        class="flex items-center gap-space-md px-4 py-3 rounded-xl transition-all duration-200 {{ $isActive ? 'bg-primary-600 text-on-primary font-heading shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface' }}">
                         <span class="material-symbols-outlined text-[22px]">{{ $item['ikon'] }}</span>
                         <span class="font-body text-body font-semibold">{{ $item['label'] }}</span>
                     </a>

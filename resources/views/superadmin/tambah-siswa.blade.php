@@ -58,8 +58,30 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('superadmin.siswa.store') }}" class="flex flex-col gap-6">
+            <form method="POST" action="{{ route('superadmin.siswa.store') }}" enctype="multipart/form-data" class="flex flex-col gap-6">
                 @csrf
+
+                {{-- Foto Profil Siswa (Opsional) --}}
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-2 text-primary-700 font-label-upper text-label-upper font-bold uppercase tracking-wider pb-1 border-b border-gray-50">
+                        <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+                        Foto Profil Siswa (Opsional)
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-2xl bg-surface-container-low border border-gray-100">
+                        <div id="fotoPreviewBox" class="w-20 h-20 rounded-2xl bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-2xl uppercase shrink-0 overflow-hidden border border-primary-200">
+                            <span id="fotoPlaceholder" class="material-symbols-outlined text-[36px] text-primary-500">image</span>
+                            <img id="fotoPreview" src="" alt="Preview" class="w-full h-full object-cover hidden">
+                        </div>
+                        <div class="flex-1 flex flex-col gap-1.5 w-full">
+                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-700 font-semibold">Pilih Berkas Foto</span>
+                            <input type="file" name="foto" id="fotoInput" accept="image/jpeg,image/png,image/jpg,image/webp"
+                                   onchange="previewImage(this)"
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-600 file:text-white hover:file:bg-primary-700 cursor-pointer">
+                            <span class="font-caption text-caption text-gray-400">Format: JPG, PNG, WEBP (Maksimal 2 MB). Disimpan di storage/image/siswa</span>
+                        </div>
+                    </div>
+                </div>
 
                 {{-- Bagian 1: Data Pribadi & Akademik --}}
                 <div class="flex flex-col gap-4">
@@ -199,4 +221,20 @@
             </form>
         </section>
     </div>
+
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('fotoPreview');
+            const placeholder = document.getElementById('fotoPlaceholder');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 @endsection

@@ -1,7 +1,25 @@
 @extends('layouts.admin')
 
 @section('konten')
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6 mt-6">
+        {{-- Breadcrumb Navigasi (Teks Saja) --}}
+        <nav class="flex items-center gap-2 font-caption text-caption text-gray-500 flex-wrap">
+            <a href="{{ route('superadmin.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            <a href="{{ route('superadmin.level-materi') }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            <a href="{{ route('superadmin.soal', ['level_materi_id' => $level->id]) }}" class="hover:text-primary-600 transition-colors">
+                Level {{ $level->urutan }}: {{ $level->nama_materi }}
+            </a>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            <span class="text-on-surface font-bold text-primary-700">
+                @if (request('tipe_soal') && isset($tipeList[request('tipe_soal')]))
+                    Soal Tipe {{ $tipeList[request('tipe_soal')] }}
+                @else
+                    Semua Tipe Soal
+                @endif
+            </span>
+        </nav>
 
 
         {{-- Section: Toolbar (Filter, Search & Tambah Soal) --}}
@@ -63,67 +81,109 @@
             </a>
         </section>
 
-        {{-- Section: Daftar Soal --}}
-        <section class="flex flex-col gap-3">
-            @forelse ($soalList as $s)
-                <div class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-3">
-                    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                        <div class="flex flex-col min-w-0">
-                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">
-                                {{ str_replace('_', ' ', strtoupper($s->tipe_soal)) }}
-                            </span>
-                            <h3 class="font-heading text-heading font-bold text-on-surface mt-0.5">{{ $s->pertanyaan }}</h3>
+        {{-- Section: Daftar Soal Terpadu dalam 1 Card --}}
+        <section class="bg-surface-container-lowest rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            @if ($soalList->count() > 0)
+                <div class="divide-y divide-gray-100 font-body text-sm">
+                    @foreach ($soalList as $s)
+                        @php
+                            $nomor = ($soalList->currentPage() - 1) * $soalList->perPage() + $loop->iteration;
+                        @endphp
+                        <div class="p-4 sm:p-5 hover:bg-surface-container-low/30 transition-colors flex flex-col gap-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                {{-- Kiri: Nomor Urut & Info Soal --}}
+                                <div class="flex items-start gap-3.5 min-w-0 flex-1">
+                                    {{-- Badge Nomor Urut --}}
+                                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center font-heading font-extrabold text-sm sm:text-base shrink-0 shadow-sm">
+                                        {{ $nomor }}
+                                    </div>
+
+                                    <div class="flex flex-col min-w-0 flex-1">
+                                        <h3 class="font-heading font-bold text-on-surface text-sm sm:text-base leading-snug">
+                                            {{ $s->pertanyaan }}
+                                        </h3>
+
+                                        <div class="flex items-center gap-2.5 flex-wrap mt-2">
+                                            <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-gray-700 font-label-upper text-[11px] font-bold uppercase">
+                                                {{ str_replace('_', ' ', strtoupper($s->tipe_soal)) }}
+                                            </span>
+                                            <span class="text-gray-300">•</span>
+                                            <span class="inline-flex items-center gap-1 font-caption text-xs font-bold text-amber-700">
+                                                <span class="material-symbols-outlined text-[14px] text-amber-500 icon-fill">bolt</span>
+                                                +{{ $s->bobot_exp }} EXP
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Kanan: Aksi Edit & Hapus --}}
+                                <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                    {{-- Tombol Edit Soal (Buka Halaman Sunting Baru) --}}
+                                    <a href="{{ route('superadmin.soal.edit', $s) }}"
+                                       title="Sunting Soal #{{ $nomor }}"
+                                       class="w-10 h-10 rounded-full bg-primary-50 hover:bg-primary-600 text-primary-700 hover:text-white flex items-center justify-center transition-all shadow-xs border border-primary-100 shrink-0">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </a>
+
+                                    {{-- Tombol Hapus Soal --}}
+                                    <form method="POST" action="{{ route('superadmin.soal.destroy', $s) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus butir soal nomor {{ $nomor }}?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                title="Hapus Soal #{{ $nomor }}"
+                                                class="w-10 h-10 rounded-full bg-error-container/50 text-error flex items-center justify-center hover:bg-error-container transition-colors shadow-xs shrink-0">
+                                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <span class="px-3 py-1.5 rounded-full bg-yellow-300/50 text-tertiary font-caption text-caption font-bold">+{{ $s->bobot_exp }} XP</span>
-                            <form method="POST" action="{{ route('superadmin.soal.destroy', $s) }}" onsubmit="return confirm('Hapus soal ini?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="w-9 h-9 rounded-full bg-error-container/60 text-error flex items-center justify-center hover:bg-error-container transition-colors">
-                                    <span class="material-symbols-outlined text-[18px]">delete</span>
-                                </button>
-                            </form>
+                    @endforeach
+                </div>
+
+                {{-- Pagination Footer Terpadu di Bagian Bawah Card --}}
+                <div class="px-5 py-3.5 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-surface-container-low/20">
+                    <div class="text-xs text-gray-500 font-caption">
+                        Menampilkan <span class="font-bold text-on-surface">{{ $soalList->firstItem() ?? 0 }}</span> - <span class="font-bold text-on-surface">{{ $soalList->lastItem() ?? 0 }}</span> dari total <span class="font-bold text-on-surface">{{ $soalList->total() }}</span> butir soal
+                    </div>
+                    <div>
+                        {{ $soalList->links() }}
+                    </div>
+                </div>
+            @else
+                <div class="p-12 text-center text-gray-500">
+                    <div class="flex flex-col items-center justify-center gap-3">
+                        <div class="w-14 h-14 rounded-2xl bg-surface-container-high text-gray-400 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[32px]">{{ request('q') || request('tipe_soal') ? 'search_off' : 'quiz' }}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <h4 class="font-heading text-sm font-bold text-on-surface">
+                                {{ request('q') || request('tipe_soal') ? 'Soal Tidak Ditemukan' : 'Belum Ada Butir Soal' }}
+                            </h4>
+                            <p class="font-body text-xs text-gray-500">
+                                {{ request('q') || request('tipe_soal') ? 'Tidak ada butir soal yang sesuai dengan filter pencarian Anda.' : 'Belum ada butir soal terdaftar untuk level ini.' }}
+                            </p>
+                        </div>
+                        <div class="pt-2">
+                            @if (request('q') || request('tipe_soal'))
+                                <a href="{{ route('superadmin.soal', ['level_materi_id' => $level->id]) }}"
+                                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-body text-xs font-bold transition-all">
+                                    <span class="material-symbols-outlined text-[18px]">close</span>
+                                    <span>Reset Filter</span>
+                                </a>
+                            @else
+                                <a href="{{ route('superadmin.soal.create', ['level_materi_id' => $level->id]) }}"
+                                   class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary-600 text-white font-body text-xs font-bold shadow-sm hover:bg-primary-700 transition-all">
+                                    <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                                    <span>Tambah Soal Anyar</span>
+                                </a>
+                            @endif
                         </div>
                     </div>
-                    <details class="group">
-                        <summary class="cursor-pointer list-none font-caption text-caption font-bold text-primary-600 flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[16px] group-open:rotate-180 transition-transform">edit</span>
-                            <span>Edit soal ini</span>
-                        </summary>
-                        <div class="mt-4 pt-4 border-t border-gray-100">
-                            @include('partials.soal-form', [
-                                'action' => route('superadmin.soal.update', $s),
-                                'levels' => $levels,
-                                'tipeList' => $tipeList,
-                                'soal' => $s,
-                                'prefix' => 'edit-'.$s->id,
-                                'ttsRoute' => route('superadmin.soal.tts'),
-                                'previewRoute' => route('superadmin.soal.preview'),
-                            ])
-                        </div>
-                    </details>
                 </div>
-            @empty
-                <div class="bg-surface-container-lowest rounded-2xl p-10 text-center border border-gray-100">
-                    <span class="material-symbols-outlined text-[40px] text-gray-500">quiz</span>
-                    <p class="font-body text-body text-gray-500 mt-2">Belum ada soal. Tambah soal baru di atas.</p>
-                </div>
-            @endforelse
-
-            @if ($soalList->hasPages())
-                <div>{{ $soalList->links() }}</div>
             @endif
-
-            {{-- Tombol Kembali ke Pilihan Level (dipindah ke bawah) --}}
-            <div class="flex justify-start mt-4">
-                <a href="{{ route('superadmin.level-materi') }}" class="flex items-center gap-2 rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-body text-body font-bold px-6 py-2.5 shadow-sm transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-                    <span>Kembali ke Pilihan Level</span>
-                </a>
-            </div>
         </section>
     </div>
-
-    @include('partials.soal-form-script')
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

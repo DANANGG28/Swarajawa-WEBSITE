@@ -175,14 +175,14 @@
                                     <span class="font-heading text-heading text-on-primary font-bold">{{ $totalSelesai }}</span>
                                     <span class="font-caption text-caption text-primary-fixed">/ {{ $totalSoal }} Soal</span>
                                 </div>
-                                <div class="h-4 w-[1px] bg-white/20 hidden sm:block"></div>
-                                <div class="flex items-center gap-space-xs">
+                                <!-- <div class="h-4 w-[1px] bg-white/20 hidden sm:block"></div> -->
+                                <!-- <div class="flex items-center gap-space-xs">
                                     <svg class="h-4 w-4 text-yellow-300" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
                                     </svg>
                                     <span class="font-caption text-caption text-primary-fixed">Rata-rata Skor:</span>
                                     <span class="font-heading text-heading text-yellow-300 font-bold">{{ $rataSkor }}%</span>
-                                </div>
+                                </div> -->
                                 <div class="h-4 w-[1px] bg-white/20 hidden sm:block"></div>
                                 <div class="flex items-center gap-space-xs">
                                     <svg class="h-4 w-4 text-orange-300" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24">
@@ -196,14 +196,8 @@
                         </div>
                         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-md lg:flex-col lg:items-end">
                             <a href="{{ $firstSoalUrl }}" class="inline-flex items-center justify-center gap-space-sm rounded-full bg-color-white font-body text-body font-bold text-primary-700 shadow-md transition-all hover:bg-surface-bright hover:shadow-lg px-6 py-3">
-                                <svg class="h-4 w-4 fill-current text-primary-700" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z"></path>
-                                </svg>
-                                <span>Mulai Latihan Harian Campuran</span>
+                                <span>Mulai Latihan</span>
                             </a>
-                            <span class="font-caption text-caption text-primary-fixed text-center lg:text-right mt-1">
-                                Mode adaptif cerdas • Menyesuaikan materi
-                            </span>
                         </div>
                     </div>
                 </section>

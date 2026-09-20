@@ -79,7 +79,7 @@ class KuisSesiController extends Controller
 
         if (! $this->progres->canStart($siswa, $levelMateri)) {
             return redirect()->route('siswa.latihan')
-                ->with('error', 'Materi belum tercapai. Rampungake level sadurunge dhisik.');
+                ->with('error', 'Materi belum terbuka. Selesaikan level sebelumnya terlebih dahulu.');
         }
 
         $soal = $this->jawaban->firstUnfinishedInLevel($siswa, $levelMateri)
@@ -87,7 +87,7 @@ class KuisSesiController extends Controller
 
         if (! $soal) {
             return redirect()->route('siswa.latihan')
-                ->with('error', 'Durung ana soal ing level iki.');
+                ->with('error', 'Belum ada soal pada level ini.');
         }
 
         return redirect()->to($this->urlForSoal($soal));

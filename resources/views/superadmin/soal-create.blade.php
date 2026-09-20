@@ -1,32 +1,50 @@
 @extends('layouts.admin')
 
 @section('konten')
-    <div class="flex flex-col gap-6">
-        {{-- Breadcrumb: Kembali ke Daftar Soal --}}
-        <div class="flex items-center gap-2">
-            <a href="{{ route('superadmin.soal', ['level_materi_id' => $level->id]) }}" class="flex items-center gap-1 text-primary-600 hover:text-primary-700 font-body text-body font-semibold transition-colors">
-                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-                <span>Kembali ke Daftar Soal</span>
+    <div class="flex flex-col gap-6 max-w-5xl mx-auto pt-2 pb-10 mt-4">
+       <nav class="flex items-center gap-2 font-caption text-caption text-gray-500 flex-wrap">
+            <a href="{{ route('superadmin.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            <a href="{{ route('superadmin.level-materi') }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            <a href="{{ route('superadmin.soal', ['level_materi_id' => $level->id]) }}" class="hover:text-primary-600 transition-colors">
+                Level {{ $level->urutan }}: {{ $level->nama_materi }}
             </a>
-        </div>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            <span class="text-on-surface font-bold text-primary-700">Tambah Soal</span>
+        </nav>
 
         {{-- Section: Tambah Soal Form --}}
-        <section class="bg-surface-container-lowest rounded-2xl shadow-sm border border-gray-100">
-            <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary-600">add_circle</span>
-                <h3 class="font-heading text-heading font-bold text-on-surface">Tambah Soal Baru</h3>
+        <section class="bg-surface-container-lowest rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-gray-100">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-primary-50 text-primary-700 flex items-center justify-center border border-primary-100 shrink-0 shadow-xs">
+                        <span class="material-symbols-outlined text-[24px]">add_circle</span>
+                    </div>
+                    <div>
+                        <h3 class="font-heading text-lg font-bold text-on-surface">Tambah Butir Soal Baru</h3>
+                        <p class="font-body text-xs text-gray-500 mt-0.5">Tambahkan soal baru untuk Level {{ $level->urutan }}: {{ $level->nama_materi }}.</p>
+                    </div>
+                </div>
+
+                <a href="{{ route('superadmin.soal', ['level_materi_id' => $level->id]) }}"
+                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-body text-xs font-semibold transition-colors shrink-0 self-start sm:self-center">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    <span>Kembali ke Daftar Soal</span>
+                </a>
             </div>
-            <div class="px-5 pb-6 pt-4">
-                @include('partials.soal-form', [
-                    'action' => route('superadmin.soal.store'),
-                    'levels' => $levels,
-                    'tipeList' => $tipeList,
-                    'soal' => null,
-                    'prefix' => 'create',
-                    'ttsRoute' => route('superadmin.soal.tts'),
-                    'previewRoute' => route('superadmin.soal.preview'),
-                ])
-            </div>
+
+            @include('partials.soal-form', [
+                'action' => route('superadmin.soal.store'),
+                'levels' => $levels,
+                'level' => $level,
+                'tipeList' => $tipeList,
+                'soal' => null,
+                'prefix' => 'create',
+                'ttsRoute' => route('superadmin.soal.tts'),
+                'previewRoute' => route('superadmin.soal.preview'),
+                'disableLevel' => true,
+            ])
         </section>
     </div>
 

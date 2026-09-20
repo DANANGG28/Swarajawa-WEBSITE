@@ -1,11 +1,7 @@
 @extends('layouts.admin')
 
 @section('aksi')
-    <a href="{{ route('superadmin.guru.create') }}"
-       class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-body font-bold shadow-md hover:shadow-lg transition-all">
-        <span class="material-symbols-outlined text-[20px]">person_add</span>
-        <span>Daftarkan Guru Baru</span>
-    </a>
+
 @endsection
 
 @section('konten')
@@ -121,24 +117,44 @@
             @empty
                 <div class="bg-surface-container-lowest rounded-3xl p-12 text-center border border-gray-100 shadow-sm flex flex-col items-center justify-center gap-3">
                     <div class="w-16 h-16 rounded-2xl bg-surface-container-high text-gray-400 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[36px]">group_off</span>
+                        <span class="material-symbols-outlined text-[36px]">{{ request('q') ? 'person_search' : 'group_off' }}</span>
                     </div>
                     <div class="flex flex-col gap-1">
-                        <h4 class="font-heading text-heading font-bold text-on-surface">Belum Ada Akun Guru</h4>
-                        <p class="font-body text-body text-gray-500">Tidak ada data guru yang cocok dengan filter atau belum didaftarkan.</p>
+                        <h4 class="font-heading text-heading font-bold text-on-surface">
+                            {{ request('q') ? 'Data Guru Tidak Ditemukan' : 'Belum Ada Akun Guru' }}
+                        </h4>
+                        <p class="font-body text-body text-gray-500">
+                            {{ request('q') ? 'Tidak ada data guru yang cocok dengan filter pencarian "' . request('q') . '".' : 'Belum ada akun guru yang terdaftar dalam sistem.' }}
+                        </p>
                     </div>
                     <div class="pt-2">
-                        <a href="{{ route('superadmin.guru.create') }}"
-                           class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary-600 text-white font-body text-body font-bold shadow-sm hover:bg-primary-700 transition-all">
-                            <span class="material-symbols-outlined text-[18px]">person_add</span>
-                            <span>Daftarkan Guru Baru Sekarang</span>
-                        </a>
+                        @if (request('q'))
+                            <a href="{{ route('superadmin.guru') }}"
+                               class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-body text-body font-bold transition-all">
+                                <span class="material-symbols-outlined text-[18px]">close</span>
+                                <span>Reset Pencarian</span>
+                            </a>
+                        @else
+                            <a href="{{ route('superadmin.guru.create') }}"
+                               class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary-600 text-white font-body text-body font-bold shadow-sm hover:bg-primary-700 transition-all">
+                                <span class="material-symbols-outlined text-[18px]">person_add</span>
+                                <span>Daftarkan Guru Baru Sekarang</span>
+                            </a>
+                        @endif
                     </div>
                 </div>
             @endforelse
 
-            @if ($guruList->hasPages())
-                <div class="mt-4">{{ $guruList->links() }}</div>
+            {{-- Pagination Footer --}}
+            @if ($guruList->total() > 0)
+                <div class="bg-surface-container-lowest rounded-2xl p-4 sm:px-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 mt-2">
+                    <div class="text-xs text-gray-500 font-caption">
+                        Menampilkan <span class="font-bold text-on-surface">{{ $guruList->firstItem() ?? 0 }}</span> - <span class="font-bold text-on-surface">{{ $guruList->lastItem() ?? 0 }}</span> dari total <span class="font-bold text-on-surface">{{ $guruList->total() }}</span> guru
+                    </div>
+                    <div>
+                        {{ $guruList->links() }}
+                    </div>
+                </div>
             @endif
         </section>
     </div>

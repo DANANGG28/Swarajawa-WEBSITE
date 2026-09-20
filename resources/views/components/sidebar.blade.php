@@ -78,7 +78,13 @@
         <div class="flex items-center justify-between p-3 rounded-2xl bg-surface-container-low">
             <div class="flex items-center gap-3 min-w-0">
                 <div class="relative flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-primary-700 text-white flex items-center justify-center font-bold text-sm uppercase">{{ $siswaInisial }}</div>
+                    @if($siswaUser?->foto_url)
+                        <img src="{{ $siswaUser->foto_url }}" alt="{{ $siswaNama }}" class="w-10 h-10 rounded-full object-cover shadow-sm">
+                    @elseif(!empty($siswaUser?->foto) && file_exists(storage_path('image/siswa/'.$siswaUser->foto)))
+                        <img src="{{ route('siswa.image', $siswaUser->foto) }}" alt="{{ $siswaNama }}" class="w-10 h-10 rounded-full object-cover shadow-sm">
+                    @else
+                        <div class="w-10 h-10 rounded-full bg-primary-700 text-white flex items-center justify-center font-bold text-sm uppercase">{{ $siswaInisial }}</div>
+                    @endif
                     <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-surface-container-lowest"></span>
                 </div>
                 <div class="flex flex-col min-w-0">

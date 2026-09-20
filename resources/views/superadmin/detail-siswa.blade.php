@@ -32,8 +32,12 @@
             <div class="absolute right-40 -top-10 w-48 h-48 rounded-full bg-yellow-300/15 blur-xl pointer-events-none"></div>
 
             <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 min-w-0">
-                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/20 backdrop-blur-md border-2 border-white/40 text-white flex items-center justify-center font-display font-extrabold text-2xl sm:text-3xl uppercase shadow-inner shrink-0">
-                    {{ \Illuminate\Support\Str::of($siswa->nama_lengkap)->substr(0, 2) }}
+                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/20 backdrop-blur-md border-2 border-white/40 text-white flex items-center justify-center font-display font-extrabold text-2xl sm:text-3xl uppercase shadow-inner shrink-0 overflow-hidden">
+                    @if ($siswa->foto_url)
+                        <img src="{{ $siswa->foto_url }}" alt="{{ $siswa->nama_lengkap }}" class="w-full h-full object-cover">
+                    @else
+                        {{ \Illuminate\Support\Str::of($siswa->nama_lengkap)->substr(0, 2) }}
+                    @endif
                 </div>
 
                 <div class="flex flex-col gap-2.5 min-w-0">
