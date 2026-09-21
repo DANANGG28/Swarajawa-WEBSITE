@@ -10,6 +10,7 @@ use App\Models\Pembahasan;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
+use App\Models\Topik;
 use App\Services\GamificationService;
 use App\Services\ProgresService;
 use App\Services\QuizScoringService;
@@ -59,8 +60,8 @@ class HomeController extends Controller
             $currentStreak = (int) ($strek?->current_streak ?? 0);
             $highestStreak = (int) ($strek?->highest_streak ?? 0);
 
-            // Level & progres
-            $levels = LevelMateri::query()
+            // Unit (level_materi) & progres
+            $allLevels = LevelMateri::query()
                 ->withCount(['soal', 'pembahasan'])
                 ->orderBy('urutan')
                 ->get()
@@ -83,6 +84,7 @@ class HomeController extends Controller
 
                     return (object) [
                         'id' => $level->id,
+                        'topik_id' => $level->topik_id,
                         'urutan' => $level->urutan,
                         'nama_materi' => $level->nama_materi,
                         'deskripsi' => $level->deskripsi,
@@ -96,11 +98,34 @@ class HomeController extends Controller
                     ];
                 });
 
+            // Topik (kategori paling dhuwur): 1 topik -> akeh unit.
+            $topikList = Topik::query()->orderBy('urutan')->get();
+
+            $topikAktif = null;
+            $topikId = session('topik_id');
+            if ($topikId) {
+                $topikAktif = $topikList->firstWhere('id', (int) $topikId);
+            }
+            if (! $topikAktif) {
+                $unitBerjalan = $allLevels->firstWhere('status', ProgresSiswa::STATUS_BERJALAN);
+                if ($unitBerjalan && $unitBerjalan->topik_id) {
+                    $topikAktif = $topikList->firstWhere('id', $unitBerjalan->topik_id);
+                }
+            }
+            if (! $topikAktif) {
+                $topikAktif = $topikList->first();
+            }
+
+            // Unit sing ditampilake mung unit saka topik sing dipilih.
+            $levels = $topikAktif
+                ? $allLevels->where('topik_id', $topikAktif->id)->values()
+                : $allLevels->values();
+
             $activeLevel = $levels->firstWhere('status', ProgresSiswa::STATUS_BERJALAN)
                 ?? $levels->firstWhere('status', ProgresSiswa::STATUS_SELESAI)
                 ?? $levels->first();
 
-            $accessibleLevelIds = $levels->where('status', '!=', ProgresSiswa::STATUS_TERKUNCI)->pluck('id');
+            $accessibleLevelIds = $allLevels->where('status', '!=', ProgresSiswa::STATUS_TERKUNCI)->pluck('id');
 
             // Aksara tracing mastery (FR-22)
             $totalAksara = Soal::where('tipe_soal', Soal::TIPE_MENULIS_AKSARA)->count();
@@ -239,6 +264,8 @@ class HomeController extends Controller
                 'currentStreak' => $currentStreak,
                 'highestStreak' => $highestStreak,
                 'levels' => $levels,
+                'topikList' => $topikList,
+                'topikAktif' => $topikAktif,
                 'activeLevel' => $activeLevel,
                 'pembahasanByLevel' => $pembahasanByLevel,
                 'fokusPembahasan' => $fokusPembahasan,
@@ -253,6 +280,82 @@ class HomeController extends Controller
         }
 
         return view('landing');
+    }
+
+    /**
+     * Kaca pilih topik: dhaptar topik (bagian) kang bisa dipilih siswa.
+     */
+    public function topik(Request $request): View
+    {
+        /** @var Siswa $siswa */
+        $siswa = AuthContext::currentUser($request);
+        $this->gamification->syncStreak($siswa);
+
+        if ($siswa->progres()->count() === 0) {
+            $this->progres->initialize($siswa);
+        }
+
+        $topikList = Topik::query()->with('units')->orderBy('urutan')->get();
+
+        $lulusIds = JawabanSiswa::where('siswa_id', $siswa->id)
+            ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
+            ->pluck('soal_id');
+
+        $topikCards = $topikList->map(function (Topik $topik) use ($siswa, $lulusIds) {
+            $unitIds = $topik->units->pluck('id');
+            $soalIds = Soal::whereIn('level_materi_id', $unitIds)->pluck('id');
+            $totalSoal = $soalIds->count();
+            $lulus = $lulusIds->intersect($soalIds)->count();
+            $persen = $totalSoal > 0 ? (int) round(($lulus / $totalSoal) * 100) : 0;
+
+            $unitSelesai = ProgresSiswa::where('siswa_id', $siswa->id)
+                ->whereIn('level_materi_id', $unitIds)
+                ->where('status', ProgresSiswa::STATUS_SELESAI)
+                ->count();
+
+            $status = ($totalSoal > 0 && $lulus >= $totalSoal)
+                ? 'selesai'
+                : ($lulus > 0 ? 'berjalan' : 'anyar');
+
+            return (object) [
+                'id' => $topik->id,
+                'nama' => $topik->nama,
+                'deskripsi' => $topik->deskripsi,
+                'urutan' => $topik->urutan,
+                'total_unit' => $unitIds->count(),
+                'unit_selesai' => $unitSelesai,
+                'total_soal' => $totalSoal,
+                'lulus_count' => $lulus,
+                'persen' => $persen,
+                'status' => $status,
+            ];
+        });
+
+        $defaultId = 0;
+        $berjalan = $topikCards->firstWhere('status', 'berjalan');
+        if ($berjalan) {
+            $defaultId = $berjalan->id;
+        } elseif ($topikCards->isNotEmpty()) {
+            $defaultId = $topikCards->first()->id;
+        }
+
+        $topikAktifId = (int) ($request->session()->get('topik_id') ?? $defaultId);
+
+        return view('pilih-topik', [
+            'siswa' => $siswa,
+            'topikCards' => $topikCards,
+            'topikAktifId' => $topikAktifId,
+        ]);
+    }
+
+    /**
+     * Pilih topik: simpen ing session banjur bali menyang beranda.
+     */
+    public function topikPilih(Request $request, Topik $topik): RedirectResponse
+    {
+        $request->session()->put('topik_id', $topik->id);
+
+        return redirect()->route('siswa.dashboard');
     }
 
     /**

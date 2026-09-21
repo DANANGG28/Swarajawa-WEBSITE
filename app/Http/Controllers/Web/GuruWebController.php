@@ -9,6 +9,7 @@ use App\Models\Pembahasan;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
+use App\Models\Topik;
 use App\Services\Aksara\AksaraJawaConverterService;
 use App\Services\TtsService;
 use Illuminate\Http\JsonResponse;
@@ -64,12 +65,16 @@ class GuruWebController extends Controller
     {
         $guru = $this->guru();
 
-        $query = LevelMateri::withCount([
+        $query = LevelMateri::with(['topik'])->withCount([
             'soal' => function ($query) use ($guru) {
                 $query->where('guru_id', $guru->id);
             },
             'pembahasan',
         ])->orderBy('urutan');
+
+        if ($request->filled('topik_id')) {
+            $query->where('topik_id', $request->integer('topik_id'));
+        }
 
         if ($request->filled('q')) {
             $term = '%'.$request->query('q').'%';
@@ -88,12 +93,15 @@ class GuruWebController extends Controller
             'active' => 'soal',
             'levelList' => $levels,
             'levels' => $levels,
+            'topikList' => Topik::orderBy('urutan')->get(),
+            'filterTopikId' => $request->integer('topik_id') ?: null,
         ]);
     }
 
     public function levelMateriStore(Request $request): RedirectResponse
     {
         $data = $request->validate([
+            'topik_id' => ['nullable', 'integer', 'exists:topik,id'],
             'nama_materi' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],

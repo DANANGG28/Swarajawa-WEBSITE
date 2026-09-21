@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\LevelMateriFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -16,11 +17,17 @@ class LevelMateri extends Model
     protected $table = 'level_materi';
 
     protected $fillable = [
+        'topik_id',
         'nama_materi',
         'deskripsi',
         'reward_exp',
         'urutan',
     ];
+
+    public function topik(): BelongsTo
+    {
+        return $this->belongsTo(Topik::class, 'topik_id');
+    }
 
     public function soal(): HasMany
     {

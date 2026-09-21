@@ -10,6 +10,7 @@ use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Superadmin;
+use App\Models\Topik;
 use App\Services\Aksara\AksaraJawaConverterService;
 use App\Services\ProgresService;
 use App\Services\TtsService;
@@ -315,11 +316,80 @@ class SuperadminWebController extends Controller
         return redirect()->route('superadmin.siswa')->with('sukses', 'Akun siswa berhasil dihapus.');
     }
 
+    // ------------------------------------------------------------- Topik
+
+    public function topik(Request $request): View
+    {
+        $query = Topik::withCount('units')->orderBy('urutan');
+
+        if ($request->filled('q')) {
+            $term = '%'.$request->query('q').'%';
+            $query->where(fn ($q) => $q->where('nama', 'like', $term)->orWhere('deskripsi', 'like', $term));
+        }
+
+        return view('superadmin.topik', [
+            'judul' => 'Manajemen Topik',
+            'subjudul' => 'Kelola topik (bagian) pembelajaran; saben topik bisa ngemot pirang-pirang unit',
+            'role' => 'superadmin',
+            'active' => 'topik',
+            'topikList' => $query->paginate(8)->withQueryString(),
+        ]);
+    }
+
+    public function topikCreate(): View
+    {
+        $maxUrutan = Topik::max('urutan') ?? 0;
+
+        return view('superadmin.tambah-topik', [
+            'judul' => 'Tambah Topik Baru',
+            'subjudul' => 'Gawe topik (bagian) pembelajaran anyar',
+            'role' => 'superadmin',
+            'active' => 'topik',
+            'nextUrutan' => $maxUrutan + 1,
+        ]);
+    }
+
+    public function topikEdit(Topik $topik): View
+    {
+        return view('superadmin.edit-topik', [
+            'judul' => 'Sunting Topik',
+            'subjudul' => "Topik {$topik->urutan} — {$topik->nama}",
+            'role' => 'superadmin',
+            'active' => 'topik',
+            'topik' => $topik,
+        ]);
+    }
+
+    public function topikStore(Request $request): RedirectResponse
+    {
+        Topik::create($this->validatedTopik($request));
+
+        return redirect()->route('superadmin.topik')->with('sukses', 'Topik berhasil dibuat.');
+    }
+
+    public function topikUpdate(Request $request, Topik $topik): RedirectResponse
+    {
+        $topik->update($this->validatedTopik($request));
+
+        return redirect()->route('superadmin.topik')->with('sukses', 'Topik berhasil diperbarui.');
+    }
+
+    public function topikDestroy(Topik $topik): RedirectResponse
+    {
+        $topik->delete();
+
+        return redirect()->route('superadmin.topik')->with('sukses', 'Topik berhasil dihapus. Unit terkait tetap tersimpan tanpa topik.');
+    }
+
     // --------------------------------------------------------- Level Materi
 
     public function levelMateri(Request $request): View
     {
-        $query = LevelMateri::withCount(['soal', 'pembahasan'])->orderBy('urutan');
+        $query = LevelMateri::with(['topik'])->withCount(['soal', 'pembahasan'])->orderBy('urutan');
+
+        if ($request->filled('topik_id')) {
+            $query->where('topik_id', $request->integer('topik_id'));
+        }
 
         if ($request->filled('q')) {
             $term = '%'.$request->query('q').'%';
@@ -335,6 +405,8 @@ class SuperadminWebController extends Controller
             'role' => 'superadmin',
             'active' => 'level-materi',
             'levels' => $query->paginate(5)->withQueryString(),
+            'topikList' => Topik::orderBy('urutan')->get(),
+            'filterTopikId' => $request->integer('topik_id') ?: null,
         ]);
     }
 
@@ -348,6 +420,7 @@ class SuperadminWebController extends Controller
             'role' => 'superadmin',
             'active' => 'level-materi',
             'nextUrutan' => $maxUrutan + 1,
+            'topikList' => Topik::orderBy('urutan')->get(),
         ]);
     }
 
@@ -359,6 +432,7 @@ class SuperadminWebController extends Controller
             'role' => 'superadmin',
             'active' => 'level-materi',
             'levelMateri' => $levelMateri,
+            'topikList' => Topik::orderBy('urutan')->get(),
         ]);
     }
 
@@ -628,9 +702,22 @@ class SuperadminWebController extends Controller
     private function validatedLevel(Request $request): array
     {
         return $request->validate([
+            'topik_id' => ['nullable', 'integer', 'exists:topik,id'],
             'nama_materi' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
+            'urutan' => ['required', 'integer', 'min:0'],
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatedTopik(Request $request): array
+    {
+        return $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'deskripsi' => ['nullable', 'string'],
             'urutan' => ['required', 'integer', 'min:0'],
         ]);
     }

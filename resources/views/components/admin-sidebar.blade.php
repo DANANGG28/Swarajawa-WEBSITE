@@ -6,6 +6,7 @@
             ['key' => 'dashboard', 'label' => 'Dashboard', 'ikon' => 'dashboard', 'url' => route('superadmin.dashboard'), 'alias' => []],
             ['key' => 'guru', 'label' => 'Akun Guru', 'ikon' => 'supervisor_account', 'url' => route('superadmin.guru'), 'alias' => []],
             ['key' => 'siswa', 'label' => 'Akun Siswa', 'ikon' => 'groups', 'url' => route('superadmin.siswa'), 'alias' => []],
+            ['key' => 'topik', 'label' => 'Topik', 'ikon' => 'topic', 'url' => route('superadmin.topik'), 'alias' => []],
             ['key' => 'level-materi', 'label' => 'Level Materi', 'ikon' => 'stairs', 'url' => route('superadmin.level-materi'), 'alias' => ['soal']],
         ]
         : [
