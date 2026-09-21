@@ -16,7 +16,7 @@
         @method('PUT')
     @endif
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {{-- Custom Dropdown Level Materi --}}
         <div class="relative flex flex-col gap-1.5" id="custom-level-wrapper-{{ $prefix }}">
             <div class="flex items-center justify-between">
@@ -78,6 +78,26 @@
                 </div>
             @endif
         </div>
+
+        {{-- Dropdown Pembahasan (sub-materi pada level terpilih) --}}
+        <label class="flex flex-col gap-1.5">
+            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Pembahasan</span>
+            @php
+                $selectedPembahasan = old('pembahasan_id', $soal->pembahasan_id ?? ($selectedPembahasanId ?? ''));
+            @endphp
+            <select name="pembahasan_id"
+                class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body text-gray-700 outline-none focus:border-primary-500">
+                <option value="">— Tanpa Pembahasan —</option>
+                @foreach (($pembahasanList ?? collect()) as $pembahasan)
+                    <option value="{{ $pembahasan->id }}" @selected((string) $selectedPembahasan === (string) $pembahasan->id)>
+                        {{ $pembahasan->urutan }}. {{ $pembahasan->nama }}
+                    </option>
+                @endforeach
+            </select>
+            @if (($pembahasanList ?? collect())->isEmpty())
+                <span class="text-caption text-gray-400">Belum ada pembahasan pada level ini.</span>
+            @endif
+        </label>
 
         {{-- Custom Dropdown Tipe Soal --}}
         <div class="relative flex flex-col gap-1.5" id="custom-tipe-wrapper-{{ $prefix }}">

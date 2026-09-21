@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Exp;
 use App\Models\JawabanSiswa;
 use App\Models\LevelMateri;
+use App\Models\Pembahasan;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
@@ -60,7 +61,7 @@ class HomeController extends Controller
 
             // Level & progres
             $levels = LevelMateri::query()
-                ->withCount('soal')
+                ->withCount(['soal', 'pembahasan'])
                 ->orderBy('urutan')
                 ->get()
                 ->map(function (LevelMateri $level) use ($siswa) {
@@ -87,6 +88,7 @@ class HomeController extends Controller
                         'deskripsi' => $level->deskripsi,
                         'reward_exp' => $level->reward_exp,
                         'total_soal' => $totalSoal,
+                        'pembahasan_count' => $level->pembahasan_count,
                         'lulus_count' => $lulusCount,
                         'persen' => $persen,
                         'rata_skor' => $rataSkor,
@@ -146,6 +148,91 @@ class HomeController extends Controller
                 ];
             }
 
+            // Pembahasan (sub-materi) saben level -> dadi node ing roadmap per unit.
+            $pembahasanByLevel = [];
+            foreach ($levels as $lvl) {
+                $levelTerkunci = $lvl->status === ProgresSiswa::STATUS_TERKUNCI;
+
+                $pembahasanByLevel[$lvl->id] = Pembahasan::query()
+                    ->where('level_materi_id', $lvl->id)
+                    ->withCount('soal')
+                    ->orderBy('urutan')
+                    ->get()
+                    ->map(function (Pembahasan $pembahasan) use ($siswa, $levelTerkunci) {
+                        $soalIds = $pembahasan->soal()->pluck('id');
+                        $jawaban = JawabanSiswa::where('siswa_id', $siswa->id)
+                            ->whereIn('soal_id', $soalIds)
+                            ->get();
+
+                        $lulus = $jawaban->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
+                        $total = $pembahasan->soal_count;
+                        $persen = $total > 0 ? (int) round(($lulus / $total) * 100) : 0;
+
+                        $status = ($total > 0 && $lulus >= $total)
+                            ? 'selesai'
+                            : ($jawaban->count() > 0 ? 'berjalan' : 'anyar');
+
+                        return (object) [
+                            'id' => $pembahasan->id,
+                            'nama' => $pembahasan->nama,
+                            'deskripsi' => $pembahasan->deskripsi,
+                            'urutan' => $pembahasan->urutan,
+                            'total_soal' => $total,
+                            'lulus_count' => $lulus,
+                            'persen' => $persen,
+                            'status' => $status,
+                            'terkunci' => $levelTerkunci,
+                            'mulai_url' => route('kuis.mulai', [
+                                'levelMateri' => $pembahasan->level_materi_id,
+                                'pembahasan_id' => $pembahasan->id,
+                            ]),
+                        ];
+                    });
+            }
+
+            $activeLevelPembahasan = $activeLevel
+                ? ($pembahasanByLevel[$activeLevel->id] ?? collect())
+                : collect();
+
+            $fokusPembahasan = $activeLevelPembahasan->firstWhere('status', '!=', 'selesai')
+                ?? $activeLevelPembahasan->first();
+
+            // Misi harian (dihitung dari jawaban hari ini).
+            $jawabanHariIni = JawabanSiswa::with('soal')
+                ->where('siswa_id', $siswa->id)
+                ->whereDate('updated_at', now()->toDateString())
+                ->get();
+
+            $lulusHariIni = $jawabanHariIni->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
+            $expHariIni = (int) $jawabanHariIni->sum('exp_diberikan');
+            $suaraHariIni = $jawabanHariIni->filter(fn ($j) => $j->soal?->tipe_soal === Soal::TIPE_KUIS_SUARA)->count();
+
+            $misiHarian = [
+                ['label' => 'Selesaikan 2 Soal', 'progress' => min($lulusHariIni, 2), 'target' => 2, 'warna' => 'emerald'],
+                ['label' => 'Dapatkan 50 XP Hari Ini', 'progress' => min($expHariIni, 50), 'target' => 50, 'warna' => 'brand'],
+                ['label' => 'Latihan Bicara AI (STT) 1×', 'progress' => min($suaraHariIni, 1), 'target' => 1, 'warna' => 'brand-300'],
+            ];
+
+            // Kalender streak 7 hari (Senin s.d. Minggu minggu ini).
+            $namaHari = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+            $awalMinggu = now()->startOfWeek();
+            $tanggalAktif = JawabanSiswa::where('siswa_id', $siswa->id)
+                ->where('updated_at', '>=', $awalMinggu)
+                ->get(['updated_at'])
+                ->map(fn ($j) => $j->updated_at->toDateString())
+                ->unique();
+
+            $weekStreak = collect(range(0, 6))->map(function (int $i) use ($awalMinggu, $tanggalAktif, $namaHari) {
+                $tanggal = $awalMinggu->copy()->addDays($i);
+
+                return [
+                    'label' => $namaHari[$tanggal->dayOfWeek],
+                    'aktif' => $tanggalAktif->contains($tanggal->toDateString()),
+                    'is_today' => $tanggal->isToday(),
+                    'is_future' => $tanggal->isFuture(),
+                ];
+            });
+
             return view('welcome', [
                 'siswa' => $siswa,
                 'totalExp' => $totalExp,
@@ -153,6 +240,10 @@ class HomeController extends Controller
                 'highestStreak' => $highestStreak,
                 'levels' => $levels,
                 'activeLevel' => $activeLevel,
+                'pembahasanByLevel' => $pembahasanByLevel,
+                'fokusPembahasan' => $fokusPembahasan,
+                'misiHarian' => $misiHarian,
+                'weekStreak' => $weekStreak,
                 'totalAksara' => $totalAksara,
                 'aksaraDikuasai' => $aksaraDikuasai,
                 'aksaraPersen' => $aksaraPersen,
@@ -363,13 +454,13 @@ class HomeController extends Controller
         $siswa = AuthContext::currentUser($request);
 
         $fields = [
-            'foto' => !empty($siswa->foto),
-            'nama_lengkap' => !empty($siswa->nama_lengkap),
-            'nis' => !empty($siswa->nis),
-            'jenis_kelamin' => !empty($siswa->jenis_kelamin),
-            'kelas' => !empty($siswa->kelas),
-            'no_telpon' => !empty($siswa->no_telpon),
-            'email' => !empty($siswa->email),
+            'foto' => ! empty($siswa->foto),
+            'nama_lengkap' => ! empty($siswa->nama_lengkap),
+            'nis' => ! empty($siswa->nis),
+            'jenis_kelamin' => ! empty($siswa->jenis_kelamin),
+            'kelas' => ! empty($siswa->kelas),
+            'no_telpon' => ! empty($siswa->no_telpon),
+            'email' => ! empty($siswa->email),
         ];
 
         $totalFields = count($fields);
@@ -388,7 +479,7 @@ class HomeController extends Controller
 
         $belumLengkap = [];
         foreach ($fields as $key => $isFilled) {
-            if (!$isFilled) {
+            if (! $isFilled) {
                 $belumLengkap[] = $fieldLabels[$key];
             }
         }
@@ -454,4 +545,3 @@ class HomeController extends Controller
         return redirect()->route('siswa.profil')->with('sukses', 'Data diri Anda berhasil diperbarui!');
     }
 }
-

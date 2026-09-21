@@ -70,6 +70,12 @@ Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(functio
 
     Route::get('/level-materi', [GuruWebController::class, 'levelMateri'])->name('level-materi');
     Route::post('/level-materi', [GuruWebController::class, 'levelMateriStore'])->name('level-materi.store');
+
+    Route::get('/pembahasan', [GuruWebController::class, 'pembahasan'])->name('pembahasan');
+    Route::post('/pembahasan', [GuruWebController::class, 'pembahasanStore'])->name('pembahasan.store');
+    Route::put('/pembahasan/{pembahasan}', [GuruWebController::class, 'pembahasanUpdate'])->name('pembahasan.update');
+    Route::delete('/pembahasan/{pembahasan}', [GuruWebController::class, 'pembahasanDestroy'])->name('pembahasan.destroy');
+
     Route::get('/soal', [GuruWebController::class, 'soal'])->name('soal');
     Route::get('/soal/tambah', [GuruWebController::class, 'soalCreate'])->name('soal.create');
     Route::get('/soal/{soal}/edit', [GuruWebController::class, 'soalEdit'])->name('soal.edit');
@@ -111,6 +117,11 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
     Route::post('/level-materi', [SuperadminWebController::class, 'levelMateriStore'])->name('level-materi.store');
     Route::put('/level-materi/{levelMateri}', [SuperadminWebController::class, 'levelMateriUpdate'])->name('level-materi.update');
     Route::delete('/level-materi/{levelMateri}', [SuperadminWebController::class, 'levelMateriDestroy'])->name('level-materi.destroy');
+
+    Route::get('/pembahasan', [SuperadminWebController::class, 'pembahasan'])->name('pembahasan');
+    Route::post('/pembahasan', [SuperadminWebController::class, 'pembahasanStore'])->name('pembahasan.store');
+    Route::put('/pembahasan/{pembahasan}', [SuperadminWebController::class, 'pembahasanUpdate'])->name('pembahasan.update');
+    Route::delete('/pembahasan/{pembahasan}', [SuperadminWebController::class, 'pembahasanDestroy'])->name('pembahasan.destroy');
 
     Route::get('/soal', [SuperadminWebController::class, 'soal'])->name('soal');
     Route::get('/soal/tambah', [SuperadminWebController::class, 'soalCreate'])->name('soal.create');

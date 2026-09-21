@@ -29,6 +29,7 @@ class Soal extends Model
 
     protected $fillable = [
         'level_materi_id',
+        'pembahasan_id',
         'tipe_soal',
         'pertanyaan',
         'soal_latin',
@@ -54,6 +55,11 @@ class Soal extends Model
     public function levelMateri(): BelongsTo
     {
         return $this->belongsTo(LevelMateri::class, 'level_materi_id');
+    }
+
+    public function pembahasan(): BelongsTo
+    {
+        return $this->belongsTo(Pembahasan::class, 'pembahasan_id');
     }
 
     public function guru(): BelongsTo
