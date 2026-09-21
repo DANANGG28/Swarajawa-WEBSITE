@@ -398,7 +398,7 @@
                                 <span class="font-heading font-black text-primary-700 text-lg">{{ number_format($myExp) }} XP</span>
                                 <span class="font-caption text-caption font-semibold text-green-500">Peringkat #{{ $myRank }}</span>
                             </div>
-                            <a href="{{ route('siswa.latihan') }}" class="px-5 py-2 rounded-full bg-primary-600 text-white font-heading font-bold text-caption hover:bg-primary-700 transition-colors shadow-sm">
+                            <a href="{{ route('siswa.dashboard') }}" class="px-5 py-2 rounded-full bg-primary-600 text-white font-heading font-bold text-caption hover:bg-primary-700 transition-colors shadow-sm">
                                 Tambah EXP
                             </a>
                         </div>

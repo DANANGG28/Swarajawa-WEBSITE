@@ -6,7 +6,7 @@
             <span class="material-symbols-outlined text-[48px] text-gray-500">draw</span>
             <h2 class="font-heading text-heading font-bold text-on-surface mt-3">Belum ada soal tracing aksara</h2>
             <p class="font-body text-body text-gray-500 mt-1">Selesaikan level sebelumnya atau hubungi guru untuk menambah soal.</p>
-            <a href="{{ url('/latihan-soal') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Kembali ke Latihan</a>
+            <a href="{{ route('siswa.dashboard') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Kembali ke Beranda</a>
         </div>
     @else
         <div class="flex flex-col gap-6">
@@ -164,8 +164,7 @@
                             if (res.next_url) {
                                 nextButtons += `<a href="${res.next_url}" class="rounded-full bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body hover:bg-primary-700 transition shadow-sm">Soal Selanjutnya</a>`;
                             }
-                            nextButtons += `<a href="{{ route('siswa.latihan') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Daftar Soal</a>`;
-                            nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Beranda</a></div>`;
+                        nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Beranda</a></div>`;
 
                             let levelSelesaiHtml = '';
                             if (res.level_selesai) {

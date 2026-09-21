@@ -10,6 +10,7 @@ use App\Models\Pembahasan;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
+use App\Models\Topik;
 use App\Services\GamificationService;
 use App\Services\ProgresService;
 use App\Services\QuizScoringService;
@@ -59,8 +60,8 @@ class HomeController extends Controller
             $currentStreak = (int) ($strek?->current_streak ?? 0);
             $highestStreak = (int) ($strek?->highest_streak ?? 0);
 
-            // Level & progres
-            $levels = LevelMateri::query()
+            // Unit (level_materi) & progres
+            $allLevels = LevelMateri::query()
                 ->withCount(['soal', 'pembahasan'])
                 ->orderBy('urutan')
                 ->get()
@@ -83,6 +84,7 @@ class HomeController extends Controller
 
                     return (object) [
                         'id' => $level->id,
+                        'topik_id' => $level->topik_id,
                         'urutan' => $level->urutan,
                         'nama_materi' => $level->nama_materi,
                         'deskripsi' => $level->deskripsi,
@@ -96,11 +98,34 @@ class HomeController extends Controller
                     ];
                 });
 
+            // Topik (kategori paling dhuwur): 1 topik -> akeh unit.
+            $topikList = Topik::query()->orderBy('urutan')->get();
+
+            $topikAktif = null;
+            $topikId = session('topik_id');
+            if ($topikId) {
+                $topikAktif = $topikList->firstWhere('id', (int) $topikId);
+            }
+            if (! $topikAktif) {
+                $unitBerjalan = $allLevels->firstWhere('status', ProgresSiswa::STATUS_BERJALAN);
+                if ($unitBerjalan && $unitBerjalan->topik_id) {
+                    $topikAktif = $topikList->firstWhere('id', $unitBerjalan->topik_id);
+                }
+            }
+            if (! $topikAktif) {
+                $topikAktif = $topikList->first();
+            }
+
+            // Unit sing ditampilake mung unit saka topik sing dipilih.
+            $levels = $topikAktif
+                ? $allLevels->where('topik_id', $topikAktif->id)->values()
+                : $allLevels->values();
+
             $activeLevel = $levels->firstWhere('status', ProgresSiswa::STATUS_BERJALAN)
                 ?? $levels->firstWhere('status', ProgresSiswa::STATUS_SELESAI)
                 ?? $levels->first();
 
-            $accessibleLevelIds = $levels->where('status', '!=', ProgresSiswa::STATUS_TERKUNCI)->pluck('id');
+            $accessibleLevelIds = $allLevels->where('status', '!=', ProgresSiswa::STATUS_TERKUNCI)->pluck('id');
 
             // Aksara tracing mastery (FR-22)
             $totalAksara = Soal::where('tipe_soal', Soal::TIPE_MENULIS_AKSARA)->count();
@@ -239,6 +264,8 @@ class HomeController extends Controller
                 'currentStreak' => $currentStreak,
                 'highestStreak' => $highestStreak,
                 'levels' => $levels,
+                'topikList' => $topikList,
+                'topikAktif' => $topikAktif,
                 'activeLevel' => $activeLevel,
                 'pembahasanByLevel' => $pembahasanByLevel,
                 'fokusPembahasan' => $fokusPembahasan,
@@ -256,9 +283,9 @@ class HomeController extends Controller
     }
 
     /**
-     * Halaman latihan soal & asesmen dinamis — menghubungkan soal guru ke siswa.
+     * Kaca pilih topik: dhaptar topik (bagian) kang bisa dipilih siswa.
      */
-    public function latihanSoal(Request $request): View
+    public function topik(Request $request): View
     {
         /** @var Siswa $siswa */
         $siswa = AuthContext::currentUser($request);
@@ -268,94 +295,67 @@ class HomeController extends Controller
             $this->progres->initialize($siswa);
         }
 
-        $levelQuery = LevelMateri::query()->withCount('soal')->orderBy('urutan');
-        if ($request->filled('q')) {
-            $levelQuery->where('nama_materi', 'like', '%'.$request->q.'%');
-        }
-        $levels = $levelQuery->get();
+        $topikList = Topik::query()->with('units')->orderBy('urutan')->get();
 
-        $progresMap = ProgresSiswa::where('siswa_id', $siswa->id)->get()->keyBy('level_materi_id');
-        $jawabanMap = JawabanSiswa::where('siswa_id', $siswa->id)->get()->keyBy('soal_id');
+        $lulusIds = JawabanSiswa::where('siswa_id', $siswa->id)
+            ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
+            ->pluck('soal_id');
 
-        $tipeLabels = [
-            Soal::TIPE_PILIHAN_GANDA => 'Pilihan Ganda',
-            Soal::TIPE_SUSUN_KALIMAT => 'Susun Ukara',
-            Soal::TIPE_PENCOCOKAN_ARTI => 'Pencocokan Arti',
-            Soal::TIPE_PUZZLE_PAKAIAN_ADAT => 'Puzzle Busana Adat',
-            Soal::TIPE_MENULIS_AKSARA => 'Tracing Aksara',
-            Soal::TIPE_KUIS_SUARA => 'Kuis Wicara Audio',
-        ];
+        $topikCards = $topikList->map(function (Topik $topik) use ($siswa, $lulusIds) {
+            $unitIds = $topik->units->pluck('id');
+            $soalIds = Soal::whereIn('level_materi_id', $unitIds)->pluck('id');
+            $totalSoal = $soalIds->count();
+            $lulus = $lulusIds->intersect($soalIds)->count();
+            $persen = $totalSoal > 0 ? (int) round(($lulus / $totalSoal) * 100) : 0;
 
-        // Siji card saben level materi.
-        $levelCards = $levels->map(function (LevelMateri $level) use ($progresMap, $jawabanMap, $tipeLabels) {
-            $progres = $progresMap->get($level->id);
-            $status = $progres?->status ?? ProgresSiswa::STATUS_TERKUNCI;
-            $isLocked = $status === ProgresSiswa::STATUS_TERKUNCI;
+            $unitSelesai = ProgresSiswa::where('siswa_id', $siswa->id)
+                ->whereIn('level_materi_id', $unitIds)
+                ->where('status', ProgresSiswa::STATUS_SELESAI)
+                ->count();
 
-            $soalLevel = Soal::where('level_materi_id', $level->id)->get(['id', 'tipe_soal', 'bobot_exp']);
-            $soalLevelIds = $soalLevel->pluck('id');
-            $total = $soalLevel->count();
-            $jawabanLevel = $jawabanMap->filter(fn ($j) => $soalLevelIds->contains($j->soal_id));
-            $lulus = $jawabanLevel->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
-            $persen = $total > 0 ? (int) round(($lulus / $total) * 100) : 0;
-            $rataSkor = $jawabanLevel->count() > 0 ? (int) round($jawabanLevel->avg('skor_tertinggi')) : 0;
-
-            if ($isLocked) {
-                $badge = 'terkunci';
-            } elseif ($total > 0 && $lulus >= $total) {
-                $badge = 'selesai';
-            } elseif ($jawabanLevel->count() > 0) {
-                $badge = 'sedang';
-            } else {
-                $badge = 'anyar';
-            }
-
-            $tipeList = $soalLevel->pluck('tipe_soal')->unique()
-                ->map(fn ($t) => $tipeLabels[$t] ?? 'Latihan')->values();
+            $status = ($totalSoal > 0 && $lulus >= $totalSoal)
+                ? 'selesai'
+                : ($lulus > 0 ? 'berjalan' : 'anyar');
 
             return (object) [
-                'id' => $level->id,
-                'urutan' => $level->urutan,
-                'nama_materi' => $level->nama_materi,
-                'deskripsi' => $level->deskripsi,
-                'reward_exp' => (int) $level->reward_exp,
-                'total_soal' => $total,
+                'id' => $topik->id,
+                'nama' => $topik->nama,
+                'deskripsi' => $topik->deskripsi,
+                'urutan' => $topik->urutan,
+                'total_unit' => $unitIds->count(),
+                'unit_selesai' => $unitSelesai,
+                'total_soal' => $totalSoal,
                 'lulus_count' => $lulus,
                 'persen' => $persen,
-                'rata_skor' => $rataSkor,
                 'status' => $status,
-                'badge' => $badge,
-                'is_locked' => $isLocked,
-                'tipe_list' => $tipeList,
-                'mulai_url' => $isLocked ? null : route('kuis.mulai', $level),
             ];
         });
 
-        // Quick stats across accessible levels.
-        $accessibleLevelIds = $progresMap->where('status', '!=', ProgresSiswa::STATUS_TERKUNCI)->pluck('level_materi_id');
-        $accessibleSoalIds = Soal::whereIn('level_materi_id', $accessibleLevelIds)->pluck('id');
-        $answered = $jawabanMap->filter(fn ($j) => $accessibleSoalIds->contains($j->soal_id));
-        $totalSoal = $accessibleSoalIds->count();
-        $totalSelesai = $answered->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
-        $rataSkor = $answered->count() > 0 ? (int) round($answered->avg('skor_tertinggi')) : 0;
-        $totalExpDiperoleh = (int) $answered->sum('exp_diberikan');
+        $defaultId = 0;
+        $berjalan = $topikCards->firstWhere('status', 'berjalan');
+        if ($berjalan) {
+            $defaultId = $berjalan->id;
+        } elseif ($topikCards->isNotEmpty()) {
+            $defaultId = $topikCards->first()->id;
+        }
 
-        // Soal pertama kanggo tombol "Mulai Latihan Harian Campuran".
-        $kuisCtrl = app(KuisSesiController::class);
-        $firstSoal = Soal::whereIn('level_materi_id', $accessibleLevelIds)
-            ->whereNotIn('id', $answered->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->pluck('soal_id'))
-            ->first() ?? Soal::whereIn('level_materi_id', $accessibleLevelIds)->first();
-        $firstSoalUrl = $firstSoal ? $kuisCtrl->urlForSoal($firstSoal) : route('kuis.pilihan-ganda');
+        $topikAktifId = (int) ($request->session()->get('topik_id') ?? $defaultId);
 
-        return view('latihan-soal', [
+        return view('pilih-topik', [
             'siswa' => $siswa,
-            'levelCards' => $levelCards,
-            'totalSoal' => $totalSoal,
-            'totalSelesai' => $totalSelesai,
-            'rataSkor' => $rataSkor,
-            'totalExpDiperoleh' => $totalExpDiperoleh,
-            'firstSoalUrl' => $firstSoalUrl,
+            'topikCards' => $topikCards,
+            'topikAktifId' => $topikAktifId,
         ]);
+    }
+
+    /**
+     * Pilih topik: simpen ing session banjur bali menyang beranda.
+     */
+    public function topikPilih(Request $request, Topik $topik): RedirectResponse
+    {
+        $request->session()->put('topik_id', $topik->id);
+
+        return redirect()->route('siswa.dashboard');
     }
 
     /**

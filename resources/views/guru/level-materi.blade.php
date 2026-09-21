@@ -6,6 +6,7 @@
         <section class="bg-surface-container-lowest rounded-3xl p-4 sm:p-5 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
             {{-- Form Input Pencarian Level Materi --}}
             <form method="GET" action="{{ route('guru.level-materi') }}" class="relative flex-1">
+                <input type="hidden" name="topik_id" value="{{ request('topik_id') }}">
                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
                 <input type="text" name="q" value="{{ request('q') }}" id="searchLevelInput" oninput="filterLevels()" placeholder="Cari nama materi atau deskripsi level..."
                        class="w-full rounded-2xl border border-gray-200 bg-gray-50 pl-11 pr-10 py-2.5 font-body text-sm outline-none focus:border-primary-500 focus:bg-white transition-all">
@@ -16,7 +17,37 @@
                     </a>
                 @endif
             </form>
+
+            {{-- Filter Topik --}}
+            <form method="GET" action="{{ route('guru.level-materi') }}" class="sm:w-64 shrink-0">
+                @if (request('q'))
+                    <input type="hidden" name="q" value="{{ request('q') }}">
+                @endif
+                <select name="topik_id" onchange="this.form.submit()"
+                        class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2.5 font-body text-sm outline-none focus:border-primary-500 focus:bg-white transition-all">
+                    <option value="">Semua Topik</option>
+                    @foreach (($topikList ?? collect()) as $topik)
+                        <option value="{{ $topik->id }}" @selected((string) request('topik_id') === (string) $topik->id)>
+                            {{ $topik->urutan }}. {{ $topik->nama }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
         </section>
+
+        @if (! empty($filterTopikId))
+            @php $filterTopik = ($topikList ?? collect())->firstWhere('id', $filterTopikId); @endphp
+            <div class="flex items-center gap-2 text-xs font-body">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-50 text-primary-700 font-bold border border-primary-100">
+                    <span class="material-symbols-outlined text-[16px]">topic</span>
+                    Unit saka topik: {{ $filterTopik?->nama ?? '#'.$filterTopikId }}
+                </span>
+                <a href="{{ route('guru.level-materi') }}" class="inline-flex items-center gap-1 text-gray-500 hover:text-primary-600 font-semibold">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                    Reset
+                </a>
+            </div>
+        @endif
 
         {{-- Daftar List Level Materi --}}
         <section class="bg-surface-container-lowest rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
@@ -47,6 +78,13 @@
                                     @endif
 
                                     <div class="flex items-center gap-3 text-xs text-gray-400 font-caption mt-2 flex-wrap">
+                                        @if ($level->topik)
+                                            <span class="flex items-center gap-1 font-semibold text-primary">
+                                                <span class="material-symbols-outlined text-[15px]">topic</span>
+                                                {{ $level->topik->nama }}
+                                            </span>
+                                            <span class="text-gray-300">•</span>
+                                        @endif
                                         {{-- Jumlah Soal Milik Guru --}}
                                         <span class="flex items-center gap-1 font-semibold text-primary-700">
                                             {{ $level->soal_count }} Soal Terdaftar

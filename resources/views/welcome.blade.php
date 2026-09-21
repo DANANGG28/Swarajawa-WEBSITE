@@ -74,10 +74,10 @@
     <style>
         ::-webkit-scrollbar { display: none; }
         .sj-app {
-            background-color: #ffffff;
+            background-color: #f7f3ff;
         }
         .sj-widgets {
-            background-color: #ffffff;
+            background-color: #f7f3ff;
         }
         .connector-dashed-line {
             stroke-dasharray: 6, 6;
@@ -86,80 +86,25 @@
         @keyframes dashMove { to { stroke-dashoffset: -100; } }
         .animate-in { animation: fadeZoom .2s ease-out; }
         @keyframes fadeZoom { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
-        .unit-tab {
-            background-color: #ffffff;
-            border: 2px solid #cbd5e1;
-            color: #5443c9;
-            font-weight: 900;
-            box-shadow: 0 3px 0 #cbd5e1;
-        }
-        .unit-tab:hover { border-color: #a78bfa; color: #4338ca; background-color: #f5f3ff; }
-        .unit-check { display: none; }
-        .unit-tab.is-active .unit-check { display: inline-block; }
-        .unit-tab.is-active .unit-lock { display: none; }
-        .unit-tab.is-active {
-            background-color: #5443c9;
-            border-color: #5443c9;
-            color: #ffffff;
-            box-shadow: 0 2px 0 #3f31a8;
-        }
         .sj-card {
-            box-shadow: 0 4px 0 rgba(15, 23, 42, 0.14), 0 2px 4px rgba(15, 23, 42, 0.10);
+            box-shadow: 0 4px 0 rgba(15, 23, 42, 0.07), 0 2px 4px rgba(15, 23, 42, 0.05);
         }
         .sj-card-hover:hover {
-            box-shadow: 0 6px 0 rgba(15, 23, 42, 0.16), 0 3px 10px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 6px 0 rgba(15, 23, 42, 0.09), 0 3px 10px rgba(15, 23, 42, 0.06);
         }
     </style>
 </head>
-<body class="bg-white antialiased text-slate-900">
+<body class="bg-[#f7f3ff] antialiased text-slate-900">
     <x-sidebar active="beranda" />
 
     <div class="pl-72 min-h-screen sj-app">
         <div class="flex max-w-[1200px] mx-auto">
             <!-- BEGIN: Center Learning Column -->
             <main class="flex-1 min-w-0 px-8 py-7">
-                <div class="max-w-3xl mx-auto space-y-6">
-
-                    <!-- Top Bar Course Header Card -->
-                    <header class="bg-white rounded-2xl p-5 sj-card sj-card-hover border-2 border-slate-300" data-purpose="course-header-card">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600 shrink-0">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <span class="text-[11px] font-black uppercase tracking-wider text-slate-500">TOPIK KURSUS AKTIF</span>
-                                <h2 id="topik-nama" class="text-xl font-black text-slate-900 leading-tight">
-                                    {{ $activeLevel?->nama_materi ?? 'Belum Ada Materi' }}
-                                </h2>
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-2" data-purpose="unit-tabs">
-                            @forelse($levels as $lvl)
-                                @php $tabAktif = $activeLevel && $activeLevel->id === $lvl->id; @endphp
-                                <button type="button"
-                                    data-unit-tab
-                                    data-unit-id="{{ $lvl->id }}"
-                                    data-unit-nama="{{ $lvl->nama_materi }}"
-                                    data-unit-urutan="{{ $lvl->urutan }}"
-                                    data-unit-deskripsi="{{ $lvl->deskripsi ?? 'Ayo sinau materi iki kanthi nyenengake.' }}"
-                                    class="unit-tab px-4 py-2 rounded-full text-xs flex items-center gap-1.5 transition-all active:scale-95 {{ $tabAktif ? 'is-active' : '' }}">
-                                    <svg class="unit-check w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    @if($lvl->status === 'terkunci')
-                                        <svg class="unit-lock w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewBox="0 0 24 24"><rect height="11" rx="2" ry="2" width="18" x="3" y="11"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                    @endif
-                                    <span>{{ $lvl->nama_materi }}</span>
-                                </button>
-                            @empty
-                                <span class="text-xs font-bold text-slate-400">Belum ada unit pembelajaran.</span>
-                            @endforelse
-                        </div>
-                    </header>
+                <div class="max-w-3xl mx-auto space-y-8">
 
                     <!-- Welcome Alert Banner -->
-                    <section id="welcome-alert" class="bg-emerald-50/80 border-2 border-emerald-300 rounded-2xl px-5 py-3.5 flex items-center gap-3 text-emerald-900 sj-card" data-purpose="welcome-alert">
+                    <section id="welcome-alert" class="bg-emerald-50/80 border-2 border-emerald-200 rounded-[28px] px-5 py-3.5 flex items-center gap-3 text-emerald-900 sj-card" data-purpose="welcome-alert">
                         <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24">
                                 <polyline points="20 6 9 17 4 12"></polyline>
@@ -182,29 +127,7 @@
                         </button>
                     </section>
 
-                    <!-- Unit Banner Header -->
-                    <section class="bg-gradient-to-r from-brand-600 to-indigo-600 rounded-3xl p-6 text-white border-2 border-brand-700 sj-card relative overflow-hidden" data-purpose="unit-banner">
-                        <div class="flex items-start justify-between gap-4 relative z-10">
-                            <div class="space-y-1.5 max-w-xl">
-                                <div id="unit-banner-label" class="text-[11px] font-black uppercase tracking-widest text-brand-200">
-                                    UNIT {{ $activeLevel?->urutan ?? 1 }}: {{ strtoupper($activeLevel?->nama_materi ?? 'DASAR') }}
-                                </div>
-                                <h3 id="unit-banner-desc" class="text-xl font-black leading-snug">
-                                    {{ $activeLevel?->deskripsi ?? 'Ayo sinau basa lan budaya Jawa kanthi nyenengake.' }}
-                                </h3>
-                            </div>
-                            <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shrink-0">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <rect height="20" rx="2" ry="2" width="16" x="4" y="2"></rect>
-                                    <line x1="8" x2="16" y1="6" y2="6"></line>
-                                    <line x1="8" x2="16" y1="10" y2="10"></line>
-                                    <line x1="8" x2="12" y1="14" y2="14"></line>
-                                </svg>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Interactive Learning Path -->
+                    <!-- Dhaptar Unit & Learning Path (jejer mudhun) -->
                     @forelse($levels as $lvl)
                         @php
                             $pembahasanList = $pembahasanByLevel[$lvl->id] ?? collect();
@@ -240,10 +163,49 @@
                             }
 
                             $firstAktifId = optional($pembahasanList->firstWhere('status', '!=', 'selesai'))->id;
-                            $tampil = $activeLevel && $activeLevel->id === $lvl->id;
                         @endphp
 
-                        <section data-roadmap="{{ $lvl->id }}" class="relative py-8 px-4 mx-auto max-w-xl select-none {{ $tampil ? '' : 'hidden' }}" data-purpose="roadmap-{{ $lvl->id }}">
+                        {{-- Banner unit (ringkes) --}}
+                        <section class="bg-gradient-to-r from-brand-600 to-indigo-600 rounded-[24px] px-5 py-4 text-white border-2 border-brand-700 sj-card relative overflow-hidden" data-purpose="unit-banner-{{ $lvl->id }}">
+                            <div class="flex items-center justify-between gap-4 relative z-10">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    @if($loop->first)
+                                        <a href="{{ route('siswa.topik') }}" title="Pilih topik"
+                                           class="w-9 h-9 rounded-lg text-white hover:bg-white/15 flex items-center justify-center shrink-0 transition-colors cursor-pointer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+                                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                                <polyline points="12 19 5 12 12 5"></polyline>
+                                            </svg>
+                                        </a>
+                                    @endif
+                                    <div class="min-w-0">
+                                        <div class="text-[11px] font-black uppercase tracking-widest text-brand-200">
+                                            @if($topikAktif)
+                                                BAGIAN {{ $topikAktif->urutan }}, UNIT {{ $lvl->urutan }}
+                                            @else
+                                                UNIT {{ $lvl->urutan }}
+                                            @endif
+                                        </div>
+                                        <h3 class="text-2xl font-black leading-tight truncate">
+                                            {{ $lvl->nama_materi }}
+                                        </h3>
+                                    </div>
+                                </div>
+
+                                @if($lvl->status === 'terkunci')
+                                    <span class="shrink-0 w-11 h-11 rounded-xl bg-white/10 border border-white/20 text-white/80 flex items-center justify-center" title="Terkunci">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewBox="0 0 24 24"><rect height="11" rx="2" ry="2" width="18" x="3" y="11"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                    </span>
+                                @else
+                                    <span class="shrink-0 w-11 h-11 rounded-xl bg-white/10 border border-white/20 text-white flex items-center justify-center" title="Unit iki">
+                                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                    </span>
+                                @endif
+                            </div>
+                        </section>
+
+                        {{-- Roadmap pembahasan unit iki --}}
+                        <section class="relative py-6 px-4 mx-auto max-w-xl select-none" data-purpose="roadmap-{{ $lvl->id }}">
                             <div class="relative mx-auto" style="width: 360px; height: {{ $pathHeight }}px;">
                                 @if($d)
                                     <svg class="absolute inset-0 pointer-events-none z-0" width="360" height="{{ $pathHeight }}" viewBox="0 0 360 {{ $pathHeight }}" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -270,7 +232,7 @@
                                     <div class="absolute flex flex-col items-center" style="left: {{ $pt['x'] }}px; top: {{ $pt['y'] - 36 }}px; transform: translateX(-50%); width: 200px;">
                                         <div class="relative flex flex-col items-center">
                                             @if($terkunci)
-                                                <div class="w-[72px] h-[72px] rounded-full bg-slate-200 text-slate-400 flex items-center justify-center ring-4 ring-white border-b-4 border-slate-300 cursor-not-allowed shadow-inner">
+                                                <div class="w-[72px] h-[72px] rounded-full bg-slate-200 text-slate-400 flex items-center justify-center ring-4 ring-white border-b-4 border-slate-200 cursor-not-allowed shadow-inner">
                                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><rect height="11" rx="2" ry="2" width="18" x="3" y="11"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                                 </div>
                                             @elseif($selesai)
@@ -295,7 +257,7 @@
                                                 </div>
                                             @endif
 
-                                            <div class="mt-3 text-center bg-white px-3 py-1.5 rounded-2xl sj-card border-2 w-[200px] {{ $aktifNode ? 'border-brand-300' : 'border-slate-300' }}">
+                                            <div class="mt-3 text-center bg-white px-3 py-1.5 rounded-[20px] sj-card border-2 w-[200px] {{ $aktifNode ? 'border-brand-200' : 'border-slate-200' }}">
                                                 <div class="text-xs font-black {{ $terkunci ? 'text-slate-500' : ($aktifNode ? 'text-brand-950' : 'text-slate-800') }} leading-snug">{{ $pembahasan->nama }}</div>
                                                 <div class="text-[10px] mt-0.5 {{ $terkunci ? 'font-bold text-slate-400' : ($selesai ? 'font-extrabold text-emerald-600' : 'font-extrabold text-brand-600') }}">{{ $subLabel }}</div>
                                             </div>
@@ -303,7 +265,7 @@
                                     </div>
                                 @empty
                                     <div class="absolute inset-0 flex items-center justify-center">
-                                        <div class="bg-white rounded-2xl p-6 text-center text-slate-500 font-bold text-sm border-2 border-slate-300 sj-card">
+                                        <div class="bg-white rounded-[24px] p-6 text-center text-slate-500 font-bold text-sm border-2 border-slate-200 sj-card">
                                             Belum ada pembahasan pada unit ini.
                                         </div>
                                     </div>
@@ -311,8 +273,8 @@
                             </div>
                         </section>
                     @empty
-                        <div class="bg-white rounded-2xl p-8 text-center text-slate-500 font-bold border-2 border-slate-300 sj-card">
-                            Belum ada level materi yang tersedia.
+                        <div class="bg-white rounded-[28px] p-8 text-center text-slate-500 font-bold border-2 border-slate-200 sj-card">
+                            Belum ada unit materi sing kasedhiya.
                         </div>
                     @endforelse
                 </div>
@@ -320,9 +282,9 @@
             <!-- END: Center Learning Column -->
 
             <!-- BEGIN: Right Sidebar (Widgets) -->
-            <aside class="w-[400px] shrink-0 border-l border-slate-100 px-6 py-7 space-y-5 sj-widgets" data-purpose="right-sidebar-widgets">
+            <aside id="dashboard-widgets" class="w-[400px] shrink-0 px-6 py-7 space-y-5 sj-widgets sticky top-0 self-start" data-purpose="right-sidebar-widgets">
                 <!-- Stats Bar -->
-                <div class="bg-white rounded-3xl p-5 px-6 border-2 border-slate-300 sj-card sj-card-hover flex items-center justify-around" data-purpose="top-stats-bar">
+                <div class="bg-white rounded-[32px] p-5 px-6 border-2 border-slate-200 sj-card sj-card-hover flex items-center justify-around" data-purpose="top-stats-bar">
                     <button type="button" id="btn-open-streak-modal" class="flex items-center gap-3 text-left cursor-pointer active:scale-95 transition-transform">
                         <div class="text-orange-500 shrink-0">
                             <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z"></path></svg>
@@ -345,7 +307,7 @@
                 </div>
 
                 <!-- Latihan Ngomong (STT & TTS) -->
-                <section class="bg-white rounded-3xl p-5 border-2 border-slate-300 sj-card sj-card-hover space-y-3" data-purpose="speaking-practice">
+                <section class="bg-white rounded-[32px] p-5 border-2 border-slate-200 sj-card sj-card-hover space-y-3" data-purpose="speaking-practice">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <div class="w-7 h-7 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center">
@@ -375,7 +337,7 @@
                 </section>
 
                 <!-- Misi Harian -->
-                <section class="bg-white rounded-3xl p-6 border-2 border-slate-300 sj-card sj-card-hover space-y-4" data-purpose="daily-quests">
+                <section class="bg-white rounded-[32px] p-6 border-2 border-slate-200 sj-card sj-card-hover space-y-4" data-purpose="daily-quests">
                     <div class="flex items-center gap-2">
                         <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
@@ -410,7 +372,7 @@
                 </section>
 
                 <!-- Asisten Tanya Bahasa AI -->
-                <section class="bg-white rounded-3xl p-6 border-2 border-slate-300 sj-card sj-card-hover space-y-4" data-purpose="ai-assistant">
+                <section class="bg-white rounded-[32px] p-6 border-2 border-slate-200 sj-card sj-card-hover space-y-4" data-purpose="ai-assistant">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
@@ -449,7 +411,7 @@
 
     <!-- Streak Modal -->
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm hidden" id="streak-modal-container">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-brand-200 relative space-y-5 animate-in">
+        <div class="bg-white rounded-[28px] max-w-md w-full p-6 shadow-2xl border-2 border-brand-200 relative space-y-5 animate-in">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div class="flex items-center gap-2.5">
                     <div class="w-9 h-9 rounded-2xl bg-orange-50 border border-orange-100 text-orange-500 flex items-center justify-center shadow-sm">
@@ -505,41 +467,26 @@
             </p>
             <div class="flex items-center gap-2.5 pt-1">
                 <button class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-black text-xs transition-colors cursor-pointer" id="btn-close-streak-footer" type="button">Tutup</button>
-                <a href="{{ $fokusPembahasan?->mulai_url ?? ($activeLevel ? route('kuis.mulai', $activeLevel->id) : route('siswa.latihan')) }}" class="flex-1 text-center py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black text-xs transition-all shadow-md shadow-brand-600/30" id="btn-continue-learning">Lanjutkan Belajar</a>
+                <a href="{{ $fokusPembahasan?->mulai_url ?? ($activeLevel ? route('kuis.mulai', $activeLevel->id) : route('siswa.dashboard')) }}" class="flex-1 text-center py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black text-xs transition-all shadow-md shadow-brand-600/30" id="btn-continue-learning">Lanjutkan Belajar</a>
             </div>
         </div>
     </div>
 
-    <script id="unit-tab-script">
+    <script id="widgets-sticky-script">
         (function () {
-            const tabs = Array.from(document.querySelectorAll('[data-unit-tab]'));
-            const roadmaps = Array.from(document.querySelectorAll('[data-roadmap]'));
-            const nama = document.getElementById('topik-nama');
-            const bannerLabel = document.getElementById('unit-banner-label');
-            const bannerDesc = document.getElementById('unit-banner-desc');
+            const aside = document.getElementById('dashboard-widgets');
+            if (!aside) return;
 
-            function activate(id) {
-                const key = String(id);
-
-                tabs.forEach(function (t) {
-                    t.classList.toggle('is-active', t.dataset.unitId === key);
-                });
-
-                roadmaps.forEach(function (m) {
-                    m.classList.toggle('hidden', m.dataset.roadmap !== key);
-                });
-
-                const tab = tabs.find(function (t) { return t.dataset.unitId === key; });
-                if (tab) {
-                    if (nama) nama.textContent = tab.dataset.unitNama;
-                    if (bannerLabel) bannerLabel.textContent = 'UNIT ' + tab.dataset.unitUrutan + ': ' + tab.dataset.unitNama.toUpperCase();
-                    if (bannerDesc) bannerDesc.textContent = tab.dataset.unitDeskripsi;
-                }
+            function apply() {
+                // Bila panel kanan lebih tinggi dari viewport, biarkan ikut scroll
+                // sampai bagian bawahnya mentok, baru berhenti (sticky).
+                const offset = Math.min(0, window.innerHeight - aside.offsetHeight);
+                aside.style.top = offset + 'px';
             }
 
-            tabs.forEach(function (t) {
-                t.addEventListener('click', function () { activate(t.dataset.unitId); });
-            });
+            apply();
+            window.addEventListener('load', apply);
+            window.addEventListener('resize', apply);
         })();
     </script>
 

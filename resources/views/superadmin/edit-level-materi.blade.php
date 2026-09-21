@@ -86,6 +86,26 @@
                         @enderror
                     </label>
 
+                    {{-- Topik Induk --}}
+                    <label class="flex flex-col gap-1.5 sm:col-span-2">
+                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-700 font-semibold">
+                            Topik Induk
+                        </span>
+                        <select name="topik_id"
+                                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-sm outline-none focus:border-primary-500 focus:bg-white transition-all">
+                            <option value="">— Tanpa Topik —</option>
+                            @foreach (($topikList ?? collect()) as $topik)
+                                <option value="{{ $topik->id }}" @selected((string) old('topik_id', $levelMateri->topik_id) === (string) $topik->id)>
+                                    {{ $topik->urutan }}. {{ $topik->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <span class="font-caption text-xs text-gray-400">Unit iki bakal kagabung ing topik sing dipilih.</span>
+                        @error('topik_id')
+                            <span class="text-error text-xs font-caption">{{ $message }}</span>
+                        @enderror
+                    </label>
+
                     {{-- Urutan Level --}}
                     <label class="flex flex-col gap-1.5">
                         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-700 font-semibold">

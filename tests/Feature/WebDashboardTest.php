@@ -19,7 +19,7 @@ class WebDashboardTest extends TestCase
     {
         $this->get('/guru/dashboard')->assertRedirect(route('masuk'));
         $this->get('/superadmin/dashboard')->assertRedirect(route('masuk'));
-        $this->get('/latihan-soal')->assertRedirect(route('masuk'));
+        $this->get('/papan-skor')->assertRedirect(route('masuk'));
     }
 
     public function test_guest_sees_landing_page_on_homepage(): void
@@ -193,7 +193,7 @@ class WebDashboardTest extends TestCase
     {
         $siswa = Siswa::factory()->create();
 
-        foreach (['/', '/dashboard', '/latihan-soal', '/papan-skor', '/asisten-ai', '/profil'] as $url) {
+        foreach (['/', '/dashboard', '/papan-skor', '/asisten-ai', '/profil'] as $url) {
             $this->actingAs($siswa, 'siswa')->get($url)->assertOk();
         }
     }
@@ -202,7 +202,6 @@ class WebDashboardTest extends TestCase
     {
         $guru = Guru::factory()->create();
 
-        $this->actingAs($guru, 'guru')->get('/latihan-soal')->assertForbidden();
         $this->actingAs($guru, 'guru')->get('/papan-skor')->assertForbidden();
     }
 
@@ -238,14 +237,7 @@ class WebDashboardTest extends TestCase
             ->assertSee('Uji Siswa')
             ->assertSee('Dasar');
 
-        // Daftar latihan menampilkan card level (bukan card per soal).
-        $this->actingAs($siswa, 'siswa')->get('/latihan-soal')
-            ->assertOk()
-            ->assertSee('LEVEL 1')
-            ->assertSee('Dasar')
-            ->assertSee('Mulai Kuis')
-            ->assertDontSee('Salam esuk?');
-
+        // Daftar level kini tampil ing beranda (bukan kaca latihan terpisah).
         // Klik level -> langsung diarahkan ke soal pertama level kasebut.
         $this->actingAs($siswa, 'siswa')->get("/kuis/mulai/{$level->id}")
             ->assertRedirect()
@@ -278,6 +270,6 @@ class WebDashboardTest extends TestCase
         ProgresSiswa::create(['siswa_id' => $siswa->id, 'level_materi_id' => $level->id, 'status' => ProgresSiswa::STATUS_TERKUNCI]);
 
         $this->actingAs($siswa, 'siswa')->get("/kuis/mulai/{$level->id}")
-            ->assertRedirect(route('siswa.latihan'));
+            ->assertRedirect(route('siswa.dashboard'));
     }
 }

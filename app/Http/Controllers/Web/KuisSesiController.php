@@ -79,7 +79,7 @@ class KuisSesiController extends Controller
         $siswa = $this->siswa();
 
         if (! $this->progres->canStart($siswa, $levelMateri)) {
-            return redirect()->route('siswa.latihan')
+            return redirect()->route('siswa.dashboard')
                 ->with('error', 'Materi belum terbuka. Selesaikan level sebelumnya terlebih dahulu.');
         }
 
@@ -100,7 +100,7 @@ class KuisSesiController extends Controller
             ?? Soal::where('level_materi_id', $levelMateri->id)->orderBy('id')->first();
 
         if (! $soal) {
-            return redirect()->route('siswa.latihan')
+            return redirect()->route('siswa.dashboard')
                 ->with('error', 'Belum ada soal pada level ini.');
         }
 

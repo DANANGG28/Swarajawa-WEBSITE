@@ -16,7 +16,9 @@ Route::get('/', [HomeController::class, 'index'])->name('siswa.dashboard');
 Route::get('/dashboard', [HomeController::class, 'index']);
 
 Route::middleware('web.auth:siswa')->group(function () {
-    Route::get('/latihan-soal', [HomeController::class, 'latihanSoal'])->name('siswa.latihan');
+    Route::get('/pilih-topik', [HomeController::class, 'topik'])->name('siswa.topik');
+    Route::get('/pilih-topik/{topik}', [HomeController::class, 'topikPilih'])->name('siswa.topik.pilih');
+
     Route::get('/papan-skor', [HomeController::class, 'papanSkor'])->name('siswa.papan-skor');
     Route::get('/asisten-ai', fn () => view('asisten-ai'))->name('siswa.asisten');
     Route::get('/profil', [HomeController::class, 'profil'])->name('siswa.profil');
@@ -110,6 +112,13 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
     Route::post('/siswa', [SuperadminWebController::class, 'siswaStore'])->name('siswa.store');
     Route::put('/siswa/{siswa}', [SuperadminWebController::class, 'siswaUpdate'])->name('siswa.update');
     Route::delete('/siswa/{siswa}', [SuperadminWebController::class, 'siswaDestroy'])->name('siswa.destroy');
+
+    Route::get('/topik', [SuperadminWebController::class, 'topik'])->name('topik');
+    Route::get('/topik/tambah', [SuperadminWebController::class, 'topikCreate'])->name('topik.create');
+    Route::get('/topik/{topik}/edit', [SuperadminWebController::class, 'topikEdit'])->name('topik.edit');
+    Route::post('/topik', [SuperadminWebController::class, 'topikStore'])->name('topik.store');
+    Route::put('/topik/{topik}', [SuperadminWebController::class, 'topikUpdate'])->name('topik.update');
+    Route::delete('/topik/{topik}', [SuperadminWebController::class, 'topikDestroy'])->name('topik.destroy');
 
     Route::get('/level-materi', [SuperadminWebController::class, 'levelMateri'])->name('level-materi');
     Route::get('/level-materi/tambah', [SuperadminWebController::class, 'levelMateriCreate'])->name('level-materi.create');
