@@ -19,32 +19,7 @@
         </div>
     </footer>
 
-    <script>
-        window.KUIS = {
-            csrf: document.querySelector('meta[name="csrf-token"]')?.content ?? null,
-            jawabUrl: @json(route('kuis.jawab')),
-            ttsUrl: @json(route('kuis.tts')),
-            sttUrl: @json(route('kuis.stt')),
-            stsUrl: @json(route('kuis.sts')),
-        };
-        window.postJSON = async function (url, body) {
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': window.KUIS.csrf,
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify(body),
-            });
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok) {
-                throw Object.assign(new Error(data.message || 'Gagal mengirim data.'), { data, status: res.status });
-            }
-            return data;
-        };
-    </script>
+    @include('partials.kuis-runtime')
     @stack('skrip')
 </body>
 </html>

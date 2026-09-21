@@ -1,75 +1,79 @@
-@extends('layouts.kuis')
+@extends('layouts.kuis-fokus')
 
 @section('konten')
     @if (! $soal)
-        <div class="bg-surface-container-lowest rounded-2xl p-10 text-center border border-gray-100 shadow-sm">
+        <div class="rounded-3xl p-10 text-center border-2 border-gray-200">
             <span class="material-symbols-outlined text-[48px] text-gray-500">keyboard_voice</span>
-            <h2 class="font-heading text-heading font-bold text-on-surface mt-3">Belum ada soal speak-to-text</h2>
-            <p class="font-body text-body text-gray-500 mt-1">Selesaikan level sebelumnya atau hubungi guru untuk menambah soal.</p>
-            <a href="{{ route('siswa.dashboard') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Kembali ke Beranda</a>
+            <h2 class="font-heading text-2xl font-extrabold text-on-surface mt-3">Belum ana soal wicara</h2>
+            <p class="font-body text-base text-gray-500 mt-1">Rampungna level sadurunge utawa hubungi guru kanggo nambah soal.</p>
+            <a href="{{ route('siswa.dashboard') }}" class="inline-flex items-center gap-2 mt-6 rounded-2xl bg-primary-600 text-on-primary px-7 py-3 font-body text-base font-bold shadow-[0_4px_0_#5443C9] active:translate-y-[3px] active:shadow-none transition-all">Bali menyang Beranda</a>
         </div>
     @else
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <section class="lg:col-span-5 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 shadow-sm">
-                <div class="flex items-center gap-2.5 pb-3.5 border-b border-gray-100">
-                    <div class="w-9 h-9 rounded-xl bg-primary-fixed flex items-center justify-center text-primary-700">
-                        <span class="material-symbols-outlined">graphic_eq</span>
-                    </div>
-                    <div>
-                        <h3 class="font-heading text-heading font-bold text-on-surface">Pemutar Suara Contoh</h3>
-                        <p class="font-caption text-caption text-gray-500">edge-tts • jv-ID-DimasNeural</p>
-                    </div>
-                </div>
-                <div class="mt-4 p-6 rounded-xl bg-primary-fixed/40 border border-primary-400/30 text-center">
-                    <p class="font-body text-body text-on-surface-variant">Tekan tombol di bawah, lalu tulis apa yang Anda dengarkan.</p>
-                </div>
-                <div class="flex items-center gap-3 mt-4">
-                    <button id="btn-tts" type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold shadow-sm">
-                        <span class="material-symbols-outlined text-[18px]">play_arrow</span>
-                        Putar Suara
+        <div class="flex flex-col gap-8 md:gap-10">
+            <h1 class="text-center font-heading text-lg md:text-xl font-bold text-on-surface leading-snug">
+                {{ $soal['pertanyaan'] }}
+            </h1>
+
+            <div class="relative overflow-hidden rounded-3xl border-2 border-gray-200 bg-surface-container-lowest p-6 md:p-8 text-center shadow-sm">
+                <div class="absolute top-0 left-0 h-1.5 w-full bg-primary-500"></div>
+                <p class="font-display text-2xl md:text-3xl font-extrabold text-primary-700 leading-snug tracking-tight">
+                    &ldquo;{{ $soal['teks_referensi'] }}&rdquo;
+                </p>
+                <button id="btn-tts" type="button"
+                    class="mt-6 inline-flex items-center gap-2 rounded-2xl bg-surface-container px-4 py-2.5 text-primary-700 hover:bg-surface-container-high transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">volume_up</span>
+                    <span id="tts-label" class="font-body text-sm font-semibold">Rungokna tuladha</span>
+                </button>
+            </div>
+
+            <div class="flex flex-col items-center gap-3">
+                <div class="relative flex items-center justify-center">
+                    <div id="pulse-ring" class="absolute w-32 h-32 rounded-full bg-primary-400/25 opacity-0 pointer-events-none transition-opacity"></div>
+                    <div class="absolute w-24 h-24 rounded-full bg-primary-500/10 pointer-events-none"></div>
+                    <button id="btn-mic" type="button" aria-label="Miwiti ngrekam swara"
+                        class="relative z-10 w-20 h-20 rounded-full bg-primary-600 text-on-primary shadow-[0_6px_0_#5443C9] flex items-center justify-center transition-all active:translate-y-[3px] active:shadow-none">
+                        <span class="material-symbols-outlined text-[38px]">mic</span>
                     </button>
-                    <span class="font-caption text-caption text-gray-500">FR-7 Speech-to-Text</span>
                 </div>
-            </section>
-
-            <section class="lg:col-span-7 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 shadow-sm">
-                <div class="flex items-center gap-2.5 pb-3.5 border-b border-gray-100">
-                    <div class="w-9 h-9 rounded-xl bg-primary-fixed flex items-center justify-center text-primary-700">
-                        <span class="material-symbols-outlined">edit_note</span>
-                    </div>
-                    <div>
-                        <h3 class="font-heading text-heading font-bold text-on-surface">Zona Mengetik Jawaban</h3>
-                        <p class="font-caption text-caption text-gray-500">Tulis kalimat yang sesuai dengan suara yang didengarkan</p>
-                    </div>
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span id="stt-status" class="font-body text-sm">Ketuk kanggo miwiti ngrekam ucapan</span>
+                    <span id="wave" class="hidden items-end gap-1">
+                        <span class="wave-bar w-1 h-3 bg-primary-600 rounded-full"></span>
+                        <span class="wave-bar w-1 h-5 bg-primary-600 rounded-full"></span>
+                        <span class="wave-bar w-1 h-2 bg-primary-600 rounded-full"></span>
+                        <span class="wave-bar w-1 h-4 bg-primary-600 rounded-full"></span>
+                        <span class="wave-bar w-1 h-3 bg-primary-600 rounded-full"></span>
+                    </span>
                 </div>
+            </div>
 
-                <label class="flex flex-col gap-1.5 mt-4">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Jawaban</span>
-                    <textarea id="jawaban" rows="3" placeholder="Tulis di sini..."
-                        class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500 transition-colors"></textarea>
-                </label>
-
-                <div class="flex items-center gap-3 mt-3">
-                    <button id="btn-mic" type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 hover:bg-surface-container-high border border-gray-200 text-on-surface font-body text-body font-semibold">
-                        <span class="material-symbols-outlined text-[18px] text-primary-600">mic</span>
-                        Gunakan Suara (STT)
-                    </button>
-                    <span id="stt-status" class="font-caption text-caption text-gray-500"></span>
+            <div class="rounded-3xl border-2 border-gray-200 bg-surface-container-lowest p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-label-upper text-xs uppercase tracking-widest font-bold text-gray-500">Asil Transkripsi</span>
+                    <span id="stt-badge" class="hidden rounded-full bg-yellow-300/50 px-2.5 py-1 text-[11px] font-bold text-tertiary">Mode mock</span>
                 </div>
+                <textarea id="jawaban" rows="2" placeholder="Asil transkripsi bakal katon ing kene, utawa tulisen manual..."
+                    class="w-full resize-none bg-transparent font-body text-lg font-semibold text-on-surface outline-none placeholder:text-gray-400"></textarea>
+            </div>
 
-                <div id="feedback" class="hidden mt-4 rounded-2xl p-5 border"></div>
-            </section>
+            <section id="feedback" class="hidden rounded-2xl p-5 border-2"></section>
         </div>
     @endif
 @endsection
 
 @section('aksi')
-    @include('partials.kuis-xp', ['soal' => $soal])
-    <button id="btn-kirim" type="button" @disabled(! $soal)
-        class="flex items-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-on-primary font-body text-body font-bold px-8 py-3 shadow-sm transition-colors">
-        <span>Kirim Jawaban</span>
-        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
-    </button>
+    @if ($soal)
+        <div class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-yellow-300/40 text-tertiary">
+            <span class="material-symbols-outlined icon-fill text-[20px] text-orange-500">star</span>
+            <span class="font-body text-base font-extrabold">Hadiah: +{{ $soal['bobot_exp'] ?? 0 }} XP</span>
+        </div>
+        <button id="btn-kirim" type="button" disabled
+            class="w-full sm:w-auto rounded-2xl bg-primary-600 hover:bg-primary-700 disabled:opacity-40 disabled:shadow-none disabled:translate-y-0 text-on-primary font-heading text-base font-extrabold uppercase tracking-wide px-8 py-3.5 shadow-[0_4px_0_#5443C9] active:translate-y-[3px] active:shadow-none transition-all">
+            Periksa
+        </button>
+    @else
+        <span></span>
+    @endif
 @endsection
 
 @if ($soal)
@@ -78,91 +82,150 @@
             const SOAL = @json($soal);
             const input = document.getElementById('jawaban');
             const feedback = document.getElementById('feedback');
+            const btn = document.getElementById('btn-kirim');
+            const status = document.getElementById('stt-status');
+            const wave = document.getElementById('wave');
+            const pulse = document.getElementById('pulse-ring');
+            const badge = document.getElementById('stt-badge');
+            const micBtn = document.getElementById('btn-mic');
+
+            function sync() {
+                btn.disabled = input.value.trim() === '';
+            }
+            input.addEventListener('input', sync);
+            sync();
 
             function showResult(res) {
-                feedback.className = 'mt-4 rounded-2xl p-5 border ' + (res.benar ? 'bg-green-500/10 border-green-500/30' : 'bg-error-container/60 border-error/30');
+                if (res.benar && res.level_selesai) {
+                    window.KuisFx.menang();
+                } else if (res.benar) {
+                    window.KuisFx.benar();
+                } else {
+                    window.KuisFx.salah();
+                }
+
+                feedback.className = 'rounded-2xl p-5 border-2 ' + (res.benar ? 'bg-green-500/10 border-green-500/40' : 'bg-error-container/50 border-error/40');
 
                 let nextButtons = '<div class="mt-4 flex flex-wrap items-center gap-3">';
                 if (res.next_url) {
-                    nextButtons += `<a href="${res.next_url}" class="rounded-full bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body hover:bg-primary-700 transition shadow-sm">Soal Selanjutnya</a>`;
+                    nextButtons += `<a href="${res.next_url}" class="rounded-2xl bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body shadow-[0_3px_0_#5443C9] active:translate-y-[3px] active:shadow-none transition-all">Soal Selanjutnya</a>`;
                 }
-                nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Beranda</a></div>`;
+                nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-2xl bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition-colors">Beranda</a></div>`;
 
                 let levelSelesaiHtml = '';
                 if (res.level_selesai) {
                     levelSelesaiHtml = `
                         <div class="mt-3 p-4 rounded-xl bg-green-500/20 border border-green-500/40 text-green-700">
-                            <div class="font-heading text-heading font-extrabold flex items-center gap-1.5">
+                            <div class="font-heading text-lg font-extrabold flex items-center gap-1.5">
                                 <span class="material-symbols-outlined icon-fill">military_tech</span>
-                                Level Selesai! Anda mendapatkan bonus +${res.reward_exp} EXP!
+                                Level Selesai! Bonus +${res.reward_exp} EXP!
                             </div>
-                            <p class="font-body text-body text-green-800 mt-1">Level selanjutnya <strong>${res.level_berikutnya ?? ''}</strong> sekarang sudah terbuka.</p>
+                            <p class="font-body text-base text-green-800 mt-1">Level sabanjure <strong>${res.level_berikutnya ?? ''}</strong> saiki wis kabukak.</p>
                         </div>`;
                 }
 
                 feedback.innerHTML = `
-                    <div class="flex items-center gap-2 font-heading text-heading font-extrabold ${res.benar ? 'text-green-500' : 'text-error'}">
+                    <div class="flex items-center gap-2 font-heading text-lg font-extrabold ${res.benar ? 'text-green-600' : 'text-error'}">
                         <span class="material-symbols-outlined icon-fill">${res.benar ? 'verified' : 'cancel'}</span>
-                        ${res.benar ? 'Benar!' : 'Belum tepat'} • Skor ${res.skor}/100 • +${res.exp_didapat ?? 0} XP
+                        ${res.benar ? 'Lancar &amp; bener!' : 'Durung pas'} • Akurasi ${res.skor}% • +${res.exp_didapat ?? 0} XP
                     </div>
-                    <p class="font-body text-body text-on-surface-variant mt-1">Kunci: <strong>${res.detail?.kunci ?? ''}</strong> • Rekor: ${res.skor_tertinggi}/100 • Total EXP ${res.total_exp} • Streak ${res.current_streak} hari</p>
+                    <p class="font-body text-base text-on-surface-variant mt-1">Kunci: <strong>${res.detail?.kunci ?? ''}</strong> • Rekor ${res.skor_tertinggi}% • Total EXP ${res.total_exp} • Streak ${res.current_streak} dina</p>
                     ${levelSelesaiHtml}
                     ${nextButtons}`;
                 feedback.classList.remove('hidden');
             }
 
-            document.getElementById('btn-kirim')?.addEventListener('click', async () => {
+            btn?.addEventListener('click', async () => {
                 const text = input.value.trim();
-                if (!text) { alert('Tulis jawaban terlebih dahulu.'); return; }
+                if (! text) return;
+                btn.disabled = true;
                 try {
                     const res = await window.postJSON(window.KUIS.jawabUrl, { soal_id: SOAL.id, jawaban: text });
                     showResult(res);
-                } catch (e) { alert(e.message); }
+                } catch (e) {
+                    alert(e.message);
+                    btn.disabled = false;
+                }
             });
 
-            document.getElementById('btn-tts')?.addEventListener('click', async () => {
+            const ttsBtn = document.getElementById('btn-tts');
+            const ttsLabel = document.getElementById('tts-label');
+            ttsBtn?.addEventListener('click', async () => {
+                if (ttsBtn.dataset.loading === '1') return;
+                ttsBtn.dataset.loading = '1';
+                ttsLabel.textContent = 'Nyetel swara...';
+                window.KuisFx.tap();
                 try {
                     const res = await window.postJSON(window.KUIS.ttsUrl, { teks: SOAL.teks_referensi });
-                    if (res.audio_base64) {
-                        new Audio('data:' + res.mime + ';base64,' + res.audio_base64).play();
-                    } else {
-                        alert('Mode mock: audio TTS belum tersedia. Tuliskan contoh: ' + SOAL.teks_referensi);
-                    }
-                } catch (e) { alert(e.message); }
+                    const src = res.audio_url || (res.audio_base64 ? 'data:' + res.mime + ';base64,' + res.audio_base64 : null);
+                    if (src) new Audio(src).play().catch(() => {});
+                } catch (e) {
+                    // abaikan — swara mung pambantu
+                } finally {
+                    ttsBtn.dataset.loading = '0';
+                    ttsLabel.textContent = 'Rungokna tuladha';
+                }
             });
 
-            let recorder = null, chunks = [];
-            document.getElementById('btn-mic')?.addEventListener('click', async () => {
-                const status = document.getElementById('stt-status');
+            let recorder = null;
+            let chunks = [];
+
+            function setRecordingUi(active) {
+                pulse.classList.toggle('opacity-0', ! active);
+                wave.classList.toggle('hidden', ! active);
+                wave.classList.toggle('flex', active);
+                micBtn.classList.toggle('bg-secondary', active);
+                micBtn.classList.toggle('bg-primary-600', ! active);
+                micBtn.classList.toggle('shadow-[0_6px_0_#5443C9]', ! active);
+                if (active) status.textContent = 'Nyemak swara panjenengan...';
+            }
+
+            async function startRecording() {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                chunks = [];
+                recorder = new MediaRecorder(stream);
+                recorder.ondataavailable = (e) => chunks.push(e.data);
+                recorder.onstop = () => {
+                    stream.getTracks().forEach((t) => t.stop());
+                    setRecordingUi(false);
+                    status.textContent = 'Ngolah swara...';
+
+                    const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+                    const reader = new FileReader();
+                    reader.onloadend = async () => {
+                        try {
+                            const res = await window.postJSON(window.KUIS.sttUrl, {
+                                audio: reader.result.split(',')[1] || '',
+                                mock_transcript: SOAL.teks_referensi,
+                            });
+                            if (res.transcript) {
+                                input.value = res.transcript;
+                                sync();
+                            }
+                            status.textContent = res.mock ? 'Mode mock — transkripsi disimulasikan.' : 'Transkripsi rampung.';
+                            badge.classList.toggle('hidden', ! res.mock);
+                            window.KuisFx.benar();
+                        } catch (e) {
+                            status.textContent = 'Gagal ngolah swara.';
+                            alert(e.message);
+                        }
+                    };
+                    reader.readAsDataURL(blob);
+                };
+                recorder.start();
+                window.KuisFx.tap();
+                setRecordingUi(true);
+            }
+
+            micBtn?.addEventListener('click', async () => {
                 try {
-                    if (!recorder) {
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                        recorder = new MediaRecorder(stream);
-                        recorder.ondataavailable = (e) => chunks.push(e.data);
-                        recorder.onstop = () => {
-                            const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
-                            const reader = new FileReader();
-                            reader.onloadend = async () => {
-                                try {
-                                    const res = await window.postJSON(window.KUIS.sttUrl, { audio: reader.result.split(',')[1] || '', mock_transcript: SOAL.teks_referensi });
-                                    if (res.transcript) { input.value = res.transcript; }
-                                    status.textContent = res.mock ? 'Mode mock — transcript disimulasikan.' : 'Transkripsi selesai.';
-                                } catch (e) { alert(e.message); }
-                            };
-                            reader.readAsDataURL(blob);
-                            stream.getTracks().forEach((t) => t.stop());
-                            chunks = [];
-                        };
-                    }
-                    if (recorder.state === 'recording') {
+                    if (recorder && recorder.state === 'recording') {
                         recorder.stop();
-                        status.textContent = 'Memproses suara...';
                     } else {
-                        recorder.start();
-                        status.textContent = 'Merekam... tekan lagi untuk menghentikan.';
+                        await startRecording();
                     }
                 } catch (e) {
-                    alert('Mikrofon tidak tersedia. Silakan ketik secara manual.');
+                    alert('Mikrofon ora kasedhiya. Tulisen manual wae.');
                 }
             });
         </script>

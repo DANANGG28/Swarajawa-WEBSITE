@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Asisten Tanya Bahasa AI - Sinau Jowo Web</title>
+    <title>Tanya Basa AI - Sinau Jowo Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400..800;1,400..800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -85,16 +85,6 @@
               "xl": "0.75rem",
               "full": "9999px"
             },
-            "spacing": {
-              "margin": "1.25rem",
-              "space-xl": "1.75rem",
-              "space-md": "1rem",
-              "space-sm": "0.5rem",
-              "gutter": "0.75rem",
-              "gutter-desktop": "1.5rem",
-              "margin-desktop": "2.5rem",
-              "space-xs": "0.25rem"
-            },
             "fontFamily": {
               "caption": ["Manrope"],
               "heading": ["Epilogue"],
@@ -126,7 +116,7 @@
         }
     </style>
 </head>
-<body class="bg-background font-body text-on-surface antialiased">
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary-fixed selection:text-primary">
     @php
         $siswaUser = \App\Support\AuthContext::currentUser(request()) ?? auth('siswa')->user();
         $userNama = $siswaUser?->nama_lengkap ?? 'Siswa';
@@ -134,131 +124,129 @@
         $userInisial = count($userWords) >= 2
             ? mb_strtoupper(mb_substr($userWords[0], 0, 1) . mb_substr($userWords[count($userWords) - 1], 0, 1))
             : mb_strtoupper(mb_substr($userNama, 0, 2));
+        $chatSessions = $siswaUser
+            ? $siswaUser->chatSessions()->latest('updated_at')->take(15)->get(['id', 'judul', 'updated_at'])
+            : collect();
     @endphp
 
-    <!-- ASIDE SIDEBAR COMPONENT -->
-    <x-sidebar active="asisten" />
-
-    <div class="pl-72 flex flex-col min-h-screen">
-        <!-- HEADER -->
-        <header class="fixed top-0 left-72 right-0 h-20 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] px-space-xl flex items-center justify-between">
-            <div class="flex items-center flex-1 max-w-md">
-                <div class="flex items-center w-full bg-gray-50 rounded-full px-space-md py-space-xs gap-space-sm border border-gray-200/60 focus-within:border-primary-500 transition-colors">
-                    <span class="material-symbols-outlined text-gray-500 text-[20px]">search</span>
-                    <input type="text" placeholder="Cari materi aksara, peribahasa, tata bahasa..." class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-500">
-                </div>
+    <header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-md border-b border-surface-container">
+        <div class="max-w-7xl mx-auto h-16 px-5 md:px-10 flex items-center justify-between">
+            <a href="{{ route('siswa.dashboard') }}" class="flex items-center gap-2.5">
+                <span class="w-9 h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-outlined text-[20px]">forum</span>
+                </span>
+                <span class="font-heading text-base font-extrabold text-on-surface tracking-tight">Tanya Basa AI</span>
+            </a>
+            <div class="flex items-center gap-2">
+                <span class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="font-caption text-xs font-bold uppercase tracking-wider">Online AI RAG</span>
+                </span>
+                <a href="{{ route('siswa.profil') ?? '#' }}" class="w-9 h-9 rounded-full bg-primary-700 text-white font-bold text-xs flex items-center justify-center">{{ $userInisial }}</a>
             </div>
-            <div class="flex items-center gap-space-lg">
-                <button type="button" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-50 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors relative">
-                    <span class="material-symbols-outlined text-[20px]">notifications</span>
-                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary"></span>
-                </button>
-            </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- MAIN CONTENT -->
-        <main class="flex-1 pt-20 w-full px-6 pb-[16rem] bg-background">
-            <div class="flex flex-col w-full gap-space-lg">
-
-                <!-- CHAT CONTAINER CARD -->
-                <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col gap-6 w-full border border-gray-100">
-
-                    <!-- Chat Header Bar -->
-                    <div class="flex items-center justify-between pb-3 bg-surface-container-low/60 -mx-6 -mt-6 px-6 pt-4 rounded-t-2xl border-b border-primary-100/50">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-primary-600 text-xl" style="font-variation-settings: 'FILL' 1;">forum</span>
-                            <span class="font-heading text-heading font-bold text-on-surface">Diskusi Pembelajaran Aktif</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-green-500">
-                            <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-                            <span class="font-caption text-caption font-bold text-green-500 uppercase">ONLINE AI RAG</span>
-                        </div>
+    <main class="w-full pt-16 flex-1 bg-surface">
+        <div class="flex flex-col lg:flex-row w-full max-w-7xl mx-auto min-h-[calc(100vh-4rem)] px-5 md:px-10 py-4 gap-6">
+            <aside class="w-full lg:w-72 shrink-0 flex flex-col justify-between bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-surface-container h-fit lg:h-[calc(100vh-7rem)] lg:sticky lg:top-20 z-10">
+                <div class="flex flex-col gap-4 overflow-hidden">
+                    <div class="flex items-center gap-2 pb-3 border-b border-surface-container">
+                        <a href="{{ route('siswa.dashboard') }}" title="Bali menyang Beranda"
+                            class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary-700 flex items-center justify-center transition-all active:scale-95">
+                            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                        </a>
+                        <span class="font-heading text-sm font-bold text-on-surface">Riwayat Obrolan</span>
                     </div>
 
-                    <!-- DAFTAR PESAN OBROLAN -->
-                    <div id="chat-messages" class="flex flex-col gap-6 w-full">
-                        <!-- Bot Welcome Message -->
-                        <div class="flex items-start gap-4 w-full">
-                            <div class="w-10 h-10 rounded-xl bg-primary-700 flex items-center justify-center text-white shrink-0 shadow-sm">
-                                <span class="material-symbols-outlined text-2xl">neurology</span>
+                    <button type="button" data-action="chat-baru"
+                        class="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-primary-700 hover:bg-primary text-white rounded-xl font-body text-xs font-bold shadow-sm transition-all active:scale-95">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        <span>Obrolan Anyar</span>
+                    </button>
+
+                    <div class="flex flex-col gap-1 overflow-y-auto pr-1 text-on-surface" id="sidebar-chat-history">
+                        @forelse($chatSessions as $sesi)
+                            <div class="group flex items-center gap-1 rounded-xl transition-colors" data-session-id="{{ $sesi->id }}">
+                                <button type="button" data-action="load-sesi" data-session-id="{{ $sesi->id }}"
+                                    class="flex-1 min-w-0 flex items-center gap-2 px-2.5 py-2 rounded-xl text-left text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors">
+                                    <span class="material-symbols-outlined text-[16px] text-gray-500 group-hover:text-primary-600 shrink-0">chat_bubble_outline</span>
+                                    <span class="truncate text-xs font-medium" data-judul>{{ $sesi->judul }}</span>
+                                </button>
+                                <button type="button" data-action="hapus-sesi" data-session-id="{{ $sesi->id }}"
+                                    class="hidden group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-500 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Hapus riwayat">
+                                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                                </button>
                             </div>
-                            <div class="flex flex-col gap-1 flex-1 min-w-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-body text-body font-bold text-on-surface">Teman Belajar Jawa AI</span>
-                                    <span class="font-caption text-caption text-gray-500">sekarang</span>
-                                </div>
-                                <div class="bg-surface-container-low p-4 rounded-2xl text-on-surface space-y-2 border border-primary-100/40">
-                                    <p class="font-body text-body leading-relaxed">
-                                        Selamat datang, {{ $userNama }}! Saya adalah <strong class="text-primary-700">Teman Belajar Jawa</strong>. Saya siap membantu Anda mempelajari tata krama, unggah-ungguh bahasa (Ngoko, Ngoko Alus, Krama, Krama Alus), aksara Jawa, tembung saroja, peribahasa, hingga seputar budaya Jawa.
-                                    </p>
-                                    <p class="font-body text-body text-on-surface-variant leading-relaxed">
-                                        Silakan tanyakan hal seputar bahasa atau budaya Jawa yang masih membingungkan!
-                                    </p>
-                                </div>
+                        @empty
+                            <div class="px-3 py-2 text-gray-500 italic text-xs" data-empty-state>Belum ada riwayat obrolan</div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('keluar') }}" class="pt-4 mt-4 border-t border-surface-container">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-bold uppercase tracking-wide text-gray-500 hover:text-error hover:bg-error-container/30 rounded-xl transition-all active:scale-95">
+                        <span class="material-symbols-outlined text-[18px]">logout</span>
+                        <span>Keluar</span>
+                    </button>
+                </form>
+            </aside>
+
+            <div class="flex-1 flex flex-col max-w-3xl mx-auto w-full pb-8">
+                <div class="flex flex-col items-center text-center mb-8">
+                    <h1 class="font-heading text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight mb-1">Tanya apa saja seputar Basa Jawa</h1>
+                    <p class="font-body text-sm text-on-surface-variant max-w-lg">Tingkatan unggah-ungguh, aksara Jawa, peribahasa, atau terjemahan krama alus langsung terverifikasi.</p>
+                </div>
+
+                <div class="flex flex-col gap-6 w-full" id="chat-messages">
+                    <div class="flex items-start gap-3 w-full">
+                        <div class="w-9 h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+                        </div>
+                        <div class="flex flex-col gap-3 flex-1 min-w-0">
+                            <div class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm text-on-surface border border-surface-container">
+                                <p class="font-body text-sm leading-relaxed">
+                                    Sugeng rawuh, <strong class="text-primary-700">{{ $userNama }}</strong>! Kula <strong class="text-primary-700">Semar AI</strong>, rencang panjenengan anggenipun sinau Basa Jawi. Sumangga tanglet bab unggah-ungguh basa (Ngoko, Krama, Krama Alus), aksara Jawa, tembung saroja, peribahasa, tuwin kabudayan Jawa.
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-4 py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Ubahlah ke Krama Alus: 'Saya mau makan bersama kakek'">Ubah ke Krama Alus: &ldquo;Saya mau makan bersama kakek&rdquo;</button>
+                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-4 py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Apa bedane tembung 'turu', 'tilem', lan 'sare'?">Bedane tembung &lsquo;turu&rsquo;, &lsquo;tilem&rsquo;, lan &lsquo;sare&rsquo;?</button>
+                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-4 py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Apa tegese bebasan 'Becik ketitik ala ketara'?">Tegese bebasan &lsquo;Becik ketitik ala ketara&rsquo;</button>
+                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-4 py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Piye panganggone sandhangan wulu lan suku ing aksara Jawa?">Panganggone sandhangan wulu lan suku</button>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- FIXED COMPOSER (Pitakon Populer + Input) -->
-                <div class="fixed bottom-0 left-72 right-0 z-40 bg-background/95 backdrop-blur-xl border-t border-gray-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] px-6 py-4">
-                    <div class="flex flex-col gap-space-lg w-full">
-                <!-- Popular Suggestion Chips -->
-                <div class="flex flex-col gap-2 w-full">
-                    <div class="flex items-center justify-between px-1">
-                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-bold">Pertanyaan Populer Pembelajaran</span>
-                    </div>
-                    <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-                        <button type="button" data-prompt="Krama Inggil tembung 'Turu' punapa nggih?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
-                            <span class="material-symbols-outlined text-base text-primary-600">help_outline</span>
-                            <span>Krama Inggil kata "Turu"?</span>
+                <div class="sticky bottom-4 w-full pt-4 mt-6">
+                    <div class="rounded-full bg-surface-container-lowest border border-surface-container p-1.5 pl-4 pr-1.5 flex items-center gap-2 shadow-md">
+                        <button type="button" id="micBtn" title="Ketik nganggo swara"
+                            class="w-9 h-9 rounded-full hover:bg-surface-container text-on-surface-variant hover:text-primary-600 flex items-center justify-center transition-colors shrink-0">
+                            <span class="material-symbols-outlined text-[20px]">mic</span>
                         </button>
-                        <button type="button" data-prompt="Bentenipun Aksara Murda kaliyan Aksara Swara kados pundi?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
-                            <span class="material-symbols-outlined text-base text-primary-600">spellcheck</span>
-                            <span>Perbedaan Aksara Murda & Swara</span>
-                        </button>
-                        <button type="button" data-prompt="Punapa tegesipun paribasan 'Becik ketitik, ala ketara'?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
-                            <span class="material-symbols-outlined text-base text-primary-600">auto_awesome</span>
-                            <span>Arti Peribahasa "Becik Ketitik"</span>
-                        </button>
-                        <button type="button" data-prompt="Kados pundi caranipun nyuwun idin marang Guru ingkang leres miturut krama alus?" class="suggestion-chip whitespace-nowrap px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-high text-on-surface rounded-full font-body text-body text-primary-700 transition-all shadow-sm flex items-center gap-1.5 border border-gray-100">
-                            <span class="material-symbols-outlined text-base text-primary-600">record_voice_over</span>
-                            <span>Tata krama izin kepada Guru</span>
+                        <input type="text" id="chat-input-field" placeholder="Ketik pitakon basa Jawa utawa unggah-ungguh ing kene..." autocomplete="off"
+                            class="flex-1 min-w-0 bg-transparent border-none outline-none font-body text-sm text-on-surface placeholder:text-gray-500 py-1">
+                        <button type="button" id="chat-send-btn" title="Kirim pitakon"
+                            class="w-9 h-9 rounded-full bg-primary-700 hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all active:scale-95 shadow-sm shrink-0">
+                            <span class="material-symbols-outlined text-[20px]">send</span>
                         </button>
                     </div>
+                    <p class="text-center font-caption text-[11px] text-gray-500 mt-2 px-2">
+                        Asisten Tanya Bahasa menjawab berdasarkan basis data korpus resmi sekolah. Tidak mengarang jawaban di luar materi.
+                    </p>
                 </div>
-
-                <!-- Chat Input Card -->
-                <div class="bg-surface-container-lowest rounded-2xl p-4 shadow-md flex flex-col gap-2 w-full border border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center gap-1 shrink-0">
-                            <button type="button" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high hover:text-primary-600 transition-colors" title="Unggah dokumen / gambar soal aksara">
-                                <span class="material-symbols-outlined text-xl">attach_file</span>
-                            </button>
-                        </div>
-                        <div class="flex-1 min-w-0 bg-surface-container-low rounded-xl px-4 py-1.5 flex items-center border border-primary-100/50">
-                            <input type="text" id="chat-input-field" placeholder="Ketik pertanyaan seputar bahasa atau budaya Jawa di sini..." autocomplete="off" class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-400 py-1">
-                        </div>
-                        <button type="button" id="chat-send-btn" class="shrink-0 inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-body text-body font-bold transition-all shadow-md">
-                            <span>Kirim Pertanyaan</span>
-                            <span class="material-symbols-outlined text-lg">send</span>
-                        </button>
-                    </div>
-                    <div class="flex items-center justify-between px-1 pt-1 border-t border-gray-100/60">
-                        <div class="flex items-center gap-1.5 text-gray-500">
-                            <span class="material-symbols-outlined text-sm text-green-500">verified</span>
-                            <span class="font-caption text-caption text-on-surface-variant">Asisten Tanya Bahasa menjawab berdasarkan basis data korpus resmi sekolah. Tidak mengarang jawaban di luar materi.</span>
-                        </div>
-                        <span class="font-caption text-caption text-gray-400 hidden sm:inline">Enter untuk mengirim</span>
-                    </div>
-                </div>
-                    </div>
-                </div>
-
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
+
+    <footer class="w-full bg-surface-container-low py-4 mt-auto">
+        <div class="w-full px-5 md:px-10 flex flex-col sm:flex-row items-center justify-between gap-2 text-on-surface-variant font-caption text-xs">
+            <span>&copy; 2026 Sinau Jowo. Kagunganipun sesarengan kangge nguri-uri kabudayan.</span>
+            <span class="font-label-upper uppercase tracking-wider text-primary-700 font-bold">Ngoko &bull; Madya &bull; Krama Inggil</span>
+        </div>
+    </footer>
 
     <script>
         window.AsistenAI = (function () {
@@ -267,7 +255,6 @@
             const chatUrl = @json(route('kuis.chat'));
             const sesiUrlTemplate = @json(route('kuis.chat.sesi.show', ['chatSession' => 'SESSION_ID']));
             const sesiDeleteTemplate = @json(route('kuis.chat.sesi.destroy', ['chatSession' => 'SESSION_ID']));
-            const userInitial = @json($userInisial);
             const container = document.getElementById('chat-messages');
             const input = document.getElementById('chat-input-field');
             const sendBtn = document.getElementById('chat-send-btn');
@@ -276,10 +263,6 @@
             let activeSessionId = null;
             let busy = false;
 
-            function nowWib() {
-                return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
-            }
-
             function fromTemplate(html) {
                 const tpl = document.createElement('template');
                 tpl.innerHTML = html.trim();
@@ -287,26 +270,14 @@
             }
 
             function scrollToBottom() {
-                if (!container) {
-                    return;
-                }
-                if (container.lastElementChild) {
-                    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-                }
+                window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
             }
 
-            function userBubble(text, waktu) {
+            function userBubble(text) {
                 const node = fromTemplate(`
-                    <div class="flex items-start justify-end gap-4 w-full">
-                        <div class="flex flex-col items-end gap-1 max-w-3xl lg:max-w-4xl">
-                            <div class="flex items-center gap-2">
-                                <span class="font-caption text-caption text-gray-500" data-waktu>${waktu || nowWib()}</span>
-                                <span class="font-body text-body font-bold text-on-surface">Anda</span>
-                                <div class="w-8 h-8 rounded-full bg-primary-700 text-white font-bold text-xs flex items-center justify-center">${userInitial}</div>
-                            </div>
-                            <div class="bg-primary-600 text-white p-4 rounded-2xl shadow-sm leading-relaxed">
-                                <p class="font-body text-body" data-text></p>
-                            </div>
+                    <div class="flex justify-end w-full">
+                        <div class="bg-primary-700 text-white px-5 py-3.5 rounded-2xl rounded-br-md max-w-xl shadow-md">
+                            <p class="font-body text-sm leading-relaxed whitespace-pre-wrap" data-text></p>
                         </div>
                     </div>
                 `);
@@ -314,20 +285,17 @@
                 return node;
             }
 
-            function botBubble(waktu) {
+            function botBubble(label) {
                 const node = fromTemplate(`
-                    <div class="flex items-start gap-4 w-full">
-                        <div class="w-10 h-10 rounded-xl bg-primary-700 flex items-center justify-center text-white shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined text-2xl">neurology</span>
+                    <div class="flex items-start gap-3 w-full">
+                        <div class="w-9 h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined text-[20px]">smart_toy</span>
                         </div>
-                        <div class="flex flex-col gap-1 flex-1 min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="font-body text-body font-bold text-on-surface">Teman Belajar Jawa AI</span>
-                                <span class="font-caption text-caption text-gray-500" data-waktu>${waktu || nowWib()}</span>
-                            </div>
-                            <div class="bg-surface-container-low p-4 rounded-2xl text-on-surface space-y-3 border border-primary-100/40">
-                                <p class="font-body text-body leading-relaxed whitespace-pre-wrap" data-text></p>
-                                <div class="hidden flex-col gap-1 pt-2 border-t border-gray-100" data-sources></div>
+                        <div class="flex flex-col gap-2 flex-1 min-w-0">
+                            <div class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm text-on-surface border border-surface-container">
+                                <span class="block font-label-upper text-[10px] uppercase tracking-wider text-gray-500 mb-1">${label}</span>
+                                <p class="font-body text-sm leading-relaxed whitespace-pre-wrap" data-text></p>
+                                <div class="hidden flex-col gap-1 pt-2 mt-2 border-t border-surface-container" data-sources></div>
                             </div>
                         </div>
                     </div>
@@ -337,11 +305,11 @@
 
             function typingIndicator() {
                 return fromTemplate(`
-                    <div class="flex items-start gap-4 w-full" data-typing>
-                        <div class="w-10 h-10 rounded-xl bg-primary-700 flex items-center justify-center text-white shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined text-2xl">neurology</span>
+                    <div class="flex items-start gap-3 w-full" data-typing>
+                        <div class="w-9 h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined text-[20px]">smart_toy</span>
                         </div>
-                        <div class="bg-surface-container-low px-5 py-4 rounded-2xl border border-primary-100/40 flex items-center gap-1.5">
+                        <div class="bg-surface-container-lowest px-5 py-4 rounded-2xl border border-surface-container flex items-center gap-1.5 shadow-sm">
                             <span class="typing-dot w-2 h-2 rounded-full bg-primary-500"></span>
                             <span class="typing-dot w-2 h-2 rounded-full bg-primary-500"></span>
                             <span class="typing-dot w-2 h-2 rounded-full bg-primary-500"></span>
@@ -351,13 +319,11 @@
             }
 
             function renderSources(node, sources) {
-                if (!Array.isArray(sources) || sources.length === 0) {
-                    return;
-                }
+                if (! Array.isArray(sources) || sources.length === 0) return;
                 const wrap = node.querySelector('[data-sources]');
                 const title = document.createElement('div');
-                title.className = 'flex items-center gap-1.5 text-gray-500 font-caption text-caption';
-                title.innerHTML = '<span class="material-symbols-outlined text-sm">menu_book</span><span data-judul></span>';
+                title.className = 'flex items-center gap-1.5 text-gray-500 font-caption text-xs';
+                title.innerHTML = '<span class="material-symbols-outlined text-[14px]">menu_book</span><span data-judul></span>';
                 title.querySelector('[data-judul]').textContent = 'Sumber korpus: ' + sources.map(function (s) {
                     return s.judul;
                 }).filter(Boolean).join('; ');
@@ -366,8 +332,8 @@
                 wrap.classList.add('flex');
             }
 
-            function appendReply(text, sources, waktu) {
-                const node = botBubble(waktu);
+            function appendReply(text, sources) {
+                const node = botBubble('Wangsulan Semar AI');
                 node.querySelector('[data-text]').textContent = text;
                 renderSources(node, sources);
                 container.appendChild(node);
@@ -385,12 +351,14 @@
             }
 
             function setActiveHighlight(id) {
-                if (!historyList) {
-                    return;
-                }
+                if (! historyList) return;
                 historyList.querySelectorAll('[data-session-id]').forEach(function (node) {
                     const isActive = String(node.dataset.sessionId) === String(id);
-                    node.classList.toggle('bg-surface-container-low', isActive);
+                    const btn = node.querySelector('[data-action="load-sesi"]');
+                    if (btn) {
+                        btn.classList.toggle('bg-surface-container-low', isActive);
+                        btn.classList.toggle('text-primary-700', isActive);
+                    }
                     const title = node.querySelector('[data-judul], .truncate');
                     if (title) {
                         title.classList.toggle('font-bold', isActive);
@@ -400,82 +368,66 @@
             }
 
             function removeEmptyState() {
-                if (!historyList) {
-                    return;
-                }
+                if (! historyList) return;
                 const empty = historyList.querySelector('[data-empty-state]');
-                if (empty) {
-                    empty.remove();
-                }
+                if (empty) empty.remove();
             }
 
             function upsertHistoryItem(id, judul) {
-                if (!historyList) {
-                    return;
-                }
+                if (! historyList) return;
                 removeEmptyState();
                 let node = sessionNode(id);
 
-                if (!node) {
+                if (! node) {
                     node = fromTemplate(`
-                        <div class="group flex items-center gap-1 rounded-xl hover:bg-surface-container-high transition-colors" data-session-id="${id}">
-                            <button type="button" data-action="load-sesi" data-session-id="${id}" class="flex-1 min-w-0 flex items-center gap-2 px-3 py-2 text-left text-on-surface-variant hover:text-on-surface transition-colors truncate">
-                                <span class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary-600 shrink-0">chat_bubble_outline</span>
-                                <span class="truncate" data-judul></span>
+                        <div class="group flex items-center gap-1 rounded-xl transition-colors" data-session-id="${id}">
+                            <button type="button" data-action="load-sesi" data-session-id="${id}" class="flex-1 min-w-0 flex items-center gap-2 px-2.5 py-2 rounded-xl text-left text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors">
+                                <span class="material-symbols-outlined text-[16px] text-gray-500 group-hover:text-primary-600 shrink-0">chat_bubble_outline</span>
+                                <span class="truncate text-xs font-medium" data-judul></span>
                             </button>
-                            <button type="button" data-action="hapus-sesi" data-session-id="${id}" class="hidden group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-400 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Hapus riwayat">
+                            <button type="button" data-action="hapus-sesi" data-session-id="${id}" class="hidden group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-500 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Hapus riwayat">
                                 <span class="material-symbols-outlined text-[16px]">delete</span>
                             </button>
                         </div>
                     `);
-                    node.querySelector('[data-judul]').textContent = judul || 'Obrolan baru';
+                    node.querySelector('[data-judul]').textContent = judul || 'Obrolan anyar';
                     historyList.prepend(node);
                 } else {
                     const title = node.querySelector('[data-judul]');
-                    if (title && judul) {
-                        title.textContent = judul;
-                    }
+                    if (title && judul) title.textContent = judul;
                 }
 
                 setActiveHighlight(id);
             }
 
             function resetView() {
-                if (container) {
-                    container.innerHTML = welcomeHtml;
-                }
+                if (container) container.innerHTML = welcomeHtml;
             }
 
             function newChat() {
                 activeSessionId = null;
                 resetView();
                 setActiveHighlight(null);
-                if (input) {
-                    input.focus();
-                }
+                if (input) input.focus();
             }
 
             async function loadSession(id) {
-                if (busy) {
-                    return;
-                }
+                if (busy) return;
                 setBusy(true);
                 try {
                     const res = await fetch(sesiUrlTemplate.replace('SESSION_ID', id), {
                         headers: { 'Accept': 'application/json' },
                         credentials: 'same-origin',
                     });
-                    if (!res.ok) {
-                        throw new Error('gagal');
-                    }
+                    if (! res.ok) throw new Error('gagal');
                     const data = await res.json();
                     activeSessionId = data.id;
                     resetView();
                     (data.messages || []).forEach(function (m) {
                         if (m.role === 'user') {
-                            container.appendChild(userBubble(m.pesan, m.waktu));
+                            container.appendChild(userBubble(m.pesan));
                         } else {
-                            appendReply(m.pesan, m.sumber || [], m.waktu);
+                            appendReply(m.pesan, m.sumber || []);
                         }
                     });
                     setActiveHighlight(data.id);
@@ -490,34 +442,21 @@
             }
 
             async function deleteSession(id) {
-                if (busy) {
-                    return;
-                }
-                if (!window.confirm('Hapus riwayat obrolan ini?')) {
-                    return;
-                }
+                if (busy) return;
+                if (! window.confirm('Hapus riwayat obrolan ini?')) return;
                 setBusy(true);
                 try {
                     const res = await fetch(sesiDeleteTemplate.replace('SESSION_ID', id), {
                         method: 'DELETE',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrf,
-                        },
+                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
                         credentials: 'same-origin',
                     });
-                    if (!res.ok) {
-                        throw new Error('gagal');
-                    }
+                    if (! res.ok) throw new Error('gagal');
                     const node = sessionNode(id);
-                    if (node) {
-                        node.remove();
-                    }
-                    if (String(activeSessionId) === String(id)) {
-                        newChat();
-                    }
-                    if (historyList && !historyList.querySelector('[data-session-id]')) {
-                        historyList.innerHTML = '<div class="px-3 py-2 text-gray-400 italic text-xs" data-empty-state>Belum ada riwayat obrolan</div>';
+                    if (node) node.remove();
+                    if (String(activeSessionId) === String(id)) newChat();
+                    if (historyList && ! historyList.querySelector('[data-session-id]')) {
+                        historyList.innerHTML = '<div class="px-3 py-2 text-gray-500 italic text-xs" data-empty-state>Belum ada riwayat obrolan</div>';
                     }
                 } catch (err) {
                     window.alert('Gagal menghapus riwayat. Silakan coba lagi.');
@@ -528,9 +467,7 @@
 
             async function ask(question) {
                 const text = (question || '').trim();
-                if (text === '' || busy) {
-                    return;
-                }
+                if (text === '' || busy) return;
 
                 container.appendChild(userBubble(text));
                 scrollToBottom();
@@ -556,7 +493,7 @@
                     const data = await res.json().catch(function () { return {}; });
                     typing.remove();
 
-                    if (!res.ok) {
+                    if (! res.ok) {
                         const message = res.status === 429
                             ? 'Mohon maaf, Anda mengirim pertanyaan terlalu cepat. Silakan tunggu beberapa saat lagi.'
                             : 'Mohon maaf, terjadi gangguan teknis. Silakan coba lagi.';
@@ -579,33 +516,66 @@
                 }
             }
 
+            function initMic() {
+                const micBtn = document.getElementById('micBtn');
+                if (! micBtn) return;
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                let recognition = null;
+                let listening = false;
+
+                micBtn.addEventListener('click', function () {
+                    if (! SR) {
+                        window.alert('Fitur swara ora kasedhiya ing browser iki. Tulisen manual wae.');
+                        return;
+                    }
+                    if (listening && recognition) {
+                        recognition.stop();
+                        return;
+                    }
+                    recognition = new SR();
+                    recognition.lang = 'id-ID';
+                    recognition.interimResults = false;
+                    recognition.onresult = function (e) {
+                        input.value = e.results[0][0].transcript;
+                        input.focus();
+                    };
+                    recognition.onend = function () {
+                        listening = false;
+                        micBtn.classList.remove('bg-error-container', 'text-error');
+                    };
+                    recognition.onerror = function () {
+                        listening = false;
+                        micBtn.classList.remove('bg-error-container', 'text-error');
+                    };
+                    recognition.start();
+                    listening = true;
+                    micBtn.classList.add('bg-error-container', 'text-error');
+                });
+            }
+
             function init() {
-                if (!container) {
-                    return;
-                }
+                if (! container) return;
 
                 sendBtn.addEventListener('click', function () {
                     ask(input.value);
                 });
 
                 input.addEventListener('keydown', function (event) {
-                    if (event.key === 'Enter' && !event.shiftKey) {
+                    if (event.key === 'Enter' && ! event.shiftKey) {
                         event.preventDefault();
                         ask(input.value);
                     }
                 });
 
-                document.querySelectorAll('.suggestion-chip').forEach(function (chip) {
-                    chip.addEventListener('click', function () {
-                        ask(chip.dataset.prompt);
-                    });
-                });
-
                 document.addEventListener('click', function (event) {
-                    const trigger = event.target.closest('[data-action]');
-                    if (!trigger) {
+                    const chip = event.target.closest('.suggestion-chip');
+                    if (chip) {
+                        ask(chip.dataset.prompt);
                         return;
                     }
+
+                    const trigger = event.target.closest('[data-action]');
+                    if (! trigger) return;
 
                     const action = trigger.dataset.action;
                     const id = trigger.dataset.sessionId;
@@ -622,6 +592,8 @@
                         deleteSession(id);
                     }
                 });
+
+                initMic();
             }
 
             init();
