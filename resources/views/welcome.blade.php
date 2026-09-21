@@ -181,9 +181,9 @@
                                     <div class="min-w-0">
                                         <div class="text-[11px] font-black uppercase tracking-widest text-brand-200">
                                             @if($topikAktif)
-                                                BAGIAN {{ $topikAktif->urutan }}, UNIT {{ $lvl->urutan }}
+                                                BAGIAN {{ $topikAktif->urutan }}, UNIT {{ $lvl->urutan_unit ?? $lvl->urutan }}
                                             @else
-                                                UNIT {{ $lvl->urutan }}
+                                                UNIT {{ $lvl->urutan_unit ?? $lvl->urutan }}
                                             @endif
                                         </div>
                                         <h3 class="text-2xl font-black leading-tight truncate">

@@ -117,9 +117,16 @@ class HomeController extends Controller
             }
 
             // Unit sing ditampilake mung unit saka topik sing dipilih.
-            $levels = $topikAktif
+            // Penomoran unit direset per topik (bagian), mula nganggo indeks relatif.
+            $levels = ($topikAktif
                 ? $allLevels->where('topik_id', $topikAktif->id)->values()
-                : $allLevels->values();
+                : $allLevels->values())
+                ->values()
+                ->map(function ($level, $index) {
+                    $level->urutan_unit = $index + 1;
+
+                    return $level;
+                });
 
             $activeLevel = $levels->firstWhere('status', ProgresSiswa::STATUS_BERJALAN)
                 ?? $levels->firstWhere('status', ProgresSiswa::STATUS_SELESAI)

@@ -438,6 +438,7 @@ class KuisSesiController extends Controller
                 'id' => $soal->levelMateri?->id,
                 'nama' => $soal->levelMateri?->nama_materi,
                 'urutan' => $soal->levelMateri?->urutan,
+                'urutan_unit' => $this->unitNumber($soal->levelMateri),
             ],
             'pembahasan' => [
                 'id' => $soal->pembahasan?->id,
@@ -452,6 +453,21 @@ class KuisSesiController extends Controller
             'petunjuk' => is_array($opsi) ? ($opsi['petunjuk'] ?? null) : null,
             'paths' => $soal->tipe_soal === Soal::TIPE_MENULIS_AKSARA ? ($kunci['paths'] ?? null) : null,
         ];
+    }
+
+    /**
+     * Nomor unit relatif ing topik (bagian): unit pisanan saben topik iku 1.
+     */
+    private function unitNumber(?LevelMateri $level): ?int
+    {
+        if (! $level) {
+            return null;
+        }
+
+        return LevelMateri::query()
+            ->when($level->topik_id, fn ($q) => $q->where('topik_id', $level->topik_id))
+            ->where('urutan', '<=', $level->urutan)
+            ->count();
     }
 
     private function siswa(): Siswa
