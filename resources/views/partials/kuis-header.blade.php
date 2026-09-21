@@ -10,7 +10,7 @@
             <div class="min-w-0">
                 <div class="font-heading text-heading font-extrabold text-on-surface truncate">Sinau Jowo</div>
                 <div class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 truncate">
-                    LEVEL {{ $soal['level']['urutan'] ?? 1 }}<span class="mx-1">•</span>{{ $judul }}
+                    UNIT {{ $soal['level']['urutan_unit'] ?? $soal['level']['urutan'] ?? 1 }}<span class="mx-1">•</span>{{ $judul }}
                 </div>
             </div>
         </div>
