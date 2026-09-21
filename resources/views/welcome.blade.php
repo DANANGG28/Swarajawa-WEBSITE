@@ -88,10 +88,10 @@
         @keyframes fadeZoom { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
         .unit-tab {
             background-color: #ffffff;
-            border: 2px solid #cbd5e1;
+            border: 2px solid #e2e8f0;
             color: #5443c9;
             font-weight: 900;
-            box-shadow: 0 3px 0 #cbd5e1;
+            box-shadow: 0 3px 0 #e2e8f0;
         }
         .unit-tab:hover { border-color: #a78bfa; color: #4338ca; background-color: #f5f3ff; }
         .unit-check { display: none; }
@@ -104,10 +104,10 @@
             box-shadow: 0 2px 0 #3f31a8;
         }
         .sj-card {
-            box-shadow: 0 4px 0 rgba(15, 23, 42, 0.14), 0 2px 4px rgba(15, 23, 42, 0.10);
+            box-shadow: 0 4px 0 rgba(15, 23, 42, 0.07), 0 2px 4px rgba(15, 23, 42, 0.05);
         }
         .sj-card-hover:hover {
-            box-shadow: 0 6px 0 rgba(15, 23, 42, 0.16), 0 3px 10px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 6px 0 rgba(15, 23, 42, 0.09), 0 3px 10px rgba(15, 23, 42, 0.06);
         }
     </style>
 </head>
@@ -121,7 +121,7 @@
                 <div class="max-w-3xl mx-auto space-y-6">
 
                     <!-- Top Bar Course Header Card -->
-                    <header class="bg-white rounded-2xl p-5 sj-card sj-card-hover border-2 border-slate-300" data-purpose="course-header-card">
+                    <header class="bg-white rounded-[28px] p-5 sj-card sj-card-hover border-2 border-slate-200" data-purpose="course-header-card">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-12 h-12 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600 shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
@@ -145,7 +145,7 @@
                                     data-unit-nama="{{ $lvl->nama_materi }}"
                                     data-unit-urutan="{{ $lvl->urutan }}"
                                     data-unit-deskripsi="{{ $lvl->deskripsi ?? 'Ayo sinau materi iki kanthi nyenengake.' }}"
-                                    class="unit-tab px-4 py-2 rounded-full text-xs flex items-center gap-1.5 transition-all active:scale-95 {{ $tabAktif ? 'is-active' : '' }}">
+                                    class="unit-tab px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all active:scale-95 {{ $tabAktif ? 'is-active' : '' }}">
                                     <svg class="unit-check w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     @if($lvl->status === 'terkunci')
                                         <svg class="unit-lock w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewBox="0 0 24 24"><rect height="11" rx="2" ry="2" width="18" x="3" y="11"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -159,7 +159,7 @@
                     </header>
 
                     <!-- Welcome Alert Banner -->
-                    <section id="welcome-alert" class="bg-emerald-50/80 border-2 border-emerald-300 rounded-2xl px-5 py-3.5 flex items-center gap-3 text-emerald-900 sj-card" data-purpose="welcome-alert">
+                    <section id="welcome-alert" class="bg-emerald-50/80 border-2 border-emerald-200 rounded-[28px] px-5 py-3.5 flex items-center gap-3 text-emerald-900 sj-card" data-purpose="welcome-alert">
                         <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24">
                                 <polyline points="20 6 9 17 4 12"></polyline>
@@ -183,7 +183,7 @@
                     </section>
 
                     <!-- Unit Banner Header -->
-                    <section class="bg-gradient-to-r from-brand-600 to-indigo-600 rounded-3xl p-6 text-white border-2 border-brand-700 sj-card relative overflow-hidden" data-purpose="unit-banner">
+                    <section class="bg-gradient-to-r from-brand-600 to-indigo-600 rounded-[32px] p-6 text-white border-2 border-brand-700 sj-card relative overflow-hidden" data-purpose="unit-banner">
                         <div class="flex items-start justify-between gap-4 relative z-10">
                             <div class="space-y-1.5 max-w-xl">
                                 <div id="unit-banner-label" class="text-[11px] font-black uppercase tracking-widest text-brand-200">
@@ -270,7 +270,7 @@
                                     <div class="absolute flex flex-col items-center" style="left: {{ $pt['x'] }}px; top: {{ $pt['y'] - 36 }}px; transform: translateX(-50%); width: 200px;">
                                         <div class="relative flex flex-col items-center">
                                             @if($terkunci)
-                                                <div class="w-[72px] h-[72px] rounded-full bg-slate-200 text-slate-400 flex items-center justify-center ring-4 ring-white border-b-4 border-slate-300 cursor-not-allowed shadow-inner">
+                                                <div class="w-[72px] h-[72px] rounded-full bg-slate-200 text-slate-400 flex items-center justify-center ring-4 ring-white border-b-4 border-slate-200 cursor-not-allowed shadow-inner">
                                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><rect height="11" rx="2" ry="2" width="18" x="3" y="11"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                                 </div>
                                             @elseif($selesai)
@@ -295,7 +295,7 @@
                                                 </div>
                                             @endif
 
-                                            <div class="mt-3 text-center bg-white px-3 py-1.5 rounded-2xl sj-card border-2 w-[200px] {{ $aktifNode ? 'border-brand-300' : 'border-slate-300' }}">
+                                            <div class="mt-3 text-center bg-white px-3 py-1.5 rounded-[20px] sj-card border-2 w-[200px] {{ $aktifNode ? 'border-brand-200' : 'border-slate-200' }}">
                                                 <div class="text-xs font-black {{ $terkunci ? 'text-slate-500' : ($aktifNode ? 'text-brand-950' : 'text-slate-800') }} leading-snug">{{ $pembahasan->nama }}</div>
                                                 <div class="text-[10px] mt-0.5 {{ $terkunci ? 'font-bold text-slate-400' : ($selesai ? 'font-extrabold text-emerald-600' : 'font-extrabold text-brand-600') }}">{{ $subLabel }}</div>
                                             </div>
@@ -303,7 +303,7 @@
                                     </div>
                                 @empty
                                     <div class="absolute inset-0 flex items-center justify-center">
-                                        <div class="bg-white rounded-2xl p-6 text-center text-slate-500 font-bold text-sm border-2 border-slate-300 sj-card">
+                                        <div class="bg-white rounded-[24px] p-6 text-center text-slate-500 font-bold text-sm border-2 border-slate-200 sj-card">
                                             Belum ada pembahasan pada unit ini.
                                         </div>
                                     </div>
@@ -311,7 +311,7 @@
                             </div>
                         </section>
                     @empty
-                        <div class="bg-white rounded-2xl p-8 text-center text-slate-500 font-bold border-2 border-slate-300 sj-card">
+                        <div class="bg-white rounded-[28px] p-8 text-center text-slate-500 font-bold border-2 border-slate-200 sj-card">
                             Belum ada level materi yang tersedia.
                         </div>
                     @endforelse
@@ -320,9 +320,9 @@
             <!-- END: Center Learning Column -->
 
             <!-- BEGIN: Right Sidebar (Widgets) -->
-            <aside class="w-[400px] shrink-0 border-l border-slate-100 px-6 py-7 space-y-5 sj-widgets" data-purpose="right-sidebar-widgets">
+            <aside id="dashboard-widgets" class="w-[400px] shrink-0 border-l border-slate-100 px-6 py-7 space-y-5 sj-widgets sticky top-0 self-start" data-purpose="right-sidebar-widgets">
                 <!-- Stats Bar -->
-                <div class="bg-white rounded-3xl p-5 px-6 border-2 border-slate-300 sj-card sj-card-hover flex items-center justify-around" data-purpose="top-stats-bar">
+                <div class="bg-white rounded-[32px] p-5 px-6 border-2 border-slate-200 sj-card sj-card-hover flex items-center justify-around" data-purpose="top-stats-bar">
                     <button type="button" id="btn-open-streak-modal" class="flex items-center gap-3 text-left cursor-pointer active:scale-95 transition-transform">
                         <div class="text-orange-500 shrink-0">
                             <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z"></path></svg>
@@ -345,7 +345,7 @@
                 </div>
 
                 <!-- Latihan Ngomong (STT & TTS) -->
-                <section class="bg-white rounded-3xl p-5 border-2 border-slate-300 sj-card sj-card-hover space-y-3" data-purpose="speaking-practice">
+                <section class="bg-white rounded-[32px] p-5 border-2 border-slate-200 sj-card sj-card-hover space-y-3" data-purpose="speaking-practice">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <div class="w-7 h-7 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center">
@@ -375,7 +375,7 @@
                 </section>
 
                 <!-- Misi Harian -->
-                <section class="bg-white rounded-3xl p-6 border-2 border-slate-300 sj-card sj-card-hover space-y-4" data-purpose="daily-quests">
+                <section class="bg-white rounded-[32px] p-6 border-2 border-slate-200 sj-card sj-card-hover space-y-4" data-purpose="daily-quests">
                     <div class="flex items-center gap-2">
                         <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
@@ -410,7 +410,7 @@
                 </section>
 
                 <!-- Asisten Tanya Bahasa AI -->
-                <section class="bg-white rounded-3xl p-6 border-2 border-slate-300 sj-card sj-card-hover space-y-4" data-purpose="ai-assistant">
+                <section class="bg-white rounded-[32px] p-6 border-2 border-slate-200 sj-card sj-card-hover space-y-4" data-purpose="ai-assistant">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
@@ -449,7 +449,7 @@
 
     <!-- Streak Modal -->
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm hidden" id="streak-modal-container">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-brand-200 relative space-y-5 animate-in">
+        <div class="bg-white rounded-[28px] max-w-md w-full p-6 shadow-2xl border-2 border-brand-200 relative space-y-5 animate-in">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div class="flex items-center gap-2.5">
                     <div class="w-9 h-9 rounded-2xl bg-orange-50 border border-orange-100 text-orange-500 flex items-center justify-center shadow-sm">
@@ -509,6 +509,24 @@
             </div>
         </div>
     </div>
+
+    <script id="widgets-sticky-script">
+        (function () {
+            const aside = document.getElementById('dashboard-widgets');
+            if (!aside) return;
+
+            function apply() {
+                // Bila panel kanan lebih tinggi dari viewport, biarkan ikut scroll
+                // sampai bagian bawahnya mentok, baru berhenti (sticky).
+                const offset = Math.min(0, window.innerHeight - aside.offsetHeight);
+                aside.style.top = offset + 'px';
+            }
+
+            apply();
+            window.addEventListener('load', apply);
+            window.addEventListener('resize', apply);
+        })();
+    </script>
 
     <script id="unit-tab-script">
         (function () {
