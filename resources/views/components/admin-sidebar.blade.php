@@ -4,14 +4,13 @@
     $nav = $role === 'superadmin'
         ? [
             ['key' => 'dashboard', 'label' => 'Dashboard', 'ikon' => 'dashboard', 'url' => route('superadmin.dashboard'), 'alias' => []],
-            ['key' => 'guru', 'label' => 'Akun Guru', 'ikon' => 'supervisor_account', 'url' => route('superadmin.guru'), 'alias' => []],
+            ['key' => 'guru', 'label' => 'Pengelola', 'ikon' => 'supervisor_account', 'url' => route('superadmin.guru'), 'alias' => []],
             ['key' => 'siswa', 'label' => 'Akun Siswa', 'ikon' => 'groups', 'url' => route('superadmin.siswa'), 'alias' => []],
-            ['key' => 'topik', 'label' => 'Topik', 'ikon' => 'topic', 'url' => route('superadmin.topik'), 'alias' => []],
-            ['key' => 'level-materi', 'label' => 'Level Materi', 'ikon' => 'stairs', 'url' => route('superadmin.level-materi'), 'alias' => ['soal']],
+            ['key' => 'topik', 'label' => 'Topik', 'ikon' => 'topic', 'url' => route('superadmin.topik'), 'alias' => ['level-materi', 'soal', 'pembahasan']],
         ]
         : [
             ['key' => 'dashboard', 'label' => 'Pemantauan Siswa', 'ikon' => 'monitoring', 'url' => route('guru.dashboard'), 'alias' => []],
-            ['key' => 'soal', 'label' => 'Manajemen Soal', 'ikon' => 'quiz', 'url' => route('guru.soal'), 'alias' => ['level-materi']],
+            ['key' => 'topik', 'label' => 'Topik', 'ikon' => 'topic', 'url' => route('guru.topik'), 'alias' => ['level-materi', 'soal', 'pembahasan']],
         ];
 
     $isItemActive = fn ($item) => $active === $item['key'] || in_array($active, $item['alias'] ?? [], true);
@@ -51,7 +50,11 @@
         <div class="flex items-center justify-between p-3 rounded-2xl bg-surface-container-low border-2 border-slate-200">
             <div class="flex items-center gap-3 min-w-0">
                 <div class="relative flex-shrink-0">
-                    <div class="w-10 h-10 rounded-full bg-primary-700 text-white flex items-center justify-center font-bold text-sm uppercase">{{ $inisial }}</div>
+                    @if ($user?->foto_url)
+                        <img src="{{ $user->foto_url }}" alt="{{ $nama }}" class="w-10 h-10 rounded-full object-cover border border-primary-200">
+                    @else
+                        <div class="w-10 h-10 rounded-full bg-primary-700 text-white flex items-center justify-center font-bold text-sm uppercase">{{ $inisial }}</div>
+                    @endif
                     <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-surface-container-lowest"></span>
                 </div>
                 <div class="flex flex-col min-w-0">

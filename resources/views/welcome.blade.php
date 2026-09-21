@@ -97,11 +97,36 @@
 <body class="bg-[#f7f3ff] antialiased text-slate-900">
     <x-sidebar active="beranda" />
 
-    <div class="pl-72 min-h-screen sj-app">
-        <div class="flex max-w-[1200px] mx-auto">
+    <!-- MOBILE TOP HEADER (Hanya tampil di mobile/tablet < lg) -->
+    <header class="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-2 border-slate-200/80 px-4 py-3 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-sm shadow-primary-600/30">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-base font-black tracking-tight text-primary uppercase leading-none">Sinau Jowo</h1>
+                <span class="text-[9px] font-extrabold uppercase tracking-widest text-primary-600 block mt-0.5">Platform Pasinaon</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button type="button" id="btn-open-streak-modal-mobile" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-600 text-xs font-black active:scale-95 transition-transform" title="Streak Belajar">
+                <svg class="w-4 h-4 fill-current text-orange-500" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z"></path></svg>
+                <span>{{ $currentStreak }}</span>
+            </button>
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-600 text-xs font-black" title="Total EXP">
+                <svg class="w-4 h-4 fill-current text-brand-600" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                <span>{{ number_format($totalExp) }}</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="pl-0 lg:pl-72 min-h-screen pb-24 lg:pb-8 sj-app">
+        <div class="flex flex-col xl:flex-row max-w-[1200px] mx-auto">
             <!-- BEGIN: Center Learning Column -->
-            <main class="flex-1 min-w-0 px-8 py-7">
-                <div class="max-w-3xl mx-auto space-y-8">
+            <main class="flex-1 min-w-0 px-4 sm:px-8 py-5 sm:py-7">
+                <div class="max-w-3xl mx-auto space-y-6 sm:space-y-8">
 
                     <!-- Welcome Alert Banner -->
                     <section id="welcome-alert" class="bg-emerald-50/80 border-2 border-emerald-200 rounded-[28px] px-5 py-3.5 flex items-center gap-3 text-emerald-900 sj-card" data-purpose="welcome-alert">
@@ -205,8 +230,8 @@
                         </section>
 
                         {{-- Roadmap pembahasan unit iki --}}
-                        <section class="relative py-6 px-4 mx-auto max-w-xl select-none" data-purpose="roadmap-{{ $lvl->id }}">
-                            <div class="relative mx-auto" style="width: 360px; height: {{ $pathHeight }}px;">
+                        <section class="relative py-6 px-2 sm:px-4 mx-auto max-w-xl select-none flex justify-center overflow-x-auto" data-purpose="roadmap-{{ $lvl->id }}">
+                            <div class="relative shrink-0" style="width: 360px; height: {{ $pathHeight }}px;">
                                 @if($d)
                                     <svg class="absolute inset-0 pointer-events-none z-0" width="360" height="{{ $pathHeight }}" viewBox="0 0 360 {{ $pathHeight }}" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="{{ $d }}" stroke="#e2e8f0" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path>
@@ -282,7 +307,7 @@
             <!-- END: Center Learning Column -->
 
             <!-- BEGIN: Right Sidebar (Widgets) -->
-            <aside id="dashboard-widgets" class="w-[400px] shrink-0 px-6 py-7 space-y-5 sj-widgets sticky top-0 self-start" data-purpose="right-sidebar-widgets">
+            <aside id="dashboard-widgets" class="hidden xl:block w-[380px] shrink-0 px-6 py-7 space-y-5 sj-widgets sticky top-0 self-start" data-purpose="right-sidebar-widgets">
                 <!-- Stats Bar -->
                 <div class="bg-white rounded-[32px] p-5 px-6 border-2 border-slate-200 sj-card sj-card-hover flex items-center justify-around" data-purpose="top-stats-bar">
                     <button type="button" id="btn-open-streak-modal" class="flex items-center gap-3 text-left cursor-pointer active:scale-95 transition-transform">
@@ -478,8 +503,10 @@
             if (!aside) return;
 
             function apply() {
-                // Bila panel kanan lebih tinggi dari viewport, biarkan ikut scroll
-                // sampai bagian bawahnya mentok, baru berhenti (sticky).
+                if (window.innerWidth < 1280) {
+                    aside.style.top = '';
+                    return;
+                }
                 const offset = Math.min(0, window.innerHeight - aside.offsetHeight);
                 aside.style.top = offset + 'px';
             }
@@ -507,6 +534,7 @@
         (function () {
             const modal = document.getElementById('streak-modal-container');
             const openBtn = document.getElementById('btn-open-streak-modal');
+            const openBtnMobile = document.getElementById('btn-open-streak-modal-mobile');
             const closeX = document.getElementById('btn-close-streak-x');
             const closeFooter = document.getElementById('btn-close-streak-footer');
 
@@ -514,6 +542,7 @@
             function hide() { if (modal) modal.classList.add('hidden'); }
 
             if (openBtn) openBtn.addEventListener('click', show);
+            if (openBtnMobile) openBtnMobile.addEventListener('click', show);
             if (closeX) closeX.addEventListener('click', hide);
             if (closeFooter) closeFooter.addEventListener('click', hide);
             if (modal) {

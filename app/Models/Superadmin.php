@@ -21,7 +21,17 @@ class Superadmin extends Authenticatable
         'email',
         'no_telpon',
         'password',
+        'foto',
     ];
+
+    public function getFotoUrlAttribute(): ?string
+    {
+        if ($this->foto && (file_exists(storage_path('image/superadmin/' . $this->foto)) || file_exists(resource_path('image/superadmin/' . $this->foto)))) {
+            return route('superadmin.image', $this->foto);
+        }
+
+        return null;
+    }
 
     protected $hidden = [
         'password',

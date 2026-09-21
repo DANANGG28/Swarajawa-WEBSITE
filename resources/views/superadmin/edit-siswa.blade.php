@@ -49,18 +49,38 @@
         </section>
 
         {{-- Card Formulir Edit Siswa --}}
-        <section class="bg-surface-container-lowest rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between pb-5 border-b border-gray-100 mb-6">
+        <section class="bg-surface-container-lowest rounded-3xl p-6 sm:p-8 shadow-sm border-2 border-slate-200/80">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-gray-100 gap-4 mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[24px]">manage_accounts</span>
+                    <div class="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 shadow-sm border border-primary-100">
+                        <span class="material-symbols-outlined text-[26px]">manage_accounts</span>
                     </div>
                     <div>
-                        <h3 class="font-heading text-heading font-bold text-on-surface">Formulir Edit Akun Siswa</h3>
-                        <p class="font-caption text-caption text-gray-500">Ubah data yang ingin diperbarui, lalu klik simpan perubahan</p>
+                        <h3 class="font-heading text-lg sm:text-xl font-bold text-on-surface">Formulir Edit Akun Siswa</h3>
+                        <p class="font-caption text-caption text-gray-500">Ubah data yang ingin diperbarui, lalu klik tombol simpan perubahan di bawah</p>
                     </div>
                 </div>
+                <div class="flex items-center gap-2 self-start sm:self-center">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-primary-50 text-primary-700 border border-primary-200 shadow-sm">
+                        <span class="material-symbols-outlined text-[16px]">school</span>
+                        Siswa
+                    </span>
+                </div>
             </div>
+
+            @if ($errors->any())
+                <div class="p-4 rounded-2xl bg-error-container/20 border border-error/30 text-error flex items-start gap-3 mb-6 shadow-sm">
+                    <span class="material-symbols-outlined text-[22px] shrink-0 mt-0.5">error</span>
+                    <div class="flex flex-col gap-1">
+                        <span class="font-body text-sm font-bold">Terdapat kesalahan pada formulir pengubahan:</span>
+                        <ul class="list-disc list-inside text-xs space-y-0.5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
 
             <form method="POST" action="{{ route('superadmin.siswa.update', $siswa) }}" enctype="multipart/form-data" class="flex flex-col gap-6">
                 @csrf
@@ -89,6 +109,9 @@
                                    onchange="previewImage(this)"
                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-600 file:text-white hover:file:bg-primary-700 cursor-pointer">
                             <span class="font-caption text-caption text-gray-400">Kosongkan jika tidak ingin mengganti foto. Format: JPG, PNG, WEBP (Maks 2 MB). Disimpan di storage/image/siswa</span>
+                            @error('foto')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -109,9 +132,14 @@
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">badge</span>
                                 <input type="text" name="nis" value="{{ old('nis', $siswa->nis) }}" required
-                                       placeholder="Nomer Induk Siswa"
+                                       inputmode="numeric" pattern="[0-9]*" maxlength="20"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                       placeholder="Contoh: 202607001"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
+                            @error('nis')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
 
                         {{-- Nama Lengkap --}}
@@ -122,9 +150,13 @@
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">id_card</span>
                                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}" required
+                                       autocomplete="name" maxlength="150"
                                        placeholder="Nama lengkap siswa"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
+                            @error('nama_lengkap')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
 
                         {{-- Jenis Kelamin --}}
@@ -140,6 +172,9 @@
                                     <option value="P" {{ old('jenis_kelamin', $siswa->jenis_kelamin) === 'P' ? 'selected' : '' }}>Perempuan (P)</option>
                                 </select>
                             </div>
+                            @error('jenis_kelamin')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
 
                         {{-- Kelas --}}
@@ -150,9 +185,13 @@
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">school</span>
                                 <input type="text" name="kelas" value="{{ old('kelas', $siswa->kelas) }}"
+                                       maxlength="50"
                                        placeholder="Contoh: 7A / 8B / 9C"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
+                            @error('kelas')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
                     </div>
                 </div>
@@ -173,9 +212,13 @@
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">mail</span>
                                 <input type="email" name="email" value="{{ old('email', $siswa->email) }}" required
+                                       autocomplete="email" maxlength="255"
                                        placeholder="siswa@sekolah.sch.id"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
+                            @error('email')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
 
                         {{-- No Telpon --}}
@@ -185,10 +228,15 @@
                             </span>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">call</span>
-                                <input type="text" name="no_telpon" value="{{ old('no_telpon', $siswa->no_telpon) }}"
+                                <input type="tel" name="no_telpon" value="{{ old('no_telpon', $siswa->no_telpon) }}"
+                                       inputmode="numeric" pattern="[0-9]*" maxlength="16"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                        placeholder="08xxxxxxxxxx"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
+                            @error('no_telpon')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
                     </div>
                 </div>
@@ -209,21 +257,24 @@
                         </div>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">key</span>
-                            <input type="password" name="password"
+                            <input type="password" name="password" minlength="6"
                                    placeholder="Ketik kata sandi baru minimal 6 karakter..."
                                    class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                         </div>
+                        @error('password')
+                            <span class="text-error text-xs font-caption">{{ $message }}</span>
+                        @enderror
                     </label>
                 </div>
 
-                {{-- Tombol Aksi --}}
-                <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-end gap-3">
+                {{-- Tombol Aksi 3D Duolingo / Swarajawa Style --}}
+                <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-end gap-3.5">
                     <a href="{{ route('superadmin.siswa') }}"
-                       class="w-full sm:w-auto px-6 py-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-body text-body font-bold text-center transition-colors">
+                       class="w-full sm:w-auto px-7 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-body text-body font-bold text-center border-b-4 border-slate-300 active:border-b-0 active:translate-y-1 transition-all">
                         Batal
                     </a>
                     <button type="submit"
-                            class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-body font-bold px-8 py-3 shadow-md hover:shadow-lg transition-all">
+                            class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-primary-600 hover:bg-primary-500 border-primary-800 text-white font-body text-body font-bold px-8 py-3 shadow-md hover:shadow-lg border-b-4 active:border-b-0 active:translate-y-1 transition-all">
                         <span class="material-symbols-outlined text-[20px]">save</span>
                         <span>Simpan Perubahan Siswa</span>
                     </button>

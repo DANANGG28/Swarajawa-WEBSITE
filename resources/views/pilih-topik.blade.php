@@ -59,8 +59,8 @@
 <body class="bg-[#f7f3ff] antialiased text-slate-900">
     <x-sidebar active="beranda" />
 
-    <div class="pl-72 min-h-screen sj-app">
-        <div class="max-w-3xl mx-auto px-8 py-7">
+    <div class="pl-0 lg:pl-72 min-h-screen pb-24 lg:pb-8 sj-app">
+        <div class="max-w-3xl mx-auto px-4 sm:px-8 py-6 sm:py-7">
             <!-- Header -->
             <div class="flex items-center gap-3 mb-6">
                 <a href="{{ route('siswa.dashboard') }}" title="Bali menyang beranda"

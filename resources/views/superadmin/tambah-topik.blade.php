@@ -33,7 +33,9 @@
 
                 <label class="flex flex-col gap-1.5">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-700 font-semibold">Nomor Urutan <span class="text-error">*</span></span>
-                    <input type="number" name="urutan" min="0" value="{{ old('urutan', $nextUrutan ?? 1) }}" required
+                    <input type="number" name="urutan" min="1" step="1" inputmode="numeric"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                           value="{{ old('urutan', $nextUrutan ?? 1) }}" required
                            class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-sm outline-none focus:border-primary-500 focus:bg-white transition-all">
                     @error('urutan')<span class="text-error text-xs font-caption">{{ $message }}</span>@enderror
                 </label>

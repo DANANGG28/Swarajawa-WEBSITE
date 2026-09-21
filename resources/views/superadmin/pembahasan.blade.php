@@ -6,11 +6,15 @@
         <nav class="flex items-center gap-2 font-caption text-caption text-gray-500 flex-wrap">
             <a href="{{ route('superadmin.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
-            <a href="{{ route('superadmin.level-materi') }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
+            <a href="{{ route('superadmin.topik') }}" class="hover:text-primary-600 transition-colors">Topik</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
-            <a href="{{ route('superadmin.soal', ['level_materi_id' => $level->id]) }}" class="hover:text-primary-600 transition-colors">
-                Level {{ $level->urutan }}: {{ $level->nama_materi }}
-            </a>
+            @if ($level->topik)
+                <a href="{{ route('superadmin.level-materi', ['topik_id' => $level->topik_id]) }}" class="hover:text-primary-600 transition-colors">{{ $level->topik->nama }}</a>
+                <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            @endif
+            <a href="{{ route('superadmin.level-materi', $level->topik_id ? ['topik_id' => $level->topik_id] : []) }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            <span class="text-gray-500">Level {{ $level->urutan }}: {{ $level->nama_materi }}</span>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
             <span class="text-on-surface font-bold text-primary-700">Kelola Pembahasan</span>
         </nav>
@@ -28,7 +32,7 @@
                     </p>
                 </div>
             </div>
-            <a href="{{ route('superadmin.level-materi') }}"
+            <a href="{{ route('superadmin.level-materi', $level->topik_id ? ['topik_id' => $level->topik_id] : []) }}"
                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-body text-xs font-semibold transition-colors shrink-0 self-start sm:self-center">
                 <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                 <span>Kembali</span>
@@ -59,7 +63,9 @@
 
                 <label class="md:col-span-2 flex flex-col gap-1.5">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Urutan</span>
-                    <input type="number" name="urutan" min="0" value="{{ old('urutan', $pembahasanList->max('urutan') + 1) }}" required
+                    <input type="number" name="urutan" min="1" step="1" inputmode="numeric"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                           value="{{ old('urutan', $pembahasanList->max('urutan') + 1) }}" required
                            class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 </label>
 
@@ -145,7 +151,9 @@
                                     </label>
                                     <label class="md:col-span-2 flex flex-col gap-1.5">
                                         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Urutan</span>
-                                        <input type="number" name="urutan" min="0" value="{{ $pembahasan->urutan }}" required
+                                        <input type="number" name="urutan" min="1" step="1" inputmode="numeric"
+                                               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                               value="{{ $pembahasan->urutan }}" required
                                                class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                                     </label>
                                     <label class="md:col-span-4 flex flex-col gap-1.5">

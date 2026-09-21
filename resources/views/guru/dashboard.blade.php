@@ -2,42 +2,84 @@
 
 @section('konten')
     <div class="flex flex-col gap-6 pt-4 sm:pt-5 pb-10">
-        <section class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
-            <div class="bg-primary-50/90 border border-primary-200/80 hover:border-primary-400 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-4">
-                <div class="flex flex-col min-w-0">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-primary-700 font-bold">Total Siswa Diampu</span>
-                    <p class="font-caption text-caption text-primary-900/60 mt-1">Siswa pada kelas/mapel Anda</p>
-                </div>
-                <div class="min-w-[56px] h-14 px-3 rounded-2xl bg-white border border-primary-100 shadow-sm flex items-center justify-center shrink-0">
-                    <span class="font-stat-number text-2xl sm:text-3xl font-extrabold text-primary-700">
-                        {{ $siswa->total() }}
-                    </span>
-                </div>
-            </div>
+        {{-- Card Terpadu 3D Ringkasan Pengajaran Guru --}}
+        <section class="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-primary-700 via-primary-600 to-primary-500 p-6 sm:p-7 text-white border-b-[6px] border-[#3c25b1] shadow-[0_12px_24px_-4px_rgba(60,37,177,0.35)]">
+            {{-- Elemen Dekorasi Cahaya Halus --}}
+            <div class="absolute -right-12 -bottom-12 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+            <div class="absolute left-1/3 -top-12 w-56 h-56 rounded-full bg-primary-400/20 blur-xl pointer-events-none"></div>
 
-            <div class="bg-amber-50/90 border border-amber-200/80 hover:border-amber-400 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-4">
-                <div class="flex flex-col min-w-0">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-amber-800 font-bold">Total Level Materi</span>
-                    <p class="font-caption text-caption text-amber-900/60 mt-1">Struktur kurikulum aktif</p>
+            <div class="relative z-10 flex flex-col gap-5">
+                {{-- Header Card Ringkasan --}}
+                <div class="flex items-center justify-between pb-4 border-b border-white/15">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white border border-white/25 shadow-inner shrink-0">
+                            <span class="material-symbols-outlined text-[22px]">analytics</span>
+                        </div>
+                        <div>
+                            <h2 class="font-heading text-base sm:text-lg font-extrabold text-white tracking-tight">Ringkasan Pengajaran Sinau Jowo</h2>
+                            <p class="font-caption text-xs text-white/80">Pantauan menyeluruh progres siswa, kurikulum pembelajaran, dan kelas yang Anda ampu</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="min-w-[56px] h-14 px-3 rounded-2xl bg-white border border-amber-100 shadow-sm flex items-center justify-center shrink-0">
-                    <span class="font-stat-number text-2xl sm:text-3xl font-extrabold text-amber-700">
-                        {{ $totalLevel }}
-                    </span>
-                </div>
-            </div>
 
-            <div class="bg-orange-50/90 border border-orange-200/80 hover:border-orange-400 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-4">
-                <div class="flex flex-col min-w-0">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-orange-800 font-bold">Kelas Diampu</span>
-                    <p class="font-caption text-caption text-orange-900/60 mt-1 truncate" title="{{ $kelasList->implode(', ') ?: 'Belum ada kelas' }}">
-                        {{ $kelasList->implode(', ') ?: 'Belum ada kelas' }}
-                    </p>
-                </div>
-                <div class="min-w-[56px] h-14 px-3 rounded-2xl bg-white border border-orange-100 shadow-sm flex items-center justify-center shrink-0">
-                    <span class="font-stat-number text-2xl sm:text-3xl font-extrabold text-orange-700">
-                        {{ $kelasList->count() }}
-                    </span>
+                {{-- 3 Modul Statistik Terpisah Rapih dengan Efek 3D --}}
+                @php
+                    $cards = [
+                        [
+                            'label' => 'Total Siswa Diampu',
+                            'value' => $siswa->total(),
+                            'deskripsi' => 'Siswa pada kelas binaan Anda',
+                            'ikon' => 'groups',
+                            'link' => '#daftar-progres-siswa',
+                            'action_label' => 'Lihat Progres Siswa',
+                        ],
+                        [
+                            'label' => 'Total Level Materi',
+                            'value' => $totalLevel,
+                            'deskripsi' => 'Struktur kurikulum aktif',
+                            'ikon' => 'topic',
+                            'link' => route('guru.topik'),
+                            'action_label' => 'Kelola Topik & Unit',
+                        ],
+                        [
+                            'label' => 'Kelas Diampu',
+                            'value' => $kelasList->count(),
+                            'deskripsi' => $kelasList->implode(', ') ?: 'Belum ada kelas aktif',
+                            'ikon' => 'school',
+                            'link' => '#filter-kelas-wrapper',
+                            'action_label' => 'Pilih & Filter Kelas',
+                        ],
+                    ];
+                @endphp
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+                    @foreach ($cards as $card)
+                        <a href="{{ $card['link'] }}"
+                           class="group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-white/15 hover:bg-white/25 active:bg-white/20 backdrop-blur-md border border-white/25 border-b-[4px] border-b-[#34209c] shadow-[0_4px_12px_rgba(0,0,0,0.12)] hover:border-b-[2px] hover:translate-y-0.5 active:border-b-0 active:translate-y-1 transition-all duration-150 cursor-pointer select-none">
+                            <div class="flex items-center justify-between">
+                                <span class="font-label-upper text-label-upper uppercase tracking-wider font-bold text-white/90">
+                                    {{ $card['label'] }}
+                                </span>
+                                <div class="w-10 h-10 rounded-xl bg-white/20 text-white border border-white/30 shadow-inner flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-110 group-hover:bg-white group-hover:text-primary-700">
+                                    <span class="material-symbols-outlined text-[20px]">{{ $card['ikon'] }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 flex flex-col">
+                                <div class="font-stat-number text-3xl sm:text-4xl font-black text-white tracking-tight">
+                                    {{ number_format($card['value']) }}
+                                </div>
+                                <p class="font-caption text-xs text-white/75 mt-1 line-clamp-1" title="{{ $card['deskripsi'] }}">
+                                    {{ $card['deskripsi'] }}
+                                </p>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-white/80 group-hover:text-white font-caption text-xs font-semibold">
+                                <span>{{ $card['action_label'] }}</span>
+                                <span class="material-symbols-outlined text-[16px] transition-transform duration-200 group-hover:translate-x-1">arrow_forward</span>
+                            </div>
+                        </a>
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -93,7 +135,7 @@
             </form>
         </section>
 
-        <section class="bg-surface-container-lowest rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <section id="daftar-progres-siswa" class="bg-surface-container-lowest rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100">
                 <h2 class="font-heading text-heading font-bold text-on-surface">Daftar Progres Siswa</h2>
                 <p class="font-caption text-caption text-gray-500">Hanya siswa pada kelas/mata pelajaran yang Anda ampu (FR-11)</p>
@@ -145,8 +187,19 @@
                     </tbody>
                 </table>
             </div>
-            @if ($siswa->hasPages())
-                <div class="px-5 py-4 border-t border-gray-100">{{ $siswa->links() }}</div>
+
+            {{-- Pagination Footer --}}
+            @if ($siswa->total() > 0)
+                <div class="px-5 py-3.5 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-surface-container-low/20">
+                    <div class="text-xs text-gray-500 font-caption">
+                        Menampilkan <span class="font-bold text-on-surface">{{ $siswa->firstItem() ?? 0 }}</span> - <span class="font-bold text-on-surface">{{ $siswa->lastItem() ?? 0 }}</span> dari total <span class="font-bold text-on-surface">{{ $siswa->total() }}</span> siswa (10 per halaman)
+                    </div>
+                    @if ($siswa->hasPages())
+                        <div>
+                            {{ $siswa->links() }}
+                        </div>
+                    @endif
+                </div>
             @endif
         </section>
     </div>

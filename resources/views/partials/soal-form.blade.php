@@ -8,6 +8,7 @@
     $ttsRoute = $ttsRoute ?? route('guru.soal.tts');
     $previewRoute = $previewRoute ?? route('guru.soal.preview');
     $disableLevel = $disableLevel ?? false;
+    $disablePembahasan = $disablePembahasan ?? false;
 @endphp
 
 <form method="POST" action="{{ $action }}" class="flex flex-col gap-4" data-soal-form data-preview-route="{{ $previewRoute }}" data-prefix="{{ $prefix }}" enctype="multipart/form-data">
@@ -79,25 +80,81 @@
             @endif
         </div>
 
-        {{-- Dropdown Pembahasan (sub-materi pada level terpilih) --}}
-        <label class="flex flex-col gap-1.5">
-            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Pembahasan</span>
+        {{-- Custom Dropdown Pembahasan --}}
+        <div class="relative flex flex-col gap-1.5" id="custom-pembahasan-wrapper-{{ $prefix }}">
             @php
-                $selectedPembahasan = old('pembahasan_id', $soal->pembahasan_id ?? ($selectedPembahasanId ?? ''));
+                $selectedPembahasanVal = old('pembahasan_id', $soal->pembahasan_id ?? ($selectedPembahasanId ?? ''));
+                $currentPembahasanObj = ($pembahasanList ?? collect())->firstWhere('id', $selectedPembahasanVal);
+                $selectedPembahasanLabel = $currentPembahasanObj 
+                    ? ($currentPembahasanObj->urutan . '. ' . $currentPembahasanObj->nama) 
+                    : 'Tanpa Pembahasan';
             @endphp
-            <select name="pembahasan_id"
-                class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body text-gray-700 outline-none focus:border-primary-500">
-                <option value="">— Tanpa Pembahasan —</option>
-                @foreach (($pembahasanList ?? collect()) as $pembahasan)
-                    <option value="{{ $pembahasan->id }}" @selected((string) $selectedPembahasan === (string) $pembahasan->id)>
-                        {{ $pembahasan->urutan }}. {{ $pembahasan->nama }}
-                    </option>
-                @endforeach
-            </select>
-            @if (($pembahasanList ?? collect())->isEmpty())
-                <span class="text-caption text-gray-400">Belum ada pembahasan pada level ini.</span>
+
+            <div class="flex items-center justify-between">
+                <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Pembahasan</span>
+                @if ($disablePembahasan && $currentPembahasanObj)
+                    <span class="inline-flex items-center gap-1 text-[11px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
+                        <span class="material-symbols-outlined text-[13px]">lock</span>
+                        Terkunci
+                    </span>
+                @endif
+            </div>
+
+            @if ($disablePembahasan && $currentPembahasanObj)
+                <input type="hidden" name="pembahasan_id" value="{{ $currentPembahasanObj->id }}">
+                <button type="button" id="btn-pembahasan-{{ $prefix }}" disabled
+                    class="flex items-center justify-between w-full rounded-full border border-gray-200 bg-gray-100/90 px-4 py-3 font-body text-body text-gray-500 shadow-none cursor-not-allowed select-none transition-all">
+                    <span id="label-pembahasan-{{ $prefix }}" class="truncate font-medium text-gray-600">
+                        {{ $selectedPembahasanLabel }}
+                    </span>
+                    <span class="inline-flex items-center justify-center shrink-0 w-5 h-5 text-gray-400 ml-2">
+                        <span class="material-symbols-outlined text-[18px] leading-none">lock</span>
+                    </span>
+                </button>
+            @else
+                {{-- Real hidden select for form submission --}}
+                <select name="pembahasan_id" id="select-pembahasan-{{ $prefix }}" class="hidden">
+                    <option value="">Tanpa Pembahasan</option>
+                    @foreach (($pembahasanList ?? collect()) as $pembahasan)
+                        <option value="{{ $pembahasan->id }}" @selected((string) $selectedPembahasanVal === (string) $pembahasan->id)>
+                            {{ $pembahasan->urutan }}. {{ $pembahasan->nama }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <button type="button" id="btn-pembahasan-{{ $prefix }}"
+                    class="flex items-center justify-between w-full rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-primary-400 px-4 py-3 font-body text-body text-gray-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+                    <span id="label-pembahasan-{{ $prefix }}" class="truncate font-medium text-gray-800">
+                        {{ $selectedPembahasanLabel }}
+                    </span>
+                    <span class="inline-flex items-center justify-center shrink-0 w-5 h-5 text-gray-400 ml-2">
+                        <span id="chevron-pembahasan-{{ $prefix }}" class="material-symbols-outlined text-[20px] leading-none transition-transform duration-200">expand_more</span>
+                    </span>
+                </button>
+
+                {{-- Dropdown Menu Pembahasan dengan Pembatas --}}
+                <div id="menu-pembahasan-{{ $prefix }}" class="hidden absolute top-full left-0 mt-2 w-full bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 overflow-hidden divide-y divide-gray-100 max-h-60 overflow-y-auto">
+                    @php $isNoneSelected = empty($selectedPembahasanVal); @endphp
+                    <button type="button" data-val="" data-label="Tanpa Pembahasan"
+                        class="opt-pembahasan-item-{{ $prefix }} w-full flex items-center justify-between px-4 py-2.5 text-left font-body text-body {{ $isNoneSelected ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600' }} transition-colors">
+                        <span>Tanpa Pembahasan</span>
+                        <span class="check-icon material-symbols-outlined text-[18px] text-primary-600 {{ $isNoneSelected ? '' : 'hidden' }}">check</span>
+                    </button>
+                    @foreach (($pembahasanList ?? collect()) as $pembahasan)
+                        @php $isPembSelected = ((string) $selectedPembahasanVal === (string) $pembahasan->id); @endphp
+                        <button type="button" data-val="{{ $pembahasan->id }}" data-label="{{ $pembahasan->urutan }}. {{ $pembahasan->nama }}"
+                            class="opt-pembahasan-item-{{ $prefix }} w-full flex items-center justify-between px-4 py-2.5 text-left font-body text-body {{ $isPembSelected ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600' }} transition-colors">
+                            <span class="truncate">{{ $pembahasan->urutan }}. {{ $pembahasan->nama }}</span>
+                            <span class="check-icon material-symbols-outlined text-[18px] text-primary-600 {{ $isPembSelected ? '' : 'hidden' }}">check</span>
+                        </button>
+                    @endforeach
+                </div>
+
+                @if (($pembahasanList ?? collect())->isEmpty())
+                    <span class="text-caption text-gray-400">Belum ada pembahasan pada level ini.</span>
+                @endif
             @endif
-        </label>
+        </div>
 
         {{-- Custom Dropdown Tipe Soal --}}
         <div class="relative flex flex-col gap-1.5" id="custom-tipe-wrapper-{{ $prefix }}">
@@ -139,7 +196,9 @@
 
         <label class="flex flex-col gap-1.5">
             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Bobot EXP</span>
-            <input type="number" name="bobot_exp" min="0" max="1000" required value="{{ old('bobot_exp', $soal->bobot_exp ?? 10) }}"
+            <input type="number" name="bobot_exp" min="0" max="1000" step="1" inputmode="numeric"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                required value="{{ old('bobot_exp', $soal->bobot_exp ?? 10) }}"
                 class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
         </label>
     </div>
@@ -277,7 +336,7 @@
         btn.disabled = false;
     });
 
-    // Custom Dropdown logic for Tipe Soal & Level Materi (prefix: {{ $prefix }})
+    // Custom Dropdown logic for Tipe Soal, Level Materi & Pembahasan (prefix: {{ $prefix }})
     (function() {
         // Tipe Soal Dropdown
         const btnTipe = document.getElementById('btn-tipe-{{ $prefix }}');
@@ -289,7 +348,7 @@
         if (btnTipe && menuTipe && selectTipe) {
             btnTipe.addEventListener('click', function(e) {
                 e.stopPropagation();
-                document.querySelectorAll('[id^="menu-tipe-"], [id^="menu-level-"]').forEach(m => {
+                document.querySelectorAll('[id^="menu-tipe-"], [id^="menu-level-"], [id^="menu-pembahasan-"]').forEach(m => {
                     if (m !== menuTipe) m.classList.add('hidden');
                 });
                 const isHidden = menuTipe.classList.toggle('hidden');
@@ -327,6 +386,53 @@
             });
         }
 
+        // Pembahasan Dropdown
+        const btnPembahasan = document.getElementById('btn-pembahasan-{{ $prefix }}');
+        const menuPembahasan = document.getElementById('menu-pembahasan-{{ $prefix }}');
+        const chevronPembahasan = document.getElementById('chevron-pembahasan-{{ $prefix }}');
+        const selectPembahasan = document.getElementById('select-pembahasan-{{ $prefix }}');
+        const labelPembahasan = document.getElementById('label-pembahasan-{{ $prefix }}');
+
+        if (btnPembahasan && menuPembahasan && selectPembahasan) {
+            btnPembahasan.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.querySelectorAll('[id^="menu-tipe-"], [id^="menu-level-"], [id^="menu-pembahasan-"]').forEach(m => {
+                    if (m !== menuPembahasan) m.classList.add('hidden');
+                });
+                const isHidden = menuPembahasan.classList.toggle('hidden');
+                if (!isHidden) {
+                    chevronPembahasan.classList.add('rotate-180');
+                } else {
+                    chevronPembahasan.classList.remove('rotate-180');
+                }
+            });
+
+            menuPembahasan.querySelectorAll('.opt-pembahasan-item-{{ $prefix }}').forEach(function(opt) {
+                opt.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const val = this.getAttribute('data-val');
+                    const label = this.getAttribute('data-label');
+
+                    selectPembahasan.value = val;
+                    labelPembahasan.textContent = label;
+
+                    menuPembahasan.querySelectorAll('.opt-pembahasan-item-{{ $prefix }}').forEach(o => {
+                        o.classList.remove('bg-primary-50', 'text-primary-700', 'font-bold');
+                        o.classList.add('text-gray-700');
+                        o.querySelector('.check-icon')?.classList.add('hidden');
+                    });
+                    this.classList.add('bg-primary-50', 'text-primary-700', 'font-bold');
+                    this.classList.remove('text-gray-700');
+                    this.querySelector('.check-icon')?.classList.remove('hidden');
+
+                    menuPembahasan.classList.add('hidden');
+                    chevronPembahasan.classList.remove('rotate-180');
+
+                    selectPembahasan.dispatchEvent(new Event('change'));
+                });
+            });
+        }
+
         // Level Materi Dropdown
         const btnLevel = document.getElementById('btn-level-{{ $prefix }}');
         const menuLevel = document.getElementById('menu-level-{{ $prefix }}');
@@ -337,7 +443,7 @@
         if (btnLevel && menuLevel && selectLevel) {
             btnLevel.addEventListener('click', function(e) {
                 e.stopPropagation();
-                document.querySelectorAll('[id^="menu-tipe-"], [id^="menu-level-"]').forEach(m => {
+                document.querySelectorAll('[id^="menu-tipe-"], [id^="menu-level-"], [id^="menu-pembahasan-"]').forEach(m => {
                     if (m !== menuLevel) m.classList.add('hidden');
                 });
                 const isHidden = menuLevel.classList.toggle('hidden');
@@ -376,6 +482,10 @@
             if (menuTipe && !btnTipe?.contains(e.target) && !menuTipe?.contains(e.target)) {
                 menuTipe.classList.add('hidden');
                 chevronTipe?.classList.remove('rotate-180');
+            }
+            if (menuPembahasan && !btnPembahasan?.contains(e.target) && !menuPembahasan?.contains(e.target)) {
+                menuPembahasan.classList.add('hidden');
+                chevronPembahasan?.classList.remove('rotate-180');
             }
             if (menuLevel && !btnLevel?.contains(e.target) && !menuLevel?.contains(e.target)) {
                 menuLevel.classList.add('hidden');

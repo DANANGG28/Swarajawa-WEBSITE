@@ -96,20 +96,20 @@
     <!-- SIDEBAR -->
     <x-sidebar active="profil" />
 
-    <div class="pl-72 flex flex-col min-h-screen">
+    <div class="pl-0 lg:pl-72 flex flex-col min-h-screen pb-24 lg:pb-8">
         <!-- HEADER -->
-        <header class="fixed top-0 left-72 right-0 h-20 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] px-space-xl flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <a href="{{ route('siswa.profil') }}" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-50 text-on-surface-variant hover:bg-surface-container hover:text-primary-600 transition-colors" title="Kembali ke Halaman Profil">
-                    <span class="material-symbols-outlined text-[22px]">arrow_back</span>
+        <header class="fixed top-0 left-0 lg:left-72 right-0 h-16 lg:h-20 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] px-4 lg:px-space-xl flex items-center justify-between">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <a href="{{ route('siswa.profil') }}" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-gray-50 text-on-surface-variant hover:bg-surface-container hover:text-primary-600 transition-colors shrink-0" title="Kembali ke Halaman Profil">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[22px]">arrow_back</span>
                 </a>
-                <div class="flex flex-col">
-                    <div class="flex items-center gap-2 text-xs font-semibold text-gray-500">
-                        <a href="{{ route('siswa.profil') }}" class="hover:text-primary-600 transition-colors">Profil Siswa</a>
+                <div class="flex flex-col min-w-0">
+                    <div class="flex items-center gap-1.5 text-xs font-semibold text-gray-500 truncate">
+                        <a href="{{ route('siswa.profil') }}" class="hover:text-primary-600 transition-colors">Profil</a>
                         <span>/</span>
-                        <span class="text-primary-600">Lengkapi & Edit Data Diri</span>
+                        <span class="text-primary-600 truncate">Edit Data</span>
                     </div>
-                    <h1 class="font-heading text-lg font-extrabold text-on-surface">Lengkapi & Edit Data Diri</h1>
+                    <h1 class="font-heading text-base sm:text-lg font-extrabold text-on-surface truncate">Lengkapi Data Diri</h1>
                 </div>
             </div>
             <div class="flex items-center gap-space-lg">
@@ -121,7 +121,7 @@
         </header>
 
         <!-- MAIN CONTENT -->
-        <main class="flex-1 pt-24 w-full px-margin-desktop py-space-xl bg-background max-w-5xl mx-auto">
+        <main class="flex-1 pt-20 lg:pt-24 w-full px-4 sm:px-6 lg:px-margin-desktop py-space-md lg:py-space-xl bg-background max-w-5xl mx-auto">
             <div class="flex flex-col w-full gap-space-lg">
 
                 <!-- Completion Status Banner -->
@@ -267,7 +267,10 @@
                                 </label>
                                 <div class="relative">
                                     <span class="absolute left-3.5 top-3 text-gray-400 material-symbols-outlined text-[20px]">pin</span>
-                                    <input type="text" id="nis" name="nis" value="{{ old('nis', $siswa->nis) }}" placeholder="Contoh: 20241001" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
+                                    <input type="text" id="nis" name="nis" value="{{ old('nis', $siswa->nis) }}"
+                                           inputmode="numeric" pattern="[0-9]*" maxlength="20"
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                           placeholder="Contoh: 20241001" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
                                 </div>
                                 @error('nis')
                                     <span class="text-xs text-error font-medium">{{ $message }}</span>
@@ -376,7 +379,10 @@
                                 </label>
                                 <div class="relative">
                                     <span class="absolute left-3.5 top-3 text-gray-400 material-symbols-outlined text-[20px]">phone_iphone</span>
-                                    <input type="tel" id="no_telpon" name="no_telpon" value="{{ old('no_telpon', $siswa->no_telpon) }}" placeholder="Contoh: 081234567890" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
+                                    <input type="tel" id="no_telpon" name="no_telpon" value="{{ old('no_telpon', $siswa->no_telpon) }}"
+                                           inputmode="numeric" pattern="[0-9]*" maxlength="16"
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                           placeholder="Contoh: 081234567890" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
                                 </div>
                                 @error('no_telpon')
                                     <span class="text-xs text-error font-medium">{{ $message }}</span>

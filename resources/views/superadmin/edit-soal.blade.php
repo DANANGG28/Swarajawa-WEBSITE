@@ -7,7 +7,13 @@
         <nav class="flex items-center gap-2 font-caption text-caption text-gray-500 flex-wrap">
             <a href="{{ route('superadmin.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
-            <a href="{{ route('superadmin.level-materi') }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
+            <a href="{{ route('superadmin.topik') }}" class="hover:text-primary-600 transition-colors">Topik</a>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            @if ($level->topik)
+                <a href="{{ route('superadmin.level-materi', ['topik_id' => $level->topik_id]) }}" class="hover:text-primary-600 transition-colors">{{ $level->topik->nama }}</a>
+                <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            @endif
+            <a href="{{ route('superadmin.level-materi', $level->topik_id ? ['topik_id' => $level->topik_id] : []) }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
             <a href="{{ route('superadmin.soal', ['level_materi_id' => $level->id]) }}" class="hover:text-primary-600 transition-colors">
                 Level {{ $level->urutan }}: {{ $level->nama_materi }}
@@ -25,11 +31,17 @@
                     </div>
                     <div>
                         <h3 class="font-heading text-lg font-bold text-on-surface">Sunting Butir Soal</h3>
-                        <p class="font-body text-xs text-gray-500 mt-0.5">Perbarui teks pertanyaan, media, opsi jawaban, atau bobot EXP untuk level ini.</p>
+                        <p class="font-body text-xs text-gray-500 mt-0.5">
+                            @if ($soal->pembahasan)
+                                Perbarui butir soal untuk Pembahasan: <span class="font-bold text-primary-700">{{ $soal->pembahasan->urutan }}. {{ $soal->pembahasan->nama }}</span>.
+                            @else
+                                Perbarui butir soal untuk Level {{ $level->urutan }}: {{ $level->nama_materi }}.
+                            @endif
+                        </p>
                     </div>
                 </div>
 
-                <a href="{{ route('superadmin.soal', ['level_materi_id' => $level->id]) }}"
+                <a href="{{ route('superadmin.soal', array_filter(['level_materi_id' => $level->id, 'pembahasan_id' => $soal->pembahasan_id])) }}"
                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-body text-xs font-semibold transition-colors shrink-0 self-start sm:self-center">
                     <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                     <span>Kembali ke Daftar Soal</span>
@@ -39,12 +51,15 @@
             @include('partials.soal-form', [
                 'action' => route('superadmin.soal.update', $soal),
                 'levels' => $levels,
+                'level' => $level,
+                'pembahasanList' => $pembahasanList,
                 'tipeList' => $tipeList,
                 'soal' => $soal,
                 'prefix' => 'edit-'.$soal->id,
                 'ttsRoute' => route('superadmin.soal.tts'),
                 'previewRoute' => route('superadmin.soal.preview'),
                 'disableLevel' => true,
+                'disablePembahasan' => true,
             ])
         </section>
     </div>

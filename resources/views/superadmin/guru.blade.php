@@ -6,13 +6,13 @@
 
 @section('konten')
     <div class="flex flex-col gap-6 max-w-7xl mx-auto pt-2 pb-10">
-        {{-- Card Terpadu: Filter Pencarian & Tombol Tambah Guru --}}
+        {{-- Card Terpadu: Filter Pencarian & Tombol Tambah Pengelola --}}
         <section class="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            {{-- Form Saring / Cari Nama & NIP --}}
+            {{-- Form Saring / Cari Nama, NIP, atau Email --}}
             <form method="GET" action="{{ route('superadmin.guru') }}" class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
-                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama lengkap atau NIP guru..."
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama lengkap, NIP, atau email pengelola..."
                            class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-2.5 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
@@ -31,27 +31,31 @@
                 </div>
             </form>
 
-            {{-- Tombol Tambah Guru Anyar di dalam Card Toolbar --}}
+            {{-- Tombol Tambah Pengelola Anyar di dalam Card Toolbar --}}
             <div class="flex items-center gap-2 shrink-0 border-t md:border-t-0 md:border-l border-gray-100 pt-3 md:pt-0 md:pl-4">
                 <a href="{{ route('superadmin.guru.create') }}"
                    class="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary-50 hover:bg-primary-100 text-primary-700 font-body text-body font-bold transition-all border border-primary-100">
                     <span class="material-symbols-outlined text-[20px] text-primary-600">person_add</span>
-                    <span>Tambah Guru</span>
+                    <span>Tambah Pengelola</span>
                 </a>
             </div>
         </section>
 
-        {{-- Daftar Kartu Guru --}}
+        {{-- Daftar Kartu Pengelola --}}
         <section class="flex flex-col gap-3">
             @forelse ($guruList as $g)
-                <div class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm border border-gray-100 hover:border-primary-200 transition-all hover:shadow-md">
+                @php
+                    $isSuperadmin = ($g->role === 'superadmin');
+                    $isSelf = ($isSuperadmin && (int) $g->id === (int) $currentUserId);
+                @endphp
+                <div class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm border border-gray-100 hover:border-primary-200 transition-all hover:shadow-md {{ $isSelf ? 'ring-2 ring-primary-500/20 bg-primary-50/10' : '' }}">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        {{-- Info Profil Guru --}}
+                        {{-- Info Profil Pengelola --}}
                         <div class="flex items-center gap-4 min-w-0">
-                            {{-- Avatar / Foto Guru dengan Fitur Klik Zoom --}}
+                            {{-- Avatar / Foto Pengelola dengan Fitur Klik Zoom --}}
                             <div title="Klik untuk melihat foto lebih besar"
-                                 onclick="openPhotoModal('{{ $g->foto_url ?? '' }}', '{{ addslashes($g->nama_lengkap) }}', '{{ $g->nip }}', '{{ $g->status_pegawaian ?: '-' }}', '{{ \Illuminate\Support\Str::of($g->nama_lengkap)->substr(0, 2) }}')"
-                                 class="group relative w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center font-heading font-extrabold text-base shrink-0 uppercase shadow-sm cursor-pointer hover:scale-105 active:scale-95 transition-all">
+                                 onclick="openPhotoModal('{{ $g->foto_url ?? '' }}', '{{ addslashes($g->nama_lengkap) }}', '{{ $g->nip ?? ($isSuperadmin ? 'Superadmin System' : '-') }}', '{{ $isSuperadmin ? 'Super Administrator' : ($g->status_pegawaian ?: '-') }}', '{{ \Illuminate\Support\Str::of($g->nama_lengkap)->substr(0, 2) }}')"
+                                 class="group relative w-12 h-12 rounded-2xl overflow-hidden {{ $isSuperadmin ? 'bg-gradient-to-br from-indigo-600 to-primary-700' : 'bg-gradient-to-br from-emerald-600 to-teal-700' }} text-white flex items-center justify-center font-heading font-extrabold text-base shrink-0 uppercase shadow-sm cursor-pointer hover:scale-105 active:scale-95 transition-all">
                                 @if ($g->foto_url)
                                     <img src="{{ $g->foto_url }}" alt="{{ $g->nama_lengkap }}" class="w-full h-full object-cover">
                                 @else
@@ -65,52 +69,106 @@
                             <div class="flex flex-col min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <h3 class="font-heading text-heading font-bold text-on-surface truncate">{{ $g->nama_lengkap }}</h3>
-                                    <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-gray-700 font-label-upper text-[11px] font-bold uppercase">
-                                        {{ $g->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
-                                    </span>
+                                    
+                                    {{-- Role Badge --}}
+                                    @if ($isSuperadmin)
+                                        <span class="px-2.5 py-0.5 rounded-full bg-primary-100 text-primary-800 border border-primary-200 font-label-upper text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[13px]">shield_person</span>
+                                            Superadmin
+                                        </span>
+                                    @else
+                                        <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 font-label-upper text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[13px]">school</span>
+                                            Guru
+                                        </span>
+                                    @endif
+
+                                    {{-- Self Badge --}}
+                                    @if ($isSelf)
+                                        <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 font-label-upper text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[12px]">account_circle</span>
+                                            Akun Anda
+                                        </span>
+                                    @endif
+
+                                    @if ($g->jenis_kelamin)
+                                        <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-gray-700 font-label-upper text-[11px] font-bold uppercase">
+                                            {{ $g->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                        </span>
+                                    @endif
                                 </div>
                                 <div class="flex items-center gap-2 text-gray-500 font-caption text-caption flex-wrap mt-0.5">
-                                    <span class="flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-[15px] text-gray-400">badge</span>
-                                        NIP {{ $g->nip }}
-                                    </span>
-                                    <span>•</span>
-                                    <span class="flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-[15px] text-gray-400">work</span>
-                                        {{ $g->status_pegawaian ?: 'Status belum diatur' }}
-                                    </span>
-                                    <span>•</span>
-                                    <span class="flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-[15px] text-gray-400">mail</span>
-                                        {{ $g->email }}
-                                    </span>
+                                    @if ($isSuperadmin)
+                                        <span class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[15px] text-gray-400">admin_panel_settings</span>
+                                            Akses Penuh Sistem
+                                        </span>
+                                        @if ($g->no_telpon)
+                                            <span>•</span>
+                                            <span class="flex items-center gap-1">
+                                                <span class="material-symbols-outlined text-[15px] text-gray-400">call</span>
+                                                {{ $g->no_telpon }}
+                                            </span>
+                                        @endif
+                                        <span>•</span>
+                                        <span class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[15px] text-gray-400">mail</span>
+                                            {{ $g->email }}
+                                        </span>
+                                    @else
+                                        <span class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[15px] text-gray-400">badge</span>
+                                            NIP {{ $g->nip }}
+                                        </span>
+                                        <span>•</span>
+                                        <span class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[15px] text-gray-400">work</span>
+                                            {{ $g->status_pegawaian ?: 'Status belum diatur' }}
+                                        </span>
+                                        <span>•</span>
+                                        <span class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[15px] text-gray-400">mail</span>
+                                            {{ $g->email }}
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
 
                         {{-- Action Buttons (Icon Only) --}}
                         <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                            {{-- Tombol Edit (Icon Pensil Saja) --}}
-                            <a href="{{ route('superadmin.guru.edit', $g) }}"
-                               title="Edit Akun Guru"
+                            {{-- Tombol Edit (Icon Pensil Saja) - Tetap bisa untuk semua termasuk akun diri sendiri --}}
+                            <a href="{{ route('superadmin.guru.edit', ['guru' => $g->id, 'role' => $g->role]) }}"
+                               title="Edit Akun {{ $isSuperadmin ? 'Superadmin' : 'Guru' }}"
                                class="w-10 h-10 rounded-full bg-primary-50 hover:bg-primary-600 text-primary-700 hover:text-white flex items-center justify-center transition-all shadow-sm border border-primary-100">
                                 <span class="material-symbols-outlined text-[19px]">edit</span>
                             </a>
 
                             {{-- Tombol Detail Akun (Icon Saja) --}}
-                            <a href="{{ route('superadmin.guru.show', $g) }}"
-                               title="Lihat Detail Akun"
+                            <a href="{{ route('superadmin.guru.show', ['guru' => $g->id, 'role' => $g->role]) }}"
+                               title="Lihat Detail Akun {{ $isSuperadmin ? 'Superadmin' : 'Guru' }}"
                                class="w-10 h-10 rounded-full bg-surface-container-high hover:bg-primary-600 text-on-surface hover:text-white flex items-center justify-center transition-all shadow-sm">
                                 <span class="material-symbols-outlined text-[19px]">visibility</span>
                             </a>
 
                             {{-- Tombol Hapus (Icon Saja) --}}
-                            <form method="POST" action="{{ route('superadmin.guru.destroy', $g) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun guru {{ $g->nama_lengkap }}?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" title="Hapus Akun" class="w-10 h-10 rounded-full bg-error-container/50 text-error flex items-center justify-center hover:bg-error-container transition-colors">
-                                    <span class="material-symbols-outlined text-[19px]">delete</span>
+                            @if ($isSelf)
+                                {{-- Jika Akun Diri Sendiri (Superadmin yang sedang login): DILARANG HAPUS --}}
+                                <button type="button"
+                                        title="Anda tidak dapat menghapus akun Anda sendiri"
+                                        disabled
+                                        class="w-10 h-10 rounded-full bg-gray-100 text-gray-300 flex items-center justify-center cursor-not-allowed border border-gray-200/60"
+                                        onclick="alert('Anda tidak dapat menghapus akun Anda sendiri.')">
+                                    <span class="material-symbols-outlined text-[19px]">delete_forever</span>
                                 </button>
-                            </form>
+                            @else
+                                <form method="POST" action="{{ route('superadmin.guru.destroy', ['guru' => $g->id, 'role' => $g->role]) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun {{ $isSuperadmin ? 'Superadmin' : 'Guru' }} {{ $g->nama_lengkap }}?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" title="Hapus Akun {{ $isSuperadmin ? 'Superadmin' : 'Guru' }}" class="w-10 h-10 rounded-full bg-error-container/50 text-error flex items-center justify-center hover:bg-error-container transition-colors">
+                                        <span class="material-symbols-outlined text-[19px]">delete</span>
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -121,10 +179,10 @@
                     </div>
                     <div class="flex flex-col gap-1">
                         <h4 class="font-heading text-heading font-bold text-on-surface">
-                            {{ request('q') ? 'Data Guru Tidak Ditemukan' : 'Belum Ada Akun Guru' }}
+                            {{ request('q') ? 'Data Pengelola Tidak Ditemukan' : 'Belum Ada Akun Pengelola' }}
                         </h4>
                         <p class="font-body text-body text-gray-500">
-                            {{ request('q') ? 'Tidak ada data guru yang cocok dengan filter pencarian "' . request('q') . '".' : 'Belum ada akun guru yang terdaftar dalam sistem.' }}
+                            {{ request('q') ? 'Tidak ada data pengelola yang cocok dengan filter pencarian "' . request('q') . '".' : 'Belum ada akun guru atau superadmin yang terdaftar dalam sistem.' }}
                         </p>
                     </div>
                     <div class="pt-2">
@@ -138,7 +196,7 @@
                             <a href="{{ route('superadmin.guru.create') }}"
                                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary-600 text-white font-body text-body font-bold shadow-sm hover:bg-primary-700 transition-all">
                                 <span class="material-symbols-outlined text-[18px]">person_add</span>
-                                <span>Daftarkan Guru Baru Sekarang</span>
+                                <span>Daftarkan Pengelola Baru Sekarang</span>
                             </a>
                         @endif
                     </div>
@@ -149,13 +207,14 @@
             @if ($guruList->total() > 0)
                 <div class="bg-surface-container-lowest rounded-2xl p-4 sm:px-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 mt-2">
                     <div class="text-xs text-gray-500 font-caption">
-                        Menampilkan <span class="font-bold text-on-surface">{{ $guruList->firstItem() ?? 0 }}</span> - <span class="font-bold text-on-surface">{{ $guruList->lastItem() ?? 0 }}</span> dari total <span class="font-bold text-on-surface">{{ $guruList->total() }}</span> guru
+                        Menampilkan <span class="font-bold text-on-surface">{{ $guruList->firstItem() ?? 0 }}</span> - <span class="font-bold text-on-surface">{{ $guruList->lastItem() ?? 0 }}</span> dari total <span class="font-bold text-on-surface">{{ $guruList->total() }}</span> akun pengelola
                     </div>
                     <div>
                         {{ $guruList->links() }}
                     </div>
                 </div>
             @endif
+
         </section>
     </div>
 

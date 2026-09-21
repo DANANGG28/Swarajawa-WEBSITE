@@ -43,7 +43,7 @@ class GuruWebController extends Controller
             $query->where(fn ($q) => $q->where('siswa.nama_lengkap', 'like', $term)->orWhere('siswa.nis', 'like', $term));
         }
 
-        $siswa = $query->paginate(12)->withQueryString();
+        $siswa = $query->paginate(10)->withQueryString();
 
         $kelasList = $guru->siswa()->distinct()->pluck('guru_siswa.kelas')->filter()->values();
 
@@ -58,19 +58,79 @@ class GuruWebController extends Controller
         ]);
     }
 
+    // ------------------------------------------------------------- Topik
+
+    public function topik(Request $request): View
+    {
+        $query = Topik::withCount('units')->orderBy('urutan');
+
+        if ($request->filled('q')) {
+            $term = '%'.$request->query('q').'%';
+            $query->where(fn ($q) => $q->where('nama', 'like', $term)->orWhere('deskripsi', 'like', $term));
+        }
+
+        return view('guru.topik', [
+            'judul' => 'Manajemen Topik',
+            'subjudul' => 'Kelola topik pembelajaran; setiap topik dapat memuat beberapa unit materi',
+            'role' => 'guru',
+            'active' => 'topik',
+            'topikList' => $query->paginate(8)->withQueryString(),
+        ]);
+    }
+
+    public function topikCreate(): View
+    {
+        $maxUrutan = Topik::max('urutan') ?? 0;
+
+        return view('guru.tambah-topik', [
+            'judul' => 'Tambah Topik Baru',
+            'subjudul' => 'Buat topik pembelajaran baru',
+            'role' => 'guru',
+            'active' => 'topik',
+            'nextUrutan' => $maxUrutan + 1,
+        ]);
+    }
+
+    public function topikEdit(Topik $topik): View
+    {
+        return view('guru.edit-topik', [
+            'judul' => 'Sunting Topik',
+            'subjudul' => "Topik {$topik->urutan} — {$topik->nama}",
+            'role' => 'guru',
+            'active' => 'topik',
+            'topik' => $topik,
+        ]);
+    }
+
+    public function topikStore(Request $request): RedirectResponse
+    {
+        Topik::create($this->validatedTopik($request));
+
+        return redirect()->route('guru.topik')->with('sukses', 'Topik berhasil dibuat.');
+    }
+
+    public function topikUpdate(Request $request, Topik $topik): RedirectResponse
+    {
+        $topik->update($this->validatedTopik($request));
+
+        return redirect()->route('guru.topik')->with('sukses', 'Topik berhasil diperbarui.');
+    }
+
+    public function topikDestroy(Topik $topik): RedirectResponse
+    {
+        $topik->delete();
+
+        return redirect()->route('guru.topik')->with('sukses', 'Topik berhasil dihapus. Unit terkait tetap tersimpan tanpa topik.');
+    }
+
+    // --------------------------------------------------------- Level Materi
+
     /**
-     * FR-12: Pilih level materi untuk manajemen soal.
+     * FR-12: Kelola level materi / unit pembelajaran.
      */
     public function levelMateri(Request $request): View
     {
-        $guru = $this->guru();
-
-        $query = LevelMateri::with(['topik'])->withCount([
-            'soal' => function ($query) use ($guru) {
-                $query->where('guru_id', $guru->id);
-            },
-            'pembahasan',
-        ])->orderBy('urutan');
+        $query = LevelMateri::with(['topik'])->withCount(['soal', 'pembahasan'])->orderBy('urutan');
 
         if ($request->filled('topik_id')) {
             $query->where('topik_id', $request->integer('topik_id'));
@@ -87,28 +147,46 @@ class GuruWebController extends Controller
         $levels = $query->paginate(5)->withQueryString();
 
         return view('guru.level-materi', [
-            'judul' => 'Daftar Level Materi',
-            'subjudul' => 'Pilih level materi kanggo ngatur utawa nambah butir soal',
+            'judul' => 'Manajemen Level Materi',
+            'subjudul' => 'Kelola daftar urutan level pembelajaran, reward EXP, dan bank soal',
             'role' => 'guru',
-            'active' => 'soal',
-            'levelList' => $levels,
+            'active' => 'topik',
             'levels' => $levels,
             'topikList' => Topik::orderBy('urutan')->get(),
             'filterTopikId' => $request->integer('topik_id') ?: null,
         ]);
     }
 
+    public function levelMateriCreate(Request $request): View
+    {
+        $maxUrutan = LevelMateri::max('urutan') ?? 0;
+
+        return view('guru.tambah-level-materi', [
+            'judul' => 'Tambah Level Materi Baru',
+            'subjudul' => 'Daftarkan level pembelajaran baru dengan urutan dan reward EXP',
+            'role' => 'guru',
+            'active' => 'topik',
+            'nextUrutan' => $maxUrutan + 1,
+            'topikList' => Topik::orderBy('urutan')->get(),
+            'selectedTopikId' => $request->integer('topik_id') ?: null,
+        ]);
+    }
+
+    public function levelMateriEdit(LevelMateri $levelMateri): View
+    {
+        return view('guru.edit-level-materi', [
+            'judul' => 'Sunting Level Materi',
+            'subjudul' => "Level {$levelMateri->urutan} — {$levelMateri->nama_materi}",
+            'role' => 'guru',
+            'active' => 'topik',
+            'levelMateri' => $levelMateri,
+            'topikList' => Topik::orderBy('urutan')->get(),
+        ]);
+    }
+
     public function levelMateriStore(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'topik_id' => ['nullable', 'integer', 'exists:topik,id'],
-            'nama_materi' => ['required', 'string', 'max:255'],
-            'deskripsi' => ['nullable', 'string'],
-            'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
-            'urutan' => ['required', 'integer', 'min:0'],
-        ]);
-
-        $level = LevelMateri::create($data);
+        $level = LevelMateri::create($this->validatedLevel($request));
 
         $siswaIds = Siswa::pluck('id');
         foreach ($siswaIds as $sId) {
@@ -118,8 +196,31 @@ class GuruWebController extends Controller
             );
         }
 
-        return back()->with('sukses', 'Level materi berhasil dibuat.');
+        $redirectParams = $level->topik_id ? ['topik_id' => $level->topik_id] : [];
+
+        return redirect()->route('guru.level-materi', $redirectParams)->with('sukses', 'Level materi berhasil dibuat.');
     }
+
+    public function levelMateriUpdate(Request $request, LevelMateri $levelMateri): RedirectResponse
+    {
+        $levelMateri->update($this->validatedLevel($request));
+
+        $redirectParams = $levelMateri->topik_id ? ['topik_id' => $levelMateri->topik_id] : [];
+
+        return redirect()->route('guru.level-materi', $redirectParams)->with('sukses', 'Level materi berhasil diperbarui.');
+    }
+
+    public function levelMateriDestroy(LevelMateri $levelMateri): RedirectResponse
+    {
+        $topikId = $levelMateri->topik_id;
+        $levelMateri->delete();
+
+        $redirectParams = $topikId ? ['topik_id' => $topikId] : [];
+
+        return redirect()->route('guru.level-materi', $redirectParams)->with('sukses', 'Level materi berhasil dihapus.');
+    }
+
+    // --------------------------------------------------------- Pembahasan
 
     /**
      * Kelola pembahasan (sub-materi) untuk sebuah level.
@@ -130,12 +231,11 @@ class GuruWebController extends Controller
             return redirect()->route('guru.level-materi');
         }
 
-        $guru = $this->guru();
         $level = LevelMateri::findOrFail($request->integer('level_materi_id'));
 
         $pembahasanList = Pembahasan::query()
             ->where('level_materi_id', $level->id)
-            ->withCount(['soal' => fn ($query) => $query->where('guru_id', $guru->id)])
+            ->withCount('soal')
             ->orderBy('urutan')
             ->get();
 
@@ -143,7 +243,7 @@ class GuruWebController extends Controller
             'judul' => 'Kelola Pembahasan',
             'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
             'role' => 'guru',
-            'active' => 'soal',
+            'active' => 'topik',
             'level' => $level,
             'pembahasanList' => $pembahasanList,
         ]);
@@ -179,13 +279,13 @@ class GuruWebController extends Controller
             ->with('sukses', 'Pembahasan berhasil dihapus. Soal terkait tetap tersimpan tanpa pembahasan.');
     }
 
+    // ------------------------------------------------------------- Soal
+
     /**
-     * FR-12: Daftar soal milik guru untuk level tertentu.
+     * FR-12: Daftar soal untuk level tertentu.
      */
     public function soal(Request $request): View|RedirectResponse
     {
-        $guru = $this->guru();
-
         // Redirect ke pilihan level jika tidak ada level_materi_id
         if (! $request->filled('level_materi_id')) {
             return redirect()->route('guru.level-materi');
@@ -196,7 +296,6 @@ class GuruWebController extends Controller
 
         $query = Soal::query()
             ->with(['levelMateri', 'pembahasan'])
-            ->where('guru_id', $guru->id)
             ->where('level_materi_id', $levelId);
 
         if ($request->filled('pembahasan_id')) {
@@ -216,7 +315,7 @@ class GuruWebController extends Controller
             'judul' => 'Manajemen Soal',
             'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
             'role' => 'guru',
-            'active' => 'soal',
+            'active' => 'topik',
             'soalList' => $query->latest()->paginate(12)->withQueryString(),
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
@@ -238,7 +337,7 @@ class GuruWebController extends Controller
             'judul' => 'Tambah Soal Anyar',
             'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
             'role' => 'guru',
-            'active' => 'soal',
+            'active' => 'topik',
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
             'pembahasanList' => Pembahasan::where('level_materi_id', $levelId)->orderBy('urutan')->get(),
@@ -258,7 +357,7 @@ class GuruWebController extends Controller
             'judul' => 'Sunting Soal',
             'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
             'role' => 'guru',
-            'active' => 'soal',
+            'active' => 'topik',
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
             'pembahasanList' => Pembahasan::where('level_materi_id', $level->id)->orderBy('urutan')->get(),
@@ -461,6 +560,32 @@ class GuruWebController extends Controller
         }
 
         return $request->validate($rules);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatedLevel(Request $request): array
+    {
+        return $request->validate([
+            'topik_id' => ['nullable', 'integer', 'exists:topik,id'],
+            'nama_materi' => ['required', 'string', 'max:255'],
+            'deskripsi' => ['nullable', 'string'],
+            'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
+            'urutan' => ['required', 'integer', 'min:0'],
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatedTopik(Request $request): array
+    {
+        return $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'deskripsi' => ['nullable', 'string'],
+            'urutan' => ['required', 'integer', 'min:0'],
+        ]);
     }
 
     /**

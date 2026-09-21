@@ -5,7 +5,13 @@
         <nav class="flex items-center gap-2 font-caption text-caption text-gray-500 flex-wrap">
             <a href="{{ route('guru.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
-            <a href="{{ route('guru.level-materi') }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
+            <a href="{{ route('guru.topik') }}" class="hover:text-primary-600 transition-colors">Topik</a>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            @if ($level->topik)
+                <a href="{{ route('guru.level-materi', ['topik_id' => $level->topik_id]) }}" class="hover:text-primary-600 transition-colors">{{ $level->topik->nama }}</a>
+                <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            @endif
+            <a href="{{ route('guru.level-materi', $level->topik_id ? ['topik_id' => $level->topik_id] : []) }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
             <a href="{{ route('guru.soal', ['level_materi_id' => $level->id]) }}" class="hover:text-primary-600 transition-colors">
                 Level {{ $level->urutan }}: {{ $level->nama_materi }}
@@ -23,11 +29,21 @@
                     </div>
                     <div>
                         <h3 class="font-heading text-lg font-bold text-on-surface">Tambah Butir Soal Baru</h3>
-                        <p class="font-body text-xs text-gray-500 mt-0.5">Tambahkan butir soal baru untuk Level {{ $level->urutan }}: {{ $level->nama_materi }}.</p>
+                        @php
+                            $activePembahasanId = $selectedPembahasanId ?? request('pembahasan_id');
+                            $currentPembahasan = $activePembahasanId ? ($pembahasanList ?? collect())->firstWhere('id', $activePembahasanId) : null;
+                        @endphp
+                        <p class="font-body text-xs text-gray-500 mt-0.5">
+                            @if ($currentPembahasan)
+                                Tambahkan butir soal baru untuk Pembahasan: <span class="font-bold text-primary-700">{{ $currentPembahasan->urutan }}. {{ $currentPembahasan->nama }}</span> (Level {{ $level->urutan }}).
+                            @else
+                                Tambahkan butir soal baru untuk Level {{ $level->urutan }}: {{ $level->nama_materi }}.
+                            @endif
+                        </p>
                     </div>
                 </div>
 
-                <a href="{{ route('guru.soal', ['level_materi_id' => $level->id]) }}"
+                <a href="{{ route('guru.soal', array_filter(['level_materi_id' => $level->id, 'pembahasan_id' => $activePembahasanId])) }}"
                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-body text-xs font-semibold transition-colors shrink-0 self-start sm:self-center">
                     <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                     <span>Kembali ke Daftar Soal</span>
@@ -38,12 +54,15 @@
                 'action' => route('guru.soal.store'),
                 'levels' => $levels,
                 'level' => $level,
+                'pembahasanList' => $pembahasanList ?? collect(),
+                'selectedPembahasanId' => $activePembahasanId,
                 'tipeList' => $tipeList,
                 'soal' => null,
                 'prefix' => 'create',
                 'ttsRoute' => route('guru.soal.tts'),
                 'previewRoute' => route('guru.soal.preview'),
                 'disableLevel' => true,
+                'disablePembahasan' => !empty($activePembahasanId),
             ])
         </section>
     </div>
