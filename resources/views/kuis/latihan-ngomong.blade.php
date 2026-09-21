@@ -6,7 +6,7 @@
             <span class="material-symbols-outlined text-[48px] text-gray-500">record_voice_over</span>
             <h2 class="font-heading text-heading font-bold text-on-surface mt-3">Belum ada soal untuk latihan ngomong</h2>
             <p class="font-body text-body text-gray-500 mt-1">Selesaikan level sebelumnya atau hubungi guru untuk menambah soal.</p>
-            <a href="{{ url('/latihan-soal') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Kembali ke Latihan</a>
+            <a href="{{ route('siswa.dashboard') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Kembali ke Beranda</a>
         </div>
     @else
         <div class="flex flex-col gap-6">
@@ -60,9 +60,9 @@
 @endsection
 
 @section('aksi')
-    <a href="{{ url('/latihan-soal') }}" class="flex items-center gap-2 rounded-full bg-gray-50 hover:bg-surface-container-high border border-gray-200 text-on-surface font-body text-body font-bold px-6 py-3 transition-colors">
+    <a href="{{ route('siswa.dashboard') }}" class="flex items-center gap-2 rounded-full bg-gray-50 hover:bg-surface-container-high border border-gray-200 text-on-surface font-body text-body font-bold px-6 py-3 transition-colors">
         <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-        <span>Daftar Latihan</span>
+        <span>Kembali ke Beranda</span>
     </a>
     <button id="btn-demo" type="button" @disabled(! $soal)
         class="flex items-center gap-2 rounded-full bg-gray-50 hover:bg-surface-container-high border border-gray-200 text-on-surface font-body text-body font-bold px-6 py-3 transition-colors disabled:opacity-50">

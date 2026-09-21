@@ -74,10 +74,10 @@
     <style>
         ::-webkit-scrollbar { display: none; }
         .sj-app {
-            background-color: #ffffff;
+            background-color: #f7f3ff;
         }
         .sj-widgets {
-            background-color: #ffffff;
+            background-color: #f7f3ff;
         }
         .connector-dashed-line {
             stroke-dasharray: 6, 6;
@@ -111,7 +111,7 @@
         }
     </style>
 </head>
-<body class="bg-white antialiased text-slate-900">
+<body class="bg-[#f7f3ff] antialiased text-slate-900">
     <x-sidebar active="beranda" />
 
     <div class="pl-72 min-h-screen sj-app">
@@ -320,7 +320,7 @@
             <!-- END: Center Learning Column -->
 
             <!-- BEGIN: Right Sidebar (Widgets) -->
-            <aside id="dashboard-widgets" class="w-[400px] shrink-0 border-l border-slate-100 px-6 py-7 space-y-5 sj-widgets sticky top-0 self-start" data-purpose="right-sidebar-widgets">
+            <aside id="dashboard-widgets" class="w-[400px] shrink-0 px-6 py-7 space-y-5 sj-widgets sticky top-0 self-start" data-purpose="right-sidebar-widgets">
                 <!-- Stats Bar -->
                 <div class="bg-white rounded-[32px] p-5 px-6 border-2 border-slate-200 sj-card sj-card-hover flex items-center justify-around" data-purpose="top-stats-bar">
                     <button type="button" id="btn-open-streak-modal" class="flex items-center gap-3 text-left cursor-pointer active:scale-95 transition-transform">
@@ -505,7 +505,7 @@
             </p>
             <div class="flex items-center gap-2.5 pt-1">
                 <button class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-black text-xs transition-colors cursor-pointer" id="btn-close-streak-footer" type="button">Tutup</button>
-                <a href="{{ $fokusPembahasan?->mulai_url ?? ($activeLevel ? route('kuis.mulai', $activeLevel->id) : route('siswa.latihan')) }}" class="flex-1 text-center py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black text-xs transition-all shadow-md shadow-brand-600/30" id="btn-continue-learning">Lanjutkan Belajar</a>
+                <a href="{{ $fokusPembahasan?->mulai_url ?? ($activeLevel ? route('kuis.mulai', $activeLevel->id) : route('siswa.dashboard')) }}" class="flex-1 text-center py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black text-xs transition-all shadow-md shadow-brand-600/30" id="btn-continue-learning">Lanjutkan Belajar</a>
             </div>
         </div>
     </div>

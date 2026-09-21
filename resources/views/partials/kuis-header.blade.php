@@ -4,7 +4,7 @@
 <header class="sticky top-0 z-50 bg-surface-container-lowest/95 backdrop-blur-xl border-b border-gray-200 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
     <div class="max-w-6xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
         <div class="flex items-center gap-3 min-w-0">
-            <a href="{{ url('/latihan-soal') }}" class="w-11 h-11 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-sm shrink-0">
+            <a href="{{ route('siswa.dashboard') }}" class="w-11 h-11 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-sm shrink-0">
                 <span class="material-symbols-outlined text-[24px]">school</span>
             </a>
             <div class="min-w-0">
@@ -30,7 +30,7 @@
                 <span class="material-symbols-outlined icon-fill text-[20px] text-orange-500">local_fire_department</span>
                 <span class="font-heading text-body font-extrabold">{{ $header['streak'] }} Hari</span>
             </div>
-            <a href="{{ url('/latihan-soal') }}" class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gray-50 hover:bg-surface-container-high text-on-surface border border-gray-200 transition-colors font-body text-body font-semibold">
+            <a href="{{ route('siswa.dashboard') }}" class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gray-50 hover:bg-surface-container-high text-on-surface border border-gray-200 transition-colors font-body text-body font-semibold">
                 <span class="material-symbols-outlined text-[18px]">close</span>
                 <span>Keluar</span>
             </a>

@@ -16,7 +16,6 @@ Route::get('/', [HomeController::class, 'index'])->name('siswa.dashboard');
 Route::get('/dashboard', [HomeController::class, 'index']);
 
 Route::middleware('web.auth:siswa')->group(function () {
-    Route::get('/latihan-soal', [HomeController::class, 'latihanSoal'])->name('siswa.latihan');
     Route::get('/papan-skor', [HomeController::class, 'papanSkor'])->name('siswa.papan-skor');
     Route::get('/asisten-ai', fn () => view('asisten-ai'))->name('siswa.asisten');
     Route::get('/profil', [HomeController::class, 'profil'])->name('siswa.profil');

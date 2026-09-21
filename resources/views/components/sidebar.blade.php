@@ -18,13 +18,6 @@
             'svg' => '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>',
         ],
         [
-            'key' => 'latihan',
-            'label' => 'Latihan Soal & Kuis',
-            'url' => url('/latihan-soal'),
-            'alias' => [],
-            'svg' => '<path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>',
-        ],
-        [
             'key' => 'papan-skor',
             'label' => 'Papan Skor & Peringkat',
             'url' => url('/papan-skor'),
