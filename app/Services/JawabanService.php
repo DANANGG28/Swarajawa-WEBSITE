@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\JawabanSiswa;
 use App\Models\LevelMateri;
+use App\Models\Pembahasan;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
@@ -108,9 +109,24 @@ class JawabanService
     }
 
     /**
-     * Soal berikutnya dalam level yang belum selesai 100%.
+     * Soal pertama ing pembahasan sing durung tuntas (skor < 100).
      */
-    public function nextSoal(Siswa $siswa, ?LevelMateri $levelMateri, int $excludeSoalId): ?Soal
+    public function firstUnfinishedInPembahasan(Siswa $siswa, Pembahasan $pembahasan): ?Soal
+    {
+        $selesaiSoalIds = JawabanSiswa::where('siswa_id', $siswa->id)
+            ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
+            ->pluck('soal_id');
+
+        return Soal::where('pembahasan_id', $pembahasan->id)
+            ->whereNotIn('id', $selesaiSoalIds)
+            ->orderBy('id')
+            ->first();
+    }
+
+    /**
+     * Soal berikutnya dalam level (utawa pembahasan) yang belum selesai 100%.
+     */
+    public function nextSoal(Siswa $siswa, ?LevelMateri $levelMateri, int $excludeSoalId, ?int $pembahasanId = null): ?Soal
     {
         if (! $levelMateri) {
             return null;
@@ -121,6 +137,7 @@ class JawabanService
             ->pluck('soal_id');
 
         return Soal::where('level_materi_id', $levelMateri->id)
+            ->when($pembahasanId, fn ($q) => $q->where('pembahasan_id', $pembahasanId))
             ->where('id', '!=', $excludeSoalId)
             ->whereNotIn('id', $selesaiSoalIds)
             ->orderBy('id')

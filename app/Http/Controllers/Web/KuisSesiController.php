@@ -7,6 +7,7 @@ use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Models\JawabanSiswa;
 use App\Models\LevelMateri;
+use App\Models\Pembahasan;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
@@ -73,7 +74,7 @@ class KuisSesiController extends Controller
      * Mulai level: arahkan ke soal pertama yang belum tuntas ing level kasebut.
      * Otomatis nuduhake tipe kuis sing bener liwat urlForSoal().
      */
-    public function mulaiLevel(LevelMateri $levelMateri): RedirectResponse
+    public function mulaiLevel(Request $request, LevelMateri $levelMateri): RedirectResponse
     {
         $siswa = $this->siswa();
 
@@ -82,7 +83,20 @@ class KuisSesiController extends Controller
                 ->with('error', 'Materi belum terbuka. Selesaikan level sebelumnya terlebih dahulu.');
         }
 
-        $soal = $this->jawaban->firstUnfinishedInLevel($siswa, $levelMateri)
+        $pembahasanId = $request->integer('pembahasan_id') ?: null;
+        $pembahasan = $pembahasanId
+            ? Pembahasan::where('level_materi_id', $levelMateri->id)->find($pembahasanId)
+            : null;
+
+        $soal = null;
+
+        if ($pembahasan) {
+            $soal = $this->jawaban->firstUnfinishedInPembahasan($siswa, $pembahasan)
+                ?? Soal::where('pembahasan_id', $pembahasan->id)->orderBy('id')->first();
+        }
+
+        $soal = $soal
+            ?? $this->jawaban->firstUnfinishedInLevel($siswa, $levelMateri)
             ?? Soal::where('level_materi_id', $levelMateri->id)->orderBy('id')->first();
 
         if (! $soal) {
@@ -115,7 +129,7 @@ class KuisSesiController extends Controller
         $hasil = $this->scoring->score($soal, $data['jawaban']);
         $catatan = $this->jawaban->record($siswa, $soal, $hasil);
 
-        $nextSoal = $this->jawaban->nextSoal($siswa, $soal->levelMateri, $soal->id);
+        $nextSoal = $this->jawaban->nextSoal($siswa, $soal->levelMateri, $soal->id, $soal->pembahasan_id);
 
         return response()->json([
             'benar' => $hasil['benar'],
@@ -311,7 +325,7 @@ class KuisSesiController extends Controller
         $accessibleLevelIds = $this->levelIds($siswa->id);
 
         $query = Soal::query()
-            ->with('levelMateri')
+            ->with(['levelMateri', 'pembahasan'])
             ->whereIn('level_materi_id', $accessibleLevelIds)
             ->where('tipe_soal', $tipe);
 
@@ -320,6 +334,10 @@ class KuisSesiController extends Controller
             if ($accessibleLevelIds->contains($levelId)) {
                 $query->where('level_materi_id', $levelId);
             }
+        }
+
+        if (request()->filled('pembahasan_id')) {
+            $query->where('pembahasan_id', (int) request('pembahasan_id'));
         }
 
         $total = (clone $query)->count();
@@ -364,9 +382,21 @@ class KuisSesiController extends Controller
         ]);
     }
 
+    public function urlForPembahasan(Pembahasan $pembahasan): string
+    {
+        return route('kuis.mulai', [
+            'levelMateri' => $pembahasan->level_materi_id,
+            'pembahasan_id' => $pembahasan->id,
+        ]);
+    }
+
     public function urlForSoal(Soal $soal): string
     {
         $params = ['soal_id' => $soal->id, 'level_materi_id' => $soal->level_materi_id];
+
+        if ($soal->pembahasan_id) {
+            $params['pembahasan_id'] = $soal->pembahasan_id;
+        }
 
         return match ($soal->tipe_soal) {
             Soal::TIPE_PILIHAN_GANDA => route('kuis.pilihan-ganda', $params),
@@ -408,6 +438,11 @@ class KuisSesiController extends Controller
                 'id' => $soal->levelMateri?->id,
                 'nama' => $soal->levelMateri?->nama_materi,
                 'urutan' => $soal->levelMateri?->urutan,
+            ],
+            'pembahasan' => [
+                'id' => $soal->pembahasan?->id,
+                'nama' => $soal->pembahasan?->nama,
+                'urutan' => $soal->pembahasan?->urutan,
             ],
             'opsi' => $opsi,
             'teks_referensi' => $soal->tipe_soal === Soal::TIPE_KUIS_SUARA ? ($kunci['teks'] ?? null) : null,

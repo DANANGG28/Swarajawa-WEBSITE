@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\LevelMateri;
+use App\Models\Pembahasan;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
@@ -15,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class GuruWebController extends Controller
@@ -62,15 +64,18 @@ class GuruWebController extends Controller
     {
         $guru = $this->guru();
 
-        $query = LevelMateri::withCount(['soal' => function ($query) use ($guru) {
-            $query->where('guru_id', $guru->id);
-        }])->orderBy('urutan');
+        $query = LevelMateri::withCount([
+            'soal' => function ($query) use ($guru) {
+                $query->where('guru_id', $guru->id);
+            },
+            'pembahasan',
+        ])->orderBy('urutan');
 
         if ($request->filled('q')) {
             $term = '%'.$request->query('q').'%';
             $query->where(function ($q) use ($term) {
                 $q->where('nama_materi', 'like', $term)
-                  ->orWhere('deskripsi', 'like', $term);
+                    ->orWhere('deskripsi', 'like', $term);
             });
         }
 
@@ -109,6 +114,64 @@ class GuruWebController extends Controller
     }
 
     /**
+     * Kelola pembahasan (sub-materi) untuk sebuah level.
+     */
+    public function pembahasan(Request $request): View|RedirectResponse
+    {
+        if (! $request->filled('level_materi_id')) {
+            return redirect()->route('guru.level-materi');
+        }
+
+        $guru = $this->guru();
+        $level = LevelMateri::findOrFail($request->integer('level_materi_id'));
+
+        $pembahasanList = Pembahasan::query()
+            ->where('level_materi_id', $level->id)
+            ->withCount(['soal' => fn ($query) => $query->where('guru_id', $guru->id)])
+            ->orderBy('urutan')
+            ->get();
+
+        return view('guru.pembahasan', [
+            'judul' => 'Kelola Pembahasan',
+            'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
+            'role' => 'guru',
+            'active' => 'soal',
+            'level' => $level,
+            'pembahasanList' => $pembahasanList,
+        ]);
+    }
+
+    public function pembahasanStore(Request $request): RedirectResponse
+    {
+        $data = $this->validatedPembahasan($request, true);
+
+        Pembahasan::create($data);
+
+        return redirect()
+            ->route('guru.pembahasan', ['level_materi_id' => $data['level_materi_id']])
+            ->with('sukses', 'Pembahasan berhasil ditambahkan.');
+    }
+
+    public function pembahasanUpdate(Request $request, Pembahasan $pembahasan): RedirectResponse
+    {
+        $pembahasan->update($this->validatedPembahasan($request));
+
+        return redirect()
+            ->route('guru.pembahasan', ['level_materi_id' => $pembahasan->level_materi_id])
+            ->with('sukses', 'Pembahasan berhasil diperbarui.');
+    }
+
+    public function pembahasanDestroy(Pembahasan $pembahasan): RedirectResponse
+    {
+        $levelId = $pembahasan->level_materi_id;
+        $pembahasan->delete();
+
+        return redirect()
+            ->route('guru.pembahasan', ['level_materi_id' => $levelId])
+            ->with('sukses', 'Pembahasan berhasil dihapus. Soal terkait tetap tersimpan tanpa pembahasan.');
+    }
+
+    /**
      * FR-12: Daftar soal milik guru untuk level tertentu.
      */
     public function soal(Request $request): View|RedirectResponse
@@ -124,9 +187,13 @@ class GuruWebController extends Controller
         $level = LevelMateri::findOrFail($levelId);
 
         $query = Soal::query()
-            ->with('levelMateri')
+            ->with(['levelMateri', 'pembahasan'])
             ->where('guru_id', $guru->id)
             ->where('level_materi_id', $levelId);
+
+        if ($request->filled('pembahasan_id')) {
+            $query->where('pembahasan_id', $request->integer('pembahasan_id'));
+        }
 
         if ($request->filled('tipe_soal')) {
             $query->where('tipe_soal', (string) $request->query('tipe_soal'));
@@ -145,6 +212,7 @@ class GuruWebController extends Controller
             'soalList' => $query->latest()->paginate(12)->withQueryString(),
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
+            'pembahasanList' => Pembahasan::where('level_materi_id', $levelId)->orderBy('urutan')->get(),
             'tipeList' => $this->tipeList(),
         ]);
     }
@@ -165,6 +233,8 @@ class GuruWebController extends Controller
             'active' => 'soal',
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
+            'pembahasanList' => Pembahasan::where('level_materi_id', $levelId)->orderBy('urutan')->get(),
+            'selectedPembahasanId' => $request->integer('pembahasan_id') ?: null,
             'tipeList' => $this->tipeList(),
         ]);
     }
@@ -183,6 +253,7 @@ class GuruWebController extends Controller
             'active' => 'soal',
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
+            'pembahasanList' => Pembahasan::where('level_materi_id', $level->id)->orderBy('urutan')->get(),
             'soal' => $soal,
             'tipeList' => $this->tipeList(),
         ]);
@@ -289,6 +360,7 @@ class GuruWebController extends Controller
     {
         $data = $request->validate([
             'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
+            'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $request->integer('level_materi_id'))],
             'tipe_soal' => ['required', 'in:pilihan_ganda,susun_kalimat,pencocokan_arti,puzzle_pakaian_adat,menulis_aksara,kuis_suara'],
             'pertanyaan' => ['required', 'string'],
             'soal_latin' => ['nullable', 'string', 'max:500'],
@@ -363,6 +435,24 @@ class GuruWebController extends Controller
         $decoded = json_decode($json, true);
 
         return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatedPembahasan(Request $request, bool $withLevel = false): array
+    {
+        $rules = [
+            'nama' => ['required', 'string', 'max:255'],
+            'deskripsi' => ['nullable', 'string'],
+            'urutan' => ['required', 'integer', 'min:0'],
+        ];
+
+        if ($withLevel) {
+            $rules['level_materi_id'] = ['required', 'integer', 'exists:level_materi,id'];
+        }
+
+        return $request->validate($rules);
     }
 
     /**

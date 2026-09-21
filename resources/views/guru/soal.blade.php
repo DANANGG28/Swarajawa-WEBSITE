@@ -40,6 +40,19 @@
                     <span class="material-symbols-outlined text-[18px]">search</span> Cari
                 </button>
 
+                <label class="flex flex-col gap-1.5 sm:w-52">
+                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Pembahasan</span>
+                    <select name="pembahasan_id" onchange="this.form.submit()"
+                        class="w-full rounded-full border border-gray-200 bg-gray-50 px-4 py-2.5 font-body text-body outline-none focus:border-primary-500">
+                        <option value="">Semua Pembahasan</option>
+                        @foreach ($pembahasanList as $pembahasan)
+                            <option value="{{ $pembahasan->id }}" @selected((string) request('pembahasan_id') === (string) $pembahasan->id)>
+                                {{ $pembahasan->urutan }}. {{ $pembahasan->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                </label>
+
                 <div class="relative flex flex-col gap-1.5 sm:w-52" id="filter-tipe-wrapper">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Tipe Soal</span>
                     <input type="hidden" name="tipe_soal" id="filter-tipe-input" value="{{ request('tipe_soal') }}">
@@ -74,7 +87,7 @@
                 </div>
             </form>
             
-            <a href="{{ route('guru.soal.create', ['level_materi_id' => $level->id]) }}" class="flex items-center justify-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold px-6 py-2.5 shadow-sm transition-colors whitespace-nowrap">
+            <a href="{{ route('guru.soal.create', array_filter(['level_materi_id' => $level->id, 'pembahasan_id' => request('pembahasan_id')])) }}" class="flex items-center justify-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold px-6 py-2.5 shadow-sm transition-colors whitespace-nowrap">
                 <span class="material-symbols-outlined text-[20px]">add_circle</span>
                 <span>Tambah Soal</span>
             </a>
@@ -106,6 +119,13 @@
                                             <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-gray-700 font-label-upper text-[11px] font-bold uppercase">
                                                 {{ str_replace('_', ' ', strtoupper($s->tipe_soal)) }}
                                             </span>
+                                            @if ($s->pembahasan)
+                                                <span class="text-gray-300">•</span>
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary-50 text-primary-700 font-label-upper text-[11px] font-bold uppercase">
+                                                    <span class="material-symbols-outlined text-[13px]">topic</span>
+                                                    {{ $s->pembahasan->nama }}
+                                                </span>
+                                            @endif
                                             <span class="text-gray-300">•</span>
                                             <span class="inline-flex items-center gap-1 font-caption text-xs font-bold text-amber-700">
                                                 <span class="material-symbols-outlined text-[14px] text-amber-500 icon-fill">bolt</span>
@@ -171,7 +191,7 @@
                                     <span>Reset Filter</span>
                                 </a>
                             @else
-                                <a href="{{ route('guru.soal.create', ['level_materi_id' => $level->id]) }}"
+                                <a href="{{ route('guru.soal.create', array_filter(['level_materi_id' => $level->id, 'pembahasan_id' => request('pembahasan_id')])) }}"
                                    class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary-600 text-white font-body text-xs font-bold shadow-sm hover:bg-primary-700 transition-all">
                                     <span class="material-symbols-outlined text-[18px]">add_circle</span>
                                     <span>Tambah Soal Anyar</span>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\LevelMateri;
+use App\Models\Pembahasan;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class SuperadminWebController extends Controller
@@ -317,13 +319,13 @@ class SuperadminWebController extends Controller
 
     public function levelMateri(Request $request): View
     {
-        $query = LevelMateri::withCount('soal')->orderBy('urutan');
+        $query = LevelMateri::withCount(['soal', 'pembahasan'])->orderBy('urutan');
 
         if ($request->filled('q')) {
             $term = '%'.$request->query('q').'%';
             $query->where(function ($q) use ($term) {
                 $q->where('nama_materi', 'like', $term)
-                  ->orWhere('deskripsi', 'like', $term);
+                    ->orWhere('deskripsi', 'like', $term);
             });
         }
 
@@ -389,6 +391,62 @@ class SuperadminWebController extends Controller
         return redirect()->route('superadmin.level-materi')->with('sukses', 'Level materi berhasil dihapus.');
     }
 
+    // --------------------------------------------------------- Pembahasan
+
+    public function pembahasan(Request $request): View|RedirectResponse
+    {
+        if (! $request->filled('level_materi_id')) {
+            return redirect()->route('superadmin.level-materi');
+        }
+
+        $level = LevelMateri::findOrFail($request->integer('level_materi_id'));
+
+        $pembahasanList = Pembahasan::query()
+            ->where('level_materi_id', $level->id)
+            ->withCount('soal')
+            ->orderBy('urutan')
+            ->get();
+
+        return view('superadmin.pembahasan', [
+            'judul' => 'Kelola Pembahasan',
+            'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
+            'role' => 'superadmin',
+            'active' => 'level-materi',
+            'level' => $level,
+            'pembahasanList' => $pembahasanList,
+        ]);
+    }
+
+    public function pembahasanStore(Request $request): RedirectResponse
+    {
+        $data = $this->validatedPembahasan($request, true);
+
+        Pembahasan::create($data);
+
+        return redirect()
+            ->route('superadmin.pembahasan', ['level_materi_id' => $data['level_materi_id']])
+            ->with('sukses', 'Pembahasan berhasil ditambahkan.');
+    }
+
+    public function pembahasanUpdate(Request $request, Pembahasan $pembahasan): RedirectResponse
+    {
+        $pembahasan->update($this->validatedPembahasan($request));
+
+        return redirect()
+            ->route('superadmin.pembahasan', ['level_materi_id' => $pembahasan->level_materi_id])
+            ->with('sukses', 'Pembahasan berhasil diperbarui.');
+    }
+
+    public function pembahasanDestroy(Pembahasan $pembahasan): RedirectResponse
+    {
+        $levelId = $pembahasan->level_materi_id;
+        $pembahasan->delete();
+
+        return redirect()
+            ->route('superadmin.pembahasan', ['level_materi_id' => $levelId])
+            ->with('sukses', 'Pembahasan berhasil dihapus. Soal terkait tetap tersimpan tanpa pembahasan.');
+    }
+
     // ------------------------------------------------------------- Soal
 
     public function soal(Request $request): View|RedirectResponse
@@ -402,8 +460,12 @@ class SuperadminWebController extends Controller
         $level = LevelMateri::findOrFail($levelId);
 
         $query = Soal::query()
-            ->with('levelMateri')
+            ->with(['levelMateri', 'pembahasan'])
             ->where('level_materi_id', $levelId);
+
+        if ($request->filled('pembahasan_id')) {
+            $query->where('pembahasan_id', $request->integer('pembahasan_id'));
+        }
 
         if ($request->filled('tipe_soal')) {
             $query->where('tipe_soal', (string) $request->query('tipe_soal'));
@@ -422,6 +484,7 @@ class SuperadminWebController extends Controller
             'soalList' => $query->latest()->paginate(12)->withQueryString(),
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
+            'pembahasanList' => Pembahasan::where('level_materi_id', $levelId)->orderBy('urutan')->get(),
             'tipeList' => $this->tipeList(),
         ]);
     }
@@ -442,6 +505,8 @@ class SuperadminWebController extends Controller
             'active' => 'level-materi',
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
+            'pembahasanList' => Pembahasan::where('level_materi_id', $levelId)->orderBy('urutan')->get(),
+            'selectedPembahasanId' => $request->integer('pembahasan_id') ?: null,
             'tipeList' => $this->tipeList(),
         ]);
     }
@@ -460,6 +525,7 @@ class SuperadminWebController extends Controller
             'active' => 'level-materi',
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
+            'pembahasanList' => Pembahasan::where('level_materi_id', $level->id)->orderBy('urutan')->get(),
             'soal' => $soal,
             'tipeList' => $this->tipeList(),
         ]);
@@ -576,6 +642,7 @@ class SuperadminWebController extends Controller
     {
         $data = $request->validate([
             'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
+            'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $request->integer('level_materi_id'))],
             'tipe_soal' => ['required', 'in:pilihan_ganda,susun_kalimat,pencocokan_arti,puzzle_pakaian_adat,menulis_aksara,kuis_suara'],
             'pertanyaan' => ['required', 'string'],
             'soal_latin' => ['nullable', 'string', 'max:500'],
@@ -649,6 +716,24 @@ class SuperadminWebController extends Controller
         $decoded = json_decode($json, true);
 
         return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatedPembahasan(Request $request, bool $withLevel = false): array
+    {
+        $rules = [
+            'nama' => ['required', 'string', 'max:255'],
+            'deskripsi' => ['nullable', 'string'],
+            'urutan' => ['required', 'integer', 'min:0'],
+        ];
+
+        if ($withLevel) {
+            $rules['level_materi_id'] = ['required', 'integer', 'exists:level_materi,id'];
+        }
+
+        return $request->validate($rules);
     }
 
     /**

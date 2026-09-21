@@ -52,6 +52,11 @@
                                             {{ $level->soal_count }} Soal Terdaftar
                                         </span>
                                         <span class="text-gray-300">•</span>
+                                        {{-- Jumlah Pembahasan --}}
+                                        <span class="flex items-center gap-1 font-semibold text-secondary">
+                                            {{ $level->pembahasan_count }} Pembahasan
+                                        </span>
+                                        <span class="text-gray-300">•</span>
                                         {{-- Reward EXP --}}
                                         <span class="flex items-center gap-1 font-semibold text-amber-700">
                                             <span class="material-symbols-outlined text-[15px] text-amber-500 icon-fill">bolt</span>
@@ -61,8 +66,16 @@
                                 </div>
                             </div>
 
-                            {{-- Aksi Guru: Kelola Soal & Tambah Soal --}}
-                            <div class="flex items-center gap-2 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-gray-100 w-full md:w-auto justify-end">
+                            {{-- Aksi Guru: Kelola Pembahasan, Kelola Soal & Tambah Soal --}}
+                            <div class="flex items-center gap-2 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-gray-100 w-full md:w-auto justify-end flex-wrap">
+                                {{-- Tombol Kelola Pembahasan --}}
+                                <a href="{{ route('guru.pembahasan', ['level_materi_id' => $level->id]) }}"
+                                   title="Kelola pembahasan (sub-materi) level ini"
+                                   class="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-surface-container-high hover:bg-primary-600 text-on-surface hover:text-white font-body text-xs font-bold transition-all shadow-xs whitespace-nowrap">
+                                    <span class="material-symbols-outlined text-[16px]">topic</span>
+                                    <span>Kelola Pembahasan</span>
+                                </a>
+
                                 {{-- Tombol Kelola Soal --}}
                                 <a href="{{ route('guru.soal', ['level_materi_id' => $level->id]) }}"
                                    title="Lihat dan kelola soal pada level ini"

@@ -27,6 +27,11 @@ class LevelMateri extends Model
         return $this->hasMany(Soal::class, 'level_materi_id');
     }
 
+    public function pembahasan(): HasMany
+    {
+        return $this->hasMany(Pembahasan::class, 'level_materi_id');
+    }
+
     public function siswa(): BelongsToMany
     {
         return $this->belongsToMany(Siswa::class, 'progres_siswa', 'level_materi_id', 'siswa_id')

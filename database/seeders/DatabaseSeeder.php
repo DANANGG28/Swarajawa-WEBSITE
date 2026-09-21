@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             SuperadminSeeder::class,
             GuruSeeder::class,
             LevelMateriSeeder::class,
+            PembahasanSeeder::class,
             SoalSeeder::class,
             SiswaSeeder::class,
             KorpusSeeder::class,
