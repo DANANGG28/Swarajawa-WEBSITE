@@ -111,7 +111,7 @@ class SuperadminWebController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $folder = resource_path('image/guru');
+            $folder = storage_path('image/guru');
             if (! File::isDirectory($folder)) {
                 File::makeDirectory($folder, 0755, true, true);
             }
@@ -122,7 +122,7 @@ class SuperadminWebController extends Controller
 
         Guru::create($data);
 
-        return redirect()->route('superadmin.guru')->with('sukses', 'Akun guru kasil didaftarake.');
+        return redirect()->route('superadmin.guru')->with('sukses', 'Akun guru berhasil didaftarkan.');
     }
 
     public function guruUpdate(Request $request, Guru $guru): RedirectResponse
@@ -139,12 +139,14 @@ class SuperadminWebController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $folder = resource_path('image/guru');
+            $folder = storage_path('image/guru');
             if (! File::isDirectory($folder)) {
                 File::makeDirectory($folder, 0755, true, true);
             }
             if ($guru->foto && File::exists($folder.'/'.$guru->foto)) {
                 File::delete($folder.'/'.$guru->foto);
+            } elseif ($guru->foto && File::exists(resource_path('image/guru/'.$guru->foto))) {
+                File::delete(resource_path('image/guru/'.$guru->foto));
             }
             $filename = time().'_'.Str::slug($request->nama_lengkap ?? $guru->nama_lengkap).'.'.$request->file('foto')->getClientOriginalExtension();
             $request->file('foto')->move($folder, $filename);
@@ -157,18 +159,20 @@ class SuperadminWebController extends Controller
 
         $guru->update($data);
 
-        return redirect()->route('superadmin.guru')->with('sukses', 'Data akun guru kasil dianyari.');
+        return redirect()->route('superadmin.guru')->with('sukses', 'Data akun guru berhasil diperbarui.');
     }
 
     public function guruDestroy(Guru $guru): RedirectResponse
     {
-        if ($guru->foto && File::exists(resource_path('image/guru/'.$guru->foto))) {
+        if ($guru->foto && File::exists(storage_path('image/guru/'.$guru->foto))) {
+            File::delete(storage_path('image/guru/'.$guru->foto));
+        } elseif ($guru->foto && File::exists(resource_path('image/guru/'.$guru->foto))) {
             File::delete(resource_path('image/guru/'.$guru->foto));
         }
 
         $guru->delete();
 
-        return redirect()->route('superadmin.guru')->with('sukses', 'Akun guru kasil dibusak.');
+        return redirect()->route('superadmin.guru')->with('sukses', 'Akun guru berhasil dihapus.');
     }
 
     // --------------------------------------------------------------- Siswa
@@ -242,14 +246,25 @@ class SuperadminWebController extends Controller
             'no_telpon' => ['nullable', 'string', 'max:30'],
             'email' => ['required', 'email', 'max:255', 'unique:siswa,email'],
             'password' => ['required', 'string', 'min:6'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
         ]);
+
+        if ($request->hasFile('foto')) {
+            $folder = storage_path('image/siswa');
+            if (! File::isDirectory($folder)) {
+                File::makeDirectory($folder, 0755, true, true);
+            }
+            $filename = time().'_'.Str::slug($request->nama_lengkap).'.'.$request->file('foto')->getClientOriginalExtension();
+            $request->file('foto')->move($folder, $filename);
+            $data['foto'] = $filename;
+        }
 
         $siswa = Siswa::create($data);
         $siswa->exp()->create(['total_exp' => 0]);
         $siswa->strek()->create(['current_streak' => 0, 'highest_streak' => 0]);
         $this->progres->initialize($siswa);
 
-        return redirect()->route('superadmin.siswa')->with('sukses', 'Akun siswa kasil didaftarake.');
+        return redirect()->route('superadmin.siswa')->with('sukses', 'Akun siswa berhasil didaftarkan.');
     }
 
     public function siswaUpdate(Request $request, Siswa $siswa): RedirectResponse
@@ -262,7 +277,21 @@ class SuperadminWebController extends Controller
             'no_telpon' => ['nullable', 'string', 'max:30'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:siswa,email,'.$siswa->id],
             'password' => ['nullable', 'string', 'min:6'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
         ]);
+
+        if ($request->hasFile('foto')) {
+            $folder = storage_path('image/siswa');
+            if (! File::isDirectory($folder)) {
+                File::makeDirectory($folder, 0755, true, true);
+            }
+            if ($siswa->foto && File::exists($folder.'/'.$siswa->foto)) {
+                File::delete($folder.'/'.$siswa->foto);
+            }
+            $filename = time().'_'.Str::slug($request->nama_lengkap ?? $siswa->nama_lengkap).'.'.$request->file('foto')->getClientOriginalExtension();
+            $request->file('foto')->move($folder, $filename);
+            $data['foto'] = $filename;
+        }
 
         if (empty($data['password'])) {
             unset($data['password']);
@@ -270,26 +299,64 @@ class SuperadminWebController extends Controller
 
         $siswa->update($data);
 
-        return redirect()->route('superadmin.siswa')->with('sukses', 'Akun siswa kasil dianyari.');
+        return redirect()->route('superadmin.siswa')->with('sukses', 'Data akun siswa berhasil diperbarui.');
     }
 
     public function siswaDestroy(Siswa $siswa): RedirectResponse
     {
+        if ($siswa->foto && File::exists(storage_path('image/siswa/'.$siswa->foto))) {
+            File::delete(storage_path('image/siswa/'.$siswa->foto));
+        }
+
         $siswa->delete();
 
-        return redirect()->route('superadmin.siswa')->with('sukses', 'Akun siswa kasil dibusak.');
+        return redirect()->route('superadmin.siswa')->with('sukses', 'Akun siswa berhasil dihapus.');
     }
 
     // --------------------------------------------------------- Level Materi
 
-    public function levelMateri(): View
+    public function levelMateri(Request $request): View
     {
+        $query = LevelMateri::withCount('soal')->orderBy('urutan');
+
+        if ($request->filled('q')) {
+            $term = '%'.$request->query('q').'%';
+            $query->where(function ($q) use ($term) {
+                $q->where('nama_materi', 'like', $term)
+                  ->orWhere('deskripsi', 'like', $term);
+            });
+        }
+
         return view('superadmin.level-materi', [
-            'judul' => 'Manajemen Soal & Level',
-            'subjudul' => 'Pilih level materi kanggo ngatur bank soal utawa tambah level anyar',
+            'judul' => 'Manajemen Level Materi',
+            'subjudul' => 'Kelola daftar urutan level pembelajaran, reward EXP, lan bank soal',
             'role' => 'superadmin',
             'active' => 'level-materi',
-            'levels' => LevelMateri::withCount('soal')->orderBy('urutan')->get(),
+            'levels' => $query->paginate(5)->withQueryString(),
+        ]);
+    }
+
+    public function levelMateriCreate(): View
+    {
+        $maxUrutan = LevelMateri::max('urutan') ?? 0;
+
+        return view('superadmin.tambah-level-materi', [
+            'judul' => 'Tambah Level Materi Baru',
+            'subjudul' => 'Daftarake level pembelajaran anyar kanthi urutan lan reward EXP',
+            'role' => 'superadmin',
+            'active' => 'level-materi',
+            'nextUrutan' => $maxUrutan + 1,
+        ]);
+    }
+
+    public function levelMateriEdit(LevelMateri $levelMateri): View
+    {
+        return view('superadmin.edit-level-materi', [
+            'judul' => 'Sunting Level Materi',
+            'subjudul' => "Level {$levelMateri->urutan} — {$levelMateri->nama_materi}",
+            'role' => 'superadmin',
+            'active' => 'level-materi',
+            'levelMateri' => $levelMateri,
         ]);
     }
 
@@ -305,21 +372,21 @@ class SuperadminWebController extends Controller
             );
         }
 
-        return back()->with('sukses', 'Level materi kasil digawe.');
+        return redirect()->route('superadmin.level-materi')->with('sukses', 'Level materi berhasil dibuat.');
     }
 
     public function levelMateriUpdate(Request $request, LevelMateri $levelMateri): RedirectResponse
     {
         $levelMateri->update($this->validatedLevel($request));
 
-        return back()->with('sukses', 'Level materi kasil dianyari.');
+        return redirect()->route('superadmin.level-materi')->with('sukses', 'Level materi berhasil diperbarui.');
     }
 
     public function levelMateriDestroy(LevelMateri $levelMateri): RedirectResponse
     {
         $levelMateri->delete();
 
-        return back()->with('sukses', 'Level materi kasil dibusak.');
+        return redirect()->route('superadmin.level-materi')->with('sukses', 'Level materi berhasil dihapus.');
     }
 
     // ------------------------------------------------------------- Soal
@@ -351,7 +418,7 @@ class SuperadminWebController extends Controller
             'judul' => 'Bank Soal',
             'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
             'role' => 'superadmin',
-            'active' => 'soal',
+            'active' => 'level-materi',
             'soalList' => $query->latest()->paginate(12)->withQueryString(),
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
@@ -372,9 +439,28 @@ class SuperadminWebController extends Controller
             'judul' => 'Tambah Soal Anyar',
             'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
             'role' => 'superadmin',
-            'active' => 'soal',
+            'active' => 'level-materi',
             'level' => $level,
             'levels' => LevelMateri::orderBy('urutan')->get(),
+            'tipeList' => $this->tipeList(),
+        ]);
+    }
+
+    public function soalEdit(Soal $soal): View
+    {
+        $this->authorize('update', $soal);
+
+        $soal->load('levelMateri');
+        $level = $soal->levelMateri ?? LevelMateri::findOrFail($soal->level_materi_id);
+
+        return view('superadmin.edit-soal', [
+            'judul' => 'Sunting Soal',
+            'subjudul' => "Level {$level->urutan} — {$level->nama_materi}",
+            'role' => 'superadmin',
+            'active' => 'level-materi',
+            'level' => $level,
+            'levels' => LevelMateri::orderBy('urutan')->get(),
+            'soal' => $soal,
             'tipeList' => $this->tipeList(),
         ]);
     }
@@ -394,7 +480,7 @@ class SuperadminWebController extends Controller
 
         Soal::create($data);
 
-        return redirect()->route('superadmin.soal', ['level_materi_id' => $data['level_materi_id']])->with('sukses', 'Soal kasil disimpen.');
+        return redirect()->route('superadmin.soal', ['level_materi_id' => $data['level_materi_id']])->with('sukses', 'Soal berhasil disimpan.');
     }
 
     public function soalUpdate(Request $request, Soal $soal, AksaraJawaConverterService $converter): RedirectResponse
@@ -412,7 +498,7 @@ class SuperadminWebController extends Controller
 
         $soal->update($data);
 
-        return back()->with('sukses', 'Soal kasil dianyari.');
+        return redirect()->route('superadmin.soal', ['level_materi_id' => $soal->level_materi_id])->with('sukses', 'Soal berhasil diperbarui.');
     }
 
     /**
@@ -459,7 +545,7 @@ class SuperadminWebController extends Controller
     {
         $soal->delete();
 
-        return back()->with('sukses', 'Soal kasil dibusak.');
+        return back()->with('sukses', 'Soal berhasil dihapus.');
     }
 
     private function superadmin(): Superadmin
@@ -523,7 +609,7 @@ class SuperadminWebController extends Controller
     private function applyTracingPayload(array &$data, AksaraJawaConverterService $converter): void
     {
         if (($data['tipe_soal'] ?? null) !== Soal::TIPE_MENULIS_AKSARA) {
-            unset($data['ketik_pepet_mode'], $data['ignore_space'], $data['aksara_swara_mode'], $data['soal_aksara']);
+            unset($data['ketik_pepet_mode'], $data['ignore_space'], $data['aksara_swara_mode'], $data['soal_aksara'], $data['soal_latin']);
 
             return;
         }

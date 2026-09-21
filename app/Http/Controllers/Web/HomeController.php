@@ -15,6 +15,8 @@ use App\Services\QuizScoringService;
 use App\Support\AuthContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -351,4 +353,105 @@ class HomeController extends Controller
             'guruPangampu' => $guruPangampu,
         ]);
     }
+
+    /**
+     * Halaman melengkapi & edit data diri siswa.
+     */
+    public function dataProfil(Request $request): View
+    {
+        /** @var Siswa $siswa */
+        $siswa = AuthContext::currentUser($request);
+
+        $fields = [
+            'foto' => !empty($siswa->foto),
+            'nama_lengkap' => !empty($siswa->nama_lengkap),
+            'nis' => !empty($siswa->nis),
+            'jenis_kelamin' => !empty($siswa->jenis_kelamin),
+            'kelas' => !empty($siswa->kelas),
+            'no_telpon' => !empty($siswa->no_telpon),
+            'email' => !empty($siswa->email),
+        ];
+
+        $totalFields = count($fields);
+        $completedFields = count(array_filter($fields));
+        $persenLengkap = (int) round(($completedFields / $totalFields) * 100);
+
+        $fieldLabels = [
+            'foto' => 'Foto Profil',
+            'nama_lengkap' => 'Nama Lengkap',
+            'nis' => 'Nomor Induk Siswa (NIS)',
+            'jenis_kelamin' => 'Jenis Kelamin',
+            'kelas' => 'Kelas',
+            'no_telpon' => 'Nomor Telepon',
+            'email' => 'Email',
+        ];
+
+        $belumLengkap = [];
+        foreach ($fields as $key => $isFilled) {
+            if (!$isFilled) {
+                $belumLengkap[] = $fieldLabels[$key];
+            }
+        }
+
+        return view('data-profil-siswa', [
+            'siswa' => $siswa,
+            'persenLengkap' => $persenLengkap,
+            'completedFields' => $completedFields,
+            'totalFields' => $totalFields,
+            'belumLengkap' => $belumLengkap,
+        ]);
+    }
+
+    /**
+     * Simpan pembaruan data diri siswa.
+     */
+    public function dataProfilUpdate(Request $request): RedirectResponse
+    {
+        /** @var Siswa $siswa */
+        $siswa = AuthContext::currentUser($request);
+
+        $data = $request->validate([
+            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nis' => ['nullable', 'string', 'max:30', 'unique:siswa,nis,'.$siswa->id],
+            'jenis_kelamin' => ['nullable', 'in:L,P'],
+            'kelas' => ['nullable', 'string', 'max:50'],
+            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'email' => ['required', 'email', 'max:255', 'unique:siswa,email,'.$siswa->id],
+            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+        ], [
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah digunakan oleh akun lain.',
+            'nis.unique' => 'NIS sudah digunakan oleh siswa lain.',
+            'password.min' => 'Kata sandi minimal 6 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Format foto harus berupa JPG, PNG, WEBP, atau SVG.',
+            'foto.max' => 'Ukuran foto maksimal 2 MB.',
+        ]);
+
+        if ($request->hasFile('foto')) {
+            $folder = storage_path('image/siswa');
+            if (! File::isDirectory($folder)) {
+                File::makeDirectory($folder, 0755, true, true);
+            }
+            if ($siswa->foto && File::exists($folder.'/'.$siswa->foto)) {
+                File::delete($folder.'/'.$siswa->foto);
+            }
+            $filename = time().'_'.Str::slug($request->nama_lengkap ?? $siswa->nama_lengkap).'.'.$request->file('foto')->getClientOriginalExtension();
+            $request->file('foto')->move($folder, $filename);
+            $data['foto'] = $filename;
+        }
+
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
+        $siswa->update($data);
+
+        return redirect()->route('siswa.profil')->with('sukses', 'Data diri Anda berhasil diperbarui!');
+    }
 }
+

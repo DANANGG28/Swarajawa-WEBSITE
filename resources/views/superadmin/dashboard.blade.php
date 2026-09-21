@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('konten')
-    <div class="flex flex-col gap-6 max-w-7xl mx-auto pt-2 pb-10">
+    <div class="flex flex-col gap-6 max-w-7xl mx-auto pt-2 pb-10 mt-4">
         {{-- Section 4 Card Statistik Utama dengan Warna Background Berbeda & Kontras --}}
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             @php

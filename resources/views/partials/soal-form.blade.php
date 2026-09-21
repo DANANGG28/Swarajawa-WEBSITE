@@ -7,6 +7,7 @@
     $kunciVal = $isEdit ? json_encode($soal->kunci_jawaban, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : '';
     $ttsRoute = $ttsRoute ?? route('guru.soal.tts');
     $previewRoute = $previewRoute ?? route('guru.soal.preview');
+    $disableLevel = $disableLevel ?? false;
 @endphp
 
 <form method="POST" action="{{ $action }}" class="flex flex-col gap-4" data-soal-form data-preview-route="{{ $previewRoute }}" data-prefix="{{ $prefix }}" enctype="multipart/form-data">
@@ -18,42 +19,64 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         {{-- Custom Dropdown Level Materi --}}
         <div class="relative flex flex-col gap-1.5" id="custom-level-wrapper-{{ $prefix }}">
-            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Level Materi</span>
-            <select name="level_materi_id" required id="select-level-{{ $prefix }}" class="hidden">
-                @foreach ($levels as $level)
-                    <option value="{{ $level->id }}" @selected(old('level_materi_id', $soal->level_materi_id ?? '') == $level->id)>
-                        Level {{ $level->urutan }} — {{ $level->nama_materi }}
-                    </option>
-                @endforeach
-            </select>
+            <div class="flex items-center justify-between">
+                <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Level Materi</span>
+                @if ($disableLevel)
+                    <span class="inline-flex items-center gap-1 text-[11px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
+                        <span class="material-symbols-outlined text-[13px]">lock</span>
+                        Terkunci
+                    </span>
+                @endif
+            </div>
 
             @php
-                $selectedLevelId = old('level_materi_id', $soal->level_materi_id ?? ($levels->first()->id ?? ''));
+                $selectedLevelId = old('level_materi_id', $selectedLevelId ?? ($soal->level_materi_id ?? ($level->id ?? ($levels->first()->id ?? ''))));
                 $selectedLevel = $levels->firstWhere('id', $selectedLevelId) ?? $levels->first();
                 $selectedLevelText = $selectedLevel ? 'Level '.$selectedLevel->urutan.' — '.$selectedLevel->nama_materi : 'Pilih Level';
             @endphp
 
-            <button type="button" id="btn-level-{{ $prefix }}"
-                class="flex items-center justify-between w-full rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-primary-400 px-4 py-3 font-body text-body text-gray-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
-                <span id="label-level-{{ $prefix }}" class="truncate font-medium text-gray-800">
-                    {{ $selectedLevelText }}
-                </span>
-                <span class="inline-flex items-center justify-center shrink-0 w-5 h-5 text-gray-400 ml-2">
-                    <span id="chevron-level-{{ $prefix }}" class="material-symbols-outlined text-[20px] leading-none transition-transform duration-200">expand_more</span>
-                </span>
-            </button>
+            @if ($disableLevel)
+                <input type="hidden" name="level_materi_id" value="{{ $selectedLevelId }}">
+                <button type="button" id="btn-level-{{ $prefix }}" disabled
+                    class="flex items-center justify-between w-full rounded-full border border-gray-200 bg-gray-100/90 px-4 py-3 font-body text-body text-gray-500 shadow-none cursor-not-allowed select-none transition-all">
+                    <span id="label-level-{{ $prefix }}" class="truncate font-medium text-gray-600">
+                        {{ $selectedLevelText }}
+                    </span>
+                    <span class="inline-flex items-center justify-center shrink-0 w-5 h-5 text-gray-400 ml-2">
+                        <span class="material-symbols-outlined text-[18px] leading-none">lock</span>
+                    </span>
+                </button>
+            @else
+                <select name="level_materi_id" required id="select-level-{{ $prefix }}" class="hidden">
+                    @foreach ($levels as $level)
+                        <option value="{{ $level->id }}" @selected(old('level_materi_id', $soal->level_materi_id ?? '') == $level->id)>
+                            Level {{ $level->urutan }} — {{ $level->nama_materi }}
+                        </option>
+                    @endforeach
+                </select>
 
-            {{-- Dropdown Menu Level Materi dengan Pembatas --}}
-            <div id="menu-level-{{ $prefix }}" class="hidden absolute top-full left-0 mt-2 w-full bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 overflow-hidden divide-y divide-gray-100 max-h-60 overflow-y-auto">
-                @foreach ($levels as $level)
-                    @php $isLvlSelected = ($selectedLevelId == $level->id); @endphp
-                    <button type="button" data-val="{{ $level->id }}" data-text="Level {{ $level->urutan }} — {{ $level->nama_materi }}"
-                        class="opt-level-item-{{ $prefix }} w-full flex items-center justify-between px-4 py-2.5 text-left font-body text-body {{ $isLvlSelected ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600' }} transition-colors">
-                        <span>Level {{ $level->urutan }} — {{ $level->nama_materi }}</span>
-                        <span class="check-icon material-symbols-outlined text-[18px] text-primary-600 {{ $isLvlSelected ? '' : 'hidden' }}">check</span>
-                    </button>
-                @endforeach
-            </div>
+                <button type="button" id="btn-level-{{ $prefix }}"
+                    class="flex items-center justify-between w-full rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-primary-400 px-4 py-3 font-body text-body text-gray-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500">
+                    <span id="label-level-{{ $prefix }}" class="truncate font-medium text-gray-800">
+                        {{ $selectedLevelText }}
+                    </span>
+                    <span class="inline-flex items-center justify-center shrink-0 w-5 h-5 text-gray-400 ml-2">
+                        <span id="chevron-level-{{ $prefix }}" class="material-symbols-outlined text-[20px] leading-none transition-transform duration-200">expand_more</span>
+                    </span>
+                </button>
+
+                {{-- Dropdown Menu Level Materi dengan Pembatas --}}
+                <div id="menu-level-{{ $prefix }}" class="hidden absolute top-full left-0 mt-2 w-full bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 overflow-hidden divide-y divide-gray-100 max-h-60 overflow-y-auto">
+                    @foreach ($levels as $level)
+                        @php $isLvlSelected = ($selectedLevelId == $level->id); @endphp
+                        <button type="button" data-val="{{ $level->id }}" data-text="Level {{ $level->urutan }} — {{ $level->nama_materi }}"
+                            class="opt-level-item-{{ $prefix }} w-full flex items-center justify-between px-4 py-2.5 text-left font-body text-body {{ $isLvlSelected ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600' }} transition-colors">
+                            <span>Level {{ $level->urutan }} — {{ $level->nama_materi }}</span>
+                            <span class="check-icon material-symbols-outlined text-[18px] text-primary-600 {{ $isLvlSelected ? '' : 'hidden' }}">check</span>
+                        </button>
+                    @endforeach
+                </div>
+            @endif
         </div>
 
         {{-- Custom Dropdown Tipe Soal --}}

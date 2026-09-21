@@ -36,13 +36,13 @@ class AuthWebController extends Controller
 
                 return redirect()
                     ->intended(route(AuthContext::homeRouteFor($role)))
-                    ->with('sukses', 'Sugeng rawuh, '.Auth::guard($role)->user()->nama_lengkap.'!');
+                    ->with('sukses', 'Selamat datang, '.Auth::guard($role)->user()->nama_lengkap.'!');
             }
         }
 
         return back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => 'Email utawa tembung sandi lepat.']);
+            ->withErrors(['email' => 'Email atau kata sandi salah.']);
     }
 
     public function showDaftar(): View
@@ -72,7 +72,7 @@ class AuthWebController extends Controller
 
         return redirect()
             ->route(AuthContext::homeRouteFor('siswa'))
-            ->with('sukses', 'Akun kasil digawe. Sugeng sinau, '.$siswa->nama_lengkap.'!');
+            ->with('sukses', 'Akun berhasil dibuat. Selamat belajar, '.$siswa->nama_lengkap.'!');
     }
 
     public function keluar(Request $request): RedirectResponse

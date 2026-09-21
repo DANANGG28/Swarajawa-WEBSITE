@@ -68,7 +68,7 @@
             </div>
         @endif
 
-        @if ($errors->any())
+        @if (session('error') || $errors->any())
             <div id="toastErrorNotification"
                  class="pointer-events-auto bg-surface-container-lowest border border-error/40 rounded-2xl p-4 shadow-[0_10px_35px_rgba(0,0,0,0.15)] flex items-start gap-3.5 toast-slide toast-hidden overflow-hidden relative">
                 <div class="w-10 h-10 rounded-xl bg-error/15 text-error flex items-center justify-center shrink-0">
@@ -76,7 +76,7 @@
                 </div>
                 <div class="flex-1 min-w-0 pt-0.5">
                     <h5 class="font-heading text-sm font-bold text-error leading-tight">Terjadi Kesalahan</h5>
-                    <p class="font-body text-xs text-on-surface-variant mt-0.5 leading-relaxed">{{ $errors->first() }}</p>
+                    <p class="font-body text-xs text-on-surface-variant mt-0.5 leading-relaxed">{{ session('error') ?? $errors->first() }}</p>
                 </div>
                 <button type="button" onclick="dismissToast('toastErrorNotification')" title="Tutup Notifikasi" class="w-7 h-7 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center justify-center transition-colors shrink-0">
                     <span class="material-symbols-outlined text-[18px]">close</span>

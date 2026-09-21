@@ -26,7 +26,17 @@ class Siswa extends Authenticatable
         'no_telpon',
         'email',
         'password',
+        'foto',
     ];
+
+    public function getFotoUrlAttribute(): ?string
+    {
+        if ($this->foto && file_exists(storage_path('image/siswa/' . $this->foto))) {
+            return route('siswa.image', $this->foto);
+        }
+
+        return null;
+    }
 
     protected $hidden = [
         'password',

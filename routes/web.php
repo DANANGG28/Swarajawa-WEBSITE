@@ -20,6 +20,8 @@ Route::middleware('web.auth:siswa')->group(function () {
     Route::get('/papan-skor', [HomeController::class, 'papanSkor'])->name('siswa.papan-skor');
     Route::get('/asisten-ai', fn () => view('asisten-ai'))->name('siswa.asisten');
     Route::get('/profil', [HomeController::class, 'profil'])->name('siswa.profil');
+    Route::get('/profil/data', [HomeController::class, 'dataProfil'])->name('siswa.profil.data');
+    Route::put('/profil/data', [HomeController::class, 'dataProfilUpdate'])->name('siswa.profil.update');
 });
 
 /*
@@ -70,6 +72,7 @@ Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(functio
     Route::post('/level-materi', [GuruWebController::class, 'levelMateriStore'])->name('level-materi.store');
     Route::get('/soal', [GuruWebController::class, 'soal'])->name('soal');
     Route::get('/soal/tambah', [GuruWebController::class, 'soalCreate'])->name('soal.create');
+    Route::get('/soal/{soal}/edit', [GuruWebController::class, 'soalEdit'])->name('soal.edit');
     Route::post('/soal/preview-aksara', [GuruWebController::class, 'previewAksara'])->name('soal.preview');
     Route::post('/soal', [GuruWebController::class, 'soalStore'])->name('soal.store');
     Route::put('/soal/{soal}', [GuruWebController::class, 'soalUpdate'])->name('soal.update');
@@ -103,12 +106,15 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
     Route::delete('/siswa/{siswa}', [SuperadminWebController::class, 'siswaDestroy'])->name('siswa.destroy');
 
     Route::get('/level-materi', [SuperadminWebController::class, 'levelMateri'])->name('level-materi');
+    Route::get('/level-materi/tambah', [SuperadminWebController::class, 'levelMateriCreate'])->name('level-materi.create');
+    Route::get('/level-materi/{levelMateri}/edit', [SuperadminWebController::class, 'levelMateriEdit'])->name('level-materi.edit');
     Route::post('/level-materi', [SuperadminWebController::class, 'levelMateriStore'])->name('level-materi.store');
     Route::put('/level-materi/{levelMateri}', [SuperadminWebController::class, 'levelMateriUpdate'])->name('level-materi.update');
     Route::delete('/level-materi/{levelMateri}', [SuperadminWebController::class, 'levelMateriDestroy'])->name('level-materi.destroy');
 
     Route::get('/soal', [SuperadminWebController::class, 'soal'])->name('soal');
     Route::get('/soal/tambah', [SuperadminWebController::class, 'soalCreate'])->name('soal.create');
+    Route::get('/soal/{soal}/edit', [SuperadminWebController::class, 'soalEdit'])->name('soal.edit');
     Route::post('/soal/preview-aksara', [SuperadminWebController::class, 'previewAksara'])->name('soal.preview');
     Route::post('/soal', [SuperadminWebController::class, 'soalStore'])->name('soal.store');
     Route::put('/soal/{soal}', [SuperadminWebController::class, 'soalUpdate'])->name('soal.update');
@@ -117,11 +123,27 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
     Route::post('/soal/generate-tts', [SuperadminWebController::class, 'generateTts'])->name('soal.tts');
 });
 
-Route::get('/resources/image/guru/{filename}', function (string $filename) {
-    $path = resource_path('image/guru/'.$filename);
+Route::get('/storage/image/guru/{filename}', function (string $filename) {
+    $path = storage_path('image/guru/'.$filename);
+    if (! file_exists($path)) {
+        $path = resource_path('image/guru/'.$filename);
+    }
     if (! file_exists($path)) {
         abort(404);
     }
 
     return response()->file($path);
 })->name('guru.image');
+
+Route::get('/resources/image/guru/{filename}', function (string $filename) {
+    return redirect()->route('guru.image', $filename);
+});
+
+Route::get('/storage/image/siswa/{filename}', function (string $filename) {
+    $path = storage_path('image/siswa/'.$filename);
+    if (! file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path);
+})->name('siswa.image');
