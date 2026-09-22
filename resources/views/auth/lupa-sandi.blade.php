@@ -61,7 +61,7 @@
                     <div class="flex flex-col gap-1.5">
                         <label for="email" class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider">Email Siswa</label>
                         <div class="relative flex items-center">
-                            <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                            <input id="email" type="email" name="email" value="{{ old('email') }}" required maxlength="255"
                                 placeholder="nama@sekolah.sch.id" autofocus
                                 class="w-full bg-gray-50 text-black-900 font-body text-body rounded-xl px-4 py-3.5 pr-11 outline-none transition-all placeholder:text-gray-500/70 focus:bg-white focus:shadow-[0_0_0_2px_#5443C9]">
                             <span class="absolute right-3.5 text-gray-500 pointer-events-none flex items-center">

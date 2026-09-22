@@ -552,5 +552,6 @@
             }
         })();
     </script>
+    @include('partials.siswa-sound')
 </body>
 </html>

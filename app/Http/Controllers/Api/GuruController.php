@@ -14,6 +14,10 @@ class GuruController extends Controller
      */
     public function index(Request $request)
     {
+        $request->validate([
+            'q' => ['nullable', 'string', 'max:255'],
+        ]);
+
         $query = Guru::query()->withCount('soal');
 
         if ($request->filled('q')) {
@@ -27,11 +31,11 @@ class GuruController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'nip' => ['required', 'string', 'max:30', 'unique:guru,nip'],
+            'nip' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'status_pegawaian' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['required', 'email', 'max:255', 'unique:guru,email'],
             'password' => ['required', 'string', 'min:6'],
         ]);
@@ -51,11 +55,11 @@ class GuruController extends Controller
     public function update(Request $request, Guru $guru): JsonResponse
     {
         $data = $request->validate([
-            'nip' => ['sometimes', 'string', 'max:30', 'unique:guru,nip,'.$guru->id],
+            'nip' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip,'.$guru->id],
             'nama_lengkap' => ['sometimes', 'string', 'max:255'],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
             'status_pegawaian' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:guru,email,'.$guru->id],
             'password' => ['nullable', 'string', 'min:6'],
         ]);

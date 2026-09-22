@@ -7,6 +7,7 @@ use App\Http\Resources\LevelMateriResource;
 use App\Models\LevelMateri;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class LevelMateriController extends Controller
 {
@@ -37,7 +38,7 @@ class LevelMateriController extends Controller
 
     public function update(Request $request, LevelMateri $levelMateri): JsonResponse
     {
-        $levelMateri->update($this->validated($request));
+        $levelMateri->update($this->validated($request, $levelMateri));
 
         return (new LevelMateriResource($levelMateri->fresh()->loadCount('soal')))
             ->additional(['message' => 'Level materi berhasil diperbarui.'])
@@ -54,11 +55,19 @@ class LevelMateriController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validated(Request $request): array
+    private function validated(Request $request, ?LevelMateri $level = null): array
     {
         return $request->validate([
-            'nama_materi' => ['required', 'string', 'max:255'],
-            'deskripsi' => ['nullable', 'string'],
+            'topik_id' => ['nullable', 'integer', 'exists:topik,id'],
+            'nama_materi' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('level_materi', 'nama_materi')
+                    ->where('topik_id', $request->input('topik_id'))
+                    ->ignore($level?->id),
+            ],
+            'deskripsi' => ['nullable', 'string', 'max:2000'],
             'reward_exp' => ['nullable', 'integer', 'min:0', 'max:100000'],
             'urutan' => ['nullable', 'integer', 'min:0'],
         ]);

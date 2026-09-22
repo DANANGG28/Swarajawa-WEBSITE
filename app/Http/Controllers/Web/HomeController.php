@@ -516,7 +516,7 @@ class HomeController extends Controller
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['required', 'email', 'max:255', 'unique:siswa,email,'.$siswa->id],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], [
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'email.required' => 'Email wajib diisi.',
@@ -532,7 +532,7 @@ class HomeController extends Controller
             'password.min' => 'Kata sandi minimal 6 karakter.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
             'foto.image' => 'File harus berupa gambar.',
-            'foto.mimes' => 'Format foto harus berupa JPG, PNG, WEBP, atau SVG.',
+            'foto.mimes' => 'Format foto harus berupa JPG, PNG, atau WEBP.',
             'foto.max' => 'Ukuran foto maksimal 2 MB.',
         ]);
 

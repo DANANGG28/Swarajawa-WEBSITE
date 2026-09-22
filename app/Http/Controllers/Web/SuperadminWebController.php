@@ -120,7 +120,7 @@ class SuperadminWebController extends Controller
 
     public function guruDetail(Request $request, string $id): View
     {
-        $role = $request->query('role', 'guru');
+        $role = $this->pengelolaRole($request);
         if ($role === 'superadmin') {
             $pengelola = Superadmin::findOrFail($id);
             $pengelola->role = 'superadmin';
@@ -144,7 +144,7 @@ class SuperadminWebController extends Controller
 
     public function guruEdit(Request $request, string $id): View
     {
-        $role = $request->query('role', 'guru');
+        $role = $this->pengelolaRole($request);
         if ($role === 'superadmin') {
             $pengelola = Superadmin::findOrFail($id);
             $pengelola->role = 'superadmin';
@@ -168,7 +168,7 @@ class SuperadminWebController extends Controller
 
     public function guruStore(Request $request): RedirectResponse
     {
-        $role = $request->input('role', 'guru');
+        $role = $this->pengelolaRole($request);
 
         if ($role === 'superadmin') {
             $data = $request->validate([
@@ -176,7 +176,7 @@ class SuperadminWebController extends Controller
                 'email' => ['required', 'email', 'max:255', 'unique:superadmin,email'],
                 'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
                 'password' => ['required', 'string', 'min:6'],
-                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             ], $this->validationMessages());
 
             if ($request->hasFile('foto')) {
@@ -202,7 +202,7 @@ class SuperadminWebController extends Controller
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['required', 'email', 'max:255', 'unique:guru,email'],
             'password' => ['required', 'string', 'min:6'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
@@ -222,7 +222,7 @@ class SuperadminWebController extends Controller
 
     public function guruUpdate(Request $request, string $id): RedirectResponse
     {
-        $role = $request->input('role', $request->query('role', 'guru'));
+        $role = $this->pengelolaRole($request);
 
         if ($role === 'superadmin') {
             $superadmin = Superadmin::findOrFail($id);
@@ -231,7 +231,7 @@ class SuperadminWebController extends Controller
                 'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
                 'email' => ['sometimes', 'email', 'max:255', 'unique:superadmin,email,'.$superadmin->id],
                 'password' => ['nullable', 'string', 'min:6'],
-                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             ], $this->validationMessages());
 
             if ($request->hasFile('foto')) {
@@ -267,7 +267,7 @@ class SuperadminWebController extends Controller
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:guru,email,'.$guru->id],
             'password' => ['nullable', 'string', 'min:6'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
@@ -296,7 +296,7 @@ class SuperadminWebController extends Controller
 
     public function guruDestroy(Request $request, string $id): RedirectResponse
     {
-        $role = $request->input('role', $request->query('role', 'guru'));
+        $role = $this->pengelolaRole($request);
 
         if ($role === 'superadmin') {
             $currentAdminId = Auth::guard('superadmin')->id();
@@ -334,6 +334,11 @@ class SuperadminWebController extends Controller
     public function siswa(Request $request): View
     {
         $query = Siswa::query()->with(['exp', 'strek']);
+
+        $request->validate([
+            'kelas' => ['nullable', 'string', 'max:50'],
+            'q' => ['nullable', 'string', 'max:255'],
+        ]);
 
         if ($request->filled('kelas')) {
             $query->where('kelas', $request->query('kelas'));
@@ -400,7 +405,7 @@ class SuperadminWebController extends Controller
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['required', 'email', 'max:255', 'unique:siswa,email'],
             'password' => ['required', 'string', 'min:6'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
@@ -431,7 +436,7 @@ class SuperadminWebController extends Controller
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:siswa,email,'.$siswa->id],
             'password' => ['nullable', 'string', 'min:6'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
@@ -472,6 +477,8 @@ class SuperadminWebController extends Controller
     public function topik(Request $request): View
     {
         $query = Topik::withCount('units')->orderBy('urutan');
+
+        $request->validate(['q' => ['nullable', 'string', 'max:255']]);
 
         if ($request->filled('q')) {
             $term = '%'.$request->query('q').'%';
@@ -537,6 +544,11 @@ class SuperadminWebController extends Controller
     public function levelMateri(Request $request): View
     {
         $query = LevelMateri::with(['topik'])->withCount(['soal', 'pembahasan'])->orderBy('urutan');
+
+        $request->validate([
+            'topik_id' => ['nullable', 'integer'],
+            'q' => ['nullable', 'string', 'max:255'],
+        ]);
 
         if ($request->filled('topik_id')) {
             $query->where('topik_id', $request->integer('topik_id'));
@@ -685,6 +697,12 @@ class SuperadminWebController extends Controller
         $levelId = $request->integer('level_materi_id');
         $level = LevelMateri::findOrFail($levelId);
 
+        $request->validate([
+            'pembahasan_id' => ['nullable', 'integer'],
+            'tipe_soal' => ['nullable', 'string', Rule::in(array_keys($this->tipeList()))],
+            'q' => ['nullable', 'string', 'max:255'],
+        ]);
+
         $query = Soal::query()
             ->with(['levelMateri', 'pembahasan'])
             ->where('level_materi_id', $levelId);
@@ -815,7 +833,7 @@ class SuperadminWebController extends Controller
 
     public function generateTts(Request $request, TtsService $ttsService)
     {
-        $request->validate(['text' => 'required|string']);
+        $request->validate(['text' => ['required', 'string', 'max:1000']]);
 
         $path = $ttsService->generate($request->text);
 
@@ -838,6 +856,15 @@ class SuperadminWebController extends Controller
         $soal->delete();
 
         return back()->with('sukses', 'Soal berhasil dihapus.');
+    }
+
+    private function pengelolaRole(Request $request): string
+    {
+        $role = (string) ($request->input('role') ?? $request->query('role', 'guru'));
+
+        abort_unless(in_array($role, ['guru', 'superadmin'], true), 422, 'Peran akun tidak valid.');
+
+        return $role;
     }
 
     private function superadmin(): Superadmin
@@ -863,7 +890,7 @@ class SuperadminWebController extends Controller
                     ->where('topik_id', $request->input('topik_id'))
                     ->ignore($level?->id),
             ],
-            'deskripsi' => ['nullable', 'string'],
+            'deskripsi' => ['nullable', 'string', 'max:2000'],
             'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
             'urutan' => ['required', 'integer', 'min:0'],
         ]);
@@ -876,7 +903,7 @@ class SuperadminWebController extends Controller
     {
         return $request->validate([
             'nama' => ['required', 'string', 'max:255', Rule::unique('topik', 'nama')->ignore($topik?->id)],
-            'deskripsi' => ['nullable', 'string'],
+            'deskripsi' => ['nullable', 'string', 'max:2000'],
             'urutan' => ['required', 'integer', 'min:0'],
         ]);
     }
@@ -890,14 +917,14 @@ class SuperadminWebController extends Controller
             'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
             'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $request->integer('level_materi_id'))],
             'tipe_soal' => ['required', 'in:pilihan_ganda,susun_kalimat,pencocokan_arti,puzzle_pakaian_adat,menulis_aksara,kuis_suara'],
-            'pertanyaan' => ['required', 'string'],
+            'pertanyaan' => ['required', 'string', 'max:5000'],
             'soal_latin' => ['nullable', 'string', 'max:500'],
-            'soal_aksara' => ['nullable', 'string'],
+            'soal_aksara' => ['nullable', 'string', 'max:1000'],
             'ketik_pepet_mode' => ['nullable', 'boolean'],
             'ignore_space' => ['nullable', 'boolean'],
             'aksara_swara_mode' => ['nullable', 'boolean'],
-            'opsi_jawaban_raw' => ['nullable', 'string'],
-            'kunci_jawaban_raw' => ['required', 'string'],
+            'opsi_jawaban_raw' => ['nullable', 'string', 'json', 'max:20000'],
+            'kunci_jawaban_raw' => ['required', 'string', 'json', 'max:20000'],
             'media_audio_url' => ['nullable', 'string', 'max:2048'],
             'bobot_exp' => ['required', 'integer', 'min:0', 'max:1000'],
             'file_gambar' => ['nullable', 'image', 'max:5120'], // max 5MB
@@ -980,7 +1007,7 @@ class SuperadminWebController extends Controller
                     ->where('level_materi_id', $levelId)
                     ->ignore($pembahasan?->id),
             ],
-            'deskripsi' => ['nullable', 'string'],
+            'deskripsi' => ['nullable', 'string', 'max:2000'],
         ];
 
         if ($withLevel) {

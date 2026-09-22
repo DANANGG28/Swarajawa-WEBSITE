@@ -134,5 +134,6 @@
             </div>
         </div>
     </div>
+    @include('partials.siswa-sound')
 </body>
 </html>

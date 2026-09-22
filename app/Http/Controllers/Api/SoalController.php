@@ -9,6 +9,7 @@ use App\Models\Soal;
 use App\Models\Superadmin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SoalController extends Controller
 {
@@ -19,6 +20,19 @@ class SoalController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Soal::class);
+
+        $request->validate([
+            'milik_saya' => ['nullable', 'boolean'],
+            'level_materi_id' => ['nullable', 'integer', 'exists:level_materi,id'],
+            'tipe_soal' => ['nullable', 'string', Rule::in([
+                Soal::TIPE_PILIHAN_GANDA,
+                Soal::TIPE_SUSUN_KALIMAT,
+                Soal::TIPE_PENCOCOKAN_ARTI,
+                Soal::TIPE_PUZZLE_PAKAIAN_ADAT,
+                Soal::TIPE_MENULIS_AKSARA,
+                Soal::TIPE_KUIS_SUARA,
+            ])],
+        ]);
 
         $user = $request->user();
         $query = Soal::query()->with('levelMateri');
@@ -90,11 +104,15 @@ class SoalController extends Controller
     {
         return $request->validate([
             'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
+            'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $request->integer('level_materi_id'))],
             'tipe_soal' => ['required', 'in:pilihan_ganda,susun_kalimat,pencocokan_arti,puzzle_pakaian_adat,menulis_aksara,kuis_suara'],
-            'pertanyaan' => ['required', 'string'],
+            'pertanyaan' => ['required', 'string', 'max:5000'],
+            'soal_latin' => ['nullable', 'string', 'max:500'],
+            'soal_aksara' => ['nullable', 'string', 'max:1000'],
             'opsi_jawaban' => ['nullable', 'array'],
             'kunci_jawaban' => ['required', 'array'],
             'media_audio_url' => ['nullable', 'string', 'max:2048'],
+            'media_gambar_url' => ['nullable', 'string', 'max:2048'],
             'bobot_exp' => ['nullable', 'integer', 'min:0', 'max:1000'],
         ]);
     }

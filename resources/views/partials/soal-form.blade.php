@@ -17,6 +17,17 @@
         @method('PUT')
     @endif
 
+    @if ($errors->any())
+        <div class="rounded-2xl border border-error/30 bg-error-container/40 px-4 py-3">
+            <p class="font-heading text-sm font-bold text-error">Periksa kembali isian berikut:</p>
+            <ul class="mt-1 list-disc list-inside font-body text-xs text-on-error-container space-y-0.5">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {{-- Custom Dropdown Level Materi --}}
         <div class="relative flex flex-col gap-1.5" id="custom-level-wrapper-{{ $prefix }}">
@@ -200,12 +211,14 @@
                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                 required value="{{ old('bobot_exp', $soal->bobot_exp ?? 10) }}"
                 class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
+            @error('bobot_exp')<span class="text-error text-xs font-caption">{{ $message }}</span>@enderror
         </label>
     </div>
 
     <label class="flex flex-col gap-1.5">
         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Pertanyaan / Instruksi</span>
-        <textarea name="pertanyaan" id="pertanyaan-{{ $prefix }}" rows="2" required class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">{{ old('pertanyaan', $soal->pertanyaan ?? '') }}</textarea>
+        <textarea name="pertanyaan" id="pertanyaan-{{ $prefix }}" rows="2" required maxlength="5000" class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">{{ old('pertanyaan', $soal->pertanyaan ?? '') }}</textarea>
+        @error('pertanyaan')<span class="text-error text-xs font-caption">{{ $message }}</span>@enderror
     </label>
     
     <label class="flex flex-col gap-1.5">
@@ -255,7 +268,9 @@
         <label class="flex flex-col gap-1.5 mt-2">
             <span class="text-caption text-gray-500">URL Audio (Otomatis terisi jika upload file / pakai TTS)</span>
             <input type="text" name="media_audio_url" id="audio-url-{{ $prefix }}" value="{{ old('media_audio_url', $soal->media_audio_url ?? '') }}"
+                maxlength="2048"
                 class="rounded-full border border-gray-200 bg-white px-4 py-3 font-body text-body outline-none focus:border-primary-500" placeholder="Path ke file audio...">
+            @error('media_audio_url')<span class="text-error text-xs font-caption">{{ $message }}</span>@enderror
         </label>
 
         <!-- Preview Audio -->
