@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\LevelMateri;
+use App\Models\ProgresSiswa;
 use App\Models\Soal;
 use App\Services\GamificationService;
 use App\Services\JawabanService;
@@ -69,6 +70,19 @@ class KuisController extends Controller
 
         $siswa = $request->user();
         $level = LevelMateri::query()->findOrFail($data['level_materi_id']);
+
+        if (! $this->progres->canStart($siswa, $level)) {
+            return response()->json(['message' => 'Materi belum tercapai.'], 403);
+        }
+
+        if ($this->progres->statusFor($siswa, $level) === ProgresSiswa::STATUS_SELESAI) {
+            return response()->json([
+                'message' => "Level {$level->nama_materi} sudah diselesaikan.",
+                'reward_exp' => 0,
+                'total_exp' => (int) ($siswa->exp()->value('total_exp') ?? 0),
+                'current_streak' => (int) ($siswa->strek()->value('current_streak') ?? 0),
+            ]);
+        }
 
         $this->progres->markSelesai($siswa, $level);
         $gamifikasi = $this->gamification->recordActivity($siswa, 0, (int) $level->reward_exp);

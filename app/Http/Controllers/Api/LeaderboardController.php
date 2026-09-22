@@ -13,8 +13,13 @@ class LeaderboardController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $kelas = $request->query('kelas');
-        $limit = (int) $request->query('limit', 20);
+        $data = $request->validate([
+            'kelas' => ['nullable', 'string', 'max:50'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $kelas = $data['kelas'] ?? null;
+        $limit = (int) ($data['limit'] ?? 20);
 
         return response()->json([
             'kelas' => $kelas,

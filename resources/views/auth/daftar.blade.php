@@ -52,12 +52,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="flex flex-col gap-1.5">
                         <label for="nama-lengkap" class="font-label-upper text-label-upper text-on-surface-variant font-semibold tracking-wider uppercase">Nama Lengkap</label>
-                        <input id="nama-lengkap" type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required placeholder="Contoh: Budi Santoso"
+                        <input id="nama-lengkap" type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required maxlength="255" placeholder="Contoh: Budi Santoso"
                             class="w-full bg-surface-container-low text-black-900 font-body text-body placeholder:text-gray-500 rounded-xl px-3.5 py-3 outline-none transition-all focus:bg-white focus:shadow-[0_0_0_2px_#5443C9]">
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <label for="nis" class="font-label-upper text-label-upper text-on-surface-variant font-semibold tracking-wider uppercase">Nomor Induk Siswa (NIS)</label>
-                        <input id="nis" type="text" name="nis" value="{{ old('nis') }}" required inputmode="numeric" placeholder="Contoh: 2026010042"
+                        <input id="nis" type="text" name="nis" value="{{ old('nis') }}" required inputmode="numeric" maxlength="30" placeholder="Contoh: 2026010042"
                             class="w-full bg-surface-container-low text-black-900 font-body text-body placeholder:text-gray-500 rounded-xl px-3.5 py-3 outline-none transition-all focus:bg-white focus:shadow-[0_0_0_2px_#5443C9]">
                     </div>
                 </div>
@@ -97,7 +97,7 @@
 
                 <div class="flex flex-col gap-1.5">
                     <label for="email" class="font-label-upper text-label-upper text-on-surface-variant font-semibold tracking-wider uppercase">Email Siswa</label>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required placeholder="nama@sekolah.sch.id"
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required maxlength="255" placeholder="nama@sekolah.sch.id"
                         class="w-full bg-surface-container-low text-black-900 font-body text-body placeholder:text-gray-500 rounded-xl px-3.5 py-3 outline-none transition-all focus:bg-white focus:shadow-[0_0_0_2px_#5443C9]">
                 </div>
 
@@ -105,7 +105,7 @@
                     <div class="flex flex-col gap-1.5">
                         <label for="password" class="font-label-upper text-label-upper text-on-surface-variant font-semibold tracking-wider uppercase">Kata Sandi</label>
                         <div class="relative flex items-center">
-                            <input id="password" type="password" name="password" required placeholder="Minimal 8 karakter"
+                            <input id="password" type="password" name="password" required minlength="8" placeholder="Minimal 8 karakter"
                                 class="w-full bg-surface-container-low text-black-900 font-body text-body placeholder:text-gray-500 rounded-xl pl-3.5 pr-10 py-3 outline-none transition-all focus:bg-white focus:shadow-[0_0_0_2px_#5443C9]">
                             <button type="button" aria-label="Tampilkan kata sandi" data-toggle-password="password" data-toggle-icon="pwd-icon"
                                 class="absolute right-2.5 p-1 rounded-lg text-on-surface-variant hover:text-black-900 transition-colors">
@@ -116,7 +116,7 @@
                     <div class="flex flex-col gap-1.5">
                         <label for="password_confirmation" class="font-label-upper text-label-upper text-on-surface-variant font-semibold tracking-wider uppercase">Konfirmasi Kata Sandi</label>
                         <div class="relative flex items-center">
-                            <input id="password_confirmation" type="password" name="password_confirmation" required placeholder="Ulangi kata sandi"
+                            <input id="password_confirmation" type="password" name="password_confirmation" required minlength="8" placeholder="Ulangi kata sandi"
                                 class="w-full bg-surface-container-low text-black-900 font-body text-body placeholder:text-gray-500 rounded-xl pl-3.5 pr-10 py-3 outline-none transition-all focus:bg-white focus:shadow-[0_0_0_2px_#5443C9]">
                             <button type="button" aria-label="Tampilkan konfirmasi kata sandi" data-toggle-password="password_confirmation" data-toggle-icon="confirm-pwd-icon"
                                 class="absolute right-2.5 p-1 rounded-lg text-on-surface-variant hover:text-black-900 transition-colors">

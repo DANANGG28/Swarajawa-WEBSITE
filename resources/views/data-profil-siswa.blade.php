@@ -213,7 +213,7 @@
                             <div class="flex flex-col justify-between gap-3 min-w-0 flex-1 text-center sm:text-left">
                                 <div>
                                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-                                        <input type="file" id="fotoInput" name="foto" accept="image/jpeg,image/png,image/webp,image/svg+xml" class="hidden" onchange="previewSelectedImage(event)">
+                                        <input type="file" id="fotoInput" name="foto" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="previewSelectedImage(event)">
                                         <button type="button" onclick="document.getElementById('fotoInput').click()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-body text-sm font-semibold shadow-sm transition-all duration-200">
                                             <span class="material-symbols-outlined text-[18px]">cloud_upload</span>
                                             <span>Pilih Foto Baru</span>
@@ -567,5 +567,6 @@
         }, 5000);
         @endif
     </script>
+    @include('partials.siswa-sound')
 </body>
 </html>

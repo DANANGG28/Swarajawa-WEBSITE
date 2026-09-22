@@ -24,6 +24,15 @@ class SttService
     }
 
     /**
+     * `mock_transcript` hanya untuk demo lokal & pengujian. Di produksi nilai
+     * dari klien diabaikan agar siswa tidak bisa memalsukan hasil transkripsi.
+     */
+    private function resolveMockTranscript(?string $mockTranscript): ?string
+    {
+        return app()->environment('production') ? null : $mockTranscript;
+    }
+
+    /**
      * Transkripsi audio base64 (kompatibel dengan endpoint speech yang ada).
      *
      * @return array{mock: bool, language: string, transcript: ?string, text: ?string, confidence: ?float, error: ?string}
@@ -31,6 +40,7 @@ class SttService
     public function transcribe(string $audioBase64, ?string $language = null, ?string $mockTranscript = null): array
     {
         $language ??= config('services.elevenlabs.language', 'jav');
+        $mockTranscript = $this->resolveMockTranscript($mockTranscript);
 
         if (! $this->isConfigured()) {
             return $this->mock($language, $mockTranscript);
@@ -65,6 +75,8 @@ class SttService
      */
     public function transcribeFile(UploadedFile|string $audio, string $languageCode = 'jav', ?string $mockTranscript = null): array
     {
+        $mockTranscript = $this->resolveMockTranscript($mockTranscript);
+
         if (! $this->isConfigured()) {
             return $this->mock($languageCode, $mockTranscript);
         }

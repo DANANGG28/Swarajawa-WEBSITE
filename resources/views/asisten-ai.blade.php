@@ -680,5 +680,6 @@
             return { ask: ask, newChat: newChat, loadSession: loadSession, deleteSession: deleteSession };
         })();
     </script>
+    @include('partials.siswa-sound')
 </body>
 </html>

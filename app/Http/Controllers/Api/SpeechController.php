@@ -36,7 +36,7 @@ class SpeechController extends Controller
     public function stt(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'audio' => ['required', 'string'],
+            'audio' => ['required', 'string', 'max:15000000'],
             'mock_transcript' => ['nullable', 'string', 'max:1000'],
         ]);
 
@@ -52,7 +52,7 @@ class SpeechController extends Controller
     public function sts(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'audio' => ['required', 'string'],
+            'audio' => ['required', 'string', 'max:15000000'],
             'teks_referensi' => ['required', 'string', 'max:1000'],
             'mock_transcript' => ['nullable', 'string', 'max:1000'],
         ]);

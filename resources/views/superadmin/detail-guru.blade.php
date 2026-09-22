@@ -188,7 +188,7 @@
                                 <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">Jenis Kelamin</span>
                                 <div class="relative">
                                     <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">wc</span>
-                                    <select name="jenis_kelamin"
+                                    <select name="jenis_kelamin" required
                                             class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                                         <option value="L" {{ old('jenis_kelamin', $guru->jenis_kelamin) === 'L' ? 'selected' : '' }}>Laki-laki (L)</option>
                                         <option value="P" {{ old('jenis_kelamin', $guru->jenis_kelamin) === 'P' ? 'selected' : '' }}>Perempuan (P)</option>

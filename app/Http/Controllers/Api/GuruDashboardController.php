@@ -17,6 +17,12 @@ class GuruDashboardController extends Controller
      */
     public function siswa(Request $request): JsonResponse
     {
+        $request->validate([
+            'kelas' => ['nullable', 'string', 'max:50'],
+            'nis' => ['nullable', 'string', 'max:30'],
+            'q' => ['nullable', 'string', 'max:255'],
+        ]);
+
         $guru = $request->user();
         $totalLevel = LevelMateri::count();
 

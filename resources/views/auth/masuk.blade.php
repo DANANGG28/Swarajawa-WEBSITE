@@ -8,8 +8,15 @@
             background-image: radial-gradient(#dcd7f5 1.2px, transparent 1.2px);
             background-size: 24px 24px;
         }
-        .btn-3d { box-shadow: 0 4px 0 #4334a6; }
-        .btn-3d:active { transform: translateY(3px); box-shadow: 0 1px 0 #4334a6; }
+        .btn-3d {
+            box-shadow: 0 4px 0 var(--btn-3d-shadow, #4334a6);
+        }
+        .btn-3d:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 var(--btn-3d-shadow, #4334a6);
+        }
+        .btn-3d-google { --btn-3d-shadow: #d1d5db; }
+        .btn-3d-outline { --btn-3d-shadow: #c6bfff; }
     </style>
 </head>
 <body class="bg-dot-pattern font-body text-on-surface antialiased min-h-screen flex flex-col justify-between">
@@ -19,7 +26,7 @@
             <span class="material-symbols-outlined text-[26px]">close</span>
         </a>
         <a href="{{ route('daftar') }}"
-            class="inline-flex items-center justify-center px-5 py-2 rounded-full border-2 border-primary-600 text-primary-600 hover:bg-primary-fixed font-bold text-sm tracking-wide uppercase transition-colors">
+            class="btn-3d btn-3d-outline inline-flex items-center justify-center px-5 py-2 rounded-full border-2 border-primary-600 text-primary-600 hover:bg-primary-fixed font-bold text-sm tracking-wide uppercase transition-all">
             Daftar
         </a>
     </nav>
@@ -51,7 +58,7 @@
                 @csrf
                 <div class="space-y-1.5">
                     <label for="email" class="block font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Email</label>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus maxlength="255"
                         autocomplete="username" placeholder="nama@sekolah.sch.id"
                         class="w-full bg-surface-container-low border border-transparent text-black-900 placeholder:text-gray-500/70 text-sm font-medium rounded-2xl px-4 py-3.5 outline-none transition-all focus:bg-white focus:border-primary-600 focus:shadow-[0_0_0_2px_#7B6CF0]">
                 </div>
@@ -62,7 +69,7 @@
                         <a href="{{ route('lupa-sandi') }}" class="font-label-upper text-label-upper uppercase tracking-wider font-bold text-primary-600 hover:text-primary-700 transition-colors">Lupa?</a>
                     </div>
                     <div class="relative">
-                        <input id="password" type="password" name="password" required
+                        <input id="password" type="password" name="password" required maxlength="255"
                             autocomplete="current-password" placeholder="Masukkan kata sandi"
                             class="w-full bg-surface-container-low border border-transparent text-black-900 placeholder:text-gray-500/70 text-sm font-medium rounded-2xl pl-4 pr-12 py-3.5 outline-none transition-all focus:bg-white focus:border-primary-600 focus:shadow-[0_0_0_2px_#7B6CF0]">
                         <button type="button" id="toggle-password" aria-label="Tampilkan kata sandi"
@@ -79,7 +86,7 @@
 
                 <div class="pt-2">
                     <button type="submit"
-                        class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm sm:text-base tracking-wider uppercase py-3.5 px-6 rounded-2xl shadow-sm btn-3d transition-all flex items-center justify-center gap-2 cursor-pointer">
+                        class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm sm:text-base tracking-wider uppercase py-3.5 px-6 rounded-2xl btn-3d transition-all flex items-center justify-center gap-2 cursor-pointer">
                         Masuk
                     </button>
                 </div>
@@ -93,7 +100,7 @@
             </div>
 
             <a href="{{ route('google.redirect') }}"
-                class="w-full bg-white hover:bg-gray-50 border border-gray-200 hover:border-primary-400 text-black-900 font-bold text-sm tracking-wide uppercase py-3.5 px-5 rounded-2xl shadow-sm transition-all flex items-center justify-center gap-3.5">
+                class="btn-3d btn-3d-google w-full bg-white hover:bg-gray-50 border border-gray-200 hover:border-primary-400 text-black-900 font-bold text-sm tracking-wide uppercase py-3.5 px-5 rounded-2xl transition-all flex items-center justify-center gap-3.5">
                 @include('partials.google-icon')
                 <span>Masuk dengan Google</span>
             </a>

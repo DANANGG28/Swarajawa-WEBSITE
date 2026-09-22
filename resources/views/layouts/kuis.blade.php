@@ -21,5 +21,6 @@
 
     @include('partials.kuis-runtime')
     @stack('skrip')
+    @include('partials.siswa-sound')
 </body>
 </html>

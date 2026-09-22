@@ -17,6 +17,11 @@ class SiswaController extends Controller
      */
     public function index(Request $request)
     {
+        $request->validate([
+            'kelas' => ['nullable', 'string', 'max:50'],
+            'q' => ['nullable', 'string', 'max:255'],
+        ]);
+
         $query = Siswa::query()->with(['exp', 'strek']);
 
         if ($request->filled('kelas')) {
@@ -34,11 +39,11 @@ class SiswaController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'nis' => ['required', 'string', 'max:30', 'unique:siswa,nis'],
+            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['required', 'email', 'max:255', 'unique:siswa,email'],
             'password' => ['required', 'string', 'min:6'],
         ]);
@@ -61,11 +66,11 @@ class SiswaController extends Controller
     public function update(Request $request, Siswa $siswa): JsonResponse
     {
         $data = $request->validate([
-            'nis' => ['sometimes', 'string', 'max:30', 'unique:siswa,nis,'.$siswa->id],
+            'nis' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis,'.$siswa->id],
             'nama_lengkap' => ['sometimes', 'string', 'max:255'],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:siswa,email,'.$siswa->id],
             'password' => ['nullable', 'string', 'min:6'],
         ]);

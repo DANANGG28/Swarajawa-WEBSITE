@@ -669,5 +669,6 @@
         }, 5000);
         @endif
     </script>
+    @include('partials.siswa-sound')
 </body>
 </html>

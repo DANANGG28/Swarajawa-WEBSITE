@@ -48,7 +48,7 @@
                     <div class="flex flex-col gap-2">
                         <label for="password" class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider">Kata Sandi Baru</label>
                         <div class="relative flex items-center">
-                            <input id="password" type="password" name="password" required placeholder="Minimal 8 karakter (kombinasi)"
+                            <input id="password" type="password" name="password" required minlength="8" placeholder="Minimal 8 karakter (kombinasi)"
                                 class="w-full h-12 px-4 pr-12 rounded-xl bg-gray-50 text-black-900 font-body text-body placeholder:text-gray-500 outline-none transition-all focus:bg-white focus:shadow-[0_0_0_2px_#6C5CE8]">
                             <button type="button" aria-label="Tampilkan kata sandi" data-toggle-password="password" data-toggle-icon="toggle-pwd-icon"
                                 class="absolute right-3 w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-black-900 transition-colors">
@@ -73,7 +73,7 @@
                     <div class="flex flex-col gap-2">
                         <label for="password_confirmation" class="font-label-upper text-label-upper text-gray-500 uppercase tracking-wider">Konfirmasi Kata Sandi Baru</label>
                         <div class="relative flex items-center">
-                            <input id="password_confirmation" type="password" name="password_confirmation" required placeholder="Ulangi kata sandi baru"
+                            <input id="password_confirmation" type="password" name="password_confirmation" required minlength="8" placeholder="Ulangi kata sandi baru"
                                 class="w-full h-12 px-4 pr-12 rounded-xl bg-gray-50 text-black-900 font-body text-body placeholder:text-gray-500 outline-none transition-all focus:bg-white focus:shadow-[0_0_0_2px_#6C5CE8]">
                             <button type="button" aria-label="Tampilkan konfirmasi kata sandi" data-toggle-password="password_confirmation" data-toggle-icon="toggle-confirm-icon"
                                 class="absolute right-3 w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-black-900 transition-colors">

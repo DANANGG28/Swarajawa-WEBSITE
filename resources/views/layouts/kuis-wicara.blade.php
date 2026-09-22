@@ -44,5 +44,6 @@
         })();
     </script>
     @stack('skrip')
+    @include('partials.siswa-sound')
 </body>
 </html>

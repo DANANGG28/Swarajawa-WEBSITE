@@ -64,6 +64,8 @@ class GuruWebController extends Controller
     {
         $query = Topik::withCount('units')->orderBy('urutan');
 
+        $request->validate(['q' => ['nullable', 'string', 'max:255']]);
+
         if ($request->filled('q')) {
             $term = '%'.$request->query('q').'%';
             $query->where(fn ($q) => $q->where('nama', 'like', $term)->orWhere('deskripsi', 'like', $term));
@@ -131,6 +133,11 @@ class GuruWebController extends Controller
     public function levelMateri(Request $request): View
     {
         $query = LevelMateri::with(['topik'])->withCount(['soal', 'pembahasan'])->orderBy('urutan');
+
+        $request->validate([
+            'topik_id' => ['nullable', 'integer'],
+            'q' => ['nullable', 'string', 'max:255'],
+        ]);
 
         if ($request->filled('topik_id')) {
             $query->where('topik_id', $request->integer('topik_id'));
@@ -295,6 +302,12 @@ class GuruWebController extends Controller
         $levelId = $request->integer('level_materi_id');
         $level = LevelMateri::findOrFail($levelId);
 
+        $request->validate([
+            'pembahasan_id' => ['nullable', 'integer'],
+            'tipe_soal' => ['nullable', 'string', Rule::in(array_keys($this->tipeList()))],
+            'q' => ['nullable', 'string', 'max:255'],
+        ]);
+
         $query = Soal::query()
             ->with(['levelMateri', 'pembahasan'])
             ->where('level_materi_id', $levelId);
@@ -415,7 +428,7 @@ class GuruWebController extends Controller
 
     public function generateTts(Request $request, TtsService $ttsService)
     {
-        $request->validate(['text' => 'required|string']);
+        $request->validate(['text' => ['required', 'string', 'max:1000']]);
 
         $path = $ttsService->generate($request->text);
 
@@ -470,14 +483,14 @@ class GuruWebController extends Controller
             'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
             'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $request->integer('level_materi_id'))],
             'tipe_soal' => ['required', 'in:pilihan_ganda,susun_kalimat,pencocokan_arti,puzzle_pakaian_adat,menulis_aksara,kuis_suara'],
-            'pertanyaan' => ['required', 'string'],
+            'pertanyaan' => ['required', 'string', 'max:5000'],
             'soal_latin' => ['nullable', 'string', 'max:500'],
-            'soal_aksara' => ['nullable', 'string'],
+            'soal_aksara' => ['nullable', 'string', 'max:1000'],
             'ketik_pepet_mode' => ['nullable', 'boolean'],
             'ignore_space' => ['nullable', 'boolean'],
             'aksara_swara_mode' => ['nullable', 'boolean'],
-            'opsi_jawaban_raw' => ['nullable', 'string'],
-            'kunci_jawaban_raw' => ['required', 'string'],
+            'opsi_jawaban_raw' => ['nullable', 'string', 'json', 'max:20000'],
+            'kunci_jawaban_raw' => ['required', 'string', 'json', 'max:20000'],
             'media_audio_url' => ['nullable', 'string', 'max:2048'],
             'bobot_exp' => ['required', 'integer', 'min:0', 'max:1000'],
             'file_gambar' => ['nullable', 'image', 'max:5120'], // max 5MB
@@ -561,7 +574,7 @@ class GuruWebController extends Controller
                     ->where('level_materi_id', $levelId)
                     ->ignore($pembahasan?->id),
             ],
-            'deskripsi' => ['nullable', 'string'],
+            'deskripsi' => ['nullable', 'string', 'max:2000'],
         ];
 
         if ($withLevel) {
@@ -586,7 +599,7 @@ class GuruWebController extends Controller
                     ->where('topik_id', $request->input('topik_id'))
                     ->ignore($level?->id),
             ],
-            'deskripsi' => ['nullable', 'string'],
+            'deskripsi' => ['nullable', 'string', 'max:2000'],
             'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
             'urutan' => ['required', 'integer', 'min:0'],
         ]);
@@ -599,7 +612,7 @@ class GuruWebController extends Controller
     {
         return $request->validate([
             'nama' => ['required', 'string', 'max:255', Rule::unique('topik', 'nama')->ignore($topik?->id)],
-            'deskripsi' => ['nullable', 'string'],
+            'deskripsi' => ['nullable', 'string', 'max:2000'],
             'urutan' => ['required', 'integer', 'min:0'],
         ]);
     }

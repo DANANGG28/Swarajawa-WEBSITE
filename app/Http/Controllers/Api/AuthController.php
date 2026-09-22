@@ -31,7 +31,7 @@ class AuthController extends Controller
             'kelas' => ['nullable', 'string', 'max:50'],
             'no_telpon' => ['nullable', 'string', 'max:30'],
             'email' => ['required', 'email', 'max:255', 'unique:siswa,email'],
-            'password' => ['required', 'string', 'min:6'],
+            'password' => ['required', 'string', 'min:8'],
         ]);
 
         $siswa = Siswa::create($data);

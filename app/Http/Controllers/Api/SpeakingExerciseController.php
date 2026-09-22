@@ -107,6 +107,10 @@ class SpeakingExerciseController extends Controller
             'mock_transcript' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        if ($soal->tipe_soal !== Soal::TIPE_KUIS_SUARA) {
+            return response()->json(['message' => 'Soal ini bukan tipe kuis suara.'], 422);
+        }
+
         $siswa = $request->user();
 
         if ($soal->levelMateri && ! $this->progres->canStart($siswa, $soal->levelMateri)) {
