@@ -119,6 +119,45 @@ class TopikFlowTest extends TestCase
         $this->assertDatabaseHas('level_materi', ['nama_materi' => 'Unit Anyar', 'topik_id' => $topik->id]);
     }
 
+    public function test_nama_topik_harus_unik(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $this->topik('Basa Saben Dina', 1);
+
+        $this->actingAs($admin, 'superadmin')->post('/superadmin/topik', [
+            'nama' => 'Basa Saben Dina',
+            'urutan' => 2,
+        ])->assertSessionHasErrors('nama');
+
+        $this->assertDatabaseCount('topik', 1);
+    }
+
+    public function test_nama_unit_harus_unik_per_topik(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $topik = $this->topik('Basa', 1);
+        $topikLain = $this->topik('Aksara', 2);
+        $this->unit($topik, 'Dasar', 1);
+
+        // Duplikat dalam topik yang sama ditolak.
+        $this->actingAs($admin, 'superadmin')->post('/superadmin/level-materi', [
+            'topik_id' => $topik->id,
+            'nama_materi' => 'Dasar',
+            'reward_exp' => 100,
+            'urutan' => 2,
+        ])->assertSessionHasErrors('nama_materi');
+
+        // Nama sama pada topik berbeda tetap diperbolehkan.
+        $this->actingAs($admin, 'superadmin')->post('/superadmin/level-materi', [
+            'topik_id' => $topikLain->id,
+            'nama_materi' => 'Dasar',
+            'reward_exp' => 100,
+            'urutan' => 2,
+        ])->assertRedirect();
+
+        $this->assertDatabaseCount('level_materi', 2);
+    }
+
     public function test_siswa_dapat_memilih_topik_lain(): void
     {
         $topikA = $this->topik('Basa Saben Dina', 1);
