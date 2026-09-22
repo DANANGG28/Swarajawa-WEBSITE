@@ -22,6 +22,20 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google OAuth (Laravel Socialite)
+    |--------------------------------------------------------------------------
+    | Kredensial diisi pada .env (GOOGLE_*). Bila kosong, tombol "Masuk dengan
+    | Google" akan menampilkan pesan bahwa login Google belum dikonfigurasi.
+    */
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
@@ -55,6 +69,7 @@ return [
         'voice_default' => env('EDGE_TTS_VOICE', 'jv-ID-DimasNeural'),
         'voice_dimas' => env('EDGE_TTS_VOICE_DIMAS', 'jv-ID-DimasNeural'),
         'voice_siti' => env('EDGE_TTS_VOICE_SITI', 'jv-ID-SitiNeural'),
+        'voice_feedback' => env('EDGE_TTS_VOICE_FEEDBACK', 'id-ID-ArdiNeural'),
     ],
 
     'gemini' => [

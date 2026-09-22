@@ -34,9 +34,9 @@ class SoalSeeder extends Seeder
                 'kunci' => ['jawaban' => 'A']],
 
             ['level' => 1, 'pembahasan' => 1, 'oleh' => 'guru', 'tipe' => Soal::TIPE_KUIS_SUARA, 'bobot' => 20,
-                'pertanyaan' => 'Ngucapna "Sugeng enjing" kanthi cetha.',
-                'opsi' => ['instruksi' => 'Pencet tombol mic banjur ngucapna salam kanthi cetha.'],
-                'kunci' => ['teks' => 'sugeng enjing']],
+                'pertanyaan' => 'Unenana "Urip iku mung mampir ngombe" kanthi cetha.',
+                'opsi' => ['instruksi' => 'Pencet tombol mic banjur unenana ukara kanthi cetha.'],
+                'kunci' => ['teks' => 'urip iku mung mampir ngombe']],
 
             ['level' => 1, 'pembahasan' => 1, 'oleh' => 'guru', 'tipe' => Soal::TIPE_PILIHAN_GANDA, 'bobot' => 10,
                 'pertanyaan' => 'Salam nalika wayah dalu yaiku ...',

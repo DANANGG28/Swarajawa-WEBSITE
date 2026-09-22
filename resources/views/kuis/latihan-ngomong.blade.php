@@ -10,13 +10,28 @@
         </div>
     @else
         <div class="flex flex-col gap-6">
-            <section class="rounded-3xl bg-surface-container-lowest p-6 md:p-7 border border-gray-100 shadow-[0_8px_20px_rgba(30,30,42,0.06)] flex flex-col gap-4">
+            <style>
+                /* Animasi mlebu: tembung-tembung katon siji-siji. Tanpa JS teks tetep katon. */
+                html.js-anim #tts-card .tts-word { opacity: 0; transform: translateY(10px); }
+                html.js-anim #tts-card.is-ready .tts-word {
+                    opacity: 1; transform: none;
+                    transition: opacity .4s cubic-bezier(.16,1,.3,1), transform .4s cubic-bezier(.16,1,.3,1);
+                    transition-delay: calc(var(--i, 0) * 42ms);
+                }
+                @media (prefers-reduced-motion: reduce) {
+                    html.js-anim #tts-card .tts-word { opacity: 1 !important; transform: none !important; transition: none !important; }
+                }
+            </style>
+            <script>document.documentElement.classList.add('js-anim');</script>
+
+            <section id="tts-card"
+                class="rounded-3xl bg-surface-container-lowest p-6 md:p-7 border border-gray-100 shadow-[0_8px_20px_rgba(30,30,42,0.06)] flex flex-col gap-4">
                 <button id="btn-tts" type="button"
-                    class="self-start inline-flex items-center gap-1.5 rounded-xl bg-surface-container px-3 py-1.5 text-primary-700 hover:bg-surface-container-high transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">volume_up</span>
-                    <span id="tts-label" class="font-body text-sm font-bold">Dengarkan Contoh Audio</span>
+                    class="self-start inline-flex items-center gap-1.5 rounded-xl bg-surface-container px-3 py-1.5 text-primary-700 hover:bg-surface-container-high disabled:opacity-70 disabled:cursor-wait transition-colors">
+                    <span id="tts-icon" class="material-symbols-outlined text-[18px]">volume_up</span>
+                    <span id="tts-label" class="font-body text-sm font-bold">Dengarkan Audio</span>
                 </button>
-                <p class="font-display text-[22px] md:text-2xl font-bold text-on-surface leading-snug tracking-tight">
+                <p id="tts-sentence" class="font-display text-[22px] md:text-2xl font-bold text-on-surface leading-snug tracking-tight">
                     &ldquo;{{ $soal['teks_referensi'] }}&rdquo;
                 </p>
             </section>
@@ -246,24 +261,71 @@
                 resetPlayback();
             });
 
-            const ttsBtn = document.getElementById('btn-tts');
-            const ttsLabel = document.getElementById('tts-label');
-            ttsBtn?.addEventListener('click', async () => {
-                if (ttsBtn.dataset.loading === '1') return;
-                ttsBtn.dataset.loading = '1';
-                ttsLabel.textContent = 'Nyetel swara...';
-                window.KuisFx.tap();
-                try {
-                    const res = await window.postJSON(window.KUIS.ttsUrl, { teks: SOAL.teks_referensi });
-                    const src = res.audio_url || (res.audio_base64 ? 'data:' + res.mime + ';base64,' + res.audio_base64 : null);
-                    if (src) new Audio(src).play().catch(() => {});
-                } catch (e) {
-                    // abaikan — swara mung pambantu
-                } finally {
-                    ttsBtn.dataset.loading = '0';
-                    ttsLabel.textContent = 'Dengarkan Contoh Audio';
+            (function initContohAudio() {
+                const card = document.getElementById('tts-card');
+                const sentence = document.getElementById('tts-sentence');
+                const btn = document.getElementById('btn-tts');
+                const icon = document.getElementById('tts-icon');
+                const label = document.getElementById('tts-label');
+                const teks = SOAL.teks_referensi;
+
+                if (! card || ! sentence) return;
+
+                let audio = null;
+
+                // Animasi mlebu: tembung-tembung katon siji-siji.
+                function reveal() {
+                    const words = sentence.textContent.trim().split(/\s+/).filter(Boolean);
+                    if (words.length) {
+                        sentence.textContent = '';
+                        const frag = document.createDocumentFragment();
+                        words.forEach((w, i) => {
+                            const span = document.createElement('span');
+                            span.className = 'tts-word';
+                            span.style.setProperty('--i', i);
+                            span.textContent = w;
+                            frag.appendChild(span);
+                            if (i < words.length - 1) frag.appendChild(document.createTextNode(' '));
+                        });
+                        sentence.appendChild(frag);
+                    }
+                    requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('is-ready')));
                 }
-            });
+
+                reveal();
+
+                function setLoading(on) {
+                    btn.disabled = on;
+                    btn.dataset.loading = on ? '1' : '0';
+                    if (icon) {
+                        icon.textContent = on ? 'progress_activity' : 'volume_up';
+                        icon.classList.toggle('animate-spin', on);
+                    }
+                    if (label) label.textContent = on ? 'Nyetel swara…' : 'Dengarkan Audio';
+                }
+
+                btn?.addEventListener('click', async () => {
+                    if (btn.dataset.loading === '1') return;
+                    if (! teks || ! window.postJSON) return;
+
+                    window.KuisFx?.tap();
+                    setLoading(true);
+                    try {
+                        // On-demand: saben play, TTS dienggo maneh (ora di-prefetch).
+                        const res = await window.postJSON(window.KUIS.ttsUrl, { teks: teks });
+                        const src = res.audio_url || (res.audio_base64 ? 'data:' + res.mime + ';base64,' + res.audio_base64 : null);
+                        if (! src) throw new Error('Audio kosong');
+
+                        if (audio) audio.pause();
+                        audio = new Audio(src);
+                        audio.play().catch(() => {});
+                    } catch (e) {
+                        alert(e.message);
+                    } finally {
+                        setLoading(false);
+                    }
+                });
+            })();
         </script>
     @endpush
 @endif

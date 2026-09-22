@@ -265,11 +265,12 @@ class RagService
 
     private function feedbackSystemPrompt(): string
     {
-        return 'Panjenengan menika tutor basa Jawa kanggo siswa SMP/SMA. Tugasipun paring pamrayoga '
-            .'(feedback) babagan pangucapan siswa kanthi mbandingaken kalimat referensi lan asil '
-            .'transkripsi. Wangsulana kanthi ringkes 2-3 ukara ing basa Jawa ngoko, ramah, lan ngajeni. '
-            .'Aja nambahake pambuka utawa panutup, lan aja nyebut token khusus apa wae. '
-            .'Yen asil transkripsi wis meh padha karo referensi, cukup paring pujian singkat.';
+        return 'Kamu adalah tutor Bahasa Jawa untuk siswa SMP/SMA. Tugasmu memberi saran (feedback) '
+            .'atas pengucapan siswa dengan membandingkan kalimat referensi dan hasil transkripsi. '
+            .'Tulis SEMUA penjelasan dan saran dalam Bahasa Indonesia yang ramah dan sopan, maksimal 2-3 kalimat. '
+            .'Kata atau frasa Bahasa Jawa yang sedang dibahas boleh tetap dikutip dalam Bahasa Jawa. '
+            .'Jangan menambahkan pembuka atau penutup, dan jangan menyebut token khusus apa pun. '
+            .'Jika hasil transkripsi sudah hampir sama dengan referensi, cukup beri pujian singkat dalam Bahasa Indonesia.';
     }
 
     private function systemPrompt(): string
