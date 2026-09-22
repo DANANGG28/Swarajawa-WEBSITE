@@ -48,7 +48,7 @@
                 </div>
                 <div>
                     <h3 class="font-heading text-base font-bold text-on-surface">Tambah Pembahasan Baru</h3>
-                    <p class="font-body text-xs text-gray-500 mt-0.5">Tentukan nama, urutan, dan deskripsi singkat pembahasan.</p>
+                    <p class="font-body text-xs text-gray-500 mt-0.5">Tentukan nama dan deskripsi singkat pembahasan.</p>
                 </div>
             </div>
 
@@ -56,15 +56,9 @@
                 @csrf
                 <input type="hidden" name="level_materi_id" value="{{ $level->id }}">
 
-                <label class="md:col-span-6 flex flex-col gap-1.5">
+                <label class="md:col-span-8 flex flex-col gap-1.5">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Nama Pembahasan</span>
                     <input type="text" name="nama" value="{{ old('nama') }}" required placeholder="cth: Salam & Sapaan"
-                           class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
-                </label>
-
-                <label class="md:col-span-2 flex flex-col gap-1.5">
-                    <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Urutan</span>
-                    <input type="number" name="urutan" min="0" value="{{ old('urutan', $pembahasanList->max('urutan') + 1) }}" required
                            class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 </label>
 
@@ -143,14 +137,9 @@
                                 <form method="POST" action="{{ route('guru.pembahasan.update', $pembahasan) }}" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                                     @csrf
                                     @method('PUT')
-                                    <label class="md:col-span-6 flex flex-col gap-1.5">
+                                    <label class="md:col-span-8 flex flex-col gap-1.5">
                                         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Nama Pembahasan</span>
                                         <input type="text" name="nama" value="{{ $pembahasan->nama }}" required
-                                               class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
-                                    </label>
-                                    <label class="md:col-span-2 flex flex-col gap-1.5">
-                                        <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Urutan</span>
-                                        <input type="number" name="urutan" min="0" value="{{ $pembahasan->urutan }}" required
                                                class="rounded-full border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                                     </label>
                                     <label class="md:col-span-4 flex flex-col gap-1.5">

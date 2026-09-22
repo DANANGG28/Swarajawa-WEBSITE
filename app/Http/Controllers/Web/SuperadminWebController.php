@@ -69,11 +69,13 @@ class SuperadminWebController extends Controller
             $sa->nip = null;
             $sa->jenis_kelamin = null;
             $sa->status_pegawaian = 'Superadmin';
+
             return $sa;
         });
 
         $gurus = $guruQuery->latest()->get()->map(function ($g) {
             $g->role = 'guru';
+
             return $g;
         });
 
@@ -131,8 +133,8 @@ class SuperadminWebController extends Controller
         }
 
         return view('superadmin.detail-guru', [
-            'judul' => 'Detail Akun ' . ($role === 'superadmin' ? 'Superadmin' : 'Guru'),
-            'subjudul' => 'Informasi profil, kontak, dan kredensial akun ' . ($role === 'superadmin' ? 'superadmin' : 'guru'),
+            'judul' => 'Detail Akun '.($role === 'superadmin' ? 'Superadmin' : 'Guru'),
+            'subjudul' => 'Informasi profil, kontak, dan kredensial akun '.($role === 'superadmin' ? 'superadmin' : 'guru'),
             'role' => 'superadmin',
             'active' => 'guru',
             'guru' => $pengelola,
@@ -155,8 +157,8 @@ class SuperadminWebController extends Controller
         }
 
         return view('superadmin.edit-guru', [
-            'judul' => 'Sunting Akun ' . ($role === 'superadmin' ? 'Superadmin' : 'Guru'),
-            'subjudul' => 'Ubah data profil, kontak, dan kredensial ' . ($role === 'superadmin' ? 'superadmin' : 'guru'),
+            'judul' => 'Sunting Akun '.($role === 'superadmin' ? 'Superadmin' : 'Guru'),
+            'subjudul' => 'Ubah data profil, kontak, dan kredensial '.($role === 'superadmin' ? 'superadmin' : 'guru'),
             'role' => 'superadmin',
             'active' => 'guru',
             'guru' => $pengelola,
@@ -518,7 +520,7 @@ class SuperadminWebController extends Controller
 
     public function topikUpdate(Request $request, Topik $topik): RedirectResponse
     {
-        $topik->update($this->validatedTopik($request));
+        $topik->update($this->validatedTopik($request, $topik));
 
         return redirect()->route('superadmin.topik')->with('sukses', 'Topik berhasil diperbarui.');
     }
@@ -602,7 +604,7 @@ class SuperadminWebController extends Controller
 
     public function levelMateriUpdate(Request $request, LevelMateri $levelMateri): RedirectResponse
     {
-        $levelMateri->update($this->validatedLevel($request));
+        $levelMateri->update($this->validatedLevel($request, $levelMateri));
 
         return redirect()->route('superadmin.level-materi')->with('sukses', 'Level materi berhasil diperbarui.');
     }
@@ -643,6 +645,7 @@ class SuperadminWebController extends Controller
     public function pembahasanStore(Request $request): RedirectResponse
     {
         $data = $this->validatedPembahasan($request, true);
+        $data['urutan'] = (Pembahasan::where('level_materi_id', $data['level_materi_id'])->max('urutan') ?? 0) + 1;
 
         Pembahasan::create($data);
 
@@ -653,7 +656,7 @@ class SuperadminWebController extends Controller
 
     public function pembahasanUpdate(Request $request, Pembahasan $pembahasan): RedirectResponse
     {
-        $pembahasan->update($this->validatedPembahasan($request));
+        $pembahasan->update($this->validatedPembahasan($request, false, $pembahasan));
 
         return redirect()
             ->route('superadmin.pembahasan', ['level_materi_id' => $pembahasan->level_materi_id])
@@ -848,11 +851,18 @@ class SuperadminWebController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatedLevel(Request $request): array
+    private function validatedLevel(Request $request, ?LevelMateri $level = null): array
     {
         return $request->validate([
             'topik_id' => ['nullable', 'integer', 'exists:topik,id'],
-            'nama_materi' => ['required', 'string', 'max:255'],
+            'nama_materi' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('level_materi', 'nama_materi')
+                    ->where('topik_id', $request->input('topik_id'))
+                    ->ignore($level?->id),
+            ],
             'deskripsi' => ['nullable', 'string'],
             'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
             'urutan' => ['required', 'integer', 'min:0'],
@@ -862,10 +872,10 @@ class SuperadminWebController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatedTopik(Request $request): array
+    private function validatedTopik(Request $request, ?Topik $topik = null): array
     {
         return $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
+            'nama' => ['required', 'string', 'max:255', Rule::unique('topik', 'nama')->ignore($topik?->id)],
             'deskripsi' => ['nullable', 'string'],
             'urutan' => ['required', 'integer', 'min:0'],
         ]);
@@ -957,12 +967,20 @@ class SuperadminWebController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatedPembahasan(Request $request, bool $withLevel = false): array
+    private function validatedPembahasan(Request $request, bool $withLevel = false, ?Pembahasan $pembahasan = null): array
     {
+        $levelId = $withLevel ? $request->integer('level_materi_id') : $pembahasan?->level_materi_id;
+
         $rules = [
-            'nama' => ['required', 'string', 'max:255'],
+            'nama' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('pembahasan', 'nama')
+                    ->where('level_materi_id', $levelId)
+                    ->ignore($pembahasan?->id),
+            ],
             'deskripsi' => ['nullable', 'string'],
-            'urutan' => ['required', 'integer', 'min:0'],
         ];
 
         if ($withLevel) {

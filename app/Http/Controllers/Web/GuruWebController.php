@@ -111,7 +111,7 @@ class GuruWebController extends Controller
 
     public function topikUpdate(Request $request, Topik $topik): RedirectResponse
     {
-        $topik->update($this->validatedTopik($request));
+        $topik->update($this->validatedTopik($request, $topik));
 
         return redirect()->route('guru.topik')->with('sukses', 'Topik berhasil diperbarui.');
     }
@@ -203,7 +203,7 @@ class GuruWebController extends Controller
 
     public function levelMateriUpdate(Request $request, LevelMateri $levelMateri): RedirectResponse
     {
-        $levelMateri->update($this->validatedLevel($request));
+        $levelMateri->update($this->validatedLevel($request, $levelMateri));
 
         $redirectParams = $levelMateri->topik_id ? ['topik_id' => $levelMateri->topik_id] : [];
 
@@ -252,6 +252,7 @@ class GuruWebController extends Controller
     public function pembahasanStore(Request $request): RedirectResponse
     {
         $data = $this->validatedPembahasan($request, true);
+        $data['urutan'] = (Pembahasan::where('level_materi_id', $data['level_materi_id'])->max('urutan') ?? 0) + 1;
 
         Pembahasan::create($data);
 
@@ -262,7 +263,7 @@ class GuruWebController extends Controller
 
     public function pembahasanUpdate(Request $request, Pembahasan $pembahasan): RedirectResponse
     {
-        $pembahasan->update($this->validatedPembahasan($request));
+        $pembahasan->update($this->validatedPembahasan($request, false, $pembahasan));
 
         return redirect()
             ->route('guru.pembahasan', ['level_materi_id' => $pembahasan->level_materi_id])
@@ -547,12 +548,20 @@ class GuruWebController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatedPembahasan(Request $request, bool $withLevel = false): array
+    private function validatedPembahasan(Request $request, bool $withLevel = false, ?Pembahasan $pembahasan = null): array
     {
+        $levelId = $withLevel ? $request->integer('level_materi_id') : $pembahasan?->level_materi_id;
+
         $rules = [
-            'nama' => ['required', 'string', 'max:255'],
+            'nama' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('pembahasan', 'nama')
+                    ->where('level_materi_id', $levelId)
+                    ->ignore($pembahasan?->id),
+            ],
             'deskripsi' => ['nullable', 'string'],
-            'urutan' => ['required', 'integer', 'min:0'],
         ];
 
         if ($withLevel) {
@@ -565,11 +574,18 @@ class GuruWebController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatedLevel(Request $request): array
+    private function validatedLevel(Request $request, ?LevelMateri $level = null): array
     {
         return $request->validate([
             'topik_id' => ['nullable', 'integer', 'exists:topik,id'],
-            'nama_materi' => ['required', 'string', 'max:255'],
+            'nama_materi' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('level_materi', 'nama_materi')
+                    ->where('topik_id', $request->input('topik_id'))
+                    ->ignore($level?->id),
+            ],
             'deskripsi' => ['nullable', 'string'],
             'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
             'urutan' => ['required', 'integer', 'min:0'],
@@ -579,10 +595,10 @@ class GuruWebController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatedTopik(Request $request): array
+    private function validatedTopik(Request $request, ?Topik $topik = null): array
     {
         return $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
+            'nama' => ['required', 'string', 'max:255', Rule::unique('topik', 'nama')->ignore($topik?->id)],
             'deskripsi' => ['nullable', 'string'],
             'urutan' => ['required', 'integer', 'min:0'],
         ]);

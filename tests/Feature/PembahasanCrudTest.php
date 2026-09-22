@@ -46,15 +46,14 @@ class PembahasanCrudTest extends TestCase
             ->assertOk()
             ->assertSee('Kelola Pembahasan');
 
-        // Tambah pembahasan.
+        // Tambah pembahasan (urutan otomatis).
         $this->actingAs($guru, 'guru')->post('/guru/pembahasan', [
             'level_materi_id' => $level->id,
             'nama' => 'Salam & Sapaan',
             'deskripsi' => 'Tetembungan salam',
-            'urutan' => 1,
         ])->assertRedirect();
 
-        $this->assertDatabaseHas('pembahasan', ['level_materi_id' => $level->id, 'nama' => 'Salam & Sapaan']);
+        $this->assertDatabaseHas('pembahasan', ['level_materi_id' => $level->id, 'nama' => 'Salam & Sapaan', 'urutan' => 1]);
 
         $pembahasan = Pembahasan::where('nama', 'Salam & Sapaan')->firstOrFail();
 
@@ -62,10 +61,9 @@ class PembahasanCrudTest extends TestCase
         $this->actingAs($guru, 'guru')->put('/guru/pembahasan/'.$pembahasan->id, [
             'nama' => 'Salam, Sapaan & Pakurmatan',
             'deskripsi' => 'Diperbarui',
-            'urutan' => 2,
         ])->assertRedirect();
 
-        $this->assertDatabaseHas('pembahasan', ['id' => $pembahasan->id, 'nama' => 'Salam, Sapaan & Pakurmatan', 'urutan' => 2]);
+        $this->assertDatabaseHas('pembahasan', ['id' => $pembahasan->id, 'nama' => 'Salam, Sapaan & Pakurmatan', 'urutan' => 1]);
 
         // Hapus pembahasan.
         $this->actingAs($guru, 'guru')->delete('/guru/pembahasan/'.$pembahasan->id)->assertRedirect();
@@ -84,20 +82,58 @@ class PembahasanCrudTest extends TestCase
         $this->actingAs($admin, 'superadmin')->post('/superadmin/pembahasan', [
             'level_materi_id' => $level->id,
             'nama' => 'Krama Inggil',
-            'urutan' => 1,
         ])->assertRedirect();
 
         $pembahasan = Pembahasan::where('nama', 'Krama Inggil')->firstOrFail();
 
         $this->actingAs($admin, 'superadmin')->put('/superadmin/pembahasan/'.$pembahasan->id, [
             'nama' => 'Krama Inggil & Alus',
-            'urutan' => 3,
         ])->assertRedirect();
 
-        $this->assertDatabaseHas('pembahasan', ['id' => $pembahasan->id, 'nama' => 'Krama Inggil & Alus', 'urutan' => 3]);
+        $this->assertDatabaseHas('pembahasan', ['id' => $pembahasan->id, 'nama' => 'Krama Inggil & Alus', 'urutan' => 1]);
 
         $this->actingAs($admin, 'superadmin')->delete('/superadmin/pembahasan/'.$pembahasan->id)->assertRedirect();
         $this->assertDatabaseMissing('pembahasan', ['id' => $pembahasan->id]);
+    }
+
+    public function test_pembahasan_name_must_be_unique_per_level(): void
+    {
+        $guru = Guru::factory()->create();
+        $level = $this->level();
+        $otherLevel = $this->level(2, 'Unggah-ungguh');
+
+        Pembahasan::create(['level_materi_id' => $level->id, 'nama' => 'Salam', 'urutan' => 1]);
+
+        // Duplikat di level yang sama ditolak.
+        $this->actingAs($guru, 'guru')->post('/guru/pembahasan', [
+            'level_materi_id' => $level->id,
+            'nama' => 'Salam',
+        ])->assertSessionHasErrors('nama');
+
+        // Nama sama di level berbeda tetap diperbolehkan.
+        $this->actingAs($guru, 'guru')->post('/guru/pembahasan', [
+            'level_materi_id' => $otherLevel->id,
+            'nama' => 'Salam',
+        ])->assertRedirect();
+
+        $this->assertDatabaseCount('pembahasan', 2);
+    }
+
+    public function test_pembahasan_urutan_is_auto_incremented_per_level(): void
+    {
+        $guru = Guru::factory()->create();
+        $level = $this->level();
+
+        foreach (['Salam', 'Pakurmatan', 'Tembung'] as $nama) {
+            $this->actingAs($guru, 'guru')->post('/guru/pembahasan', [
+                'level_materi_id' => $level->id,
+                'nama' => $nama,
+            ])->assertRedirect();
+        }
+
+        $this->assertDatabaseHas('pembahasan', ['nama' => 'Salam', 'urutan' => 1]);
+        $this->assertDatabaseHas('pembahasan', ['nama' => 'Pakurmatan', 'urutan' => 2]);
+        $this->assertDatabaseHas('pembahasan', ['nama' => 'Tembung', 'urutan' => 3]);
     }
 
     public function test_guru_can_create_soal_with_pembahasan(): void
