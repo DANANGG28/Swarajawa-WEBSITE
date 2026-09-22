@@ -17,6 +17,7 @@ use App\Services\TtsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -41,9 +42,11 @@ class SuperadminWebController extends Controller
             'stat' => [
                 'guru' => Guru::count(),
                 'siswa' => Siswa::count(),
+                'topik' => Topik::count(),
                 'level' => LevelMateri::count(),
                 'soal' => Soal::count(),
             ],
+            'topikList' => Topik::withCount('units')->orderBy('urutan')->get(),
             'levelTerbaru' => LevelMateri::withCount('soal')->orderBy('urutan')->get(),
         ]);
     }
@@ -52,66 +55,153 @@ class SuperadminWebController extends Controller
 
     public function guru(Request $request): View
     {
-        $query = Guru::query()->withCount('soal');
+        $guruQuery = Guru::query()->withCount('soal');
+        $superadminQuery = Superadmin::query();
 
         if ($request->filled('q')) {
             $term = '%'.$request->query('q').'%';
-            $query->where(fn ($q) => $q->where('nama_lengkap', 'like', $term)->orWhere('nip', 'like', $term));
+            $guruQuery->where(fn ($q) => $q->where('nama_lengkap', 'like', $term)->orWhere('nip', 'like', $term)->orWhere('email', 'like', $term));
+            $superadminQuery->where(fn ($q) => $q->where('nama_lengkap', 'like', $term)->orWhere('email', 'like', $term));
         }
 
+        $superadmins = $superadminQuery->latest()->get()->map(function ($sa) {
+            $sa->role = 'superadmin';
+            $sa->nip = null;
+            $sa->jenis_kelamin = null;
+            $sa->status_pegawaian = 'Superadmin';
+            return $sa;
+        });
+
+        $gurus = $guruQuery->latest()->get()->map(function ($g) {
+            $g->role = 'guru';
+            return $g;
+        });
+
+        $combined = $superadmins->concat($gurus)->sortByDesc(fn ($item) => $item->created_at)->values();
+
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 10;
+        $paginatedItems = $combined->slice(($page - 1) * $perPage, $perPage)->values();
+
+        $paginator = new LengthAwarePaginator(
+            $paginatedItems,
+            $combined->count(),
+            $perPage,
+            $page,
+            [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+                'query' => $request->query(),
+            ]
+        );
+
+        $currentUserId = Auth::guard('superadmin')->id();
+
         return view('superadmin.guru', [
-            'judul' => 'Akun Guru',
-            'subjudul' => 'Daftarkan dan kelola akun guru terverifikasi',
+            'judul' => 'Pengelola',
+            'subjudul' => 'Daftarkan dan kelola akun guru serta superadmin terverifikasi',
             'role' => 'superadmin',
             'active' => 'guru',
-            'guruList' => $query->latest()->paginate(10)->withQueryString(),
+            'guruList' => $paginator,
+            'currentUserId' => $currentUserId,
         ]);
     }
 
     public function guruCreate(): View
     {
         return view('superadmin.tambah-guru', [
-            'judul' => 'Daftarake Guru Anyar',
-            'subjudul' => 'Tambah akun guru anyar supaya bisa ngatur siswa lan bank soal',
+            'judul' => 'Daftarkan Pengelola Baru',
+            'subjudul' => 'Tambah akun guru atau superadmin baru untuk mengelola sistem Sinau Jowo',
             'role' => 'superadmin',
             'active' => 'guru',
         ]);
     }
 
-    public function guruDetail(Guru $guru): View
+    public function guruDetail(Request $request, string $id): View
     {
+        $role = $request->query('role', 'guru');
+        if ($role === 'superadmin') {
+            $pengelola = Superadmin::findOrFail($id);
+            $pengelola->role = 'superadmin';
+            $pengelola->nip = null;
+            $pengelola->jenis_kelamin = null;
+            $pengelola->status_pegawaian = 'Superadmin';
+        } else {
+            $pengelola = Guru::findOrFail($id);
+            $pengelola->role = 'guru';
+        }
+
         return view('superadmin.detail-guru', [
-            'judul' => 'Detail Akun Guru',
-            'subjudul' => 'Informasi profil, kontak, lan kredensial akun guru',
+            'judul' => 'Detail Akun ' . ($role === 'superadmin' ? 'Superadmin' : 'Guru'),
+            'subjudul' => 'Informasi profil, kontak, dan kredensial akun ' . ($role === 'superadmin' ? 'superadmin' : 'guru'),
             'role' => 'superadmin',
             'active' => 'guru',
-            'guru' => $guru,
+            'guru' => $pengelola,
+            'isSuperadmin' => ($role === 'superadmin'),
         ]);
     }
 
-    public function guruEdit(Guru $guru): View
+    public function guruEdit(Request $request, string $id): View
     {
+        $role = $request->query('role', 'guru');
+        if ($role === 'superadmin') {
+            $pengelola = Superadmin::findOrFail($id);
+            $pengelola->role = 'superadmin';
+            $pengelola->nip = null;
+            $pengelola->jenis_kelamin = null;
+            $pengelola->status_pegawaian = 'Superadmin';
+        } else {
+            $pengelola = Guru::findOrFail($id);
+            $pengelola->role = 'guru';
+        }
+
         return view('superadmin.edit-guru', [
-            'judul' => 'Sunting Akun Guru',
-            'subjudul' => 'Owahi data profil, informasi kontak, foto, lan kredensial guru',
+            'judul' => 'Sunting Akun ' . ($role === 'superadmin' ? 'Superadmin' : 'Guru'),
+            'subjudul' => 'Ubah data profil, kontak, dan kredensial ' . ($role === 'superadmin' ? 'superadmin' : 'guru'),
             'role' => 'superadmin',
             'active' => 'guru',
-            'guru' => $guru,
+            'guru' => $pengelola,
+            'isSuperadmin' => ($role === 'superadmin'),
         ]);
     }
 
     public function guruStore(Request $request): RedirectResponse
     {
+        $role = $request->input('role', 'guru');
+
+        if ($role === 'superadmin') {
+            $data = $request->validate([
+                'nama_lengkap' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'email', 'max:255', 'unique:superadmin,email'],
+                'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
+                'password' => ['required', 'string', 'min:6'],
+                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+            ], $this->validationMessages());
+
+            if ($request->hasFile('foto')) {
+                $folder = storage_path('image/superadmin');
+                if (! File::isDirectory($folder)) {
+                    File::makeDirectory($folder, 0755, true, true);
+                }
+                $filename = time().'_'.Str::slug($request->nama_lengkap).'.'.$request->file('foto')->getClientOriginalExtension();
+                $request->file('foto')->move($folder, $filename);
+                $data['foto'] = $filename;
+            }
+
+            Superadmin::create($data);
+
+            return redirect()->route('superadmin.guru')->with('sukses', 'Akun Superadmin berhasil didaftarkan.');
+        }
+
         $data = $request->validate([
-            'nip' => ['required', 'string', 'max:30', 'unique:guru,nip'],
+            'nip' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'status_pegawaian' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['required', 'email', 'max:255', 'unique:guru,email'],
             'password' => ['required', 'string', 'min:6'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
-        ]);
+        ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
             $folder = storage_path('image/guru');
@@ -125,21 +215,58 @@ class SuperadminWebController extends Controller
 
         Guru::create($data);
 
-        return redirect()->route('superadmin.guru')->with('sukses', 'Akun guru berhasil didaftarkan.');
+        return redirect()->route('superadmin.guru')->with('sukses', 'Akun Guru berhasil didaftarkan.');
     }
 
-    public function guruUpdate(Request $request, Guru $guru): RedirectResponse
+    public function guruUpdate(Request $request, string $id): RedirectResponse
     {
+        $role = $request->input('role', $request->query('role', 'guru'));
+
+        if ($role === 'superadmin') {
+            $superadmin = Superadmin::findOrFail($id);
+            $data = $request->validate([
+                'nama_lengkap' => ['sometimes', 'string', 'max:255'],
+                'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
+                'email' => ['sometimes', 'email', 'max:255', 'unique:superadmin,email,'.$superadmin->id],
+                'password' => ['nullable', 'string', 'min:6'],
+                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+            ], $this->validationMessages());
+
+            if ($request->hasFile('foto')) {
+                $folder = storage_path('image/superadmin');
+                if (! File::isDirectory($folder)) {
+                    File::makeDirectory($folder, 0755, true, true);
+                }
+                if ($superadmin->foto && File::exists($folder.'/'.$superadmin->foto)) {
+                    File::delete($folder.'/'.$superadmin->foto);
+                } elseif ($superadmin->foto && File::exists(resource_path('image/superadmin/'.$superadmin->foto))) {
+                    File::delete(resource_path('image/superadmin/'.$superadmin->foto));
+                }
+                $filename = time().'_'.Str::slug($request->nama_lengkap ?? $superadmin->nama_lengkap).'.'.$request->file('foto')->getClientOriginalExtension();
+                $request->file('foto')->move($folder, $filename);
+                $data['foto'] = $filename;
+            }
+
+            if (empty($data['password'])) {
+                unset($data['password']);
+            }
+
+            $superadmin->update($data);
+
+            return redirect()->route('superadmin.guru')->with('sukses', 'Data akun Superadmin berhasil diperbarui.');
+        }
+
+        $guru = Guru::findOrFail($id);
         $data = $request->validate([
-            'nip' => ['sometimes', 'string', 'max:30', 'unique:guru,nip,'.$guru->id],
+            'nip' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip,'.$guru->id],
             'nama_lengkap' => ['sometimes', 'string', 'max:255'],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
             'status_pegawaian' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:guru,email,'.$guru->id],
             'password' => ['nullable', 'string', 'min:6'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
-        ]);
+        ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
             $folder = storage_path('image/guru');
@@ -162,11 +289,33 @@ class SuperadminWebController extends Controller
 
         $guru->update($data);
 
-        return redirect()->route('superadmin.guru')->with('sukses', 'Data akun guru berhasil diperbarui.');
+        return redirect()->route('superadmin.guru')->with('sukses', 'Data akun Guru berhasil diperbarui.');
     }
 
-    public function guruDestroy(Guru $guru): RedirectResponse
+    public function guruDestroy(Request $request, string $id): RedirectResponse
     {
+        $role = $request->input('role', $request->query('role', 'guru'));
+
+        if ($role === 'superadmin') {
+            $currentAdminId = Auth::guard('superadmin')->id();
+            if ((int) $id === (int) $currentAdminId) {
+                return redirect()->route('superadmin.guru')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+            }
+
+            $superadmin = Superadmin::findOrFail($id);
+            if ($superadmin->foto && File::exists(storage_path('image/superadmin/'.$superadmin->foto))) {
+                File::delete(storage_path('image/superadmin/'.$superadmin->foto));
+            } elseif ($superadmin->foto && File::exists(resource_path('image/superadmin/'.$superadmin->foto))) {
+                File::delete(resource_path('image/superadmin/'.$superadmin->foto));
+            }
+
+            $superadmin->delete();
+
+            return redirect()->route('superadmin.guru')->with('sukses', 'Akun Superadmin berhasil dihapus.');
+        }
+
+        $guru = Guru::findOrFail($id);
+
         if ($guru->foto && File::exists(storage_path('image/guru/'.$guru->foto))) {
             File::delete(storage_path('image/guru/'.$guru->foto));
         } elseif ($guru->foto && File::exists(resource_path('image/guru/'.$guru->foto))) {
@@ -175,7 +324,7 @@ class SuperadminWebController extends Controller
 
         $guru->delete();
 
-        return redirect()->route('superadmin.guru')->with('sukses', 'Akun guru berhasil dihapus.');
+        return redirect()->route('superadmin.guru')->with('sukses', 'Akun Guru berhasil dihapus.');
     }
 
     // --------------------------------------------------------------- Siswa
@@ -242,15 +391,15 @@ class SuperadminWebController extends Controller
     public function siswaStore(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'nis' => ['required', 'string', 'max:30', 'unique:siswa,nis'],
+            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['required', 'email', 'max:255', 'unique:siswa,email'],
             'password' => ['required', 'string', 'min:6'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
-        ]);
+        ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
             $folder = storage_path('image/siswa');
@@ -273,15 +422,15 @@ class SuperadminWebController extends Controller
     public function siswaUpdate(Request $request, Siswa $siswa): RedirectResponse
     {
         $data = $request->validate([
-            'nis' => ['sometimes', 'string', 'max:30', 'unique:siswa,nis,'.$siswa->id],
+            'nis' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis,'.$siswa->id],
             'nama_lengkap' => ['sometimes', 'string', 'max:255'],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:siswa,email,'.$siswa->id],
             'password' => ['nullable', 'string', 'min:6'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
-        ]);
+        ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
             $folder = storage_path('image/siswa');
@@ -835,6 +984,27 @@ class SuperadminWebController extends Controller
             Soal::TIPE_PUZZLE_PAKAIAN_ADAT => 'Puzzle Pakaian Adat',
             Soal::TIPE_MENULIS_AKSARA => 'Menulis Aksara (Tracing)',
             Soal::TIPE_KUIS_SUARA => 'Kuis Suara (TTS/STT)',
+        ];
+    }
+
+    /**
+     * Pesan kustom validasi form Superadmin.
+     *
+     * @return array<string, string>
+     */
+    private function validationMessages(): array
+    {
+        return [
+            'no_telpon.regex' => 'Nomor telepon hanya boleh berisi angka.',
+            'no_telpon.min' => 'Nomor telepon minimal 9 digit.',
+            'no_telpon.max' => 'Nomor telepon maksimal 16 digit.',
+            'nip.regex' => 'NIP hanya boleh berisi angka.',
+            'nip.min' => 'NIP minimal 8 digit.',
+            'nip.max' => 'NIP maksimal 25 digit.',
+            'nis.regex' => 'NIS hanya boleh berisi angka.',
+            'nis.min' => 'NIS minimal 4 digit.',
+            'nis.max' => 'NIS maksimal 20 digit.',
+            'urutan.min' => 'Nomor urutan minimal 1.',
         ];
     }
 }

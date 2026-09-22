@@ -14,9 +14,9 @@
         <nav class="flex items-center gap-2 font-caption text-caption text-gray-500">
             <a href="{{ route('superadmin.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
             <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-            <a href="{{ route('superadmin.guru') }}" class="hover:text-primary-600 transition-colors">Akun Guru</a>
+            <a href="{{ route('superadmin.guru') }}" class="hover:text-primary-600 transition-colors">Pengelola</a>
             <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-            <span class="text-on-surface font-bold">Daftarkan Guru Baru</span>
+            <span class="text-on-surface font-bold">Daftarkan Pengelola Baru</span>
         </nav>
 
         {{-- Hero Header Banner --}}
@@ -31,14 +31,14 @@
                 <div class="flex flex-col gap-1.5 min-w-0">
                     <div class="flex items-center gap-2 flex-wrap">
                         <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                            Daftarkan Guru Baru
+                            Daftarkan Pengelola Baru
                         </h2>
-                        <span class="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-label-upper text-[11px] font-bold tracking-wider uppercase">
-                            Superadmin
+                        <span id="roleBannerBadge" class="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-label-upper text-[11px] font-bold tracking-wider uppercase">
+                            Guru
                         </span>
                     </div>
                     <p class="font-body text-body text-white/90">
-                        Tambah akun guru terverifikasi untuk membuka akses manajemen siswa dan penyusunan bank soal Sinau Jowo.
+                        Tambah akun guru pengajar atau akun superadmin pengelola sistem Sinau Jowo.
                     </p>
                 </div>
             </div>
@@ -52,20 +52,59 @@
                         <span class="material-symbols-outlined text-[24px]">assignment_ind</span>
                     </div>
                     <div>
-                        <h3 class="font-heading text-heading font-bold text-on-surface">Formulir Data Akun Guru</h3>
+                        <h3 class="font-heading text-heading font-bold text-on-surface">Formulir Pendaftaran Pengelola</h3>
                         <p class="font-caption text-caption text-gray-500">Semua data yang bertanda (*) wajib diisi dengan benar</p>
                     </div>
                 </div>
             </div>
 
+            @if ($errors->any())
+                <div class="p-4 rounded-2xl bg-error-container/20 border border-error/30 text-error flex items-start gap-3 mb-6">
+                    <span class="material-symbols-outlined text-[22px] shrink-0 mt-0.5">error</span>
+                    <div class="flex flex-col gap-1">
+                        <span class="font-body text-sm font-bold">Terdapat kesalahan pada formulir pendaftaran:</span>
+                        <ul class="list-disc list-inside text-xs space-y-0.5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('superadmin.guru.store') }}" enctype="multipart/form-data" class="flex flex-col gap-6">
                 @csrf
 
-                {{-- Bagian Foto Profil Guru --}}
-                <div class="flex flex-col gap-4">
+                {{-- Bagian Pemilihan Role / Peran --}}
+                <div class="flex flex-col gap-2 p-4 sm:p-5 rounded-2xl bg-primary-50/70 border border-primary-100/80">
+                    <label class="flex flex-col gap-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-primary-900 font-bold flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[19px] text-primary-600">admin_panel_settings</span>
+                                <span>Pilih Role / Peran Akun <span class="text-error">*</span></span>
+                            </span>
+                            <span id="roleBadgePill" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                Guru
+                            </span>
+                        </div>
+                        <div class="relative">
+                            <select name="role" id="roleSelect" required onchange="handleRoleChange(this.value)"
+                                    class="w-full rounded-xl border border-primary-200 bg-white px-4 py-3 font-body text-body font-semibold text-gray-800 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all cursor-pointer">
+                                <option value="guru" {{ old('role', 'guru') === 'guru' ? 'selected' : '' }}>Guru (Pengajar Bahasa Jawa & Manajemen Soal)</option>
+                                <option value="superadmin" {{ old('role') === 'superadmin' ? 'selected' : '' }}>Superadmin (Administrator Penuh Sistem)</option>
+                            </select>
+                        </div>
+                        <p id="roleDescription" class="font-caption text-caption text-gray-600 mt-1">
+                            Akun Guru memiliki akses ke manajemen butir soal, level materi, pembahasan, dan pemantauan siswa.
+                        </p>
+                    </label>
+                </div>
+
+                {{-- Bagian Foto Profil Guru (Khusus Guru) --}}
+                <div class="flex flex-col gap-4" id="fotoSection">
                     <div class="flex items-center gap-2 text-primary-700 font-label-upper text-label-upper font-bold uppercase tracking-wider pb-1 border-b border-gray-50">
                         <span class="material-symbols-outlined text-[18px]">add_a_photo</span>
-                        Foto Profil Guru (Opsional)
+                        Foto Profil (Opsional)
                     </div>
 
                     <div class="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-2xl bg-surface-container-low border border-gray-100">
@@ -78,33 +117,23 @@
                             <input type="file" name="foto" id="fotoInput" accept="image/jpeg,image/png,image/jpg,image/webp"
                                    onchange="previewImage(this)"
                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-600 file:text-white hover:file:bg-primary-700 cursor-pointer">
-                            <span class="font-caption text-caption text-gray-400">Format: JPG, PNG, WEBP (Maksimal 2 MB). Disimpan di storage/image/guru</span>
+                            <span class="font-caption text-caption text-gray-400">Format: JPG, PNG, WEBP (Maksimal 2 MB)</span>
+                            @error('foto')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
-                {{-- Bagian 1: Data Pribadi & Kepegawaian --}}
+                {{-- Bagian 1: Data Profil & Identitas --}}
                 <div class="flex flex-col gap-4">
                     <div class="flex items-center gap-2 text-primary-700 font-label-upper text-label-upper font-bold uppercase tracking-wider pb-1 border-b border-gray-50">
                         <span class="material-symbols-outlined text-[18px]">person</span>
-                        Data Pribadi & Kepegawaian
+                        <span>Data Profil & Identitas</span>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {{-- NIP --}}
-                        <label class="flex flex-col gap-1.5">
-                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">
-                                NIP <span class="text-error">*</span>
-                            </span>
-                            <div class="relative">
-                                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">badge</span>
-                                <input type="text" name="nip" value="{{ old('nip') }}" required
-                                       placeholder="Contoh: 198501012010011001"
-                                       class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
-                            </div>
-                        </label>
-
-                        {{-- Nama Lengkap --}}
+                    <div class="grid grid-cols-1 gap-4">
+                        {{-- Nama Lengkap (Wajib untuk Guru & Superadmin) --}}
                         <label class="flex flex-col gap-1.5">
                             <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">
                                 Nama Lengkap <span class="text-error">*</span>
@@ -112,9 +141,34 @@
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">id_card</span>
                                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required
-                                       placeholder="Nama guru dan gelar akademik"
+                                       autocomplete="name" maxlength="150"
+                                       placeholder="Nama lengkap pengelola beserta gelar jika ada"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
+                            @error('nama_lengkap')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
+                        </label>
+                    </div>
+
+                    {{-- Data Khusus Guru (NIP, Jenis Kelamin, Status Pegawaian) --}}
+                    <div id="guruSpecificFields" class="grid grid-cols-1 sm:grid-cols-3 gap-4 transition-all">
+                        {{-- NIP --}}
+                        <label class="flex flex-col gap-1.5">
+                            <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">
+                                NIP <span class="text-error">*</span>
+                            </span>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">badge</span>
+                                <input type="text" name="nip" id="nipInput" value="{{ old('nip') }}" required
+                                       inputmode="numeric" pattern="[0-9]*" maxlength="25"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                       placeholder="Contoh: 198501012010011001"
+                                       class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
+                            </div>
+                            @error('nip')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
 
                         {{-- Jenis Kelamin --}}
@@ -124,12 +178,15 @@
                             </span>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">wc</span>
-                                <select name="jenis_kelamin"
+                                <select name="jenis_kelamin" id="jkInput" required
                                         class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                                     <option value="L" {{ old('jenis_kelamin') === 'L' ? 'selected' : '' }}>Laki-laki (L)</option>
                                     <option value="P" {{ old('jenis_kelamin') === 'P' ? 'selected' : '' }}>Perempuan (P)</option>
                                 </select>
                             </div>
+                            @error('jenis_kelamin')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
 
                         {{-- Status Pegawaian --}}
@@ -140,9 +197,12 @@
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">work</span>
                                 <input type="text" name="status_pegawaian" value="{{ old('status_pegawaian') }}"
-                                       placeholder="PNS / PPPK / GTT / Tetap Yayasan"
+                                       placeholder="PNS / PPPK / GTT / Tetap"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
+                            @error('status_pegawaian')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
                     </div>
                 </div>
@@ -163,9 +223,13 @@
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">mail</span>
                                 <input type="email" name="email" value="{{ old('email') }}" required
-                                       placeholder="guru@sekolah.sch.id"
+                                       autocomplete="email" maxlength="255"
+                                       placeholder="pengelola@sekolah.sch.id"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
+                            @error('email')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
 
                         {{-- No Telpon --}}
@@ -175,10 +239,15 @@
                             </span>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">call</span>
-                                <input type="text" name="no_telpon" value="{{ old('no_telpon') }}"
+                                <input type="tel" name="no_telpon" value="{{ old('no_telpon') }}"
+                                       inputmode="numeric" pattern="[0-9]*" maxlength="16"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                        placeholder="08xxxxxxxxxx"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>
+                            @error('no_telpon')
+                                <span class="text-error text-xs font-caption">{{ $message }}</span>
+                            @enderror
                         </label>
                     </div>
                 </div>
@@ -199,10 +268,13 @@
                         </div>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">key</span>
-                            <input type="password" name="password" required
-                                   placeholder="Ketik kata sandi awal akun guru..."
+                            <input type="password" name="password" required minlength="6"
+                                   placeholder="Ketik kata sandi awal akun..."
                                    class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                         </div>
+                        @error('password')
+                            <span class="text-error text-xs font-caption">{{ $message }}</span>
+                        @enderror
                     </label>
                 </div>
 
@@ -215,7 +287,7 @@
                     <button type="submit"
                             class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-body font-bold px-8 py-3 shadow-md hover:shadow-lg transition-all">
                         <span class="material-symbols-outlined text-[20px]">save</span>
-                        <span>Simpan Akun Guru</span>
+                        <span id="submitBtnText">Simpan Akun Guru</span>
                     </button>
                 </div>
             </form>
@@ -236,5 +308,48 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
+        function handleRoleChange(role) {
+            const guruFields = document.getElementById('guruSpecificFields');
+            const nipInput = document.getElementById('nipInput');
+            const jkInput = document.getElementById('jkInput');
+            const roleBadge = document.getElementById('roleBadgePill');
+            const roleBanner = document.getElementById('roleBannerBadge');
+            const roleDesc = document.getElementById('roleDescription');
+            const submitText = document.getElementById('submitBtnText');
+
+            if (role === 'superadmin') {
+                if (guruFields) guruFields.classList.add('hidden');
+                if (nipInput) nipInput.removeAttribute('required');
+                if (jkInput) jkInput.removeAttribute('required');
+
+                if (roleBadge) {
+                    roleBadge.textContent = 'Superadmin';
+                    roleBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase bg-primary-100 text-primary-800 border border-primary-200';
+                }
+                if (roleBanner) roleBanner.textContent = 'Superadmin';
+                if (roleDesc) roleDesc.textContent = 'Akun Superadmin memiliki hak akses penuh ke seluruh pengelolaan sistem, kurikulum, dan manajemen pengguna.';
+                if (submitText) submitText.textContent = 'Simpan Akun Superadmin';
+            } else {
+                if (guruFields) guruFields.classList.remove('hidden');
+                if (nipInput) nipInput.setAttribute('required', 'required');
+                if (jkInput) jkInput.setAttribute('required', 'required');
+
+                if (roleBadge) {
+                    roleBadge.textContent = 'Guru';
+                    roleBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200';
+                }
+                if (roleBanner) roleBanner.textContent = 'Guru';
+                if (roleDesc) roleDesc.textContent = 'Akun Guru memiliki akses ke manajemen butir soal, level materi, pembahasan, dan pemantauan siswa.';
+                if (submitText) submitText.textContent = 'Simpan Akun Guru';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('roleSelect');
+            if (roleSelect) {
+                handleRoleChange(roleSelect.value);
+            }
+        });
     </script>
 @endsection

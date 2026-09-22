@@ -129,27 +129,82 @@
             : collect();
     @endphp
 
-    <header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-md border-b border-surface-container">
-        <div class="max-w-7xl mx-auto h-16 px-5 md:px-10 flex items-center justify-between">
-            <a href="{{ route('siswa.dashboard') }}" class="flex items-center gap-2.5">
-                <span class="w-9 h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shadow-sm">
-                    <span class="material-symbols-outlined text-[20px]">forum</span>
-                </span>
-                <span class="font-heading text-base font-extrabold text-on-surface tracking-tight">Tanya Basa AI</span>
-            </a>
-            <div class="flex items-center gap-2">
-                <span class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span class="font-caption text-xs font-bold uppercase tracking-wider">Online AI RAG</span>
-                </span>
-                <a href="{{ route('siswa.profil') ?? '#' }}" class="w-9 h-9 rounded-full bg-primary-700 text-white font-bold text-xs flex items-center justify-center">{{ $userInisial }}</a>
+
+
+    <!-- HEADER KHUSUS MOBILE DENGAN TOMBOL DI POJOK KIRI ATAS -->
+    <header class="lg:hidden sticky top-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md px-4 py-3 border-b border-surface-container flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
+        <!-- Tombol Pojok Kiri Atas: Buka Riwayat Chat -->
+        <button type="button" id="btn-open-mobile-history" class="w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary-700 flex items-center justify-center transition-all active:scale-95 shadow-sm" title="Buka Riwayat Obrolan">
+            <span class="material-symbols-outlined text-[22px] text-primary-700">history</span>
+        </button>
+
+        <!-- Identitas Chat Asisten -->
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-primary-700 text-white flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">smart_toy</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-heading text-xs font-bold text-on-surface leading-tight">Semar AI</span>
+                <span class="font-caption text-[10px] text-primary-600 font-semibold">Tanya Basa Jawa</span>
             </div>
         </div>
+
+        <!-- Tombol Kembali ke Beranda -->
+        <a href="{{ route('siswa.dashboard') }}" title="Bali menyang Beranda" class="w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary-700 flex items-center justify-center transition-all active:scale-95 shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        </a>
     </header>
 
-    <main class="w-full pt-16 flex-1 bg-surface">
-        <div class="flex flex-col lg:flex-row w-full max-w-7xl mx-auto min-h-[calc(100vh-4rem)] px-5 md:px-10 py-4 gap-6">
-            <aside class="w-full lg:w-72 shrink-0 flex flex-col justify-between bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-surface-container h-fit lg:h-[calc(100vh-7rem)] lg:sticky lg:top-20 z-10">
+    <!-- MOBILE OVERLAY BACKDROP & DRAWER RIWAYAT CHAT -->
+    <div id="mobile-history-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"></div>
+
+    <div id="mobile-history-drawer" class="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm bg-surface-container-lowest z-50 shadow-2xl flex flex-col justify-between p-4 transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden border-r border-surface-container">
+        <div class="flex flex-col gap-3 overflow-hidden flex-1">
+            <!-- Header Drawer Riwayat dengan Tombol Kembali -->
+            <div class="flex items-center justify-between pb-3 border-b border-surface-container">
+                <div class="flex items-center gap-2">
+                    <button type="button" id="btn-close-mobile-history" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary-700 flex items-center justify-center transition-all active:scale-95" title="Tutup Riwayat">
+                        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    </button>
+                    <span class="font-heading text-sm font-bold text-on-surface">Riwayat Obrolan</span>
+                </div>
+                <a href="{{ route('siswa.dashboard') }}" title="Bali menyang Beranda" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary-700 flex items-center justify-center transition-all active:scale-95">
+                    <span class="material-symbols-outlined text-[18px]">home</span>
+                </a>
+            </div>
+
+            <!-- Tombol Obrolan Baru -->
+            <button type="button" data-action="chat-baru"
+                class="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-primary-700 hover:bg-primary text-white rounded-xl font-body text-xs font-bold shadow-sm transition-all active:scale-95">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                <span>Obrolan Anyar</span>
+            </button>
+
+            <!-- Daftar Riwayat Obrolan Mobile -->
+            <div class="flex-1 flex flex-col gap-1 overflow-y-auto pr-1 text-on-surface chat-history-list" id="mobile-chat-history">
+                @forelse($chatSessions as $sesi)
+                    <div class="group flex items-center gap-1 rounded-xl transition-colors" data-session-id="{{ $sesi->id }}">
+                        <button type="button" data-action="load-sesi" data-session-id="{{ $sesi->id }}"
+                            class="flex-1 min-w-0 flex items-center gap-2 px-2.5 py-2 rounded-xl text-left text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors">
+                            <span class="material-symbols-outlined text-[16px] text-gray-500 group-hover:text-primary-600 shrink-0">chat_bubble_outline</span>
+                            <span class="truncate text-xs font-medium" data-judul>{{ $sesi->judul }}</span>
+                        </button>
+                        <button type="button" data-action="hapus-sesi" data-session-id="{{ $sesi->id }}"
+                            class="flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-400 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Hapus riwayat">
+                            <span class="material-symbols-outlined text-[16px]">delete</span>
+                        </button>
+                    </div>
+                @empty
+                    <div class="px-3 py-2 text-gray-500 italic text-xs" data-empty-state>Belum ada riwayat obrolan</div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    <main class="w-full pt-4 lg:pt-8 flex-1 bg-surface">
+        <div class="flex flex-col lg:flex-row w-full max-w-7xl mx-auto min-h-[calc(100vh-4rem)] px-4 sm:px-6 md:px-10 py-2 sm:py-4 gap-6">
+            <!-- SIDEBAR KHUSUS DESKTOP -->
+            <aside class="hidden lg:flex lg:flex-col lg:w-72 shrink-0 justify-between bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-surface-container h-[calc(100vh-7rem)] lg:sticky lg:top-20 z-10">
                 <div class="flex flex-col gap-4 overflow-hidden">
                     <div class="flex items-center gap-2 pb-3 border-b border-surface-container">
                         <a href="{{ route('siswa.dashboard') }}" title="Bali menyang Beranda"
@@ -165,7 +220,7 @@
                         <span>Obrolan Anyar</span>
                     </button>
 
-                    <div class="flex flex-col gap-1 overflow-y-auto pr-1 text-on-surface" id="sidebar-chat-history">
+                    <div class="flex flex-col gap-1 overflow-y-auto pr-1 text-on-surface chat-history-list" id="sidebar-chat-history">
                         @forelse($chatSessions as $sesi)
                             <div class="group flex items-center gap-1 rounded-xl transition-colors" data-session-id="{{ $sesi->id }}">
                                 <button type="button" data-action="load-sesi" data-session-id="{{ $sesi->id }}"
@@ -183,20 +238,12 @@
                         @endforelse
                     </div>
                 </div>
-
-                <form method="POST" action="{{ route('keluar') }}" class="pt-4 mt-4 border-t border-surface-container">
-                    @csrf
-                    <button type="submit" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-bold uppercase tracking-wide text-gray-500 hover:text-error hover:bg-error-container/30 rounded-xl transition-all active:scale-95">
-                        <span class="material-symbols-outlined text-[18px]">logout</span>
-                        <span>Keluar</span>
-                    </button>
-                </form>
             </aside>
 
             <div class="flex-1 flex flex-col max-w-3xl mx-auto w-full pb-8">
-                <div class="flex flex-col items-center text-center mb-8">
-                    <h1 class="font-heading text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight mb-1">Tanya apa saja seputar Basa Jawa</h1>
-                    <p class="font-body text-sm text-on-surface-variant max-w-lg">Tingkatan unggah-ungguh, aksara Jawa, peribahasa, atau terjemahan krama alus langsung terverifikasi.</p>
+                <div class="flex flex-col items-center text-center mb-6 sm:mb-8">
+                    <h1 class="font-heading text-xl sm:text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight mb-1">Tanya apa saja seputar Basa Jawa</h1>
+                    <p class="font-body text-xs sm:text-sm text-on-surface-variant max-w-lg">Tingkatan unggah-ungguh, aksara Jawa, peribahasa, atau terjemahan krama alus langsung terverifikasi.</p>
                 </div>
 
                 <div class="flex flex-col gap-6 w-full" id="chat-messages">
@@ -205,36 +252,36 @@
                             <span class="material-symbols-outlined text-[20px]">smart_toy</span>
                         </div>
                         <div class="flex flex-col gap-3 flex-1 min-w-0">
-                            <div class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm text-on-surface border border-surface-container">
-                                <p class="font-body text-sm leading-relaxed">
+                            <div class="rounded-2xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm text-on-surface border border-surface-container">
+                                <p class="font-body text-xs sm:text-sm leading-relaxed">
                                     Sugeng rawuh, <strong class="text-primary-700">{{ $userNama }}</strong>! Kula <strong class="text-primary-700">Semar AI</strong>, rencang panjenengan anggenipun sinau Basa Jawi. Sumangga tanglet bab unggah-ungguh basa (Ngoko, Krama, Krama Alus), aksara Jawa, tembung saroja, peribahasa, tuwin kabudayan Jawa.
                                 </p>
                             </div>
                             <div class="flex flex-wrap gap-2">
-                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-4 py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Ubahlah ke Krama Alus: 'Saya mau makan bersama kakek'">Ubah ke Krama Alus: &ldquo;Saya mau makan bersama kakek&rdquo;</button>
-                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-4 py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Apa bedane tembung 'turu', 'tilem', lan 'sare'?">Bedane tembung &lsquo;turu&rsquo;, &lsquo;tilem&rsquo;, lan &lsquo;sare&rsquo;?</button>
-                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-4 py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Apa tegese bebasan 'Becik ketitik ala ketara'?">Tegese bebasan &lsquo;Becik ketitik ala ketara&rsquo;</button>
-                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-4 py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Piye panganggone sandhangan wulu lan suku ing aksara Jawa?">Panganggone sandhangan wulu lan suku</button>
+                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Ubahlah ke Krama Alus: 'Saya mau makan bersama kakek'">Ubah ke Krama Alus: &ldquo;Saya mau makan bersama kakek&rdquo;</button>
+                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Apa bedane tembung 'turu', 'tilem', lan 'sare'?">Bedane tembung &lsquo;turu&rsquo;, &lsquo;tilem&rsquo;, lan &lsquo;sare&rsquo;?</button>
+                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Apa tegese bebasan 'Becik ketitik ala ketara'?">Tegese bebasan &lsquo;Becik ketitik ala ketara&rsquo;</button>
+                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Piye panganggone sandhangan wulu lan suku ing aksara Jawa?">Panganggone sandhangan wulu lan suku</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="sticky bottom-4 w-full pt-4 mt-6">
-                    <div class="rounded-full bg-surface-container-lowest border border-surface-container p-1.5 pl-4 pr-1.5 flex items-center gap-2 shadow-md">
+                    <div class="rounded-full bg-surface-container-lowest border border-surface-container p-1.5 pl-3.5 sm:pl-4 pr-1.5 flex items-center gap-2 shadow-md">
                         <button type="button" id="micBtn" title="Ketik nganggo swara"
                             class="w-9 h-9 rounded-full hover:bg-surface-container text-on-surface-variant hover:text-primary-600 flex items-center justify-center transition-colors shrink-0">
                             <span class="material-symbols-outlined text-[20px]">mic</span>
                         </button>
-                        <input type="text" id="chat-input-field" placeholder="Ketik pitakon basa Jawa utawa unggah-ungguh ing kene..." autocomplete="off"
-                            class="flex-1 min-w-0 bg-transparent border-none outline-none font-body text-sm text-on-surface placeholder:text-gray-500 py-1">
+                        <input type="text" id="chat-input-field" placeholder="Ketik pitakon basa Jawa ing kene..." autocomplete="off"
+                            class="flex-1 min-w-0 bg-transparent border-none outline-none font-body text-xs sm:text-sm text-on-surface placeholder:text-gray-500 py-1">
                         <button type="button" id="chat-send-btn" title="Kirim pitakon"
                             class="w-9 h-9 rounded-full bg-primary-700 hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all active:scale-95 shadow-sm shrink-0">
                             <span class="material-symbols-outlined text-[20px]">send</span>
                         </button>
                     </div>
-                    <p class="text-center font-caption text-[11px] text-gray-500 mt-2 px-2">
-                        Asisten Tanya Bahasa menjawab berdasarkan basis data korpus resmi sekolah. Tidak mengarang jawaban di luar materi.
+                    <p class="text-center font-caption text-[10px] sm:text-[11px] text-gray-500 mt-2 px-2">
+                        Asisten Tanya Bahasa menjawab berdasarkan basis data korpus resmi sekolah.
                     </p>
                 </div>
             </div>
@@ -258,10 +305,35 @@
             const container = document.getElementById('chat-messages');
             const input = document.getElementById('chat-input-field');
             const sendBtn = document.getElementById('chat-send-btn');
-            const historyList = document.getElementById('sidebar-chat-history');
             const welcomeHtml = container ? container.innerHTML : '';
             let activeSessionId = null;
             let busy = false;
+
+            // Mobile Drawer Controls
+            const openMobileHistoryBtn = document.getElementById('btn-open-mobile-history');
+            const closeMobileHistoryBtn = document.getElementById('btn-close-mobile-history');
+            const mobileHistoryDrawer = document.getElementById('mobile-history-drawer');
+            const mobileHistoryBackdrop = document.getElementById('mobile-history-backdrop');
+
+            function openMobileHistory() {
+                if (! mobileHistoryDrawer || ! mobileHistoryBackdrop) return;
+                mobileHistoryBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+                mobileHistoryBackdrop.classList.add('opacity-100');
+                mobileHistoryDrawer.classList.remove('-translate-x-full');
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function closeMobileHistory() {
+                if (! mobileHistoryDrawer || ! mobileHistoryBackdrop) return;
+                mobileHistoryBackdrop.classList.remove('opacity-100');
+                mobileHistoryBackdrop.classList.add('opacity-0', 'pointer-events-none');
+                mobileHistoryDrawer.classList.add('-translate-x-full');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            if (openMobileHistoryBtn) openMobileHistoryBtn.addEventListener('click', openMobileHistory);
+            if (closeMobileHistoryBtn) closeMobileHistoryBtn.addEventListener('click', closeMobileHistory);
+            if (mobileHistoryBackdrop) mobileHistoryBackdrop.addEventListener('click', closeMobileHistory);
 
             function fromTemplate(html) {
                 const tpl = document.createElement('template');
@@ -276,8 +348,8 @@
             function userBubble(text) {
                 const node = fromTemplate(`
                     <div class="flex justify-end w-full">
-                        <div class="bg-primary-700 text-white px-5 py-3.5 rounded-2xl rounded-br-md max-w-xl shadow-md">
-                            <p class="font-body text-sm leading-relaxed whitespace-pre-wrap" data-text></p>
+                        <div class="bg-primary-700 text-white px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl rounded-br-md max-w-xl shadow-md">
+                            <p class="font-body text-xs sm:text-sm leading-relaxed whitespace-pre-wrap" data-text></p>
                         </div>
                     </div>
                 `);
@@ -287,14 +359,14 @@
 
             function botBubble(label) {
                 const node = fromTemplate(`
-                    <div class="flex items-start gap-3 w-full">
-                        <div class="w-9 h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+                    <div class="flex items-start gap-2.5 sm:gap-3 w-full">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined text-[18px] sm:text-[20px]">smart_toy</span>
                         </div>
                         <div class="flex flex-col gap-2 flex-1 min-w-0">
-                            <div class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm text-on-surface border border-surface-container">
+                            <div class="rounded-2xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm text-on-surface border border-surface-container">
                                 <span class="block font-label-upper text-[10px] uppercase tracking-wider text-gray-500 mb-1">${label}</span>
-                                <p class="font-body text-sm leading-relaxed whitespace-pre-wrap" data-text></p>
+                                <p class="font-body text-xs sm:text-sm leading-relaxed whitespace-pre-wrap" data-text></p>
                                 <div class="hidden flex-col gap-1 pt-2 mt-2 border-t border-surface-container" data-sources></div>
                             </div>
                         </div>
@@ -305,11 +377,11 @@
 
             function typingIndicator() {
                 return fromTemplate(`
-                    <div class="flex items-start gap-3 w-full" data-typing>
-                        <div class="w-9 h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+                    <div class="flex items-start gap-2.5 sm:gap-3 w-full" data-typing>
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined text-[18px] sm:text-[20px]">smart_toy</span>
                         </div>
-                        <div class="bg-surface-container-lowest px-5 py-4 rounded-2xl border border-surface-container flex items-center gap-1.5 shadow-sm">
+                        <div class="bg-surface-container-lowest px-4 sm:px-5 py-3 sm:py-4 rounded-2xl border border-surface-container flex items-center gap-1.5 shadow-sm">
                             <span class="typing-dot w-2 h-2 rounded-full bg-primary-500"></span>
                             <span class="typing-dot w-2 h-2 rounded-full bg-primary-500"></span>
                             <span class="typing-dot w-2 h-2 rounded-full bg-primary-500"></span>
@@ -346,13 +418,12 @@
                 input.disabled = state;
             }
 
-            function sessionNode(id) {
-                return historyList ? historyList.querySelector('[data-session-id="' + id + '"]') : null;
+            function sessionNodes(id) {
+                return document.querySelectorAll('.chat-history-list [data-session-id="' + id + '"]');
             }
 
             function setActiveHighlight(id) {
-                if (! historyList) return;
-                historyList.querySelectorAll('[data-session-id]').forEach(function (node) {
+                document.querySelectorAll('.chat-history-list [data-session-id]').forEach(function (node) {
                     const isActive = String(node.dataset.sessionId) === String(id);
                     const btn = node.querySelector('[data-action="load-sesi"]');
                     if (btn) {
@@ -368,33 +439,36 @@
             }
 
             function removeEmptyState() {
-                if (! historyList) return;
-                const empty = historyList.querySelector('[data-empty-state]');
-                if (empty) empty.remove();
+                document.querySelectorAll('.chat-history-list [data-empty-state]').forEach(function (el) {
+                    el.remove();
+                });
             }
 
             function upsertHistoryItem(id, judul) {
-                if (! historyList) return;
                 removeEmptyState();
-                let node = sessionNode(id);
+                const existingNodes = sessionNodes(id);
 
-                if (! node) {
-                    node = fromTemplate(`
-                        <div class="group flex items-center gap-1 rounded-xl transition-colors" data-session-id="${id}">
-                            <button type="button" data-action="load-sesi" data-session-id="${id}" class="flex-1 min-w-0 flex items-center gap-2 px-2.5 py-2 rounded-xl text-left text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors">
-                                <span class="material-symbols-outlined text-[16px] text-gray-500 group-hover:text-primary-600 shrink-0">chat_bubble_outline</span>
-                                <span class="truncate text-xs font-medium" data-judul></span>
-                            </button>
-                            <button type="button" data-action="hapus-sesi" data-session-id="${id}" class="hidden group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-500 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Hapus riwayat">
-                                <span class="material-symbols-outlined text-[16px]">delete</span>
-                            </button>
-                        </div>
-                    `);
-                    node.querySelector('[data-judul]').textContent = judul || 'Obrolan anyar';
-                    historyList.prepend(node);
+                if (existingNodes.length === 0) {
+                    document.querySelectorAll('.chat-history-list').forEach(function (list) {
+                        const node = fromTemplate(`
+                            <div class="group flex items-center gap-1 rounded-xl transition-colors" data-session-id="${id}">
+                                <button type="button" data-action="load-sesi" data-session-id="${id}" class="flex-1 min-w-0 flex items-center gap-2 px-2.5 py-2 rounded-xl text-left text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors">
+                                    <span class="material-symbols-outlined text-[16px] text-gray-500 group-hover:text-primary-600 shrink-0">chat_bubble_outline</span>
+                                    <span class="truncate text-xs font-medium" data-judul></span>
+                                </button>
+                                <button type="button" data-action="hapus-sesi" data-session-id="${id}" class="flex lg:hidden lg:group-hover:flex items-center justify-center w-7 h-7 mr-1 rounded-full text-gray-400 hover:text-error hover:bg-error-container/50 transition-colors shrink-0" title="Hapus riwayat">
+                                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                                </button>
+                            </div>
+                        `);
+                        node.querySelector('[data-judul]').textContent = judul || 'Obrolan anyar';
+                        list.prepend(node);
+                    });
                 } else {
-                    const title = node.querySelector('[data-judul]');
-                    if (title && judul) title.textContent = judul;
+                    existingNodes.forEach(function (node) {
+                        const title = node.querySelector('[data-judul]');
+                        if (title && judul) title.textContent = judul;
+                    });
                 }
 
                 setActiveHighlight(id);
@@ -452,12 +526,15 @@
                         credentials: 'same-origin',
                     });
                     if (! res.ok) throw new Error('gagal');
-                    const node = sessionNode(id);
-                    if (node) node.remove();
+                    sessionNodes(id).forEach(function (node) {
+                        node.remove();
+                    });
                     if (String(activeSessionId) === String(id)) newChat();
-                    if (historyList && ! historyList.querySelector('[data-session-id]')) {
-                        historyList.innerHTML = '<div class="px-3 py-2 text-gray-500 italic text-xs" data-empty-state>Belum ada riwayat obrolan</div>';
-                    }
+                    document.querySelectorAll('.chat-history-list').forEach(function (list) {
+                        if (! list.querySelector('[data-session-id]')) {
+                            list.innerHTML = '<div class="px-3 py-2 text-gray-500 italic text-xs" data-empty-state>Belum ada riwayat obrolan</div>';
+                        }
+                    });
                 } catch (err) {
                     window.alert('Gagal menghapus riwayat. Silakan coba lagi.');
                 } finally {
@@ -583,9 +660,11 @@
                     if (action === 'chat-baru') {
                         event.preventDefault();
                         newChat();
+                        closeMobileHistory();
                     } else if (action === 'load-sesi' && id) {
                         event.preventDefault();
                         loadSession(id);
+                        closeMobileHistory();
                     } else if (action === 'hapus-sesi' && id) {
                         event.preventDefault();
                         event.stopPropagation();

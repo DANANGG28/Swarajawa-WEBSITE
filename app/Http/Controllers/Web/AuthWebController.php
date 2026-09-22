@@ -53,13 +53,20 @@ class AuthWebController extends Controller
     public function daftar(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'nis' => ['required', 'string', 'max:30', 'unique:siswa,nis'],
+            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
             'email' => ['required', 'email', 'max:255', 'unique:siswa,email'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ], [
+            'no_telpon.regex' => 'Nomor telepon hanya boleh berisi angka.',
+            'no_telpon.min' => 'Nomor telepon minimal 9 digit.',
+            'no_telpon.max' => 'Nomor telepon maksimal 16 digit.',
+            'nis.regex' => 'NIS hanya boleh berisi angka.',
+            'nis.min' => 'NIS minimal 4 digit.',
+            'nis.max' => 'NIS maksimal 20 digit.',
         ]);
 
         $siswa = Siswa::create($data);

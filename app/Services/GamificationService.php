@@ -84,7 +84,7 @@ class GamificationService
     }
 
     /**
-     * @return array<int, array{peringkat: int, siswa_id: int, nama: string, kelas: ?string, total_exp: int}>
+     * @return array<int, array{peringkat: int, siswa_id: int, nama: string, kelas: ?string, foto: ?string, foto_url: ?string, total_exp: int}>
      */
     public function leaderboard(?string $kelas = null, int $limit = 20): array
     {
@@ -101,6 +101,8 @@ class GamificationService
             'siswa_id' => $exp->siswa_id,
             'nama' => $exp->siswa?->nama_lengkap ?? '-',
             'kelas' => $exp->siswa?->kelas,
+            'foto' => $exp->siswa?->foto,
+            'foto_url' => $exp->siswa?->foto_url,
             'total_exp' => (int) $exp->total_exp,
         ])->all();
     }

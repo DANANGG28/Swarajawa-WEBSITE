@@ -70,8 +70,19 @@ Route::middleware('web.auth:siswa')->prefix('kuis')->group(function () {
 Route::middleware('web.auth:guru')->prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard', [GuruWebController::class, 'dashboard'])->name('dashboard');
 
+    Route::get('/topik', [GuruWebController::class, 'topik'])->name('topik');
+    Route::get('/topik/tambah', [GuruWebController::class, 'topikCreate'])->name('topik.create');
+    Route::get('/topik/{topik}/edit', [GuruWebController::class, 'topikEdit'])->name('topik.edit');
+    Route::post('/topik', [GuruWebController::class, 'topikStore'])->name('topik.store');
+    Route::put('/topik/{topik}', [GuruWebController::class, 'topikUpdate'])->name('topik.update');
+    Route::delete('/topik/{topik}', [GuruWebController::class, 'topikDestroy'])->name('topik.destroy');
+
     Route::get('/level-materi', [GuruWebController::class, 'levelMateri'])->name('level-materi');
+    Route::get('/level-materi/tambah', [GuruWebController::class, 'levelMateriCreate'])->name('level-materi.create');
+    Route::get('/level-materi/{levelMateri}/edit', [GuruWebController::class, 'levelMateriEdit'])->name('level-materi.edit');
     Route::post('/level-materi', [GuruWebController::class, 'levelMateriStore'])->name('level-materi.store');
+    Route::put('/level-materi/{levelMateri}', [GuruWebController::class, 'levelMateriUpdate'])->name('level-materi.update');
+    Route::delete('/level-materi/{levelMateri}', [GuruWebController::class, 'levelMateriDestroy'])->name('level-materi.destroy');
 
     Route::get('/pembahasan', [GuruWebController::class, 'pembahasan'])->name('pembahasan');
     Route::post('/pembahasan', [GuruWebController::class, 'pembahasanStore'])->name('pembahasan.store');
@@ -157,6 +168,22 @@ Route::get('/storage/image/guru/{filename}', function (string $filename) {
 
 Route::get('/resources/image/guru/{filename}', function (string $filename) {
     return redirect()->route('guru.image', $filename);
+});
+
+Route::get('/storage/image/superadmin/{filename}', function (string $filename) {
+    $path = storage_path('image/superadmin/'.$filename);
+    if (! file_exists($path)) {
+        $path = resource_path('image/superadmin/'.$filename);
+    }
+    if (! file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path);
+})->name('superadmin.image');
+
+Route::get('/resources/image/superadmin/{filename}', function (string $filename) {
+    return redirect()->route('superadmin.image', $filename);
 });
 
 Route::get('/storage/image/siswa/{filename}', function (string $filename) {

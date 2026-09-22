@@ -9,33 +9,105 @@
         ? mb_strtoupper(mb_substr($namaWords[0], 0, 1) . mb_substr($namaWords[count($namaWords) - 1], 0, 1))
         : mb_strtoupper(mb_substr($siswaNama, 0, 2));
 
-    $nav = [
+    // Navigasi Mobile: 5 menu lengkap (hanya ikon)
+    $navMobile = [
         [
             'key' => 'beranda',
             'label' => 'Beranda',
-            'url' => url('/'),
-            'alias' => [],
-            'svg' => '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>',
+            'url' => route('siswa.dashboard'),
+            'alias' => ['dashboard'],
+            'svg' => '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>',
         ],
         [
             'key' => 'papan-skor',
-            'label' => 'Papan Skor & Peringkat',
-            'url' => url('/papan-skor'),
-            'alias' => ['skor'],
+            'label' => 'Papan Peringkat',
+            'url' => route('siswa.papan-skor'),
+            'alias' => ['skor', 'papan-peringkat', 'peringkat'],
+            'svg' => '<circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>',
+        ],
+        [
+            'key' => 'latihan-ngomong',
+            'label' => 'Latihan Ngomong',
+            'url' => route('kuis.latihan-ngomong'),
+            'alias' => ['wicara', 'ngomong', 'speech'],
+            'svg' => '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" x2="12" y1="19" y2="22"></line>',
+        ],
+        [
+            'key' => 'asisten-ai',
+            'label' => 'Tanya Bahasa AI',
+            'url' => route('siswa.asisten'),
+            'alias' => ['asisten', 'ai', 'chat-ai'],
+            'svg' => '<path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path>',
+        ],
+        [
+            'key' => 'profil',
+            'label' => 'Pengaturan Profil',
+            'url' => route('siswa.profil'),
+            'alias' => ['profile', 'data-profil'],
+            'svg' => '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>',
+        ],
+    ];
+
+    // Navigasi Desktop Sidebar: Latihan Ngomong & Tanya Bahasa AI dihilangkan karena sudah ada di card sebelah kanan
+    $navDesktop = [
+        [
+            'key' => 'beranda',
+            'label' => 'Beranda',
+            'url' => route('siswa.dashboard'),
+            'alias' => ['dashboard'],
+            'svg' => '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>',
+        ],
+        [
+            'key' => 'papan-skor',
+            'label' => 'Papan Peringkat',
+            'url' => route('siswa.papan-skor'),
+            'alias' => ['skor', 'papan-peringkat', 'peringkat'],
             'svg' => '<circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>',
         ],
         [
             'key' => 'profil',
             'label' => 'Pengaturan Profil',
-            'url' => url('/profil'),
-            'alias' => ['profile'],
+            'url' => route('siswa.profil'),
+            'alias' => ['profile', 'data-profil'],
             'svg' => '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>',
         ],
     ];
+
     $isAktif = fn ($item) => $active === $item['key'] || in_array($active, $item['alias'], true);
 @endphp
 
-<aside class="fixed left-0 top-0 h-full w-72 bg-white z-50 flex flex-col justify-between shadow-sm border-r-2 border-slate-300">
+<!-- ==========================================
+     MOBILE BOTTOM NAVBAR (Tampil di layar < lg)
+     Hanya menyisakan ikon dengan susunan:
+     1. Beranda
+     2. Papan Peringkat
+     3. Latihan Ngomong
+     4. Tanya Bahasa AI
+     5. Pengaturan Profil
+=========================================== -->
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t-2 border-slate-200/90 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] px-2 py-2 flex items-center justify-around" data-purpose="mobile-bottom-navbar">
+    @foreach ($navMobile as $item)
+        @php
+            $activeItem = $isAktif($item);
+        @endphp
+        <a href="{{ $item['url'] }}"
+           title="{{ $item['label'] }}"
+           aria-label="{{ $item['label'] }}"
+           class="relative flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all duration-200 active:scale-95 {{ $activeItem ? 'bg-primary-600 text-white shadow-md shadow-primary-600/30 -translate-y-1' : 'text-slate-500 hover:text-primary-600 hover:bg-primary-fixed/30' }}">
+            <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ $activeItem ? '2.5' : '2.1' }}" viewBox="0 0 24 24">
+                {!! $item['svg'] !!}
+            </svg>
+            @if($activeItem)
+                <span class="absolute -bottom-1 w-1.5 h-1.5 rounded-full bg-primary-600 ring-2 ring-white"></span>
+            @endif
+        </a>
+    @endforeach
+</nav>
+
+<!-- ==========================================
+     DESKTOP SIDEBAR (Tampil di layar besar >= lg)
+=========================================== -->
+<aside class="hidden lg:flex fixed left-0 top-0 h-full w-72 bg-white z-50 flex-col justify-between shadow-sm border-r-2 border-slate-300">
     <div class="flex flex-col flex-1 overflow-y-auto px-5 py-6">
         <!-- Brand -->
         <div class="flex items-center gap-3.5 px-2 mb-8" data-purpose="brand-header">
@@ -51,14 +123,14 @@
         </div>
 
         <!-- Navigation -->
-        <nav class="space-y-1.5" data-purpose="main-navigation">
-            @foreach ($nav as $item)
+        <nav class="space-y-2" data-purpose="main-navigation">
+            @foreach ($navDesktop as $item)
                 <a href="{{ $item['url'] }}"
                     class="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all border-2 {{ $isAktif($item) ? 'bg-primary-fixed/60 border-primary-fixed-dim text-primary-600 font-black uppercase shadow-[0_3px_0_rgba(84,67,201,0.18)]' : 'border-transparent text-slate-600 hover:text-primary-600 hover:bg-primary-fixed/30 font-bold uppercase' }}">
-                    <svg class="w-5 h-5 {{ $isAktif($item) ? 'text-primary-600' : 'text-slate-400' }} shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24">
+                    <svg class="w-[22px] h-[22px] {{ $isAktif($item) ? 'text-primary-600' : 'text-slate-400' }} shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24">
                         {!! $item['svg'] !!}
                     </svg>
-                    <span class="text-sm tracking-wide">{{ $item['label'] }}</span>
+                    <span class="text-sm font-black tracking-wide leading-tight">{{ $item['label'] }}</span>
                 </a>
             @endforeach
         </nav>

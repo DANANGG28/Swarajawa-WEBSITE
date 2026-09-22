@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('aksi')
-    <a href="{{ route('superadmin.level-materi') }}"
+    <a href="{{ route('guru.level-materi') }}"
        class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-body text-body font-bold transition-all shadow-sm">
         <span class="material-symbols-outlined text-[20px]">arrow_back</span>
         <span>Kembali ke Level Materi</span>
@@ -12,11 +12,11 @@
     <div class="flex flex-col gap-6 max-w-5xl mx-auto pt-4 pb-10">
         {{-- Breadcrumb Navigasi --}}
         <nav class="flex items-center gap-2 font-caption text-caption text-gray-500 flex-wrap">
-            <a href="{{ route('superadmin.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
+            <a href="{{ route('guru.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
-            <a href="{{ route('superadmin.topik') }}" class="hover:text-primary-600 transition-colors">Topik</a>
+            <a href="{{ route('guru.topik') }}" class="hover:text-primary-600 transition-colors">Topik</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
-            <a href="{{ route('superadmin.level-materi') }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
+            <a href="{{ route('guru.level-materi') }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
             <span class="text-on-surface font-bold text-primary-700">Tambah Level Materi</span>
         </nav>
@@ -36,11 +36,11 @@
                             Tambah Level Materi Baru
                         </h2>
                         <span class="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-label-upper text-[11px] font-bold tracking-wider uppercase">
-                            Superadmin
+                            Guru Pengajar
                         </span>
                     </div>
                     <p class="font-body text-body text-white/90">
-                        Buat level materi pembelajaran anyar kanthi urutan, jeneng materi, reward EXP, lan katrangan lengkap.
+                        Buat unit atau level materi pembelajaran baru lengkap dengan urutan, nama materi, dan reward EXP.
                     </p>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('superadmin.level-materi.store') }}" class="flex flex-col gap-6">
+            <form method="POST" action="{{ route('guru.level-materi.store') }}" class="flex flex-col gap-6">
                 @csrf
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -70,31 +70,33 @@
                             Nama Materi Pembelajaran <span class="text-error">*</span>
                         </span>
                         <div class="relative">
-                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">menu_book</span>
+                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">menu_book</span>
                             <input type="text" name="nama_materi" value="{{ old('nama_materi') }}" required
-                                   placeholder="Contoh: Aksara Jawa Nglegena & Pasangan"
-                                   class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-sm outline-none focus:border-primary-500 focus:bg-white transition-all">
+                                   placeholder="Contoh: Aksara Jawa Dasar (Nglegena)"
+                                   class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                         </div>
                         @error('nama_materi')
                             <span class="text-error text-xs font-caption">{{ $message }}</span>
                         @enderror
                     </label>
 
-                    {{-- Topik Induk --}}
-                    <label class="flex flex-col gap-1.5 sm:col-span-2">
+                    {{-- Pilihan Topik --}}
+                    <label class="flex flex-col gap-1.5">
                         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-700 font-semibold">
-                            Topik Induk
+                            Topik (Bagian Pembelajaran)
                         </span>
-                        <select name="topik_id"
-                                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-sm outline-none focus:border-primary-500 focus:bg-white transition-all">
-                            <option value="">— Tanpa Topik —</option>
-                            @foreach (($topikList ?? collect()) as $topik)
-                                <option value="{{ $topik->id }}" @selected((string) old('topik_id') === (string) $topik->id)>
-                                    {{ $topik->urutan }}. {{ $topik->nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="font-caption text-xs text-gray-400">Unit iki bakal kagabung ing topik sing dipilih.</span>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">topic</span>
+                            <select name="topik_id"
+                                    class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all cursor-pointer">
+                                <option value="">-- Tanpa Topik (Umum) --</option>
+                                @foreach (($topikList ?? collect()) as $topik)
+                                    <option value="{{ $topik->id }}" @selected(old('topik_id', $selectedTopikId ?? request('topik_id')) == $topik->id)>
+                                        Topik {{ $topik->urutan }}: {{ $topik->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                         @error('topik_id')
                             <span class="text-error text-xs font-caption">{{ $message }}</span>
                         @enderror
@@ -106,13 +108,11 @@
                             Nomor Urutan Level <span class="text-error">*</span>
                         </span>
                         <div class="relative">
-                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">format_list_numbered</span>
-                            <input type="number" name="urutan" min="1" step="1" inputmode="numeric"
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                   value="{{ old('urutan', $nextUrutan ?? 1) }}" required
-                                   class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-sm outline-none focus:border-primary-500 focus:bg-white transition-all">
+                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">format_list_numbered</span>
+                            <input type="number" name="urutan" value="{{ old('urutan', $nextUrutan ?? 1) }}" required min="1" step="1"
+                                   inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                   class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                         </div>
-                        <span class="font-caption text-xs text-gray-400">Urutan level menentukan posisi alur belajar siswa</span>
                         @error('urutan')
                             <span class="text-error text-xs font-caption">{{ $message }}</span>
                         @enderror
@@ -124,14 +124,12 @@
                             Reward EXP Siswa <span class="text-error">*</span>
                         </span>
                         <div class="relative">
-                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-amber-500 text-[20px] icon-fill">bolt</span>
-                            <input type="number" name="reward_exp" min="0" max="100000" step="1" inputmode="numeric"
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                   value="{{ old('reward_exp', 100) }}" required
+                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">bolt</span>
+                            <input type="number" name="reward_exp" value="{{ old('reward_exp', 100) }}" required min="0" step="1"
+                                   inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                    placeholder="100"
-                                   class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-sm outline-none focus:border-primary-500 focus:bg-white transition-all">
+                                   class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                         </div>
-                        <span class="font-caption text-xs text-gray-400">Poin pengalaman yang didapatkan siswa setelah menyelesaikan level ini</span>
                         @error('reward_exp')
                             <span class="text-error text-xs font-caption">{{ $message }}</span>
                         @enderror
@@ -140,11 +138,11 @@
                     {{-- Deskripsi Materi --}}
                     <label class="flex flex-col gap-1.5 sm:col-span-2">
                         <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-700 font-semibold">
-                            Deskripsi Materi Pembelajaran
+                            Deskripsi Materi
                         </span>
-                        <textarea name="deskripsi" rows="3"
-                                  placeholder="Keterangan ringkas mengenai cakupan materi, kompetensi, atau petunjuk belajar siswa..."
-                                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-sm outline-none focus:border-primary-500 focus:bg-white transition-all">{{ old('deskripsi') }}</textarea>
+                        <textarea name="deskripsi" rows="4"
+                                  placeholder="Tuliskan deskripsi singkat atau kisi-kisi pembelajaran pada level ini..."
+                                  class="w-full rounded-xl border border-gray-200 bg-gray-50 p-4 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">{{ old('deskripsi') }}</textarea>
                         @error('deskripsi')
                             <span class="text-error text-xs font-caption">{{ $message }}</span>
                         @enderror
@@ -152,13 +150,13 @@
                 </div>
 
                 {{-- Tombol Aksi --}}
-                <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-end gap-3">
-                    <a href="{{ route('superadmin.level-materi') }}"
-                       class="w-full sm:w-auto px-6 py-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-body text-sm font-bold text-center transition-colors">
+                <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-end gap-3.5">
+                    <a href="{{ route('guru.level-materi') }}"
+                       class="w-full sm:w-auto px-7 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-body text-body font-bold text-center border-b-4 border-slate-300 active:border-b-0 active:translate-y-1 transition-all">
                         Batal
                     </a>
                     <button type="submit"
-                            class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-body text-sm font-bold px-8 py-3 shadow-md hover:shadow-lg transition-all">
+                            class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl bg-primary-600 hover:bg-primary-500 text-white font-body text-body font-bold px-8 py-3 shadow-md hover:shadow-lg border-b-4 border-primary-800 active:border-b-0 active:translate-y-1 transition-all">
                         <span class="material-symbols-outlined text-[20px]">save</span>
                         <span>Simpan Level Materi</span>
                     </button>

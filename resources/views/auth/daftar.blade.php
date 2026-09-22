@@ -31,6 +31,9 @@
                 <label class="flex flex-col gap-1.5">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">NIS</span>
                     <input type="text" name="nis" value="{{ old('nis') }}" required
+                        inputmode="numeric" pattern="[0-9]*" maxlength="20"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        placeholder="Contoh: 202607001"
                         class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 </label>
 
@@ -72,12 +75,16 @@
                 <label class="flex flex-col gap-1.5">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">Kelas</span>
                     <input type="text" name="kelas" value="{{ old('kelas') }}" placeholder="7A"
+                        maxlength="50"
                         class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 </label>
 
                 <label class="flex flex-col gap-1.5">
                     <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500">No. Telpon</span>
-                    <input type="text" name="no_telpon" value="{{ old('no_telpon') }}"
+                    <input type="tel" name="no_telpon" value="{{ old('no_telpon') }}"
+                        inputmode="numeric" pattern="[0-9]*" maxlength="16"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        placeholder="08xxxxxxxxxx"
                         class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-body text-body outline-none focus:border-primary-500">
                 </label>
 

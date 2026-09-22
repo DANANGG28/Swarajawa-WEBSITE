@@ -2,18 +2,23 @@
 
 @section('konten')
     <div class="flex flex-col gap-6 max-w-5xl mx-auto pt-2 pb-10 mt-4">
-        {{-- Breadcrumb --}}
+         {{-- Breadcrumb --}}
         <nav class="flex items-center gap-2 font-caption text-caption text-gray-500 flex-wrap">
-            <a href="{{ route('guru.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
+            <a href="{{ route('superadmin.dashboard') }}" class="hover:text-primary-600 transition-colors">Dashboard</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
-            <a href="{{ route('guru.level-materi') }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
+            <a href="{{ route('superadmin.topik') }}" class="hover:text-primary-600 transition-colors">Topik</a>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
-            <a href="{{ route('guru.soal', ['level_materi_id' => $level->id]) }}" class="hover:text-primary-600 transition-colors">
-                Level {{ $level->urutan }}: {{ $level->nama_materi }}
-            </a>
+            @if ($level->topik)
+                <a href="{{ route('superadmin.level-materi', ['topik_id' => $level->topik_id]) }}" class="hover:text-primary-600 transition-colors">{{ $level->topik->nama }}</a>
+                <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            @endif
+            <a href="{{ route('superadmin.level-materi', $level->topik_id ? ['topik_id' => $level->topik_id] : []) }}" class="hover:text-primary-600 transition-colors">Level Materi</a>
+            <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
+            <span class="text-gray-500">Level {{ $level->urutan }}: {{ $level->nama_materi }}</span>
             <span class="material-symbols-outlined text-[14px] text-gray-400">chevron_right</span>
             <span class="text-on-surface font-bold text-primary-700">Kelola Pembahasan</span>
         </nav>
+
 
         {{-- Header Level --}}
         <section class="bg-surface-container-lowest rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -28,7 +33,7 @@
                     </p>
                 </div>
             </div>
-            <a href="{{ route('guru.level-materi') }}"
+            <a href="{{ route('guru.level-materi', $level->topik_id ? ['topik_id' => $level->topik_id] : []) }}"
                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-body text-xs font-semibold transition-colors shrink-0 self-start sm:self-center">
                 <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                 <span>Kembali</span>
