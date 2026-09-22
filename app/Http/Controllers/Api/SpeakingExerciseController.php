@@ -120,16 +120,17 @@ class SpeakingExerciseController extends Controller
 
             $prompt = "Kalimat referensi (yang seharusnya diucapkan siswa): \"{$referensi}\"\n"
                 ."Hasil transkripsi ucapan siswa: \"{$hasilStt['text']}\"\n\n"
-                .'Berikan feedback singkat (maksimal 2-3 kalimat) dalam Bahasa Jawa ngoko yang ramah, '
+                .'Berikan feedback singkat (maksimal 2-3 kalimat) dalam Bahasa Indonesia yang ramah, '
                 .'tentang bagian mana yang kurang tepat (kata yang hilang, tertukar, atau kemungkinan pelafalan '
-                .'yang kurang jelas berdasarkan perbedaan teks). Jika hasil transkripsi sudah sangat mendekati '
+                .'yang kurang jelas berdasarkan perbedaan teks). Kata atau frasa Bahasa Jawa yang sedang dibahas '
+                .'boleh tetap dikutip dalam Bahasa Jawa. Jika hasil transkripsi sudah sangat mendekati '
                 .'kalimat referensi, beri pujian singkat saja tanpa mengarang kekurangan. '
-                .'Wangsulana mung teks feedback wae, tanpa pambuka utawa panutup tambahan.';
+                .'Balas hanya teks feedback-nya saja, tanpa pembuka atau penutup tambahan.';
 
             $feedback = $this->rag->askDirect($prompt)
-                ?? 'Nyuwun pangapunten, kula dereng saged paring pamrayoga. Sumangga dipuncobi malih.';
+                ?? 'Maaf, saran belum bisa dibuat saat ini. Silakan coba lagi.';
 
-            $tts = $this->tts->synthesize($feedback);
+            $tts = $this->tts->synthesize($feedback, config('services.edge_tts.voice_feedback'));
 
             return response()->json([
                 'mock' => (bool) ($hasilStt['mock'] || $tts['mock']),

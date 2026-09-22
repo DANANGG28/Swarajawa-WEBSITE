@@ -37,6 +37,20 @@ Route::get('/daftar', [AuthWebController::class, 'showDaftar'])->name('daftar');
 Route::post('/daftar', [AuthWebController::class, 'daftar']);
 Route::post('/keluar', [AuthWebController::class, 'keluar'])->name('keluar');
 
+// Login dengan Google (OAuth)
+Route::get('/auth/google', [AuthWebController::class, 'googleRedirect'])->name('google.redirect');
+Route::get('/auth/google/callback', [AuthWebController::class, 'googleCallback'])->name('google.callback');
+
+// Lupa & atur ulang kata sandi (kirim tautan via email/Resend)
+Route::get('/lupa-sandi', [AuthWebController::class, 'showLupaSandi'])->name('lupa-sandi');
+Route::post('/lupa-sandi', [AuthWebController::class, 'kirimLupaSandi'])
+    ->middleware('throttle:6,1')
+    ->name('lupa-sandi.kirim');
+Route::get('/reset-sandi/{token}', [AuthWebController::class, 'showSandiAnyar'])->name('sandi.reset');
+Route::post('/reset-sandi', [AuthWebController::class, 'simpanSandiAnyar'])
+    ->middleware('throttle:6,1')
+    ->name('sandi.simpan');
+
 /*
 |--------------------------------------------------------------------------
 | Sesi Kuis Siswa (Blade) — FR-3, FR-4, FR-8, FR-7, FR-22
