@@ -43,7 +43,7 @@ RUN composer dump-autoload --no-dev --optimize --classmap-authoritative
 FROM php:8.4-fpm-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    PORT=80 \
+    PORT=8088 \
     PATH="/opt/edge-tts/bin:${PATH}"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -109,7 +109,7 @@ RUN mkdir -p /opt/app-seed \
     && rm -f public/hot \
     && rm -f bootstrap/cache/*.php
 
-EXPOSE 80
+EXPOSE 8088
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
     CMD curl -fsS "http://127.0.0.1:${PORT}/up" || exit 1
