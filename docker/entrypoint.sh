@@ -43,7 +43,7 @@ chown -R www-data:www-data storage bootstrap/cache
 chmod -R ug+rwX storage bootstrap/cache
 
 # --- 4. Render konfigurasi nginx dengan PORT dari Dokploy ---------------------
-export PORT="${PORT:-80}"
+export PORT="${PORT:-8088}"
 envsubst '${PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/conf.d/default.conf
 log "Nginx listen di port ${PORT}"
 
@@ -52,26 +52,54 @@ if [ -z "${APP_KEY:-}" ]; then
     log "PERINGATAN: APP_KEY kosong. Set APP_KEY di environment Dokploy."
 fi
 
-# --- 6. Bootstrap Laravel -----------------------------------------------------
+# --- 6. Tunggu database siap --------------------------------------------------
+wait_for_db() {
+    case "${DB_CONNECTION:-}" in
+        pgsql|mysql|mariadb) ;;
+        *) return 0 ;;
+    esac
+
+    local host="${DB_HOST:-127.0.0.1}"
+    local port="${DB_PORT:-5432}"
+    local attempts="${DB_WAIT_ATTEMPTS:-30}"
+
+    for i in $(seq 1 "$attempts"); do
+        if (echo > "/dev/tcp/${host}/${port}") >/dev/null 2>&1; then
+            log "Database ${host}:${port} siap (percobaan ${i})"
+            return 0
+        fi
+        log "Menunggu database ${host}:${port}... (${i}/${attempts})"
+        sleep 2
+    done
+
+    log "PERINGATAN: database ${host}:${port} tidak merespons — lanjut tanpa migrasi"
+    return 1
+}
+
+# --- 7. Bootstrap Laravel -----------------------------------------------------
 log "Menautkan storage publik"
 php artisan storage:link || true
 
-log "Menjalankan migrasi database"
-php artisan migrate --force
-
-if [ "${RUN_SEEDERS:-false}" = "true" ]; then
-    log "Menjalankan seeder (RUN_SEEDERS=true)"
-    php artisan db:seed --force
+if wait_for_db; then
+    if php artisan migrate --force; then
+        log "Migrasi selesai"
+        if [ "${RUN_SEEDERS:-false}" = "true" ]; then
+            log "Menjalankan seeder (RUN_SEEDERS=true)"
+            php artisan db:seed --force || log "PERINGATAN: seeder gagal"
+        fi
+    else
+        log "PERINGATAN: migrasi gagal — aplikasi tetap dijalankan untuk debugging"
+    fi
 fi
 
 log "Membangun cache konfigurasi/route/view"
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan config:cache || log "PERINGATAN: config:cache gagal"
+php artisan route:cache || log "PERINGATAN: route:cache gagal"
+php artisan view:cache || log "PERINGATAN: view:cache gagal"
 
 chown -R www-data:www-data storage bootstrap/cache
 
-# --- 7. Cek ketersediaan edge-tts --------------------------------------------
+# --- 8. Cek ketersediaan edge-tts --------------------------------------------
 if command -v edge-tts >/dev/null 2>&1; then
     log "edge-tts ditemukan: $(command -v edge-tts)"
 else
