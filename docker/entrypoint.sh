@@ -63,6 +63,11 @@ wait_for_db() {
     local port="${DB_PORT:-5432}"
     local attempts="${DB_WAIT_ATTEMPTS:-30}"
 
+    local resolved
+    resolved="$(getent hosts "$host" 2>/dev/null | awk '{print $1}' | paste -sd, - || true)"
+    log "Resolusi DNS ${host} -> ${resolved:-GAGAL (host tidak dikenal dari container ini)}"
+    log "Hostname container ini: $(hostname)"
+
     for i in $(seq 1 "$attempts"); do
         if (echo > "/dev/tcp/${host}/${port}") >/dev/null 2>&1; then
             log "Database ${host}:${port} siap (percobaan ${i})"
