@@ -2,7 +2,8 @@
 # =============================================================================
 # Entrypoint container produksi (Dokploy).
 # Menyiapkan runtime Laravel + edge-tts, lalu menyalakan supervisord
-# (php-fpm + nginx + queue worker).
+# (php-fpm + nginx). Migrasi database dijalankan di background agar web
+# server tidak menunggu DB (mencegah 502 saat DB belum siap).
 # =============================================================================
 set -euo pipefail
 
@@ -52,8 +53,18 @@ if [ -z "${APP_KEY:-}" ]; then
     log "PERINGATAN: APP_KEY kosong. Set APP_KEY di environment Dokploy."
 fi
 
-# --- 6. Tunggu database siap --------------------------------------------------
-wait_for_db() {
+# --- 6. Tautkan storage publik ------------------------------------------------
+log "Menautkan storage publik"
+php artisan storage:link || true
+
+# --- 7. Cache konfigurasi/route/view (tidak membutuhkan database) -------------
+log "Membangun cache konfigurasi/route/view"
+php artisan config:cache || log "PERINGATAN: config:cache gagal"
+php artisan route:cache || log "PERINGATAN: route:cache gagal"
+php artisan view:cache || log "PERINGATAN: view:cache gagal"
+
+# --- 8. Migrasi + seeder di BACKGROUND (agar web server langsung siap) --------
+migrate_in_background() {
     case "${DB_CONNECTION:-}" in
         pgsql|mysql|mariadb) ;;
         *) return 0 ;;
@@ -61,65 +72,52 @@ wait_for_db() {
 
     local host="${DB_HOST:-127.0.0.1}"
     local port="${DB_PORT:-5432}"
-    local attempts="${DB_WAIT_ATTEMPTS:-90}"
 
     local resolved
     resolved="$(getent hosts "$host" 2>/dev/null | awk '{print $1}' | paste -sd, - || true)"
     log "Resolusi DNS ${host} -> ${resolved:-GAGAL (host tidak dikenal dari container ini)}"
     log "Hostname container ini: $(hostname)"
 
-    for i in $(seq 1 "$attempts"); do
+    local ready=false
+    for i in $(seq 1 90); do
         if (echo > "/dev/tcp/${host}/${port}") >/dev/null 2>&1; then
             log "Database ${host}:${port} siap (percobaan ${i})"
-            return 0
+            ready=true
+            break
         fi
-        log "Menunggu database ${host}:${port}... (${i}/${attempts})"
+        log "Menunggu database ${host}:${port}... (${i}/90)"
         sleep 2
     done
 
-    log "PERINGATAN: database ${host}:${port} tidak merespons — lanjut tanpa migrasi"
-    return 1
-}
+    if [ "$ready" != "true" ]; then
+        log "PERINGATAN: database ${host}:${port} tidak merespons — migrasi dilewati"
+        return 1
+    fi
 
-# --- 7. Bootstrap Laravel -----------------------------------------------------
-log "Menautkan storage publik"
-php artisan storage:link || true
-
-if wait_for_db; then
-    migrated=false
     for i in $(seq 1 10); do
         if php artisan migrate --force; then
-            migrated=true
-            break
+            log "Migrasi selesai"
+            if [ "${RUN_SEEDERS:-false}" = "true" ]; then
+                log "Menjalankan seeder (RUN_SEEDERS=true)"
+                php artisan db:seed --force || log "PERINGATAN: seeder gagal"
+            fi
+            return 0
         fi
         log "Migrasi gagal (percobaan ${i}/10) — ulangi dalam 5 detik"
         sleep 5
     done
 
-    if [ "$migrated" = "true" ]; then
-        log "Migrasi selesai"
-        if [ "${RUN_SEEDERS:-false}" = "true" ]; then
-            log "Menjalankan seeder (RUN_SEEDERS=true)"
-            php artisan db:seed --force || log "PERINGATAN: seeder gagal"
-        fi
-    else
-        log "PERINGATAN: migrasi gagal — aplikasi tetap dijalankan untuk debugging"
-    fi
-fi
+    log "PERINGATAN: migrasi gagal — cek kredensial/jaringan database"
+    return 1
+}
+migrate_in_background &
 
-log "Membangun cache konfigurasi/route/view"
-php artisan config:cache || log "PERINGATAN: config:cache gagal"
-php artisan route:cache || log "PERINGATAN: route:cache gagal"
-php artisan view:cache || log "PERINGATAN: view:cache gagal"
-
-chown -R www-data:www-data storage bootstrap/cache
-
-# --- 8. Cek ketersediaan edge-tts --------------------------------------------
+# --- 9. Cek ketersediaan edge-tts --------------------------------------------
 if command -v edge-tts >/dev/null 2>&1; then
     log "edge-tts ditemukan: $(command -v edge-tts)"
 else
     log "PERINGATAN: edge-tts tidak ditemukan di PATH — fitur TTS akan memakai mode mock."
 fi
 
-log "Menyalakan supervisord (php-fpm + nginx + queue)"
+log "Menyalakan supervisord (php-fpm + nginx)"
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
