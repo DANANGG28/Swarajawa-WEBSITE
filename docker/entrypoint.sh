@@ -61,7 +61,7 @@ wait_for_db() {
 
     local host="${DB_HOST:-127.0.0.1}"
     local port="${DB_PORT:-5432}"
-    local attempts="${DB_WAIT_ATTEMPTS:-30}"
+    local attempts="${DB_WAIT_ATTEMPTS:-90}"
 
     local resolved
     resolved="$(getent hosts "$host" 2>/dev/null | awk '{print $1}' | paste -sd, - || true)"
@@ -86,7 +86,17 @@ log "Menautkan storage publik"
 php artisan storage:link || true
 
 if wait_for_db; then
-    if php artisan migrate --force; then
+    migrated=false
+    for i in $(seq 1 10); do
+        if php artisan migrate --force; then
+            migrated=true
+            break
+        fi
+        log "Migrasi gagal (percobaan ${i}/10) — ulangi dalam 5 detik"
+        sleep 5
+    done
+
+    if [ "$migrated" = "true" ]; then
         log "Migrasi selesai"
         if [ "${RUN_SEEDERS:-false}" = "true" ]; then
             log "Menjalankan seeder (RUN_SEEDERS=true)"
