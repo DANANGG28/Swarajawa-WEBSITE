@@ -1,71 +1,62 @@
-@extends('layouts.kuis')
+@extends('layouts.kuis-wicara')
 
 @section('konten')
     @if (! $soal)
-        <div class="bg-surface-container-lowest rounded-2xl p-10 text-center border border-gray-100 shadow-sm">
-            <span class="material-symbols-outlined text-[48px] text-gray-500">mic</span>
+        <div class="w-full bg-white rounded-2xl p-10 text-center border border-gray-100 shadow-sm flex flex-col items-center justify-center">
+            <span class="material-symbols-outlined text-[48px] text-gray-400">mic</span>
             <h2 class="font-heading text-heading font-bold text-on-surface mt-3">Belum ada soal kuis wicara</h2>
             <p class="font-body text-body text-gray-500 mt-1">Selesaikan level sebelumnya atau hubungi guru untuk menambah soal.</p>
-            <a href="{{ route('siswa.dashboard') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 text-on-primary px-6 py-3 font-body text-body font-bold">Kembali ke Beranda</a>
+            <a href="{{ route('siswa.dashboard') }}" class="inline-flex items-center gap-2 mt-5 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary px-6 py-3 font-body text-body font-bold transition shadow-sm">Kembali ke Beranda</a>
         </div>
     @else
-        <div class="flex flex-col gap-6">
-            <section class="bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 shadow-sm">
-                <div class="flex items-center gap-2 font-label-upper text-label-upper uppercase tracking-wider text-primary-600 font-bold mb-2">
-                    <span class="material-symbols-outlined text-[18px]">graphic_eq</span>
-                    Kuis Wicara (STS/STT) • FR-8
-                </div>
-                <h1 class="font-display text-display font-extrabold text-on-surface leading-snug">{{ $soal['pertanyaan'] }}</h1>
-                <div class="mt-4 p-5 rounded-2xl bg-primary-fixed/40 border border-primary-400/30 text-center">
-                    <p class="font-heading text-heading font-extrabold text-on-surface">“{{ $soal['teks_referensi'] }}”</p>
-                </div>
-                <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-4 border-t border-gray-100">
-                    <button type="button" id="btn-tts" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary font-body text-body font-bold shadow-sm transition-colors">
-                        <span class="material-symbols-outlined text-[18px]">volume_up</span>
-                        Dengarkan Contoh (edge-tts)
-                    </button>
-                    <span class="font-caption text-caption text-gray-500">Pipeline: ElevenLabs STT → Fuzzy Matching → edge-tts</span>
-                </div>
-            </section>
+        <div class="w-full max-w-2xl mx-auto flex flex-col items-center text-center">
+            <h1 class="font-heading text-heading md:text-xl font-bold text-on-surface mb-6">
+                {{ $soal['pertanyaan'] }}
+            </h1>
 
-            <section class="bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col items-center text-center">
-                <div class="w-full flex items-center justify-between mb-2">
-                    <span class="inline-flex items-center gap-1.5 font-caption text-caption font-bold text-gray-500">
-                        <span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
-                        <span id="status-mic">Status Mikrofon: Siap Merekam</span>
-                    </span>
-                    <span id="timer" class="font-caption text-caption font-bold text-primary-700 bg-primary-fixed/50 px-2.5 py-1 rounded-md">00:00 / 00:10</span>
+            <div class="w-full bg-white rounded-2xl shadow-sm p-6 flex flex-col items-center justify-center text-center relative overflow-hidden mb-8 border border-gray-100">
+                <div class="absolute top-0 left-0 w-full h-1 bg-primary-500"></div>
+                <p id="targetSentence" class="font-stat-number text-stat-number text-primary-700 font-extrabold tracking-tight mb-4">
+                    “{{ $soal['teks_referensi'] }}”
+                </p>
+
+                <button id="btn-tts" type="button" class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container hover:bg-surface-container-high text-primary-700 font-body text-body font-semibold rounded-xl shadow-sm transition">
+                    <span id="tts-icon" class="material-symbols-outlined text-[18px]">volume_up</span>
+                    <span id="tts-label">Dengarkan Contoh (edge-tts)</span>
+                </button>
+            </div>
+
+            <div class="flex flex-col items-center justify-center mb-6 relative w-full">
+                <div id="pulseRing" class="absolute w-28 h-28 rounded-full bg-primary-400/20 animate-ping opacity-0 pointer-events-none transition-opacity"></div>
+                <div id="outerGlow" class="absolute w-24 h-24 rounded-full bg-primary-500/10 pointer-events-none"></div>
+                <button id="btn-mic" type="button" aria-label="Mulai Merekam Suara" class="relative z-10 w-20 h-20 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary shadow-md flex flex-col items-center justify-center transition-all duration-300 transform active:scale-95">
+                    <span id="mic-icon" class="material-symbols-outlined text-[36px]">mic</span>
+                    <span id="mic-label" class="sr-only">Rekam</span>
+                </button>
+
+                <div class="mt-4 flex items-center gap-2 text-on-surface-variant font-caption text-caption">
+                    <span id="status-mic">Ketuk untuk Mulai Rekam Ucapan</span>
+                    <span id="timer" class="font-caption text-caption font-bold text-primary-700 bg-primary-fixed/50 px-2.5 py-0.5 rounded-md hidden">00:00 / 00:10</span>
+                    <div id="waveform" class="hidden flex items-center gap-1">
+                        <span class="w-1 h-3 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
+                        <span class="w-1 h-5 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                        <span class="w-1 h-2 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
+                        <span class="w-1 h-4 bg-primary-600 rounded-full animate-bounce" style="animation-delay: 0.15s"></span>
+                    </div>
                 </div>
+            </div>
 
-                <div class="my-4 relative flex items-center justify-center">
-                    <div class="absolute w-32 h-32 rounded-full bg-primary-400/30 mic-pulse-ring pointer-events-none"></div>
-                    <button id="btn-mic" type="button" class="relative z-10 w-24 h-24 rounded-full bg-gradient-to-tr from-primary-700 via-primary-600 to-primary-500 text-on-primary flex flex-col items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform">
-                        <span class="material-symbols-outlined text-[30px]">mic</span>
-                        <span id="mic-label" class="font-caption text-caption font-bold uppercase">Rekam</span>
-                    </button>
-                </div>
+            <div id="feedback" class="hidden w-full bg-white rounded-2xl shadow-sm p-5 border text-left transition-all duration-300 mb-6"></div>
 
-                <div id="waveform" class="hidden w-full max-w-sm flex items-end justify-center gap-1.5 h-10 my-1">
-                    @for ($i = 0; $i < 12; $i++)
-                        <div class="wave-bar w-1.5 bg-primary-400 rounded-full"></div>
-                    @endfor
-                </div>
-
-                <p class="font-caption text-caption text-gray-500 mt-2">Tekan tombol mic untuk memulai, tekan lagi untuk mengakhiri. Jika mikrofon tidak tersedia, sistem menggunakan mode demo.</p>
-
-                <div id="feedback" class="hidden w-full mt-4 text-left rounded-2xl p-5 border"></div>
-            </section>
+            <div class="w-full flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-gray-200">
+                <button id="btn-demo" type="button" @disabled(! $soal) class="inline-flex items-center gap-2 rounded-full bg-gray-100 hover:bg-gray-200 text-on-surface font-body text-body font-bold px-5 py-2.5 transition-colors disabled:opacity-50">
+                    <span class="material-symbols-outlined text-[20px]">play_circle</span>
+                    <span>Coba Mode Demo</span>
+                </button>
+                <span class="font-caption text-caption text-gray-400">Pipeline: ElevenLabs STT → Fuzzy Matching → edge-tts</span>
+            </div>
         </div>
     @endif
-@endsection
-
-@section('aksi')
-    @include('partials.kuis-xp', ['soal' => $soal])
-    <button id="btn-demo" type="button" @disabled(! $soal)
-        class="flex items-center gap-2 rounded-full bg-gray-50 hover:bg-surface-container-high border border-gray-200 text-on-surface font-body text-body font-bold px-6 py-3 transition-colors disabled:opacity-50">
-        <span class="material-symbols-outlined text-[20px]">play_circle</span>
-        <span>Coba Mode Demo</span>
-    </button>
 @endsection
 
 @if ($soal)
@@ -74,10 +65,14 @@
             const SOAL = @json($soal);
             const feedback = document.getElementById('feedback');
             const btnMic = document.getElementById('btn-mic');
-            const micLabel = document.getElementById('mic-label');
+            const micIcon = document.getElementById('mic-icon');
+            const pulseRing = document.getElementById('pulseRing');
             const statusMic = document.getElementById('status-mic');
             const timerEl = document.getElementById('timer');
             const waveform = document.getElementById('waveform');
+            const btnTts = document.getElementById('btn-tts');
+            const ttsIcon = document.getElementById('tts-icon');
+            const ttsLabel = document.getElementById('tts-label');
 
             let recorder = null, chunks = [], recording = false, timer = null, seconds = 0;
 
@@ -91,7 +86,7 @@
                 } catch(e) { console.error(e); }
 
                 const expText = jawabRes ? ` • +${jawabRes.exp_didapat} XP` : '';
-                feedback.className = 'w-full mt-4 text-left rounded-2xl p-5 border ' + (res.benar ? 'bg-green-500/10 border-green-500/30' : 'bg-error-container/60 border-error/30');
+                feedback.className = 'w-full mb-6 text-left rounded-2xl p-5 border shadow-sm ' + (res.benar ? 'bg-green-500/10 border-green-500/30' : 'bg-error-container/60 border-error/30');
 
                 let nextButtons = '<div class="mt-4 flex flex-wrap items-center gap-3">';
                 if (jawabRes && jawabRes.next_url) {
@@ -112,11 +107,11 @@
                 }
 
                 feedback.innerHTML = `
-                    <div class="flex items-center gap-2 font-heading text-heading font-extrabold ${res.benar ? 'text-green-500' : 'text-error'}">
+                    <div class="flex items-center gap-2 font-heading text-heading font-extrabold ${res.benar ? 'text-green-600' : 'text-error'}">
                         <span class="material-symbols-outlined icon-fill">${res.benar ? 'verified' : 'cancel'}</span>
-                        ${res.benar ? 'Pelafalan benar!' : 'Belum tepat'} • Skor ${res.skor ?? 0}/100${expText}
+                        ${res.benar ? 'LANCAR & BENER!' : 'Belum tepat'} • Skor ${res.skor ?? 0}/100${expText}
                     </div>
-                    <p class="font-body text-body text-on-surface-variant mt-1">Terdeteksi: <strong>${res.transcript ?? '-'}</strong> • Rekor: ${(jawabRes ? jawabRes.skor_tertinggi : res.skor)}/100</p>
+                    <p class="font-body text-body text-on-surface-variant mt-1">Terdeteksi: <strong>“${res.transcript ?? '-'}”</strong> • Rekor: ${(jawabRes ? jawabRes.skor_tertinggi : res.skor)}/100</p>
                     <p class="font-body text-body text-on-surface mt-1">${res.balasan_teks ?? ''}</p>
                     ${levelSelesaiHtml}
                     ${nextButtons}
@@ -143,8 +138,11 @@
                 recording = false;
                 clearInterval(timer);
                 waveform.classList.add('hidden');
-                micLabel.textContent = 'Rekam';
+                timerEl.classList.add('hidden');
+                pulseRing.classList.add('opacity-0');
+                if (micIcon) micIcon.textContent = 'mic';
                 btnMic.classList.remove('bg-error');
+                btnMic.classList.add('bg-primary-600');
                 if (recorder && recorder.state !== 'inactive') recorder.stop();
             }
 
@@ -165,9 +163,12 @@
                     recording = true;
                     seconds = 0;
                     waveform.classList.remove('hidden');
-                    micLabel.textContent = 'Berhenti';
+                    timerEl.classList.remove('hidden');
+                    pulseRing.classList.remove('opacity-0');
+                    if (micIcon) micIcon.textContent = 'stop';
+                    btnMic.classList.remove('bg-primary-600');
                     btnMic.classList.add('bg-error');
-                    statusMic.textContent = 'Status Mikrofon: Merekam...';
+                    statusMic.textContent = 'Nyemak swara panjenengan...';
                     timer = setInterval(() => {
                         seconds = Math.min(seconds + 1, 10);
                         timerEl.textContent = `00:0${seconds} / 00:10`;
@@ -191,15 +192,32 @@
                 } catch (e) { alert(e.message); }
             });
 
-            document.getElementById('btn-tts')?.addEventListener('click', async () => {
+            btnTts?.addEventListener('click', async () => {
+                if (ttsIcon) {
+                    ttsIcon.textContent = 'progress_activity';
+                    ttsIcon.classList.add('animate-spin');
+                }
+                if (ttsLabel) ttsLabel.textContent = 'Nyetel Swara...';
+
                 try {
                     const res = await window.postJSON(window.KUIS.ttsUrl, { teks: SOAL.teks_referensi });
                     if (res.audio_base64) {
-                        new Audio('data:' + res.mime + ';base64,' + res.audio_base64).play();
+                        const audio = new Audio('data:' + res.mime + ';base64,' + res.audio_base64);
+                        audio.play();
+                    } else if (res.audio_url) {
+                        new Audio(res.audio_url).play();
                     } else {
-                        alert('Mode mock: audio TTS belum tersedia (edge-tts gagal dijalankan).');
+                        alert('Mode mock: audio TTS belum tersedia.');
                     }
-                } catch (e) { alert(e.message); }
+                } catch (e) {
+                    alert(e.message);
+                } finally {
+                    if (ttsIcon) {
+                        ttsIcon.textContent = 'volume_up';
+                        ttsIcon.classList.remove('animate-spin');
+                    }
+                    if (ttsLabel) ttsLabel.textContent = 'Dengarkan Contoh (edge-tts)';
+                }
             });
         </script>
     @endpush
