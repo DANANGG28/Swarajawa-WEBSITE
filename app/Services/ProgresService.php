@@ -61,11 +61,15 @@ class ProgresService
             ->first();
 
         if ($next) {
-            ProgresSiswa::query()
-                ->where('siswa_id', $siswa->id)
-                ->where('level_materi_id', $next->id)
-                ->where('status', ProgresSiswa::STATUS_TERKUNCI)
-                ->update(['status' => ProgresSiswa::STATUS_BERJALAN]);
+            $nextProgres = ProgresSiswa::firstOrNew([
+                'siswa_id' => $siswa->id,
+                'level_materi_id' => $next->id,
+            ]);
+
+            if (! $nextProgres->exists || $nextProgres->status === ProgresSiswa::STATUS_TERKUNCI) {
+                $nextProgres->status = ProgresSiswa::STATUS_BERJALAN;
+                $nextProgres->save();
+            }
         }
 
         return $progres;

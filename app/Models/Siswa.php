@@ -38,6 +38,39 @@ class Siswa extends Authenticatable
         return null;
     }
 
+    /**
+     * Memeriksa apakah data diri siswa (terutama Kelas dan NIS) belum lengkap.
+     */
+    public function profilBelumLengkap(): bool
+    {
+        return ! empty($this->dataBelumLengkap());
+    }
+
+    /**
+     * Mengembalikan daftar field data diri yang belum lengkap/belum valid.
+     *
+     * @return array<string, string>
+     */
+    public function dataBelumLengkap(): array
+    {
+        $missing = [];
+
+        // 1. Kelas (wajib untuk penugasan dan perankingan kelas)
+        if (empty(trim((string) $this->kelas))) {
+            $missing['kelas'] = 'Kelas belum dipilih / diisi';
+        }
+
+        // 2. NIS (wajib berupa angka valid, bukan kode acak placeholder Google auth)
+        $nis = trim((string) $this->nis);
+        if (empty($nis)) {
+            $missing['nis'] = 'Nomor Induk Siswa (NIS) belum diisi';
+        } elseif (str_starts_with($nis, 'G') && ! ctype_digit(substr($nis, 1))) {
+            $missing['nis'] = 'NIS masih berupa kode acak sementara dari Google Login';
+        }
+
+        return $missing;
+    }
+
     protected $hidden = [
         'password',
         'remember_token',
