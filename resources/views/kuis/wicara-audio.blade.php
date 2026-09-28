@@ -26,13 +26,15 @@
                 </button>
             </div>
 
-            <div class="flex flex-col items-center justify-center mb-6 relative w-full">
-                <div id="pulseRing" class="absolute w-28 h-28 rounded-full bg-primary-400/20 animate-ping opacity-0 pointer-events-none transition-opacity"></div>
-                <div id="outerGlow" class="absolute w-24 h-24 rounded-full bg-primary-500/10 pointer-events-none"></div>
-                <button id="btn-mic" type="button" aria-label="Mulai Merekam Suara" class="relative z-10 w-20 h-20 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary shadow-md flex flex-col items-center justify-center transition-all duration-300 transform active:scale-95">
-                    <span id="mic-icon" class="material-symbols-outlined text-[36px]">mic</span>
-                    <span id="mic-label" class="sr-only">Rekam</span>
-                </button>
+            <div class="flex flex-col items-center justify-center mb-6 w-full">
+                <div class="relative flex items-center justify-center">
+                    <div id="pulseRing" class="absolute w-28 h-28 rounded-full bg-primary-400/20 animate-ping opacity-0 pointer-events-none transition-opacity"></div>
+                    <div id="outerGlow" class="absolute w-24 h-24 rounded-full bg-primary-500/10 pointer-events-none"></div>
+                    <button id="btn-mic" type="button" aria-label="Mulai Merekam Suara" class="relative z-10 w-20 h-20 rounded-full bg-primary-600 hover:bg-primary-700 text-on-primary shadow-md flex flex-col items-center justify-center transition-all duration-300 transform active:scale-95">
+                        <span id="mic-icon" class="material-symbols-outlined text-[36px]">mic</span>
+                        <span id="mic-label" class="sr-only">Rekam</span>
+                    </button>
+                </div>
 
                 <div class="mt-4 flex items-center gap-2 text-on-surface-variant font-caption text-caption">
                     <span id="status-mic">Ketuk untuk Mulai Rekam Ucapan</span>
@@ -85,38 +87,30 @@
                     });
                 } catch(e) { console.error(e); }
 
-                const expText = jawabRes ? ` • +${jawabRes.exp_didapat} XP` : '';
-                feedback.className = 'w-full mb-6 text-left rounded-2xl p-5 border shadow-sm ' + (res.benar ? 'bg-green-500/10 border-green-500/30' : 'bg-error-container/60 border-error/30');
+                // Tampilkan Popup Feedback Terpusat di Tengah dengan Emoji
+                if (window.showQuizFeedbackModal) {
+                    const isPassed = Boolean(res.benar || (jawabRes && jawabRes.benar));
+                    const currentSkor = jawabRes ? jawabRes.skor : (res.skor ?? 0);
+                    const keteranganText = (res.transcript ? `Terdeteksi: <strong>“${res.transcript}”</strong><br>` : '') +
+                        (res.balasan_teks ? `<span class="text-slate-600 font-normal">${res.balasan_teks}</span>` : '');
 
-                let nextButtons = '<div class="mt-4 flex flex-wrap items-center gap-3">';
-                if (jawabRes && jawabRes.next_url) {
-                    nextButtons += `<a href="${jawabRes.next_url}" class="rounded-full bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body hover:bg-primary-700 transition shadow-sm">Soal Selanjutnya</a>`;
+                    window.showQuizFeedbackModal({
+                        benar: isPassed,
+                        skor: currentSkor,
+                        skor_tertinggi: jawabRes ? jawabRes.skor_tertinggi : (res.skor ?? 0),
+                        exp_didapat: jawabRes ? jawabRes.exp_didapat : 0,
+                        total_exp: jawabRes ? jawabRes.total_exp : 0,
+                        current_streak: jawabRes ? jawabRes.current_streak : 0,
+                        kunciDisplay: SOAL.teks_referensi,
+                        keterangan: keteranganText,
+                        level_selesai: jawabRes ? jawabRes.level_selesai : false,
+                        reward_exp: jawabRes ? jawabRes.reward_exp : 0,
+                        level_berikutnya: jawabRes ? jawabRes.level_berikutnya : null,
+                        next_url: jawabRes ? jawabRes.next_url : null,
+                        next_level_url: jawabRes ? jawabRes.next_level_url : null,
+                        title: isPassed ? 'Lancar & Bener!' : 'Belum Tepat'
+                    });
                 }
-                nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-full bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition">Beranda</a></div>`;
-
-                let levelSelesaiHtml = '';
-                if (jawabRes && jawabRes.level_selesai) {
-                    levelSelesaiHtml = `
-                        <div class="mt-3 p-4 rounded-xl bg-green-500/20 border border-green-500/40 text-green-700">
-                            <div class="font-heading text-heading font-extrabold flex items-center gap-1.5">
-                                <span class="material-symbols-outlined icon-fill">military_tech</span>
-                                Level Selesai! Anda mendapatkan bonus +${jawabRes.reward_exp} EXP!
-                            </div>
-                            <p class="font-body text-body text-green-800 mt-1">Level selanjutnya <strong>${jawabRes.level_berikutnya ?? ''}</strong> sekarang sudah terbuka.</p>
-                        </div>`;
-                }
-
-                feedback.innerHTML = `
-                    <div class="flex items-center gap-2 font-heading text-heading font-extrabold ${res.benar ? 'text-green-600' : 'text-error'}">
-                        <span class="material-symbols-outlined icon-fill">${res.benar ? 'verified' : 'cancel'}</span>
-                        ${res.benar ? 'LANCAR & BENER!' : 'Belum tepat'} • Skor ${res.skor ?? 0}/100${expText}
-                    </div>
-                    <p class="font-body text-body text-on-surface-variant mt-1">Terdeteksi: <strong>“${res.transcript ?? '-'}”</strong> • Rekor: ${(jawabRes ? jawabRes.skor_tertinggi : res.skor)}/100</p>
-                    <p class="font-body text-body text-on-surface mt-1">${res.balasan_teks ?? ''}</p>
-                    ${levelSelesaiHtml}
-                    ${nextButtons}
-                    ${res.mock ? '<p class="font-caption text-caption text-gray-500 mt-2">(Mode mock — API vendor belum dikonfigurasi)</p>' : ''}`;
-                feedback.classList.remove('hidden');
             }
 
             async function kirimAudio(base64) {

@@ -41,15 +41,24 @@ class QuizScoringService
         $kunci = $soal->kunci_jawaban ?? [];
         $kunciRaw = $kunci['jawaban'] ?? ($kunci[0] ?? null);
 
-        $kunciNorm = $this->resolvePilihan($soal->opsi_jawaban, $kunciRaw);
-        $jawabanNorm = $this->resolvePilihan($soal->opsi_jawaban, $jawaban);
+        $kunciMatch = $this->findPilihan($soal->opsi_jawaban, $kunciRaw);
+        $jawabanMatch = $this->findPilihan($soal->opsi_jawaban, $jawaban);
+
+        $kunciNorm = $kunciMatch['norm'];
+        $jawabanNorm = $jawabanMatch['norm'];
 
         $benar = $kunciNorm !== '' && $kunciNorm === $jawabanNorm;
 
         return [
             'benar' => $benar,
             'skor' => $benar ? 100 : 0,
-            'detail' => ['kunci' => $kunciNorm, 'jawaban' => $jawabanNorm],
+            'detail' => [
+                'kunci' => $kunciMatch['teks'] !== '' ? $kunciMatch['teks'] : $kunciNorm,
+                'kunci_label' => $kunciMatch['label'],
+                'kunci_teks' => $kunciMatch['teks'],
+                'jawaban' => $jawabanMatch['teks'] !== '' ? $jawabanMatch['teks'] : $jawabanNorm,
+                'jawaban_label' => $jawabanMatch['label'],
+            ],
         ];
     }
 
@@ -182,11 +191,16 @@ class QuizScoringService
         ];
     }
 
-    private function resolvePilihan(mixed $opsi, mixed $value): string
+    /**
+     * @return array{label: ?string, teks: string, norm: string}
+     */
+    private function findPilihan(mixed $opsi, mixed $value): array
     {
         if ($value === null) {
-            return '';
+            return ['label' => null, 'teks' => '', 'norm' => ''];
         }
+
+        $valNorm = TextSimilarity::normalize((string) $value);
 
         if (is_array($opsi)) {
             foreach ($opsi as $index => $option) {
@@ -194,25 +208,38 @@ class QuizScoringService
                     $label = (string) ($option['label'] ?? $option['id'] ?? $index);
                     $teks = (string) ($option['teks'] ?? $option['text'] ?? $option['value'] ?? '');
 
-                    if (TextSimilarity::normalize($label) === TextSimilarity::normalize((string) $value)) {
-                        return TextSimilarity::normalize($teks);
-                    }
-                    if (TextSimilarity::normalize($teks) === TextSimilarity::normalize((string) $value)) {
-                        return TextSimilarity::normalize($teks);
+                    if (TextSimilarity::normalize($label) === $valNorm || TextSimilarity::normalize($teks) === $valNorm) {
+                        return [
+                            'label' => $label,
+                            'teks' => $teks,
+                            'norm' => TextSimilarity::normalize($teks),
+                        ];
                     }
                 } else {
+                    $label = (string) $index;
                     $teks = (string) $option;
-                    if ((string) $index === (string) $value) {
-                        return TextSimilarity::normalize($teks);
-                    }
-                    if (TextSimilarity::normalize($teks) === TextSimilarity::normalize((string) $value)) {
-                        return TextSimilarity::normalize($teks);
+
+                    if (TextSimilarity::normalize($label) === $valNorm || TextSimilarity::normalize($teks) === $valNorm) {
+                        return [
+                            'label' => $label,
+                            'teks' => $teks,
+                            'norm' => TextSimilarity::normalize($teks),
+                        ];
                     }
                 }
             }
         }
 
-        return TextSimilarity::normalize((string) $value);
+        return [
+            'label' => null,
+            'teks' => (string) $value,
+            'norm' => $valNorm,
+        ];
+    }
+
+    private function resolvePilihan(mixed $opsi, mixed $value): string
+    {
+        return $this->findPilihan($opsi, $value)['norm'];
     }
 
     /**

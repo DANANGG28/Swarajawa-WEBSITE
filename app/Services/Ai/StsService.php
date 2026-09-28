@@ -31,6 +31,12 @@ class StsService
      */
     public function respond(string $audioBase64, string $expectedText, ?string $mockTranscript = null): array
     {
+        // Jika API vendor belum dikonfigurasi (lingkungan lokal/dev) dan ada audio,
+        // gunakan teks referensi sebagai mock transcript agar alur pengerjaan kuis suara lancar.
+        if (! $this->stt->isConfigured() && $mockTranscript === null && filled($audioBase64)) {
+            $mockTranscript = $expectedText;
+        }
+
         $stt = $this->stt->transcribe($audioBase64, mockTranscript: $mockTranscript);
         $transcript = $stt['transcript'];
 

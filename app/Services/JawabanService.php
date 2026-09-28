@@ -57,12 +57,12 @@ class JawabanService
         if ($levelMateri) {
             $totalSoalLevel = Soal::where('level_materi_id', $levelMateri->id)->count();
             $soalIdsLevel = Soal::where('level_materi_id', $levelMateri->id)->pluck('id');
-            $lulusCount = JawabanSiswa::where('siswa_id', $siswa->id)
+            // Unit selesai jika semua soal pada level ini sudah pernah dikerjakan minimal 1x
+            $dikerjakanCount = JawabanSiswa::where('siswa_id', $siswa->id)
                 ->whereIn('soal_id', $soalIdsLevel)
-                ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
                 ->count();
 
-            if ($totalSoalLevel > 0 && $lulusCount >= $totalSoalLevel) {
+            if ($totalSoalLevel > 0 && $dikerjakanCount >= $totalSoalLevel) {
                 $progresLevel = ProgresSiswa::where('siswa_id', $siswa->id)
                     ->where('level_materi_id', $levelMateri->id)
                     ->first();
@@ -124,23 +124,124 @@ class JawabanService
     }
 
     /**
-     * Soal berikutnya dalam level (utawa pembahasan) yang belum selesai 100%.
+     * Soal berikutnya dalam level (utawa pembahasan) untuk alur kuis yang mulus.
+     * Memprioritaskan soal belum tuntas ke depan (forward sequence).
+     * Jika tidak ada lagi soal belum tuntas ke depan, kembalikan null agar level selesai/lanjut ke unit berikutnya.
      */
     public function nextSoal(Siswa $siswa, ?LevelMateri $levelMateri, int $excludeSoalId, ?int $pembahasanId = null): ?Soal
     {
+        $currentSoal = Soal::find($excludeSoalId);
+        $levelMateri = $levelMateri ?? $currentSoal?->levelMateri;
+
         if (! $levelMateri) {
             return null;
         }
 
+        $pembahasanId = $pembahasanId ?? $currentSoal?->pembahasan_id;
+
         $selesaiSoalIds = JawabanSiswa::where('siswa_id', $siswa->id)
             ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
-            ->pluck('soal_id');
+            ->pluck('soal_id')
+            ->all();
 
-        return Soal::where('level_materi_id', $levelMateri->id)
-            ->when($pembahasanId, fn ($q) => $q->where('pembahasan_id', $pembahasanId))
-            ->where('id', '!=', $excludeSoalId)
+        // 1. Cari soal belum tuntas ke depan di pembahasan yang sama
+        if ($pembahasanId) {
+            $nextUnfinishedInPembahasan = Soal::where('pembahasan_id', $pembahasanId)
+                ->where('id', '>', $excludeSoalId)
+                ->whereNotIn('id', $selesaiSoalIds)
+                ->orderBy('id')
+                ->first();
+
+            if ($nextUnfinishedInPembahasan) {
+                return $nextUnfinishedInPembahasan;
+            }
+        }
+
+        // 2. Cari soal belum tuntas di pembahasan berikutnya dalam level yang sama
+        if ($pembahasanId) {
+            $currentPembahasan = Pembahasan::find($pembahasanId);
+            $currentUrutan = $currentPembahasan?->urutan ?? 0;
+
+            $nextPembahasans = Pembahasan::where('level_materi_id', $levelMateri->id)
+                ->when($currentUrutan > 0, fn ($q) => $q->where('urutan', '>', $currentUrutan))
+                ->orderBy('urutan')
+                ->get();
+
+            foreach ($nextPembahasans as $nextPembahasan) {
+                $soalNextPembahasan = Soal::where('pembahasan_id', $nextPembahasan->id)
+                    ->whereNotIn('id', $selesaiSoalIds)
+                    ->orderBy('id')
+                    ->first();
+
+                if ($soalNextPembahasan) {
+                    return $soalNextPembahasan;
+                }
+            }
+        }
+
+        // 3. Cari soal belum tuntas ke depan dalam level (jika tanpa pembahasan)
+        $nextUnfinishedInLevel = Soal::where('level_materi_id', $levelMateri->id)
+            ->where('id', '>', $excludeSoalId)
             ->whereNotIn('id', $selesaiSoalIds)
             ->orderBy('id')
             ->first();
+
+        if ($nextUnfinishedInLevel) {
+            return $nextUnfinishedInLevel;
+        }
+
+        // 4. Jika semua soal di level ini SUDAH TUNTAS (skor >= 70 untuk seluruh soal)
+        // dan siswa sedang dalam mode latihan ulang (replay), lanjutkan urutan sekuensial forward
+        $totalSoalLevel = Soal::where('level_materi_id', $levelMateri->id)->count();
+        $totalSelesaiLevel = count(array_intersect(
+            Soal::where('level_materi_id', $levelMateri->id)->pluck('id')->all(),
+            $selesaiSoalIds
+        ));
+
+        if ($totalSoalLevel > 0 && $totalSelesaiLevel >= $totalSoalLevel) {
+            // Replay mode: maju ke soal berikutnya dalam pembahasan
+            if ($pembahasanId) {
+                $nextSeqInPembahasan = Soal::where('pembahasan_id', $pembahasanId)
+                    ->where('id', '>', $excludeSoalId)
+                    ->orderBy('id')
+                    ->first();
+
+                if ($nextSeqInPembahasan) {
+                    return $nextSeqInPembahasan;
+                }
+
+                // Atau ke soal pertama di pembahasan berikutnya
+                $currentPembahasan = Pembahasan::find($pembahasanId);
+                $currentUrutan = $currentPembahasan?->urutan ?? 0;
+
+                $nextPembahasan = Pembahasan::where('level_materi_id', $levelMateri->id)
+                    ->when($currentUrutan > 0, fn ($q) => $q->where('urutan', '>', $currentUrutan))
+                    ->orderBy('urutan')
+                    ->first();
+
+                if ($nextPembahasan) {
+                    $firstSoalNext = Soal::where('pembahasan_id', $nextPembahasan->id)
+                        ->orderBy('id')
+                        ->first();
+
+                    if ($firstSoalNext) {
+                        return $firstSoalNext;
+                    }
+                }
+            }
+
+            // Replay mode: maju ke soal berikutnya dalam level
+            $nextSeqInLevel = Soal::where('level_materi_id', $levelMateri->id)
+                ->where('id', '>', $excludeSoalId)
+                ->orderBy('id')
+                ->first();
+
+            if ($nextSeqInLevel) {
+                return $nextSeqInLevel;
+            }
+        }
+
+        // Sudah di ujung rangkaian pengerjaan level -> kembalikan null (level selesai)
+        return null;
     }
 }

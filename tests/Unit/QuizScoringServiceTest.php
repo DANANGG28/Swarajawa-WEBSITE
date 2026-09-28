@@ -27,9 +27,18 @@ class QuizScoringServiceTest extends TestCase
             'kunci_jawaban' => ['jawaban' => 'A'],
         ]);
 
-        $this->assertSame(100, $this->service->score($soal, 'A')['skor']);
-        $this->assertTrue($this->service->score($soal, 'A')['benar']);
-        $this->assertSame(0, $this->service->score($soal, 'B')['skor']);
+        $resultA = $this->service->score($soal, 'A');
+        $this->assertSame(100, $resultA['skor']);
+        $this->assertTrue($resultA['benar']);
+        $this->assertSame('A', $resultA['detail']['kunci_label']);
+        $this->assertSame('Sugeng enjing', $resultA['detail']['kunci_teks']);
+        $this->assertSame('Sugeng enjing', $resultA['detail']['kunci']);
+
+        $resultB = $this->service->score($soal, 'B');
+        $this->assertSame(0, $resultB['skor']);
+        $this->assertFalse($resultB['benar']);
+        $this->assertSame('B', $resultB['detail']['jawaban_label']);
+        $this->assertSame('Sugeng dalu', $resultB['detail']['jawaban']);
     }
 
     public function test_susun_kalimat_scoring(): void

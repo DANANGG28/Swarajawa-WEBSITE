@@ -45,27 +45,27 @@ class KuisSesiController extends Controller
         private readonly JawabanService $jawaban,
     ) {}
 
-    public function pilihanGanda(): View
+    public function pilihanGanda(): View|RedirectResponse
     {
         return $this->render('kuis.pilihan-ganda', Soal::TIPE_PILIHAN_GANDA, 'Pilihan Ganda');
     }
 
-    public function susunUkara(): View
+    public function susunUkara(): View|RedirectResponse
     {
         return $this->render('kuis.susun-ukara', Soal::TIPE_SUSUN_KALIMAT, 'Susun Ukara');
     }
 
-    public function wicaraAudio(): View
+    public function wicaraAudio(): View|RedirectResponse
     {
         return $this->render('kuis.wicara-audio', Soal::TIPE_KUIS_SUARA, 'Kuis Wicara (STS)');
     }
 
-    public function speakToText(): View
+    public function speakToText(): View|RedirectResponse
     {
         return $this->render('kuis.speak-to-text', Soal::TIPE_KUIS_SUARA, 'Latihan Speak to Text');
     }
 
-    public function tracingAksara(): View
+    public function tracingAksara(): View|RedirectResponse
     {
         return $this->render('kuis.tracing-aksara', Soal::TIPE_MENULIS_AKSARA, 'Tracing Aksara');
     }
@@ -77,6 +77,12 @@ class KuisSesiController extends Controller
     public function mulaiLevel(Request $request, LevelMateri $levelMateri): RedirectResponse
     {
         $siswa = $this->siswa();
+
+        if ($siswa->profilBelumLengkap()) {
+            return redirect()->route('siswa.dashboard')
+                ->with('perlu_lengkapi_profil', true)
+                ->with('error', 'Lengkapi data diri (Kelas dan NIS) Anda terlebih dahulu sebelum memulai kuis.');
+        }
 
         if (! $this->progres->canStart($siswa, $levelMateri)) {
             return redirect()->route('siswa.dashboard')
@@ -91,13 +97,18 @@ class KuisSesiController extends Controller
         $soal = null;
 
         if ($pembahasan) {
-            $soal = $this->jawaban->firstUnfinishedInPembahasan($siswa, $pembahasan)
-                ?? Soal::where('pembahasan_id', $pembahasan->id)->orderBy('id')->first();
+            $soal = $this->jawaban->firstUnfinishedInPembahasan($siswa, $pembahasan);
         }
 
-        $soal = $soal
-            ?? $this->jawaban->firstUnfinishedInLevel($siswa, $levelMateri)
-            ?? Soal::where('level_materi_id', $levelMateri->id)->orderBy('id')->first();
+        // Jika tidak ada soal yang belum selesai di pembahasan ini, cari di pembahasan lain dalam level
+        $soal = $soal ?? $this->jawaban->firstUnfinishedInLevel($siswa, $levelMateri);
+
+        // Jika semua soal pada level/pembahasan ini sudah tuntas dan siswa ingin mengulang materi (replay)
+        if (! $soal) {
+            $soal = $pembahasan
+                ? Soal::where('pembahasan_id', $pembahasan->id)->orderBy('id')->first()
+                : Soal::where('level_materi_id', $levelMateri->id)->orderBy('id')->first();
+        }
 
         if (! $soal) {
             return redirect()->route('siswa.dashboard')
@@ -121,6 +132,13 @@ class KuisSesiController extends Controller
         $soal = Soal::query()->with('levelMateri')->findOrFail($data['soal_id']);
         $siswa = $this->siswa();
 
+        if ($siswa->profilBelumLengkap()) {
+            return response()->json([
+                'message' => 'Lengkapi data diri (Kelas dan NIS) Anda terlebih dahulu sebelum menjawab kuis.',
+                'perlu_lengkapi_profil' => true,
+            ], 403);
+        }
+
         // FR-2: blokir bila level masih terkunci.
         if ($soal->levelMateri && ! $this->progres->canStart($siswa, $soal->levelMateri)) {
             return response()->json(['message' => 'Materi belum tercapai.'], 403);
@@ -131,6 +149,20 @@ class KuisSesiController extends Controller
 
         $nextSoal = $this->jawaban->nextSoal($siswa, $soal->levelMateri, $soal->id, $soal->pembahasan_id);
 
+        $nextLevelUrl = null;
+        $nextLevelNama = $catatan['level_berikutnya'] ?? null;
+
+        if ($catatan['level_selesai'] || (! $nextSoal && $soal->levelMateri)) {
+            $nextLevel = LevelMateri::where('urutan', '>', $soal->levelMateri?->urutan)
+                ->orderBy('urutan')
+                ->first();
+
+            if ($nextLevel && $this->progres->canStart($siswa, $nextLevel)) {
+                $nextLevelUrl = route('kuis.mulai', $nextLevel->id);
+                $nextLevelNama = $nextLevel->nama_materi;
+            }
+        }
+
         return response()->json([
             'benar' => $hasil['benar'],
             'skor' => $hasil['skor'],
@@ -140,9 +172,11 @@ class KuisSesiController extends Controller
             'exp_didapat' => $catatan['exp_didapat'],
             'reward_exp' => $catatan['reward_exp'],
             'level_selesai' => $catatan['level_selesai'],
-            'level_berikutnya' => $catatan['level_berikutnya'],
+            'level_berikutnya' => $nextLevelNama,
             'next_soal_id' => $nextSoal?->id,
             'next_url' => $nextSoal ? $this->urlForSoal($nextSoal) : null,
+            'next_level_url' => $nextLevelUrl,
+            'next_level_nama' => $nextLevelNama,
             'total_exp' => $catatan['total_exp'],
             'current_streak' => $catatan['current_streak'],
             'highest_streak' => $catatan['highest_streak'],
@@ -180,8 +214,14 @@ class KuisSesiController extends Controller
         return response()->json($this->sts->respond($data['audio'], $data['teks_referensi'], $data['mock_transcript'] ?? null));
     }
 
-    public function latihanNgomong(): View
+    public function latihanNgomong(): View|RedirectResponse
     {
+        if ($this->siswa()->profilBelumLengkap()) {
+            return redirect()->route('siswa.dashboard')
+                ->with('perlu_lengkapi_profil', true)
+                ->with('error', 'Lengkapi data diri (Kelas dan NIS) Anda terlebih dahulu sebelum memulai latihan.');
+        }
+
         return $this->render('kuis.latihan-ngomong', Soal::TIPE_KUIS_SUARA, 'Latihan Ngomong');
     }
 
@@ -198,6 +238,13 @@ class KuisSesiController extends Controller
 
         $soal = Soal::query()->with('levelMateri')->findOrFail($data['soal_id']);
         $siswa = $this->siswa();
+
+        if ($siswa->profilBelumLengkap()) {
+            return response()->json([
+                'message' => 'Lengkapi data diri (Kelas dan NIS) Anda terlebih dahulu sebelum memulai latihan.',
+                'perlu_lengkapi_profil' => true,
+            ], 403);
+        }
 
         if ($soal->levelMateri && ! $this->progres->canStart($siswa, $soal->levelMateri)) {
             return response()->json(['message' => 'Materi belum tercapai.'], 403);
@@ -319,11 +366,33 @@ class KuisSesiController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    private function render(string $view, string $tipe, string $judul): View
+    private function render(string $view, string $tipe, string $judul): View|RedirectResponse
     {
         $siswa = $this->siswa();
+
+        if ($siswa->profilBelumLengkap()) {
+            return redirect()->route('siswa.dashboard')
+                ->with('perlu_lengkapi_profil', true)
+                ->with('error', 'Lengkapi data diri (Kelas dan NIS) Anda terlebih dahulu sebelum memulai kuis.');
+        }
+
         $this->gamification->syncStreak($siswa);
         $accessibleLevelIds = $this->levelIds($siswa->id);
+
+        $soal = null;
+
+        if (request()->filled('soal_id')) {
+            $requestedId = (int) request('soal_id');
+            $requestedSoal = Soal::query()->with(['levelMateri', 'pembahasan'])->find($requestedId);
+
+            if ($requestedSoal) {
+                // Jika tipe soal berbeda dengan layar saat ini, alihkan ke layar kuis yang sesuai
+                if ($requestedSoal->tipe_soal !== $tipe) {
+                    return redirect()->to($this->urlForSoal($requestedSoal));
+                }
+                $soal = $requestedSoal;
+            }
+        }
 
         $query = Soal::query()
             ->with(['levelMateri', 'pembahasan'])
@@ -339,14 +408,6 @@ class KuisSesiController extends Controller
 
         if (request()->filled('pembahasan_id')) {
             $query->where('pembahasan_id', (int) request('pembahasan_id'));
-        }
-
-        $total = (clone $query)->count();
-        $soal = null;
-
-        if (request()->filled('soal_id')) {
-            $requestedId = (int) request('soal_id');
-            $soal = (clone $query)->where('id', $requestedId)->first();
         }
 
         if (! $soal) {
@@ -368,7 +429,21 @@ class KuisSesiController extends Controller
             }
         }
 
-        $nomor = $soal ? (clone $query)->where('id', '<=', $soal->id)->count() : 0;
+        // Hitung progres sesi (nomor urut dan total soal di sesi pembahasan/level ini)
+        $pembahasanId = request('pembahasan_id') ?: $soal?->pembahasan_id;
+        $levelId = request('level_materi_id') ?: $soal?->level_materi_id;
+
+        if ($pembahasanId) {
+            $sessionSoalIds = Soal::where('pembahasan_id', $pembahasanId)->orderBy('id')->pluck('id')->all();
+        } elseif ($levelId) {
+            $sessionSoalIds = Soal::where('level_materi_id', $levelId)->orderBy('id')->pluck('id')->all();
+        } else {
+            $sessionSoalIds = (clone $query)->orderBy('id')->pluck('id')->all();
+        }
+
+        $total = count($sessionSoalIds);
+        $currentIndex = $soal ? array_search($soal->id, $sessionSoalIds) : false;
+        $nomor = $currentIndex !== false ? $currentIndex + 1 : ($soal ? 1 : 0);
 
         return view($view, [
             'judul' => $judul,

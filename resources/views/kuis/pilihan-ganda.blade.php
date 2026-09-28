@@ -110,51 +110,58 @@
                         window.KuisFx.salah();
                     }
 
-                    feedback.className = 'rounded-2xl p-5 border-2 ' + (res.benar ? 'bg-green-500/10 border-green-500/40' : 'bg-error-container/50 border-error/40');
+                    const kunciDisplay = res.detail?.kunci_teks
+                        ? (res.detail.kunci_label ? res.detail.kunci_label + '. ' : '') + res.detail.kunci_teks
+                        : (res.detail?.kunci ?? '-');
 
-                    let nextButtons = '<div class="mt-4 flex flex-wrap items-center gap-3">';
-                    if (res.next_url) {
-                        nextButtons += `<a href="${res.next_url}" class="rounded-2xl bg-primary-600 text-on-primary px-6 py-2.5 font-bold font-body shadow-[0_3px_0_#5443C9] active:translate-y-[3px] active:shadow-none transition-all">Soal Selanjutnya</a>`;
+                    // Tampilkan Popup Feedback Terpusat di Tengah dengan Emoji
+                    if (window.showQuizFeedbackModal) {
+                        window.showQuizFeedbackModal({
+                            benar: res.benar,
+                            skor: res.skor,
+                            skor_tertinggi: res.skor_tertinggi,
+                            exp_didapat: res.exp_didapat,
+                            total_exp: res.total_exp,
+                            current_streak: res.current_streak,
+                            kunciDisplay: kunciDisplay,
+                            level_selesai: res.level_selesai,
+                            reward_exp: res.reward_exp,
+                            level_berikutnya: res.level_berikutnya,
+                            next_url: res.next_url,
+                            next_level_url: res.next_level_url,
+                            title: res.benar ? 'Jawabanmu Bener!' : 'Durung Pas!'
+                        });
                     }
-                    nextButtons += `<a href="{{ route('siswa.dashboard') }}" class="rounded-2xl bg-gray-100 text-on-surface px-6 py-2.5 font-bold font-body hover:bg-gray-200 transition-colors">Beranda</a></div>`;
-
-                    let levelSelesaiHtml = '';
-                    if (res.level_selesai) {
-                        levelSelesaiHtml = `
-                            <div class="mt-3 p-4 rounded-xl bg-green-500/20 border border-green-500/40 text-green-700">
-                                <div class="font-heading text-lg font-extrabold flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined icon-fill">military_tech</span>
-                                    Level Selesai! Bonus +${res.reward_exp} EXP!
-                                </div>
-                                <p class="font-body text-base text-green-800 mt-1">Level sabanjure <strong>${res.level_berikutnya ?? ''}</strong> saiki wis kabukak.</p>
-                            </div>`;
-                    }
-
-                    feedback.innerHTML = `
-                        <div class="flex items-center gap-2 font-heading text-lg font-extrabold ${res.benar ? 'text-green-600' : 'text-error'}">
-                            <span class="material-symbols-outlined icon-fill">${res.benar ? 'verified' : 'cancel'}</span>
-                            ${res.benar ? 'Bener!' : 'Durung pas'} • Skor ${res.skor}/100 • +${res.exp_didapat} XP
-                        </div>
-                        <p class="font-body text-base text-on-surface-variant mt-1">Kunci: <strong>${res.detail?.kunci ?? '-'}</strong> • Rekor ${res.skor_tertinggi}/100 • Total EXP ${res.total_exp} • Streak ${res.current_streak} dina</p>
-                        ${levelSelesaiHtml}
-                        ${nextButtons}`;
-                    feedback.classList.remove('hidden');
 
                     cards.forEach((c) => {
                         c.dataset.done = '1';
                         c.disabled = true;
                         const mark = c.querySelector('.opsi-mark');
-                        mark.style.opacity = '1';
-                        if (c.dataset.teks === res.detail?.kunci) {
-                            c.classList.remove(...STATE_LIHAT);
+                        const badge = c.querySelector('.opsi-badge');
+
+                        const isSelected = String(c.dataset.label) === String(selected);
+                        const isCorrectCard = (res.benar && isSelected) ||
+                            (res.detail?.kunci_label && String(c.dataset.label) === String(res.detail.kunci_label)) ||
+                            (res.detail?.kunci_teks && c.dataset.teks === res.detail.kunci_teks) ||
+                            (res.kunci_jawaban?.jawaban && String(c.dataset.label) === String(res.kunci_jawaban.jawaban)) ||
+                            (res.detail?.kunci && String(c.dataset.teks).trim().toLowerCase() === String(res.detail.kunci).trim().toLowerCase());
+
+                        c.classList.remove(...STATE_LIHAT, 'border-green-500', 'bg-green-500/10', 'border-error', 'bg-error-container/40');
+                        badge.classList.remove('bg-primary-600', 'text-on-primary', 'bg-green-500', 'bg-error', 'text-white');
+                        mark.classList.remove('text-primary-600', 'text-green-500', 'text-error');
+
+                        if (isCorrectCard) {
                             c.classList.add('border-green-500', 'bg-green-500/10');
+                            badge.classList.add('bg-green-500', 'text-white');
                             mark.textContent = 'check_circle';
                             mark.classList.add('text-green-500');
-                        } else if (c.dataset.label === selected) {
-                            c.classList.remove(...STATE_LIHAT);
+                            mark.style.opacity = '1';
+                        } else if (isSelected && !res.benar) {
                             c.classList.add('border-error', 'bg-error-container/40');
+                            badge.classList.add('bg-error', 'text-white');
                             mark.textContent = 'cancel';
                             mark.classList.add('text-error');
+                            mark.style.opacity = '1';
                         } else {
                             mark.style.opacity = '0';
                         }
