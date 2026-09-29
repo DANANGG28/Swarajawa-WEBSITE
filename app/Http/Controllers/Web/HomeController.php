@@ -11,6 +11,9 @@ use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Topik;
+use App\Rules\UniqueCaseInsensitive;
+use App\Rules\UniquePhoneNumber;
+use App\Rules\UniqueUserEmail;
 use App\Services\GamificationService;
 use App\Services\ProgresService;
 use App\Services\QuizScoringService;
@@ -509,20 +512,20 @@ class HomeController extends Controller
         $siswa = AuthContext::currentUser($request);
 
         $data = $request->validate([
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nis' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis,'.$siswa->id],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', ignoreId: $siswa->id, customMessage: 'Nama lengkap sudah terdaftar.')],
+            'nis' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20'],
             'jenis_kelamin' => ['nullable', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
-            'email' => ['required', 'email', 'max:255', 'unique:siswa,email,'.$siswa->id],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber('siswa', $siswa->id)],
+            'email' => ['required', 'email', 'max:255', new UniqueUserEmail('siswa', $siswa->id)],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], [
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah digunakan oleh akun lain.',
-            'nis.unique' => 'NIS sudah digunakan oleh siswa lain.',
             'nis.regex' => 'NIS hanya boleh berisi angka.',
             'nis.min' => 'NIS minimal 4 digit.',
             'nis.max' => 'NIS maksimal 20 digit.',

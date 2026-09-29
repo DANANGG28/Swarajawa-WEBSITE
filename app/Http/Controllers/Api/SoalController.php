@@ -7,6 +7,7 @@ use App\Http\Resources\SoalResource;
 use App\Models\Guru;
 use App\Models\Soal;
 use App\Models\Superadmin;
+use App\Rules\UniqueCaseInsensitive;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -81,7 +82,7 @@ class SoalController extends Controller
     {
         $this->authorize('update', $soal);
 
-        $soal->update($this->validated($request));
+        $soal->update($this->validated($request, $soal));
 
         return (new SoalResource($soal->fresh()->load('levelMateri')))
             ->additional(['message' => 'Soal berhasil diperbarui.'])
@@ -100,13 +101,20 @@ class SoalController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validated(Request $request): array
+    private function validated(Request $request, ?Soal $soal = null): array
     {
+        $levelId = $request->integer('level_materi_id');
+
         return $request->validate([
             'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
-            'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $request->integer('level_materi_id'))],
+            'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $levelId)],
             'tipe_soal' => ['required', 'in:pilihan_ganda,susun_kalimat,pencocokan_arti,puzzle_pakaian_adat,menulis_aksara,kuis_suara'],
-            'pertanyaan' => ['required', 'string', 'max:5000'],
+            'pertanyaan' => [
+                'required',
+                'string',
+                'max:5000',
+                new UniqueCaseInsensitive('soal', 'pertanyaan', ignoreId: $soal?->id, where: ['level_materi_id' => $levelId], customMessage: 'Pertanyaan soal sudah digunakan pada level materi ini.'),
+            ],
             'soal_latin' => ['nullable', 'string', 'max:500'],
             'soal_aksara' => ['nullable', 'string', 'max:1000'],
             'opsi_jawaban' => ['nullable', 'array'],

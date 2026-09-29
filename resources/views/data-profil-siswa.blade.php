@@ -253,7 +253,7 @@
                                 </label>
                                 <div class="relative">
                                     <span class="absolute left-3.5 top-3 text-gray-400 material-symbols-outlined text-[20px]">person</span>
-                                    <input type="text" id="nama_lengkap" name="nama_lengkap" required value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}"  placeholder="Masukkan nama lengkap siswa" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
+                                    <input type="text" id="nama_lengkap" name="nama_lengkap" required value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}" pattern="^[a-zA-Z\s]+$" title="Nama hanya boleh berisi huruf dan spasi." oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" placeholder="Masukkan nama lengkap siswa" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
                                 </div>
                                 @error('nama_lengkap')
                                     <span class="text-xs text-error font-medium">{{ $message }}</span>

@@ -31,7 +31,7 @@ class Siswa extends Authenticatable
 
     public function getFotoUrlAttribute(): ?string
     {
-        if ($this->foto && file_exists(storage_path('image/siswa/' . $this->foto))) {
+        if ($this->foto && file_exists(storage_path('image/siswa/'.$this->foto))) {
             return route('siswa.image', $this->foto);
         }
 
