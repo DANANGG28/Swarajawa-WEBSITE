@@ -253,7 +253,7 @@
                                 </label>
                                 <div class="relative">
                                     <span class="absolute left-3.5 top-3 text-gray-400 material-symbols-outlined text-[20px]">person</span>
-                                    <input type="text" id="nama_lengkap" name="nama_lengkap" required value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}" placeholder="Masukkan nama lengkap siswa" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
+                                    <input type="text" id="nama_lengkap" name="nama_lengkap" required value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}"  placeholder="Masukkan nama lengkap siswa" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
                                 </div>
                                 @error('nama_lengkap')
                                     <span class="text-xs text-error font-medium">{{ $message }}</span>
@@ -268,7 +268,7 @@
                                 <div class="relative">
                                     <span class="absolute left-3.5 top-3 text-gray-400 material-symbols-outlined text-[20px]">pin</span>
                                     <input type="text" id="nis" name="nis" value="{{ old('nis', $siswa->nis) }}"
-                                           inputmode="numeric" pattern="[0-9]*" maxlength="20"
+                                           inputmode="numeric" pattern="[0-9]*" maxlength="10"
                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                            placeholder="Contoh: 20241001" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
                                 </div>
