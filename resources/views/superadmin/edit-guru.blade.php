@@ -122,7 +122,7 @@
                         <div class="flex-1 flex flex-col gap-2 w-full">
                             <div class="flex flex-col">
                                 <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-700 font-bold">Ganti Berkas Foto Profil (Opsional)</span>
-                                <span class="font-caption text-caption text-gray-500">Pilih foto jika ingin memperbarui. Format didukung: JPG, PNG, WEBP (Maks 2 MB).</span>
+                                <span class="font-caption text-caption text-gray-500">Pilih foto jika ingin memperbarui. Format didukung: JPG, PNG, WEBP (Maks 500 KB).</span>
                             </div>
                             <input type="file" name="foto" id="fotoInput" accept="image/jpeg,image/png,image/jpg,image/webp"
                                    onchange="previewImage(this)"
@@ -236,9 +236,14 @@
                                 </span>
                                 <div class="relative">
                                     <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">work</span>
-                                    <input type="text" name="status_pegawaian" value="{{ old('status_pegawaian', $guru->status_pegawaian) }}"
-                                           placeholder="Contoh: PNS / PPPK / GTT / Tetap Yayasan"
-                                           class="w-full rounded-xl border border-gray-200 bg-gray-50/70 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-primary-500/10 transition-all">
+                                    <select name="status_pegawaian" id="statusPegawaianSelect"
+                                            class="w-full rounded-xl border border-gray-200 bg-gray-50/70 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white focus:ring-2 focus:ring-primary-500/10 transition-all cursor-pointer">
+                                        <option value="" {{ old('status_pegawaian', $guru->status_pegawaian) === null || old('status_pegawaian', $guru->status_pegawaian) === '' ? 'selected' : '' }}>-- Pilih Status Pegawai --</option>
+                                        <option value="PKWTT" {{ old('status_pegawaian', $guru->status_pegawaian) === 'PKWTT' ? 'selected' : '' }}>PKWTT</option>
+                                        <option value="PKWT" {{ old('status_pegawaian', $guru->status_pegawaian) === 'PKWT' ? 'selected' : '' }}>PKWT</option>
+                                        <option value="PPPK" {{ old('status_pegawaian', $guru->status_pegawaian) === 'PPPK' ? 'selected' : '' }}>PPPK</option>
+                                        <option value="PNS" {{ old('status_pegawaian', $guru->status_pegawaian) === 'PNS' ? 'selected' : '' }}>PNS</option>
+                                    </select>
                                 </div>
                                 @error('status_pegawaian')
                                     <span class="text-error text-xs font-caption font-semibold">{{ $message }}</span>
@@ -346,13 +351,19 @@
             const preview = document.getElementById('fotoPreview');
             const placeholder = document.getElementById('fotoPlaceholder');
             if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 500 * 1024) {
+                    alert('Ukuran foto melebihi 500 KB. Silakan pilih foto dengan ukuran maksimal 500 KB.');
+                    input.value = '';
+                    return;
+                }
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.classList.remove('hidden');
                     if (placeholder) placeholder.classList.add('hidden');
                 }
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
             }
         }
 

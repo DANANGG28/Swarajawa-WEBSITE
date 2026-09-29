@@ -213,17 +213,28 @@
                             </div>
                         </div>
 
-                        <!-- Tombol Lengkapi / Edit Data Diri -->
+                        <!-- Tombol Lengkapi / Edit Data Diri & Logout Mobile -->
                         @php
                             $isDataLengkap = !empty($siswa->foto) && !empty($siswa->nis) && !empty($siswa->no_telpon) && !empty($siswa->jenis_kelamin);
                         @endphp
-                        <div class="flex items-center justify-center sm:justify-start gap-3 shrink-0 self-stretch sm:self-center md:self-center w-full sm:w-auto mt-1 sm:mt-0">
+                        <div class="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2.5 shrink-0 self-stretch sm:self-center md:self-center w-full sm:w-auto mt-2 sm:mt-0">
                             <a href="{{ route('siswa.profil.data') }}"
                                class="inline-flex items-center justify-center gap-2 px-5 py-2 sm:px-6 sm:py-2.5 rounded-full font-body text-xs sm:text-sm font-bold bg-white text-primary-700 hover:bg-white/95 hover:text-primary-800 shadow-md hover:shadow-lg transition-all duration-200 w-full sm:w-auto"
                                title="{{ $isDataLengkap ? 'Ubah atau perbarui data diri Anda' : 'Lengkapi foto profil dan data diri Anda' }}">
                                 <span class="material-symbols-outlined text-[18px] sm:text-[20px] text-primary-700">{{ $isDataLengkap ? 'edit_square' : 'assignment_ind' }}</span>
                                 <span>{{ $isDataLengkap ? 'Edit Data Diri' : 'Lengkapi Data Diri' }}</span>
                             </a>
+
+                            {{-- Tombol Logout Khusus Tampilan Mobile di Bawah Lengkapi Data Diri --}}
+                            <form method="POST" action="{{ route('keluar') }}" class="lg:hidden w-full sm:w-auto inline-flex">
+                                @csrf
+                                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin keluar dari akun?')"
+                                        class="inline-flex items-center justify-center gap-2 px-5 py-2 sm:py-2.5 rounded-full font-body text-xs sm:text-sm font-bold bg-red-600 hover:bg-red-700 text-white shadow-md hover:shadow-lg transition-all duration-200 w-full active:scale-95 cursor-pointer"
+                                        title="Keluar dari akun">
+                                    <span class="material-symbols-outlined text-[18px]">logout</span>
+                                    <span>Keluar Akun</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -299,17 +310,16 @@
                     <div class="bg-surface-container-low p-4 sm:p-6 rounded-2xl border border-primary-100/50 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
                         <div class="flex flex-col min-w-0">
                             <h2 class="font-heading text-sm sm:text-base lg:text-heading text-black-900 font-bold">Koleksi Piagam & Lencana Belajar</h2>
-                            <p class="font-body text-xs sm:text-sm text-gray-500 mt-0.5">Lencana otomatis diraih ketika menyelesaikan penelusuran aksara, percakapan krama, dan kuis kebudayaan.</p>
+                            <p class="font-body text-xs sm:text-sm text-gray-500 mt-0.5">Lencana diraih secara dinamis berdasarkan penyelesaian kuis wicara, aksara, tata krama, dan pencapaian EXP.</p>
                         </div>
                         <!-- Badge Completion Counter Bar -->
-                        @php $persenLevel = $totalLevels > 0 ? (int) round(($completedLevels / $totalLevels) * 100) : 0; @endphp
                         <div class="flex flex-col w-full md:w-80 bg-white p-3 sm:p-3.5 rounded-xl border border-gray-100 shadow-sm shrink-0">
                             <div class="flex justify-between items-center mb-1.5 text-[11px] sm:text-xs">
-                                <span class="text-gray-500 font-semibold">Progres Pembelajaran</span>
-                                <span class="font-bold text-primary-600">{{ $completedLevels }} dari {{ $totalLevels }} Level ({{ $persenLevel }}%)</span>
+                                <span class="text-gray-500 font-semibold">Progres Koleksi Lencana</span>
+                                <span class="font-bold text-primary-600">{{ $earnedBadgesCount ?? 0 }} dari {{ $totalBadgesCount ?? 0 }} Lencana ({{ $persenLencana ?? 0 }}%)</span>
                             </div>
                             <div class="w-full h-2 bg-gray-200/80 rounded-full overflow-hidden">
-                                <div class="h-full bg-primary-600 rounded-full transition-all duration-500" style="width: {{ $persenLevel }}%"></div>
+                                <div class="h-full bg-primary-600 rounded-full transition-all duration-500" style="width: {{ $persenLencana ?? 0 }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -319,120 +329,50 @@
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
                             <div class="flex items-center gap-1.5 sm:gap-2">
                                 <span class="material-symbols-outlined text-green-500 text-base sm:text-lg shrink-0">verified</span>
-                                <h2 class="font-heading text-xs sm:text-sm md:text-base lg:text-heading text-on-surface font-bold">Lencana yang Telah Diraih ({{ $completedLevels }})</h2>
+                                <h2 class="font-heading text-xs sm:text-sm md:text-base lg:text-heading text-on-surface font-bold">Lencana yang Telah Diraih ({{ $earnedBadgesCount ?? 0 }})</h2>
                             </div>
                             <span class="font-label-upper text-[9px] sm:text-xs text-gray-500 uppercase font-semibold">BERHASIL DIRAIH • STATUS AKTIF</span>
                         </div>
 
-                        <!-- 3-Column Grid with Distinct Geometric Clip-Path Badge Containers (§5.12 Compliant) -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
-
-                            <!-- Earned Badge 1: Jawara Hanacaraka (HEXAGON) -->
-                            <div class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center hover:shadow-md transition-all border border-gray-100 group">
-                                <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
-                                    <!-- Geometric Container: HEXAGON clip-path with Gold Solid Fill -->
-                                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#F6D98B] flex items-center justify-center shrink-0 text-amber-900 shadow-sm clip-hexagon transition-transform duration-200 group-hover:scale-105">
-                                        <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5m14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"></path>
-                                        </svg>
+                        @if(!empty($earnedBadges) && count($earnedBadges) > 0)
+                            <!-- 3-Column Grid with Distinct Geometric Clip-Path Badge Containers -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+                                @foreach($earnedBadges as $badge)
+                                    <div class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center hover:shadow-md transition-all border border-gray-100 group">
+                                        <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
+                                            <!-- Geometric Container with Dynamic Clip-Path and Color -->
+                                            <div class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0 {{ $badge['text_color'] ?? 'text-white' }} shadow-sm {{ $badge['shape'] ?? 'clip-hexagon' }} transition-transform duration-200 group-hover:scale-105"
+                                                 style="background-color: {{ $badge['bg_color'] ?? '#6C5CE8' }};">
+                                                <span class="material-symbols-outlined text-2xl sm:text-3xl">{{ $badge['icon'] ?? 'military_tech' }}</span>
+                                            </div>
+                                            <div class="flex flex-col items-center text-center min-w-0 w-full">
+                                                <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">{{ $badge['kategori'] }} <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
+                                                <h3 class="font-heading text-sm sm:text-base text-on-surface font-bold mt-1">{{ $badge['nama'] }}</h3>
+                                                <p class="font-caption text-xs text-on-surface-variant mt-1 leading-relaxed">{{ $badge['deskripsi'] }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl flex items-center justify-between text-[11px] sm:text-xs text-gray-500 border border-primary-100/30">
+                                            <span>{{ $badge['earned_stat_left'] }}</span>
+                                            <span class="text-primary-700 font-bold">{{ $badge['earned_stat_right'] }}</span>
+                                        </div>
                                     </div>
-                                    <div class="flex flex-col items-center text-center min-w-0 w-full">
-                                        <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">LEVEL 1 <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
-                                        <h3 class="font-heading text-sm sm:text-base text-on-surface font-bold mt-1">Jawara Hanacaraka</h3>
-                                        <p class="font-caption text-xs text-on-surface-variant mt-1 leading-relaxed">Sukses menulis dan menghafal 14 aksara nglegena dasar dengan presisi tinggi.</p>
-                                    </div>
-                                </div>
-                                <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl flex items-center justify-between text-[11px] sm:text-xs text-gray-500 border border-primary-100/30">
-                                    <span>Akurasi Tracing: 96%</span>
-                                    <span class="text-primary-700 font-bold">+150 XP</span>
-                                </div>
+                                @endforeach
                             </div>
-
-                            <!-- Earned Badge 2: Tatas Unggah-Ungguh (PENTAGON) -->
-                            <div class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center hover:shadow-md transition-all border border-gray-100 group">
-                                <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
-                                    <!-- Geometric Container: PENTAGON clip-path with Green Solid Fill -->
-                                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#4CAF6D] flex items-center justify-center shrink-0 text-white shadow-sm clip-pentagon transition-transform duration-200 group-hover:scale-105">
-                                        <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
-                                        </svg>
-                                    </div>
-                                    <div class="flex flex-col items-center text-center min-w-0 w-full">
-                                        <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">WICARA KRAMA <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
-                                        <h3 class="font-heading text-sm sm:text-base text-on-surface font-bold mt-1">Tatas Unggah-Ungguh</h3>
-                                        <p class="font-caption text-xs text-on-surface-variant mt-1 leading-relaxed">Menuntaskan percakapan Krama Inggil kepada guru dan orang tua dengan skor 92%.</p>
-                                    </div>
+                        @else
+                            <div class="bg-surface-container-lowest p-6 sm:p-8 rounded-2xl border border-dashed border-gray-200 text-center flex flex-col items-center justify-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-2xl">workspace_premium</span>
                                 </div>
-                                <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl flex items-center justify-between text-[11px] sm:text-xs text-gray-500 border border-primary-100/30">
-                                    <span>Pelafalan STT: 92%</span>
-                                    <span class="text-primary-700 font-bold">+200 XP</span>
+                                <div>
+                                    <h4 class="font-heading text-sm sm:text-base font-bold text-on-surface">Belum Ada Lencana yang Terbuka</h4>
+                                    <p class="font-body text-xs sm:text-sm text-gray-500 max-w-md mt-1">Selesaikan kuis wicara suara, latihan aksara Jawa, dan kumpulkan poin EXP untuk membuka lencana pertamamu!</p>
                                 </div>
+                                <a href="{{ route('siswa.topik') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-600 text-white font-semibold text-xs hover:bg-primary-700 transition-colors shadow-sm mt-1">
+                                    <span class="material-symbols-outlined text-base">play_circle</span>
+                                    <span>Mulai Kerjakan Kuis</span>
+                                </a>
                             </div>
-
-                            <!-- Earned Badge 3: Prajurit Sandhangan (SHIELD) -->
-                            <div class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center hover:shadow-md transition-all border border-gray-100 group">
-                                <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
-                                    <!-- Geometric Container: SHIELD clip-path with Primary Purple Solid Fill -->
-                                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#6C5CE8] flex items-center justify-center shrink-0 text-white shadow-sm clip-shield transition-transform duration-200 group-hover:scale-105">
-                                        <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path>
-                                        </svg>
-                                    </div>
-                                    <div class="flex flex-col items-center text-center min-w-0 w-full">
-                                        <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">AKSARA JAWA <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
-                                        <h3 class="font-heading text-sm sm:text-base text-on-surface font-bold mt-1">Prajurit Sandhangan</h3>
-                                        <p class="font-caption text-xs text-on-surface-variant mt-1 leading-relaxed">Paham penggunaan Wulu, Suku, Taling, dan Tarung dalam 20 kalimat latihan.</p>
-                                    </div>
-                                </div>
-                                <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl flex items-center justify-between text-[11px] sm:text-xs text-gray-500 border border-primary-100/30">
-                                    <span>Kuis Pasangan: 100/100</span>
-                                    <span class="text-primary-700 font-bold">+180 XP</span>
-                                </div>
-                            </div>
-
-                            <!-- Earned Badge 4: Busana Gagrag Anyar (RHOMBUS / DIAMOND) -->
-                            <div class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center hover:shadow-md transition-all border border-gray-100 group">
-                                <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
-                                    <!-- Geometric Container: RHOMBUS/DIAMOND clip-path with Orange Solid Fill -->
-                                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#F0955A] flex items-center justify-center shrink-0 text-white shadow-sm clip-rhombus transition-transform duration-200 group-hover:scale-105">
-                                        <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                                        </svg>
-                                    </div>
-                                    <div class="flex flex-col items-center text-center min-w-0 w-full">
-                                        <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">BUDAYA JAWA <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
-                                        <h3 class="font-heading text-sm sm:text-base text-on-surface font-bold mt-1">Busana Gagrag Anyar</h3>
-                                        <p class="font-caption text-xs text-on-surface-variant mt-1 leading-relaxed">Menyelesaikan tebak busana adat: Jarik, Beskap, dan Blangkon Jawa Timur.</p>
-                                    </div>
-                                </div>
-                                <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl flex items-center justify-between text-[11px] sm:text-xs text-gray-500 border border-primary-100/30">
-                                    <span>TTS Budaya: Selesai</span>
-                                    <span class="text-primary-700 font-bold">+120 XP</span>
-                                </div>
-                            </div>
-
-                            <!-- Earned Badge 5: Wicara Prigel (OCTAGON) -->
-                            <div class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center hover:shadow-md transition-all border border-gray-100 group">
-                                <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
-                                    <!-- Geometric Container: OCTAGON clip-path with Indigo Solid Fill -->
-                                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#7B6CF0] flex items-center justify-center shrink-0 text-white shadow-sm clip-octagon transition-transform duration-200 group-hover:scale-105">
-                                        <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path>
-                                        </svg>
-                                    </div>
-                                    <div class="flex flex-col items-center text-center min-w-0 w-full">
-                                        <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">AI STT RECOGNITION <span class="mx-0.5">•</span> <span class="text-green-500 font-bold">SELESAI</span></span>
-                                        <h3 class="font-heading text-sm sm:text-base text-on-surface font-bold mt-1">Wicara Prigel</h3>
-                                        <p class="font-caption text-xs text-on-surface-variant mt-1 leading-relaxed">Latihan pelafalan suara Jawa dengan kecerdasan buatan sebanyak 10 kali berturut-turut.</p>
-                                    </div>
-                                </div>
-                                <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl flex items-center justify-between text-[11px] sm:text-xs text-gray-500 border border-primary-100/30">
-                                    <span>Evaluasi Suara AI</span>
-                                    <span class="text-primary-700 font-bold">+220 XP</span>
-                                </div>
-                            </div>
-
-                        </div>
+                        @endif
                     </div>
 
                     <!-- Locked Badges Section -->
@@ -440,66 +380,53 @@
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
                             <div class="flex items-center gap-1.5 sm:gap-2">
                                 <span class="material-symbols-outlined text-gray-500 text-base sm:text-lg shrink-0">lock</span>
-                                <h2 class="font-heading text-xs sm:text-sm md:text-base lg:text-heading text-on-surface font-bold">Lencana yang Masih Terkunci (7)</h2>
+                                <h2 class="font-heading text-xs sm:text-sm md:text-base lg:text-heading text-on-surface font-bold">Lencana yang Masih Terkunci ({{ count($lockedBadges ?? []) }})</h2>
                             </div>
-                            <span class="font-label-upper text-[9px] sm:text-xs text-gray-500 uppercase font-semibold">SYARAT PEROLEHAN • TINGKAT LANJUT</span>
+                            <span class="font-label-upper text-[9px] sm:text-xs text-gray-500 uppercase font-semibold">SYARAT PEROLEHAN • MISI TERSEDIA</span>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
-                            <!-- Locked Badge 1: Empu Aksara Murda & Swara (HEXAGON) -->
-                            <div class="bg-surface-container-lowest/70 p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center opacity-80 border border-gray-200 group">
-                                <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
-                                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#E4E4EC] flex items-center justify-center shrink-0 text-gray-500 clip-hexagon shadow-inner">
-                                        <span class="material-symbols-outlined text-2xl sm:text-3xl">lock</span>
-                                    </div>
-                                    <div class="flex flex-col items-center text-center min-w-0 w-full">
-                                        <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">LEVEL 3 <span class="mx-0.5">•</span> TERKUNCI</span>
-                                        <h3 class="font-heading text-sm sm:text-base text-on-surface-variant font-bold mt-1">Empu Aksara Murda & Swara</h3>
-                                        <p class="font-caption text-xs text-gray-500 mt-1 leading-relaxed">Selesaikan pembelajaran aksara murda, swara, dan rekan dengan nilai minimal 85.</p>
-                                    </div>
-                                </div>
-                                <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl text-[11px] sm:text-xs text-gray-500 flex items-center justify-center gap-1.5 border border-gray-100">
-                                    <span class="material-symbols-outlined text-xs">info</span>
-                                    <span>Syarat: Tuntaskan Bab 3 Terlebih Dahulu</span>
-                                </div>
-                            </div>
+                        @if(!empty($lockedBadges) && count($lockedBadges) > 0)
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+                                @foreach($lockedBadges as $badge)
+                                    <div class="bg-surface-container-lowest/80 p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center opacity-90 border border-gray-200 group hover:opacity-100 transition-all">
+                                        <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
+                                            <!-- Geometric Container: Grayscale with Lock and Inner Icon -->
+                                            <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 flex items-center justify-center shrink-0 text-gray-400 {{ $badge['shape'] ?? 'clip-hexagon' }} shadow-inner">
+                                                <span class="material-symbols-outlined text-2xl sm:text-3xl text-gray-500">{{ $badge['icon'] ?? 'lock' }}</span>
+                                                <div class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-gray-600 text-white flex items-center justify-center text-[10px] shadow">
+                                                    <span class="material-symbols-outlined text-[12px]">lock</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col items-center text-center min-w-0 w-full">
+                                                <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">{{ $badge['kategori'] }} <span class="mx-0.5">•</span> TERKUNCI</span>
+                                                <h3 class="font-heading text-sm sm:text-base text-on-surface-variant font-bold mt-1">{{ $badge['nama'] }}</h3>
+                                                <p class="font-caption text-xs text-gray-500 mt-1 leading-relaxed">{{ $badge['deskripsi'] }}</p>
 
-                            <!-- Locked Badge 2: Pujangga Paribasan (PENTAGON) -->
-                            <div class="bg-surface-container-lowest/70 p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center opacity-80 border border-gray-200 group">
-                                <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
-                                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#E4E4EC] flex items-center justify-center shrink-0 text-gray-500 clip-pentagon shadow-inner">
-                                        <span class="material-symbols-outlined text-2xl sm:text-3xl">lock</span>
+                                                <!-- Mini Mission Progress Bar -->
+                                                <div class="w-full mt-2.5 pt-1">
+                                                    <div class="flex justify-between items-center text-[10px] text-gray-500 font-semibold mb-1">
+                                                        <span>Progres Misi</span>
+                                                        <span class="text-primary-600 font-bold">{{ $badge['progress_percent'] }}%</span>
+                                                    </div>
+                                                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                                        <div class="h-full bg-primary-500/70 rounded-full transition-all duration-300" style="width: {{ $badge['progress_percent'] }}%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl text-[11px] sm:text-xs text-gray-600 flex items-center justify-center gap-1.5 border border-gray-100 text-center">
+                                            <span class="material-symbols-outlined text-xs text-primary-600 shrink-0">flag</span>
+                                            <span class="leading-tight">{{ $badge['syarat_text'] }}</span>
+                                        </div>
                                     </div>
-                                    <div class="flex flex-col items-center text-center min-w-0 w-full">
-                                        <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">PARIBASAN <span class="mx-0.5">•</span> TERKUNCI</span>
-                                        <h3 class="font-heading text-sm sm:text-base text-on-surface-variant font-bold mt-1">Pujangga Paribasan</h3>
-                                        <p class="font-caption text-xs text-gray-500 mt-1 leading-relaxed">Dapat menyelesaikan kuis peribahasa, bebasan, dan saloka dengan skor sempurna 100.</p>
-                                    </div>
-                                </div>
-                                <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl text-[11px] sm:text-xs text-gray-500 flex items-center justify-center gap-1.5 border border-gray-100">
-                                    <span class="material-symbols-outlined text-xs">info</span>
-                                    <span>Syarat: Skor Kuis Peribahasa &gt; 95</span>
-                                </div>
+                                @endforeach
                             </div>
-
-                            <!-- Locked Badge 3: Gathutkaca Streak Master (SHIELD) -->
-                            <div class="bg-surface-container-lowest/70 p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between items-center opacity-80 border border-gray-200 group">
-                                <div class="flex flex-col items-center text-center gap-3 sm:gap-3.5 w-full">
-                                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#E4E4EC] flex items-center justify-center shrink-0 text-gray-500 clip-shield shadow-inner">
-                                        <span class="material-symbols-outlined text-2xl sm:text-3xl">lock</span>
-                                    </div>
-                                    <div class="flex flex-col items-center text-center min-w-0 w-full">
-                                        <span class="font-label-upper text-[10px] sm:text-[11px] text-gray-500 uppercase font-semibold">KONSISTENSI <span class="mx-0.5">•</span> TERKUNCI</span>
-                                        <h3 class="font-heading text-sm sm:text-base text-on-surface-variant font-bold mt-1">Gathutkaca Streak Master</h3>
-                                        <p class="font-caption text-xs text-gray-500 mt-1 leading-relaxed">Raih streak belajar aktif tanpa henti selama 15 hari berturut-turut.</p>
-                                    </div>
-                                </div>
-                                <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl text-[11px] sm:text-xs text-gray-500 flex items-center justify-center gap-1.5 border border-gray-100">
-                                    <span class="material-symbols-outlined text-xs">info</span>
-                                    <span>Syarat: 10 Hari lagi (Saat ini {{ $currentStreak }}/15)</span>
-                                </div>
+                        @else
+                            <div class="bg-surface-container-lowest p-6 rounded-2xl border border-green-200 text-center flex items-center justify-center gap-2 text-green-700 font-semibold text-sm">
+                                <span class="material-symbols-outlined text-green-600">military_tech</span>
+                                <span>Luar biasa! Seluruh lencana telah berhasil kamu raih.</span>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 

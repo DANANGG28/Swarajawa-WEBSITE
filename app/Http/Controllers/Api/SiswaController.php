@@ -42,7 +42,7 @@ class SiswaController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20'],
+            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis'],
             'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
@@ -69,7 +69,7 @@ class SiswaController extends Controller
     public function update(Request $request, Siswa $siswa): JsonResponse
     {
         $data = $request->validate([
-            'nis' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20'],
+            'nis' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis,'.$siswa->id],
             'nama_lengkap' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', ignoreId: $siswa->id, customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],

@@ -204,8 +204,14 @@
                                 <span class="font-label-upper text-label-upper uppercase tracking-wider text-gray-500 font-semibold">Status Pegawaian</span>
                                 <div class="relative">
                                     <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">work</span>
-                                    <input type="text" name="status_pegawaian" value="{{ old('status_pegawaian', $guru->status_pegawaian) }}" placeholder="PNS / PPPK / GTT / Tetap"
-                                           class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
+                                    <select name="status_pegawaian" id="statusPegawaianSelect"
+                                            class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all cursor-pointer">
+                                        <option value="" {{ old('status_pegawaian', $guru->status_pegawaian) === null || old('status_pegawaian', $guru->status_pegawaian) === '' ? 'selected' : '' }}>-- Pilih Status Pegawai --</option>
+                                        <option value="PKWTT" {{ old('status_pegawaian', $guru->status_pegawaian) === 'PKWTT' ? 'selected' : '' }}>PKWTT</option>
+                                        <option value="PKWT" {{ old('status_pegawaian', $guru->status_pegawaian) === 'PKWT' ? 'selected' : '' }}>PKWT</option>
+                                        <option value="PPPK" {{ old('status_pegawaian', $guru->status_pegawaian) === 'PPPK' ? 'selected' : '' }}>PPPK</option>
+                                        <option value="PNS" {{ old('status_pegawaian', $guru->status_pegawaian) === 'PNS' ? 'selected' : '' }}>PNS</option>
+                                    </select>
                                 </div>
                                 @error('status_pegawaian')
                                     <span class="text-error text-xs font-caption">{{ $message }}</span>

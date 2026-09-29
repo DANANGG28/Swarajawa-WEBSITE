@@ -92,7 +92,7 @@
                             <input type="file" name="foto" id="fotoInput" accept="image/jpeg,image/png,image/jpg,image/webp"
                                    onchange="previewImage(this)"
                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-600 file:text-white hover:file:bg-primary-700 cursor-pointer">
-                            <span class="font-caption text-caption text-gray-400">Format: JPG, PNG, WEBP (Maksimal 2 MB). Disimpan di storage/image/siswa</span>
+                            <span class="font-caption text-caption text-gray-400">Format: JPG, PNG, WEBP (Maksimal 500 KB). Disimpan di storage/image/siswa</span>
                             @error('foto')
                                 <span class="text-error text-xs font-caption">{{ $message }}</span>
                             @enderror
@@ -170,10 +170,14 @@
                             </span>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">school</span>
-                                <input type="text" name="kelas" value="{{ old('kelas') }}"
-                                       maxlength="50"
-                                       placeholder="Contoh: 7A / 8B / 9C"
-                                       class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
+                                <select name="kelas" id="kelasSelect"
+                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all cursor-pointer appearance-none">
+                                    <option value="" {{ old('kelas') === null || old('kelas') === '' ? 'selected' : '' }}>-- Pilih Kelas --</option>
+                                    @foreach (['7A', '7B', '7C', '8A', '8B', '9A'] as $kelas)
+                                        <option value="{{ $kelas }}" {{ old('kelas') === $kelas ? 'selected' : '' }}>{{ $kelas }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">expand_more</span>
                             </div>
                             @error('kelas')
                                 <span class="text-error text-xs font-caption">{{ $message }}</span>
@@ -274,13 +278,22 @@
             const preview = document.getElementById('fotoPreview');
             const placeholder = document.getElementById('fotoPlaceholder');
             if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 500 * 1024) {
+                    alert('Ukuran foto melebihi 500 KB. Silakan pilih foto dengan ukuran maksimal 500 KB.');
+                    input.value = '';
+                    preview.src = '';
+                    preview.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                    return;
+                }
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.classList.remove('hidden');
                     placeholder.classList.add('hidden');
                 }
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
             }
         }
     </script>

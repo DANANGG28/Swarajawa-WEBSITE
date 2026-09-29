@@ -9,6 +9,8 @@ use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Superadmin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class WebDashboardTest extends TestCase
@@ -271,5 +273,407 @@ class WebDashboardTest extends TestCase
 
         $this->actingAs($siswa, 'siswa')->get("/kuis/mulai/{$level->id}")
             ->assertRedirect(route('siswa.dashboard'));
+    }
+
+    public function test_siswa_profile_page_renders_dynamic_badges(): void
+    {
+        $siswa = Siswa::factory()->create(['nama_lengkap' => 'Budi Santoso', 'kelas' => '8B']);
+        $siswa->exp()->create(['total_exp' => 300]);
+        $siswa->strek()->create(['current_streak' => 3, 'highest_streak' => 3]);
+
+        $response = $this->actingAs($siswa, 'siswa')->get('/profil');
+
+        $response->assertOk()
+            ->assertSee('Budi Santoso')
+            ->assertSee('Koleksi Piagam & Lencana Belajar')
+            ->assertSee('Gathutkaca Streak Master')
+            ->assertSee('Wasasis Utama')
+            ->assertSee('Wicara Prigel');
+    }
+
+    public function test_superadmin_can_create_guru_with_dropdown_status_pegawaian(): void
+    {
+        $admin = Superadmin::factory()->create();
+
+        $response = $this->actingAs($admin, 'superadmin')->post('/superadmin/guru', [
+            'role' => 'guru',
+            'nip' => '198701012015011005',
+            'nama_lengkap' => 'Pak Joko Widodo',
+            'jenis_kelamin' => 'L',
+            'status_pegawaian' => 'PKWTT',
+            'no_telpon' => '081234567890',
+            'email' => 'joko@sekolah.sch.id',
+            'password' => 'password123',
+        ]);
+
+        $response->assertRedirect(route('superadmin.guru'));
+        $this->assertDatabaseHas('guru', [
+            'nip' => '198701012015011005',
+            'nama_lengkap' => 'Pak Joko Widodo',
+            'status_pegawaian' => 'PKWTT',
+        ]);
+    }
+
+    public function test_superadmin_cannot_create_guru_with_invalid_status_pegawaian(): void
+    {
+        $admin = Superadmin::factory()->create();
+
+        $response = $this->actingAs($admin, 'superadmin')->post('/superadmin/guru', [
+            'role' => 'guru',
+            'nip' => '198701012015011006',
+            'nama_lengkap' => 'Pak Bambang',
+            'jenis_kelamin' => 'L',
+            'status_pegawaian' => 'HONORER_BEBAS',
+            'no_telpon' => '081234567891',
+            'email' => 'bambang@sekolah.sch.id',
+            'password' => 'password123',
+        ]);
+
+        $response->assertSessionHasErrors('status_pegawaian');
+    }
+
+    public function test_superadmin_can_update_guru_status_pegawaian(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $guru = Guru::factory()->create(['status_pegawaian' => 'PKWT']);
+
+        $response = $this->actingAs($admin, 'superadmin')->put("/superadmin/guru/{$guru->id}", [
+            'role' => 'guru',
+            'nip' => $guru->nip,
+            'nama_lengkap' => $guru->nama_lengkap,
+            'jenis_kelamin' => $guru->jenis_kelamin,
+            'status_pegawaian' => 'PNS',
+            'no_telpon' => $guru->no_telpon,
+            'email' => $guru->email,
+        ]);
+
+        $response->assertRedirect(route('superadmin.guru'));
+        $this->assertDatabaseHas('guru', [
+            'id' => $guru->id,
+            'status_pegawaian' => 'PNS',
+        ]);
+    }
+
+    public function test_superadmin_guru_views_render_dropdown_options(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $guru = Guru::factory()->create(['status_pegawaian' => 'PPPK']);
+
+        // Create page
+        $createPage = $this->actingAs($admin, 'superadmin')->get('/superadmin/guru/tambah');
+        $createPage->assertOk()
+            ->assertSee('name="status_pegawaian"', false)
+            ->assertSee('value="PKWTT"', false)
+            ->assertSee('value="PKWT"', false)
+            ->assertSee('value="PPPK"', false)
+            ->assertSee('value="PNS"', false);
+
+        // Edit page
+        $editPage = $this->actingAs($admin, 'superadmin')->get("/superadmin/guru/{$guru->id}/edit?role=guru");
+        $editPage->assertOk()
+            ->assertSee('name="status_pegawaian"', false)
+            ->assertSee('value="PPPK" selected', false);
+
+        // Detail page
+        $detailPage = $this->actingAs($admin, 'superadmin')->get("/superadmin/guru/{$guru->id}?role=guru");
+        $detailPage->assertOk()
+            ->assertSee('name="status_pegawaian"', false)
+            ->assertSee('value="PPPK" selected', false);
+    }
+
+    public function test_superadmin_cannot_create_siswa_with_duplicate_nis(): void
+    {
+        $admin = Superadmin::factory()->create();
+        Siswa::factory()->create(['nis' => '2026010001']);
+
+        $response = $this->actingAs($admin, 'superadmin')->post('/superadmin/siswa', [
+            'nis' => '2026010001',
+            'nama_lengkap' => 'Siswa Baru',
+            'jenis_kelamin' => 'L',
+            'kelas' => '7A',
+            'email' => 'siswabaru@sekolah.sch.id',
+            'password' => 'password123',
+        ]);
+
+        $response->assertSessionHasErrors('nis');
+        $this->assertDatabaseCount('siswa', 1);
+    }
+
+    public function test_superadmin_can_update_siswa_keeping_same_nis(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $siswa = Siswa::factory()->create(['nis' => '2026010001', 'nama_lengkap' => 'Nama Awal']);
+
+        $response = $this->actingAs($admin, 'superadmin')->put("/superadmin/siswa/{$siswa->id}", [
+            'nis' => '2026010001',
+            'nama_lengkap' => 'Nama Anyar',
+            'jenis_kelamin' => $siswa->jenis_kelamin,
+            'kelas' => '8B',
+            'email' => $siswa->email,
+        ]);
+
+        $response->assertRedirect(route('superadmin.siswa'));
+        $this->assertDatabaseHas('siswa', [
+            'id' => $siswa->id,
+            'nis' => '2026010001',
+            'nama_lengkap' => 'Nama Anyar',
+            'kelas' => '8B',
+        ]);
+    }
+
+    public function test_superadmin_cannot_update_siswa_to_another_siswa_nis(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $siswaA = Siswa::factory()->create(['nis' => '2026010001', 'nama_lengkap' => 'Siswa A']);
+        $siswaB = Siswa::factory()->create(['nis' => '2026010002', 'nama_lengkap' => 'Siswa B']);
+
+        $response = $this->actingAs($admin, 'superadmin')->put("/superadmin/siswa/{$siswaA->id}", [
+            'nis' => '2026010002',
+            'nama_lengkap' => 'Siswa A Edit',
+            'jenis_kelamin' => $siswaA->jenis_kelamin,
+            'kelas' => $siswaA->kelas,
+            'email' => $siswaA->email,
+        ]);
+
+        $response->assertSessionHasErrors('nis');
+    }
+
+    public function test_superadmin_siswa_views_render_kelas_dropdown_options(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $siswa = Siswa::factory()->create(['kelas' => '8A']);
+
+        // Create page
+        $createPage = $this->actingAs($admin, 'superadmin')->get('/superadmin/siswa/tambah');
+        $createPage->assertOk()
+            ->assertSee('name="kelas"', false)
+            ->assertSee('value="7A"', false)
+            ->assertSee('value="8A"', false)
+            ->assertSee('value="9A"', false);
+
+        // Edit page
+        $editPage = $this->actingAs($admin, 'superadmin')->get("/superadmin/siswa/{$siswa->id}/edit");
+        $editPage->assertOk()
+            ->assertSee('name="kelas"', false)
+            ->assertSee('value="8A" selected', false);
+    }
+
+    public function test_superadmin_cannot_create_guru_with_duplicate_nip(): void
+    {
+        $admin = Superadmin::factory()->create();
+        Guru::factory()->create(['nip' => '198501012010011001']);
+
+        $response = $this->actingAs($admin, 'superadmin')->post('/superadmin/guru', [
+            'role' => 'guru',
+            'nip' => '198501012010011001',
+            'nama_lengkap' => 'Guru Anyar',
+            'jenis_kelamin' => 'L',
+            'status_pegawaian' => 'PKWTT',
+            'no_telpon' => '081234567800',
+            'email' => 'guru.anyar@sekolah.sch.id',
+            'password' => 'password123',
+        ]);
+
+        $response->assertSessionHasErrors('nip');
+        $this->assertDatabaseCount('guru', 1);
+    }
+
+    public function test_superadmin_can_update_guru_keeping_same_nip(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $guru = Guru::factory()->create(['nip' => '198501012010011001', 'nama_lengkap' => 'Pak Joko']);
+
+        $response = $this->actingAs($admin, 'superadmin')->put("/superadmin/guru/{$guru->id}", [
+            'role' => 'guru',
+            'nip' => '198501012010011001',
+            'nama_lengkap' => 'Pak Joko Widodo',
+            'jenis_kelamin' => $guru->jenis_kelamin,
+            'status_pegawaian' => 'PNS',
+            'no_telpon' => $guru->no_telpon,
+            'email' => $guru->email,
+        ]);
+
+        $response->assertRedirect(route('superadmin.guru'));
+        $this->assertDatabaseHas('guru', [
+            'id' => $guru->id,
+            'nip' => '198501012010011001',
+            'nama_lengkap' => 'Pak Joko Widodo',
+            'status_pegawaian' => 'PNS',
+        ]);
+    }
+
+    public function test_superadmin_cannot_update_guru_to_another_guru_nip(): void
+    {
+        $admin = Superadmin::factory()->create();
+        $guruA = Guru::factory()->create(['nip' => '198501012010011001', 'nama_lengkap' => 'Guru A']);
+        $guruB = Guru::factory()->create(['nip' => '198501012010011002', 'nama_lengkap' => 'Guru B']);
+
+        $response = $this->actingAs($admin, 'superadmin')->put("/superadmin/guru/{$guruA->id}", [
+            'role' => 'guru',
+            'nip' => '198501012010011002',
+            'nama_lengkap' => 'Guru A Edit',
+            'jenis_kelamin' => $guruA->jenis_kelamin,
+            'no_telpon' => $guruA->no_telpon,
+            'email' => $guruA->email,
+        ]);
+
+        $response->assertSessionHasErrors('nip');
+    }
+
+    public function test_superadmin_cannot_create_guru_with_photo_exceeding_500kb(): void
+    {
+        Storage::fake('public');
+        $admin = Superadmin::factory()->create();
+        $largeFile = UploadedFile::fake()->image('profile.jpg')->size(600);
+
+        $response = $this->actingAs($admin, 'superadmin')->post('/superadmin/guru', [
+            'role' => 'guru',
+            'nip' => '198901012015011007',
+            'nama_lengkap' => 'Guru Gambar Besar',
+            'jenis_kelamin' => 'L',
+            'status_pegawaian' => 'PKWTT',
+            'no_telpon' => '081234567899',
+            'email' => 'guruharustolak@sekolah.sch.id',
+            'password' => 'password123',
+            'foto' => $largeFile,
+        ]);
+
+        $response->assertSessionHasErrors('foto');
+        $this->assertDatabaseMissing('guru', ['email' => 'guruharustolak@sekolah.sch.id']);
+    }
+
+    public function test_superadmin_cannot_create_guru_with_disallowed_file_format(): void
+    {
+        Storage::fake('public');
+        $admin = Superadmin::factory()->create();
+        $svgFile = UploadedFile::fake()->create('malicious.svg', 100, 'image/svg+xml');
+
+        $response = $this->actingAs($admin, 'superadmin')->post('/superadmin/guru', [
+            'role' => 'guru',
+            'nip' => '198901012015011008',
+            'nama_lengkap' => 'Guru Format Salah',
+            'jenis_kelamin' => 'L',
+            'status_pegawaian' => 'PKWTT',
+            'no_telpon' => '081234567898',
+            'email' => 'guruformat@sekolah.sch.id',
+            'password' => 'password123',
+            'foto' => $svgFile,
+        ]);
+
+        $response->assertSessionHasErrors('foto');
+        $this->assertDatabaseMissing('guru', ['email' => 'guruformat@sekolah.sch.id']);
+    }
+
+    public function test_superadmin_can_create_guru_with_valid_photo_under_500kb(): void
+    {
+        Storage::fake('public');
+        $admin = Superadmin::factory()->create();
+        $validFile = UploadedFile::fake()->image('guru_avatar.png', 200, 200)->size(300);
+
+        $response = $this->actingAs($admin, 'superadmin')->post('/superadmin/guru', [
+            'role' => 'guru',
+            'nip' => '198901012015011009',
+            'nama_lengkap' => 'Guru Valid Foto',
+            'jenis_kelamin' => 'L',
+            'status_pegawaian' => 'PKWTT',
+            'no_telpon' => '081234567897',
+            'email' => 'guruvalid@sekolah.sch.id',
+            'password' => 'password123',
+            'foto' => $validFile,
+        ]);
+
+        $response->assertRedirect(route('superadmin.guru'));
+        $this->assertDatabaseHas('guru', [
+            'email' => 'guruvalid@sekolah.sch.id',
+        ]);
+        $guru = Guru::where('email', 'guruvalid@sekolah.sch.id')->first();
+        $this->assertNotNull($guru->foto);
+        $this->assertFileExists(public_path('storage/' . $guru->foto));
+
+        // Clean up created file in storage
+        if ($guru->foto && file_exists(public_path('storage/' . $guru->foto))) {
+            @unlink(public_path('storage/' . $guru->foto));
+        }
+    }
+
+    public function test_siswa_cannot_update_profile_photo_exceeding_500kb(): void
+    {
+        $siswa = Siswa::factory()->create();
+        $siswa->exp()->create(['total_exp' => 0]);
+        $siswa->strek()->create(['current_streak' => 0, 'highest_streak' => 0]);
+
+        $largeFile = UploadedFile::fake()->image('avatar_siswa.jpg')->size(700);
+
+        $response = $this->actingAs($siswa, 'siswa')->put('/profil', [
+            'nama_lengkap' => $siswa->nama_lengkap,
+            'jenis_kelamin' => $siswa->jenis_kelamin,
+            'kelas' => $siswa->kelas,
+            'foto' => $largeFile,
+        ]);
+
+        $response->assertSessionHasErrors('foto');
+    }
+
+    public function test_siswa_cannot_update_profile_photo_with_disallowed_extension(): void
+    {
+        $siswa = Siswa::factory()->create();
+        $siswa->exp()->create(['total_exp' => 0]);
+        $siswa->strek()->create(['current_streak' => 0, 'highest_streak' => 0]);
+
+        $pdfFile = UploadedFile::fake()->create('dokumen.pdf', 200, 'application/pdf');
+
+        $response = $this->actingAs($siswa, 'siswa')->put('/profil', [
+            'nama_lengkap' => $siswa->nama_lengkap,
+            'jenis_kelamin' => $siswa->jenis_kelamin,
+            'kelas' => $siswa->kelas,
+            'foto' => $pdfFile,
+        ]);
+
+        $response->assertSessionHasErrors('foto');
+    }
+
+    public function test_siswa_can_update_profile_photo_with_valid_image_under_500kb(): void
+    {
+        $siswa = Siswa::factory()->create();
+        $siswa->exp()->create(['total_exp' => 0]);
+        $siswa->strek()->create(['current_streak' => 0, 'highest_streak' => 0]);
+
+        $validFile = UploadedFile::fake()->image('siswa_avatar.jpg', 200, 200)->size(250);
+
+        $response = $this->actingAs($siswa, 'siswa')->put('/profil', [
+            'nama_lengkap' => 'Nama Baru Siswa',
+            'jenis_kelamin' => 'P',
+            'kelas' => '8A',
+            'foto' => $validFile,
+        ]);
+
+        $response->assertRedirect(route('siswa.profil'));
+        $siswa->refresh();
+        $this->assertEquals('Nama Baru Siswa', $siswa->nama_lengkap);
+        $this->assertNotNull($siswa->foto);
+        $this->assertFileExists(public_path('storage/' . $siswa->foto));
+
+        // Clean up created file
+        if ($siswa->foto && file_exists(public_path('storage/' . $siswa->foto))) {
+            @unlink(public_path('storage/' . $siswa->foto));
+        }
+    }
+
+    public function test_siswa_profile_page_renders_logout_button_and_can_logout(): void
+    {
+        $siswa = Siswa::factory()->create();
+        $siswa->exp()->create(['total_exp' => 0]);
+        $siswa->strek()->create(['current_streak' => 0, 'highest_streak' => 0]);
+
+        // Verify profile page contains logout action
+        $response = $this->actingAs($siswa, 'siswa')->get('/profil');
+        $response->assertOk()
+            ->assertSee(route('keluar'))
+            ->assertSee('Keluar');
+
+        // Verify logout action successfully logs out the user
+        $logoutResponse = $this->actingAs($siswa, 'siswa')->post('/keluar');
+        $logoutResponse->assertRedirect(route('masuk'));
+        $this->assertGuest('siswa');
     }
 }
