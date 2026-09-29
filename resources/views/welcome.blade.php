@@ -152,6 +152,27 @@
                         </button>
                     </section>
 
+                    @if($siswa->profilBelumLengkap())
+                        <!-- Profil Belum Lengkap Warning Banner -->
+                        <section class="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-[28px] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 text-amber-950 shadow-sm">
+                            <div class="flex items-center gap-3.5 min-w-0">
+                                <div class="w-11 h-11 rounded-2xl bg-amber-400 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                    <span class="material-symbols-outlined text-[26px]">assignment_late</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-heading text-sm sm:text-base font-black text-amber-950 leading-tight">Data Diri Belum Lengkap!</h4>
+                                    <p class="font-body text-xs text-amber-800/90 mt-0.5 leading-relaxed">
+                                        Kamu perlu mengisi <strong>Kelas</strong> dan <strong>NIS</strong> sebelum dapat mengerjakan kuis.
+                                    </p>
+                                </div>
+                            </div>
+                            <a href="{{ route('siswa.profil.data') }}" class="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-heading font-black text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 border-b-2 border-amber-700">
+                                <span>Lengkapi Data</span>
+                                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                            </a>
+                        </section>
+                    @endif
+
                     <!-- Dhaptar Unit & Learning Path (jejer mudhun) -->
                     @forelse($levels as $lvl)
                         @php
@@ -497,6 +518,72 @@
         </div>
     </div>
 
+    <!-- MODAL LENGKAPI DATA DIRI (POP-UP PERINGATAN 3D) -->
+    <div id="modal-lengkapi-profil" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+        <div id="card-lengkapi-profil" class="bg-white rounded-[28px] p-6 max-w-[400px] w-full shadow-2xl border-2 border-slate-200 border-b-[6px] border-b-slate-300 flex flex-col items-center text-center transform scale-95 transition-all duration-300">
+            <!-- Icon 3D Badge -->
+            <div class="w-20 h-20 rounded-3xl flex items-center justify-center text-4xl border-2 border-b-4 mb-3 shadow-sm select-none bg-amber-100 border-amber-300 border-b-amber-500">
+                <span>⚠️</span>
+            </div>
+
+            <!-- Status Pill Badge -->
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl font-heading font-black text-[11px] tracking-wider uppercase mb-2 bg-amber-500 text-white border-b-2 border-amber-700 shadow-sm">
+                <span class="material-symbols-outlined text-[16px]">assignment_late</span>
+                <span>Data Diri Belum Lengkap</span>
+            </div>
+
+            <!-- Judul -->
+            <h3 class="font-heading text-xl font-black text-slate-900 leading-tight">
+                Lengkapi Data Diri Dulu Ya!
+            </h3>
+
+            <!-- Deskripsi -->
+            <p class="font-body text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                Supaya kamu bisa mengerjakan kuis, nilaimu tercatat, dan masuk ke perankingan kelas, silakan lengkapi data profil kamu terlebih dahulu.
+            </p>
+
+            <!-- Rincian Data yang Kurang -->
+            <div class="w-full flex flex-col gap-2 my-4 text-left">
+                @php
+                    $dataKurang = $siswa->dataBelumLengkap();
+                @endphp
+                @if(isset($dataKurang['kelas']))
+                    <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs font-bold">
+                        <div class="w-7 h-7 rounded-xl bg-rose-200 text-rose-700 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-[16px]">class</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[10px] font-black uppercase text-rose-500">Kelas Siswa</div>
+                            <div class="truncate text-xs font-black">{{ $dataKurang['kelas'] }}</div>
+                        </div>
+                    </div>
+                @endif
+                @if(isset($dataKurang['nis']))
+                    <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold">
+                        <div class="w-7 h-7 rounded-xl bg-amber-200 text-amber-700 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-[16px]">badge</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[10px] font-black uppercase text-amber-600">Nomor Induk Siswa (NIS)</div>
+                            <div class="truncate text-xs font-black">{{ $dataKurang['nis'] }}</div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Tombol Aksi 3D -->
+            <div class="w-full flex flex-col gap-2">
+                <a href="{{ route('siswa.profil.data') }}" class="w-full py-3.5 px-5 rounded-2xl bg-primary-600 hover:bg-primary-500 text-white font-heading font-black text-sm uppercase tracking-wider border-b-[4px] border-primary-800 shadow-md active:translate-y-[2px] active:border-b-[2px] active:shadow-none transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <span>Lengkapi Profil Sekarang</span>
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </a>
+                <button type="button" id="btn-tutup-modal-lengkapi" class="w-full py-2.5 px-4 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 font-heading font-extrabold text-xs uppercase tracking-wider transition-colors cursor-pointer">
+                    Nanti Saja
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script id="widgets-sticky-script">
         (function () {
             const aside = document.getElementById('dashboard-widgets');
@@ -549,6 +636,51 @@
                 modal.addEventListener('click', function (e) {
                     if (e.target === modal) hide();
                 });
+            }
+        })();
+    </script>
+
+    <script id="lengkapi-profil-script">
+        (function () {
+            const profilBelumLengkap = @json($siswa->profilBelumLengkap());
+            const autoShow = @json(session('perlu_lengkapi_profil', false));
+            const modal = document.getElementById('modal-lengkapi-profil');
+            const card = document.getElementById('card-lengkapi-profil');
+            const btnTutup = document.getElementById('btn-tutup-modal-lengkapi');
+
+            function bukaModal() {
+                if (!modal || !card) return;
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }
+
+            function tutupModal() {
+                if (!modal || !card) return;
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modal.classList.remove('opacity-100');
+                card.classList.add('scale-95');
+                card.classList.remove('scale-100');
+            }
+
+            btnTutup?.addEventListener('click', tutupModal);
+            modal?.addEventListener('click', function (e) {
+                if (e.target === modal) tutupModal();
+            });
+
+            if (profilBelumLengkap) {
+                // Tangkap semua klik link yang mengarah ke kuis
+                document.querySelectorAll('a[href*="/kuis/"], #btn-continue-learning').forEach(function (el) {
+                    el.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        bukaModal();
+                    });
+                });
+
+                if (autoShow) {
+                    bukaModal();
+                }
             }
         })();
     </script>
