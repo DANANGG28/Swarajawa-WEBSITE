@@ -4,7 +4,6 @@ use App\Models\JawabanSiswa;
 use App\Models\Soal;
 use Database\Seeders\SoalSeeder;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {

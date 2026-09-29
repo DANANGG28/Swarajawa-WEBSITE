@@ -134,7 +134,9 @@
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">id_card</span>
                                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required
-                                       autocomplete="name" maxlength="150"
+                                       autocomplete="name" maxlength="150" pattern="^[a-zA-Z\s]+$"
+                                       title="Nama hanya boleh berisi huruf dan spasi."
+                                       oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
                                        placeholder="Nama lengkap siswa"
                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
                             </div>

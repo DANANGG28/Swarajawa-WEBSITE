@@ -26,7 +26,7 @@ class Superadmin extends Authenticatable
 
     public function getFotoUrlAttribute(): ?string
     {
-        if ($this->foto && (file_exists(storage_path('image/superadmin/' . $this->foto)) || file_exists(resource_path('image/superadmin/' . $this->foto)))) {
+        if ($this->foto && (file_exists(storage_path('image/superadmin/'.$this->foto)) || file_exists(resource_path('image/superadmin/'.$this->foto)))) {
             return route('superadmin.image', $this->foto);
         }
 

@@ -11,6 +11,9 @@ use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Superadmin;
 use App\Models\Topik;
+use App\Rules\UniqueCaseInsensitive;
+use App\Rules\UniquePhoneNumber;
+use App\Rules\UniqueUserEmail;
 use App\Services\Aksara\AksaraJawaConverterService;
 use App\Services\ProgresService;
 use App\Services\TtsService;
@@ -172,9 +175,9 @@ class SuperadminWebController extends Controller
 
         if ($role === 'superadmin') {
             $data = $request->validate([
-                'nama_lengkap' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'email', 'max:255', 'unique:superadmin,email'],
-                'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
+                'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('superadmin', 'nama_lengkap', customMessage: 'Nama lengkap sudah terdaftar.')],
+                'email' => ['required', 'email', 'max:255', new UniqueUserEmail],
+                'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber],
                 'password' => ['required', 'string', 'min:6'],
                 'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             ], $this->validationMessages());
@@ -196,11 +199,11 @@ class SuperadminWebController extends Controller
 
         $data = $request->validate([
             'nip' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('guru', 'nama_lengkap', customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'status_pegawaian' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
-            'email' => ['required', 'email', 'max:255', 'unique:guru,email'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber],
+            'email' => ['required', 'email', 'max:255', new UniqueUserEmail],
             'password' => ['required', 'string', 'min:6'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], $this->validationMessages());
@@ -227,9 +230,9 @@ class SuperadminWebController extends Controller
         if ($role === 'superadmin') {
             $superadmin = Superadmin::findOrFail($id);
             $data = $request->validate([
-                'nama_lengkap' => ['sometimes', 'string', 'max:255'],
-                'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
-                'email' => ['sometimes', 'email', 'max:255', 'unique:superadmin,email,'.$superadmin->id],
+                'nama_lengkap' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('superadmin', 'nama_lengkap', ignoreId: $superadmin->id, customMessage: 'Nama lengkap sudah terdaftar.')],
+                'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber('superadmin', $superadmin->id)],
+                'email' => ['sometimes', 'email', 'max:255', new UniqueUserEmail('superadmin', $superadmin->id)],
                 'password' => ['nullable', 'string', 'min:6'],
                 'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             ], $this->validationMessages());
@@ -261,11 +264,11 @@ class SuperadminWebController extends Controller
         $guru = Guru::findOrFail($id);
         $data = $request->validate([
             'nip' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip,'.$guru->id],
-            'nama_lengkap' => ['sometimes', 'string', 'max:255'],
+            'nama_lengkap' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('guru', 'nama_lengkap', ignoreId: $guru->id, customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
             'status_pegawaian' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
-            'email' => ['sometimes', 'email', 'max:255', 'unique:guru,email,'.$guru->id],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber('guru', $guru->id)],
+            'email' => ['sometimes', 'email', 'max:255', new UniqueUserEmail('guru', $guru->id)],
             'password' => ['nullable', 'string', 'min:6'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], $this->validationMessages());
@@ -398,12 +401,12 @@ class SuperadminWebController extends Controller
     public function siswaStore(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20'],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
-            'email' => ['required', 'email', 'max:255', 'unique:siswa,email'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber],
+            'email' => ['required', 'email', 'max:255', new UniqueUserEmail],
             'password' => ['required', 'string', 'min:6'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], $this->validationMessages());
@@ -429,12 +432,12 @@ class SuperadminWebController extends Controller
     public function siswaUpdate(Request $request, Siswa $siswa): RedirectResponse
     {
         $data = $request->validate([
-            'nis' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis,'.$siswa->id],
-            'nama_lengkap' => ['sometimes', 'string', 'max:255'],
+            'nis' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20'],
+            'nama_lengkap' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', ignoreId: $siswa->id, customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
-            'email' => ['sometimes', 'email', 'max:255', 'unique:siswa,email,'.$siswa->id],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber('siswa', $siswa->id)],
+            'email' => ['sometimes', 'email', 'max:255', new UniqueUserEmail('siswa', $siswa->id)],
             'password' => ['nullable', 'string', 'min:6'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ], $this->validationMessages());
@@ -797,7 +800,7 @@ class SuperadminWebController extends Controller
     {
         $this->authorize('update', $soal);
 
-        $data = $this->validatedSoal($request, $converter);
+        $data = $this->validatedSoal($request, $converter, $soal);
 
         if ($request->hasFile('file_gambar')) {
             $data['media_gambar_url'] = $request->file('file_gambar')->store('soal_media', 'public');
@@ -886,9 +889,7 @@ class SuperadminWebController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('level_materi', 'nama_materi')
-                    ->where('topik_id', $request->input('topik_id'))
-                    ->ignore($level?->id),
+                new UniqueCaseInsensitive('level_materi', 'nama_materi', ignoreId: $level?->id, where: ['topik_id' => $request->input('topik_id')], customMessage: 'Nama materi sudah digunakan pada topik ini.'),
             ],
             'deskripsi' => ['nullable', 'string', 'max:2000'],
             'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
@@ -902,7 +903,12 @@ class SuperadminWebController extends Controller
     private function validatedTopik(Request $request, ?Topik $topik = null): array
     {
         return $request->validate([
-            'nama' => ['required', 'string', 'max:255', Rule::unique('topik', 'nama')->ignore($topik?->id)],
+            'nama' => [
+                'required',
+                'string',
+                'max:255',
+                new UniqueCaseInsensitive('topik', 'nama', ignoreId: $topik?->id, customMessage: 'Nama topik sudah digunakan.'),
+            ],
             'deskripsi' => ['nullable', 'string', 'max:2000'],
             'urutan' => ['required', 'integer', 'min:0'],
         ]);
@@ -911,13 +917,19 @@ class SuperadminWebController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatedSoal(Request $request, AksaraJawaConverterService $converter): array
+    private function validatedSoal(Request $request, AksaraJawaConverterService $converter, ?Soal $soal = null): array
     {
+        $levelId = $request->integer('level_materi_id');
         $data = $request->validate([
             'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
-            'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $request->integer('level_materi_id'))],
+            'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $levelId)],
             'tipe_soal' => ['required', 'in:pilihan_ganda,susun_kalimat,pencocokan_arti,puzzle_pakaian_adat,menulis_aksara,kuis_suara'],
-            'pertanyaan' => ['required', 'string', 'max:5000'],
+            'pertanyaan' => [
+                'required',
+                'string',
+                'max:5000',
+                new UniqueCaseInsensitive('soal', 'pertanyaan', ignoreId: $soal?->id, where: ['level_materi_id' => $levelId], customMessage: 'Pertanyaan soal sudah digunakan pada level materi ini.'),
+            ],
             'soal_latin' => ['nullable', 'string', 'max:500'],
             'soal_aksara' => ['nullable', 'string', 'max:1000'],
             'ketik_pepet_mode' => ['nullable', 'boolean'],
@@ -1003,9 +1015,7 @@ class SuperadminWebController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('pembahasan', 'nama')
-                    ->where('level_materi_id', $levelId)
-                    ->ignore($pembahasan?->id),
+                new UniqueCaseInsensitive('pembahasan', 'nama', ignoreId: $pembahasan?->id, where: ['level_materi_id' => $levelId], customMessage: 'Nama bagian sudah digunakan pada level materi ini.'),
             ],
             'deskripsi' => ['nullable', 'string', 'max:2000'],
         ];
@@ -1040,9 +1050,12 @@ class SuperadminWebController extends Controller
     private function validationMessages(): array
     {
         return [
+            'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+            'nama_lengkap.unique' => 'Nama lengkap sudah terdaftar.',
             'no_telpon.regex' => 'Nomor telepon hanya boleh berisi angka.',
             'no_telpon.min' => 'Nomor telepon minimal 9 digit.',
             'no_telpon.max' => 'Nomor telepon maksimal 16 digit.',
+            'no_telpon.unique' => 'Nomor telepon sudah digunakan oleh akun lain.',
             'nip.regex' => 'NIP hanya boleh berisi angka.',
             'nip.min' => 'NIP minimal 8 digit.',
             'nip.max' => 'NIP maksimal 25 digit.',

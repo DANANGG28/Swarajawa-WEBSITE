@@ -104,7 +104,7 @@ class PembahasanFlowTest extends TestCase
         $p2 = $this->pembahasan($level, 'Tembung lan Ukara Dasar', 2);
         $soalP1a = $this->soal($level, $p1, 'Pitakon salam 1?');
         $soalP1b = $this->soal($level, $p1, 'Pitakon salam 2?');
-        $this->soal($level, $p2, 'Pitakon tembung?');
+        $soalP2 = $this->soal($level, $p2, 'Pitakon tembung?');
 
         $siswa = $this->siswaDenganProgres($level);
 
@@ -114,10 +114,10 @@ class PembahasanFlowTest extends TestCase
             'jawaban' => 'A',
         ])->assertOk()->assertJson(['next_soal_id' => $soalP1b->id]);
 
-        // Selesaikan soal kedua -> pembahasan 1 rampung, tidak lompat ke pembahasan lain.
+        // Selesaikan soal kedua di pembahasan 1 -> lanjut ke pembahasan 2.
         $this->actingAs($siswa, 'siswa')->postJson('/kuis/jawab', [
             'soal_id' => $soalP1b->id,
             'jawaban' => 'A',
-        ])->assertOk()->assertJson(['next_soal_id' => null]);
+        ])->assertOk()->assertJson(['next_soal_id' => $soalP2->id]);
     }
 }
