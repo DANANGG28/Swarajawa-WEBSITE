@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LevelMateriResource;
 use App\Models\LevelMateri;
+use App\Rules\UniqueCaseInsensitive;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class LevelMateriController extends Controller
 {
@@ -63,9 +63,7 @@ class LevelMateriController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('level_materi', 'nama_materi')
-                    ->where('topik_id', $request->input('topik_id'))
-                    ->ignore($level?->id),
+                new UniqueCaseInsensitive('level_materi', 'nama_materi', ignoreId: $level?->id, where: ['topik_id' => $request->input('topik_id')], customMessage: 'Nama materi sudah digunakan pada topik ini.'),
             ],
             'deskripsi' => ['nullable', 'string', 'max:2000'],
             'reward_exp' => ['nullable', 'integer', 'min:0', 'max:100000'],

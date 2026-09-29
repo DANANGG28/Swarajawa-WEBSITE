@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Siswa;
+use App\Rules\UniqueCaseInsensitive;
+use App\Rules\UniquePhoneNumber;
+use App\Rules\UniqueUserEmail;
 use App\Services\GamificationService;
 use App\Services\ProgresService;
 use App\Support\AuthContext;
@@ -25,12 +28,12 @@ class AuthController extends Controller
     public function registerSiswa(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'nis' => ['required', 'string', 'max:30', 'unique:siswa,nis'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:30'],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
-            'email' => ['required', 'email', 'max:255', 'unique:siswa,email'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:20', new UniquePhoneNumber],
+            'email' => ['required', 'email', 'max:255', new UniqueUserEmail],
             'password' => ['required', 'string', 'min:8'],
         ]);
 

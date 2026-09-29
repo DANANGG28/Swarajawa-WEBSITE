@@ -142,8 +142,17 @@ return [
     'uuid' => ':attribute harus berupa UUID yang valid.',
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'nama_lengkap' => [
+            'regex' => 'Nama hanya boleh berisi huruf dan spasi.',
+        ],
+        'nis' => [
+            'regex' => 'NIS hanya boleh berisi angka.',
+        ],
+        'nip' => [
+            'regex' => 'NIP hanya boleh berisi angka.',
+        ],
+        'no_telpon' => [
+            'regex' => 'Nomor telepon hanya boleh berisi angka.',
         ],
     ],
 

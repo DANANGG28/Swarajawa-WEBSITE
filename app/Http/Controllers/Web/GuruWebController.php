@@ -10,6 +10,7 @@ use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Topik;
+use App\Rules\UniqueCaseInsensitive;
 use App\Services\Aksara\AksaraJawaConverterService;
 use App\Services\TtsService;
 use Illuminate\Http\JsonResponse;
@@ -403,7 +404,7 @@ class GuruWebController extends Controller
     {
         $this->authorize('update', $soal);
 
-        $data = $this->validatedSoal($request, $converter);
+        $data = $this->validatedSoal($request, $converter, $soal);
 
         if ($request->hasFile('file_gambar')) {
             $data['media_gambar_url'] = $request->file('file_gambar')->store('soal_media', 'public');
@@ -477,13 +478,19 @@ class GuruWebController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatedSoal(Request $request, AksaraJawaConverterService $converter): array
+    private function validatedSoal(Request $request, AksaraJawaConverterService $converter, ?Soal $soal = null): array
     {
+        $levelId = $request->integer('level_materi_id');
         $data = $request->validate([
             'level_materi_id' => ['required', 'integer', 'exists:level_materi,id'],
-            'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $request->integer('level_materi_id'))],
+            'pembahasan_id' => ['nullable', 'integer', Rule::exists('pembahasan', 'id')->where('level_materi_id', $levelId)],
             'tipe_soal' => ['required', 'in:pilihan_ganda,susun_kalimat,pencocokan_arti,puzzle_pakaian_adat,menulis_aksara,kuis_suara'],
-            'pertanyaan' => ['required', 'string', 'max:5000'],
+            'pertanyaan' => [
+                'required',
+                'string',
+                'max:5000',
+                new UniqueCaseInsensitive('soal', 'pertanyaan', ignoreId: $soal?->id, where: ['level_materi_id' => $levelId], customMessage: 'Pertanyaan soal sudah digunakan pada level materi ini.'),
+            ],
             'soal_latin' => ['nullable', 'string', 'max:500'],
             'soal_aksara' => ['nullable', 'string', 'max:1000'],
             'ketik_pepet_mode' => ['nullable', 'boolean'],
@@ -570,9 +577,7 @@ class GuruWebController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('pembahasan', 'nama')
-                    ->where('level_materi_id', $levelId)
-                    ->ignore($pembahasan?->id),
+                new UniqueCaseInsensitive('pembahasan', 'nama', ignoreId: $pembahasan?->id, where: ['level_materi_id' => $levelId], customMessage: 'Nama bagian sudah digunakan pada level materi ini.'),
             ],
             'deskripsi' => ['nullable', 'string', 'max:2000'],
         ];
@@ -595,9 +600,7 @@ class GuruWebController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('level_materi', 'nama_materi')
-                    ->where('topik_id', $request->input('topik_id'))
-                    ->ignore($level?->id),
+                new UniqueCaseInsensitive('level_materi', 'nama_materi', ignoreId: $level?->id, where: ['topik_id' => $request->input('topik_id')], customMessage: 'Nama materi sudah digunakan pada topik ini.'),
             ],
             'deskripsi' => ['nullable', 'string', 'max:2000'],
             'reward_exp' => ['required', 'integer', 'min:0', 'max:100000'],
@@ -611,7 +614,12 @@ class GuruWebController extends Controller
     private function validatedTopik(Request $request, ?Topik $topik = null): array
     {
         return $request->validate([
-            'nama' => ['required', 'string', 'max:255', Rule::unique('topik', 'nama')->ignore($topik?->id)],
+            'nama' => [
+                'required',
+                'string',
+                'max:255',
+                new UniqueCaseInsensitive('topik', 'nama', ignoreId: $topik?->id, customMessage: 'Nama topik sudah digunakan.'),
+            ],
             'deskripsi' => ['nullable', 'string', 'max:2000'],
             'urutan' => ['required', 'integer', 'min:0'],
         ]);

@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
+use App\Rules\UniqueCaseInsensitive;
+use App\Rules\UniquePhoneNumber;
+use App\Rules\UniqueUserEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -32,11 +35,11 @@ class GuruController extends Controller
     {
         $data = $request->validate([
             'nip' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('guru', 'nama_lengkap', customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'status_pegawaian' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
-            'email' => ['required', 'email', 'max:255', 'unique:guru,email'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber],
+            'email' => ['required', 'email', 'max:255', new UniqueUserEmail],
             'password' => ['required', 'string', 'min:6'],
         ]);
 
@@ -56,11 +59,11 @@ class GuruController extends Controller
     {
         $data = $request->validate([
             'nip' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip,'.$guru->id],
-            'nama_lengkap' => ['sometimes', 'string', 'max:255'],
+            'nama_lengkap' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('guru', 'nama_lengkap', ignoreId: $guru->id, customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
             'status_pegawaian' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16'],
-            'email' => ['sometimes', 'email', 'max:255', 'unique:guru,email,'.$guru->id],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber('guru', $guru->id)],
+            'email' => ['sometimes', 'email', 'max:255', new UniqueUserEmail('guru', $guru->id)],
             'password' => ['nullable', 'string', 'min:6'],
         ]);
 

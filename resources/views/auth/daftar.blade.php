@@ -52,7 +52,10 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="flex flex-col gap-1.5">
                         <label for="nama-lengkap" class="font-label-upper text-label-upper text-on-surface-variant font-semibold tracking-wider uppercase">Nama Lengkap</label>
-                        <input id="nama-lengkap" type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required maxlength="255" placeholder="Contoh: Budi Santoso"
+                        <input id="nama-lengkap" type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required maxlength="255" pattern="^[a-zA-Z\s]+$"
+                            title="Nama hanya boleh berisi huruf dan spasi."
+                            oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
+                            placeholder="Contoh: Budi Santoso"
                             class="w-full bg-surface-container-low text-black-900 font-body text-body placeholder:text-gray-500 rounded-xl px-3.5 py-3 outline-none transition-all focus:bg-white focus:shadow-[0_0_0_2px_#5443C9]">
                     </div>
                     <div class="flex flex-col gap-1.5">

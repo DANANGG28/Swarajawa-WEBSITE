@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Siswa;
+use App\Rules\UniqueCaseInsensitive;
+use App\Rules\UniquePhoneNumber;
+use App\Rules\UniqueUserEmail;
 use App\Services\ProgresService;
 use App\Support\AuthContext;
 use Illuminate\Http\RedirectResponse;
@@ -57,17 +60,20 @@ class AuthWebController extends Controller
     public function daftar(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:30', 'unique:siswa,nis'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:30'],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
-            'no_telpon' => ['nullable', 'string', 'max:30'],
-            'email' => ['required', 'email', 'max:255', 'unique:siswa,email'],
+            'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:20', new UniquePhoneNumber],
+            'email' => ['required', 'email', 'max:255', new UniqueUserEmail],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
+            'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
             'nis.regex' => 'NIS hanya boleh berisi angka.',
-            'nis.unique' => 'NIS sudah terdaftar.',
+            'nis.min' => 'NIS minimal 4 digit.',
             'nis.required' => 'NIS wajib diisi.',
+            'no_telpon.regex' => 'Nomor telepon hanya boleh berisi angka.',
+            'no_telpon.min' => 'Nomor telepon minimal 9 digit.',
             'email.unique' => 'Email sudah terdaftar.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
             'password.min' => 'Kata sandi minimal 8 karakter.',
