@@ -253,7 +253,7 @@
                                 </label>
                                 <div class="relative">
                                     <span class="absolute left-3.5 top-3 text-gray-400 material-symbols-outlined text-[20px]">person</span>
-                                    <input type="text" id="nama_lengkap" name="nama_lengkap" required value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}" placeholder="Masukkan nama lengkap siswa" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
+                                    <input type="text" id="nama_lengkap" name="nama_lengkap" required value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}"  placeholder="Masukkan nama lengkap siswa" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
                                 </div>
                                 @error('nama_lengkap')
                                     <span class="text-xs text-error font-medium">{{ $message }}</span>
@@ -268,7 +268,7 @@
                                 <div class="relative">
                                     <span class="absolute left-3.5 top-3 text-gray-400 material-symbols-outlined text-[20px]">pin</span>
                                     <input type="text" id="nis" name="nis" value="{{ old('nis', $siswa->nis) }}"
-                                           inputmode="numeric" pattern="[0-9]*" maxlength="20"
+                                           inputmode="numeric" pattern="[0-9]*" maxlength="10"
                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                            placeholder="Contoh: 20241001" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
                                 </div>
@@ -282,24 +282,19 @@
                                 <label for="kelas" class="font-body text-xs font-bold text-on-surface uppercase tracking-wider">
                                     Kelas Siswa
                                 </label>
+                                @php
+                                    $selectedKelas = old('kelas', $siswa->kelas);
+                                    $daftarKelas = ['7A', '7B', '7C', '8A', '8B', '9A'];
+                                @endphp
                                 <div class="relative">
-                                    <span class="absolute left-3.5 top-3 text-gray-400 material-symbols-outlined text-[20px]">class</span>
-                                    <input type="text" id="kelas" name="kelas" list="kelasList" value="{{ old('kelas', $siswa->kelas) }}" placeholder="Pilih atau ketik kelas (contoh: X-A, XI-IPA)" class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all">
-                                    <datalist id="kelasList">
-                                        <option value="X">
-                                        <option value="X-A">
-                                        <option value="X-B">
-                                        <option value="X-C">
-                                        <option value="XI">
-                                        <option value="XI-IPA 1">
-                                        <option value="XI-IPA 2">
-                                        <option value="XI-IPS 1">
-                                        <option value="XI-IPS 2">
-                                        <option value="XII">
-                                        <option value="XII-IPA 1">
-                                        <option value="XII-IPA 2">
-                                        <option value="XII-IPS 1">
-                                    </datalist>
+                                    <span class="absolute left-3.5 top-3 text-gray-400 material-symbols-outlined text-[20px] pointer-events-none">school</span>
+                                    <select id="kelas" name="kelas" class="w-full pl-11 pr-10 py-2.5 rounded-xl bg-surface-container-low border border-gray-200/80 focus:border-primary-500 focus:bg-white text-on-surface font-body text-sm outline-none transition-all cursor-pointer appearance-none">
+                                        <option value="" disabled {{ empty($selectedKelas) ? 'selected' : '' }}>Pilih Kelas</option>
+                                        @foreach ($daftarKelas as $itemKelas)
+                                            <option value="{{ $itemKelas }}" {{ $selectedKelas === $itemKelas ? 'selected' : '' }}>{{ $itemKelas }}</option>
+                                        @endforeach
+                                    </select>
+                                    <span class="material-symbols-outlined pointer-events-none absolute right-3.5 top-3 text-gray-400 text-[20px]">expand_more</span>
                                 </div>
                                 @error('kelas')
                                     <span class="text-xs text-error font-medium">{{ $message }}</span>

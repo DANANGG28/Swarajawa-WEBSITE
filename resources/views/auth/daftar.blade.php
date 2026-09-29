@@ -57,7 +57,9 @@
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <label for="nis" class="font-label-upper text-label-upper text-on-surface-variant font-semibold tracking-wider uppercase">Nomor Induk Siswa (NIS)</label>
-                        <input id="nis" type="text" name="nis" value="{{ old('nis') }}" required inputmode="numeric" maxlength="30" placeholder="Contoh: 2026010042"
+                        <input id="nis" type="text" name="nis" value="{{ old('nis') }}" required inputmode="numeric" pattern="[0-9]*" maxlength="10"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            placeholder="Contoh: 2026010042"
                             class="w-full bg-surface-container-low text-black-900 font-body text-body placeholder:text-gray-500 rounded-xl px-3.5 py-3 outline-none transition-all focus:bg-white focus:shadow-[0_0_0_2px_#5443C9]">
                     </div>
                 </div>
