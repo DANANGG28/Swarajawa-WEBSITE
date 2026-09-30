@@ -37,7 +37,7 @@ class SpeakingExerciseController extends Controller
     public function quizSuara(Request $request, Soal $soal): JsonResponse
     {
         $data = $request->validate([
-            'audio' => ['required', 'file', 'mimes:mp3,wav,m4a,webm,ogg,flac', 'max:10240'],
+            'audio' => ['required', 'file', 'mimetypes:audio/*,video/mp4,video/webm', 'max:10240'],
             'mock_transcript' => ['nullable', 'string', 'max:1000'],
         ]);
 
@@ -103,7 +103,7 @@ class SpeakingExerciseController extends Controller
     public function latihanNgomong(Request $request, Soal $soal): JsonResponse
     {
         $data = $request->validate([
-            'audio' => ['required', 'file', 'mimes:mp3,wav,m4a,webm,ogg,flac', 'max:10240'],
+            'audio' => ['required', 'file', 'mimetypes:audio/*,video/mp4,video/webm', 'max:10240'],
             'mock_transcript' => ['nullable', 'string', 'max:1000'],
         ]);
 
