@@ -179,7 +179,7 @@ class SuperadminWebController extends Controller
                 'email' => ['required', 'email', 'max:255', new UniqueUserEmail],
                 'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber],
                 'password' => ['required', 'string', 'min:6'],
-                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:500'],
             ], $this->validationMessages());
 
             if ($request->hasFile('foto')) {
@@ -201,11 +201,11 @@ class SuperadminWebController extends Controller
             'nip' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip'],
             'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('guru', 'nama_lengkap', customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['required', 'in:L,P'],
-            'status_pegawaian' => ['nullable', 'string', 'max:50'],
+            'status_pegawaian' => ['nullable', 'string', 'in:PKWTT,PKWT,PPPK,PNS'],
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber],
             'email' => ['required', 'email', 'max:255', new UniqueUserEmail],
             'password' => ['required', 'string', 'min:6'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:500'],
         ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
@@ -234,7 +234,7 @@ class SuperadminWebController extends Controller
                 'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber('superadmin', $superadmin->id)],
                 'email' => ['sometimes', 'email', 'max:255', new UniqueUserEmail('superadmin', $superadmin->id)],
                 'password' => ['nullable', 'string', 'min:6'],
-                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+                'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:500'],
             ], $this->validationMessages());
 
             if ($request->hasFile('foto')) {
@@ -266,11 +266,11 @@ class SuperadminWebController extends Controller
             'nip' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:8', 'max:25', 'unique:guru,nip,'.$guru->id],
             'nama_lengkap' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('guru', 'nama_lengkap', ignoreId: $guru->id, customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
-            'status_pegawaian' => ['nullable', 'string', 'max:50'],
+            'status_pegawaian' => ['nullable', 'string', 'in:PKWTT,PKWT,PPPK,PNS'],
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber('guru', $guru->id)],
             'email' => ['sometimes', 'email', 'max:255', new UniqueUserEmail('guru', $guru->id)],
             'password' => ['nullable', 'string', 'min:6'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:500'],
         ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
@@ -401,14 +401,14 @@ class SuperadminWebController extends Controller
     public function siswaStore(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20'],
+            'nis' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis'],
             'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['required', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber],
             'email' => ['required', 'email', 'max:255', new UniqueUserEmail],
             'password' => ['required', 'string', 'min:6'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:500'],
         ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
@@ -432,14 +432,14 @@ class SuperadminWebController extends Controller
     public function siswaUpdate(Request $request, Siswa $siswa): RedirectResponse
     {
         $data = $request->validate([
-            'nis' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20'],
+            'nis' => ['sometimes', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis,'.$siswa->id],
             'nama_lengkap' => ['sometimes', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', ignoreId: $siswa->id, customMessage: 'Nama lengkap sudah terdaftar.')],
             'jenis_kelamin' => ['sometimes', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber('siswa', $siswa->id)],
             'email' => ['sometimes', 'email', 'max:255', new UniqueUserEmail('siswa', $siswa->id)],
             'password' => ['nullable', 'string', 'min:6'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:500'],
         ], $this->validationMessages());
 
         if ($request->hasFile('foto')) {
@@ -1059,9 +1059,15 @@ class SuperadminWebController extends Controller
             'nip.regex' => 'NIP hanya boleh berisi angka.',
             'nip.min' => 'NIP minimal 8 digit.',
             'nip.max' => 'NIP maksimal 25 digit.',
+            'nip.unique' => 'NIP sudah terdaftar. Silakan gunakan NIP yang berbeda.',
             'nis.regex' => 'NIS hanya boleh berisi angka.',
             'nis.min' => 'NIS minimal 4 digit.',
             'nis.max' => 'NIS maksimal 20 digit.',
+            'nis.unique' => 'NIS sudah terdaftar. Silakan gunakan NIS yang berbeda.',
+            'status_pegawaian.in' => 'Status kepegawaian harus salah satu dari: PKWTT, PKWT, PPPK, atau PNS.',
+            'foto.image' => 'File foto profil harus berupa gambar valid.',
+            'foto.mimes' => 'Format foto profil harus berupa JPG, JPEG, PNG, atau WEBP.',
+            'foto.max' => 'Ukuran foto profil maksimal 500 KB.',
             'urutan.min' => 'Nomor urutan minimal 1.',
         ];
     }
