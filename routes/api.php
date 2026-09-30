@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BadgeController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\GoogleAuthController;
 use App\Http\Controllers\Api\GuruController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Api\KuisController;
 use App\Http\Controllers\Api\LeaderboardController;
 use App\Http\Controllers\Api\LevelMateriController;
 use App\Http\Controllers\Api\MateriController;
+use App\Http\Controllers\Api\ProfilController;
 use App\Http\Controllers\Api\ProgresController;
 use App\Http\Controllers\Api\SiswaController;
 use App\Http\Controllers\Api\SoalController;
@@ -50,6 +52,9 @@ Route::middleware('auth.any')->group(function () {
 
         Route::get('leaderboard', [LeaderboardController::class, 'index']);
         Route::get('progres', [ProgresController::class, 'index']);
+        Route::get('badge', [BadgeController::class, 'index']);
+
+        Route::match(['put', 'post'], 'profil/data', [ProfilController::class, 'update']);
 
         Route::post('chat', [ChatController::class, 'ask'])->middleware('throttle:30,1');
         Route::get('chat/histori', [ChatController::class, 'histori']);
