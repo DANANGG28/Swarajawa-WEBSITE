@@ -62,13 +62,43 @@ class DollarRecognizer
                 continue;
             }
             foreach ($stroke as $point) {
-                if (is_array($point) && count($point) >= 2) {
-                    $points[] = [(float) $point[0], (float) $point[1]];
+                $xy = self::pointToPair($point);
+                if ($xy !== null) {
+                    $points[] = $xy;
                 }
             }
         }
 
         return $points;
+    }
+
+    /**
+     * Terima titik dalam bentuk list [x, y] (klien web) maupun map {x, y}
+     * (aplikasi mobile) agar penilaian tidak pernah gagal karena format.
+     *
+     * @return array{0: float, 1: float}|null
+     */
+    private static function pointToPair(mixed $point): ?array
+    {
+        if (! is_array($point)) {
+            return null;
+        }
+
+        if (array_key_exists(0, $point) && array_key_exists(1, $point)) {
+            $x = $point[0];
+            $y = $point[1];
+        } elseif (array_key_exists('x', $point) && array_key_exists('y', $point)) {
+            $x = $point['x'];
+            $y = $point['y'];
+        } else {
+            return null;
+        }
+
+        if (! is_numeric($x) || ! is_numeric($y)) {
+            return null;
+        }
+
+        return [(float) $x, (float) $y];
     }
 
     /**
