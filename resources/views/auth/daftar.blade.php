@@ -16,10 +16,7 @@
             class="inline-flex items-center justify-center w-11 h-11 rounded-full text-gray-500 hover:text-black-900 hover:bg-white/80 border border-transparent hover:border-gray-200 transition-colors">
             <span class="material-symbols-outlined text-[26px]">close</span>
         </a>
-        <a href="{{ route('masuk') }}"
-            class="inline-flex items-center justify-center px-5 py-2 rounded-full border-2 border-primary-600 text-primary-600 hover:bg-primary-fixed font-bold text-sm tracking-wide uppercase transition-colors">
-            Masuk
-        </a>
+    
     </nav>
 
     <main class="flex-1 flex items-center justify-center px-4 py-6 sm:py-10">
@@ -28,10 +25,11 @@
             <div aria-hidden="true" class="absolute -bottom-16 -left-16 w-36 h-36 rounded-full bg-secondary-fixed opacity-40 blur-2xl pointer-events-none"></div>
 
             <header class="relative text-center mb-6">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 rounded-3xl bg-primary-600 flex items-center justify-center text-white shadow-lg p-2.5 sm:p-3 transition-transform hover:scale-105">
+                    <img src="{{ route('logo.image', ['filename' => 'Logo_TP.png']) }}?v={{ file_exists(storage_path('logo/Logo_TP.png')) ? filemtime(storage_path('logo/Logo_TP.png')) : time() }}" alt="Logo SINAU APP" class="w-full h-full object-contain drop-shadow-sm">
+                </div>
                 <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-black-900 tracking-tight">Daftar Akun Siswa</h1>
-                <p class="font-body text-body text-on-surface-variant max-w-sm mx-auto mt-1">
-                    Mulai petualangan belajar bahasa &amp; budaya Jawa secara interaktif dan menyenangkan.
-                </p>
+               
             </header>
 
             @if (session('sukses'))
@@ -154,13 +152,6 @@
                     <span>Daftar dengan Google</span>
                 </a>
 
-                <p class="font-caption text-caption text-gray-500 text-center px-4 leading-relaxed">
-                    Dengan mendaftar di Sinau Jowo, Anda menyetujui
-                    <a href="#" class="text-primary-700 hover:underline font-medium">Ketentuan Layanan</a>
-                    dan
-                    <a href="#" class="text-primary-700 hover:underline font-medium">Kebijakan Privasi</a>
-                    kami.
-                </p>
 
                 <div class="pt-1 text-center">
                     <p class="font-body text-body text-on-surface-variant">
@@ -173,7 +164,7 @@
     </main>
 
     <footer class="w-full py-4 text-center text-xs text-gray-500">
-        <p>&copy; 2025 Sinau Jowo. Hak Cipta Dilindungi. Untuk Pembelajaran Bahasa &amp; Aksara Jawa.</p>
+        <p>&copy; 2025 SINAU APP. Hak Cipta Dilindungi. Untuk Pembelajaran Bahasa &amp; Aksara Jawa.</p>
     </footer>
 
     <script>

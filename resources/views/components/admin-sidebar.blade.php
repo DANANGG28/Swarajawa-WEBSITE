@@ -23,11 +23,14 @@
 
 <aside class="fixed left-0 top-0 h-full w-72 bg-white z-50 flex flex-col justify-between shadow-sm border-r-2 border-slate-300">
     <div class="flex flex-col flex-1 overflow-y-auto">
-        <div class="h-20 px-space-xl flex items-center gap-space-md shrink-0">
-            <div class="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center text-white font-bold font-heading text-xl shadow-sm">SJ</div>
-            <div class="flex flex-col">
-                <span class="font-heading text-heading font-black uppercase text-primary leading-tight">Sinau Jowo</span>
-                <span class="font-caption text-caption font-bold uppercase tracking-wide text-primary-600">{{ $peran }}</span>
+        <!-- Brand Header -->
+        <div class="flex items-center gap-3.5 px-5 pt-6 mb-6" data-purpose="brand-header">
+            <div class="w-11 h-11 rounded-2xl bg-primary-600 flex items-center justify-center text-white shadow-md shadow-primary-600/30 p-1.5 shrink-0">
+                <img src="{{ route('logo.image', ['filename' => 'Logo_TP.png']) }}?v={{ file_exists(storage_path('logo/Logo_TP.png')) ? filemtime(storage_path('logo/Logo_TP.png')) : time() }}" alt="Logo SINAU APP" class="w-full h-full object-contain drop-shadow-sm">
+            </div>
+            <div>
+                <h1 class="text-xl font-black tracking-tight text-primary uppercase leading-none">SINAU APP</h1>
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-primary-600 mt-1 block">{{ $peran }}</span>
             </div>
         </div>
         <div class="px-space-md py-space-sm">

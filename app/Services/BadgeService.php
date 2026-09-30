@@ -102,7 +102,7 @@ class BadgeService
     }
 
     /**
-     * Definisi katalog seluruh lencana sistem Sinau Jowo.
+     * Definisi katalog seluruh lencana sistem SINAU APP.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -263,7 +263,7 @@ class BadgeService
             ],
             [
                 'id' => 'narendra_jagad_jawa',
-                'nama' => 'Narendra Sinau Jowo',
+                'nama' => 'Narendra SINAU APP',
                 'kategori' => 'PENJELAJAH MATERI',
                 'deskripsi' => 'Menjelajahi dan menuntaskan unit materi pembelajaran tingkat dasar hingga lanjut.',
                 'syarat_deskripsi' => 'Selesaikan minimal 3 Level Materi pembelajaran.',
@@ -315,15 +315,15 @@ class BadgeService
                 $sisaSoal = max(0, $targetSoal - $currentSoal);
                 $sisaExp = max(0, $targetExp - $currentExp);
                 if ($sisaSoal > 0 && $sisaExp > 0) {
-                    $syaratText = "Syarat: {$sisaSoal} soal lagi (Saat ini {$currentSoal}/{$targetSoal}) & {$sisaExp} XP lagi";
+                    $syaratText = "Kurang {$sisaSoal} Soal ({$currentSoal}/{$targetSoal}) & {$sisaExp} XP";
                 } elseif ($sisaSoal > 0) {
-                    $syaratText = "Syarat: {$sisaSoal} soal lagi (Saat ini {$currentSoal}/{$targetSoal})";
+                    $syaratText = "Kurang {$sisaSoal} Soal ({$currentSoal}/{$targetSoal})";
                 } elseif ($sisaExp > 0) {
-                    $syaratText = "Syarat: {$sisaExp} XP lagi (Saat ini {$currentExp}/{$targetExp} XP)";
+                    $syaratText = "Kurang {$sisaExp} XP ({$currentExp}/{$targetExp} XP)";
                 }
             } else {
                 $earnedStatLeft = "{$def['stat_label']}: {$currentSoal} Soal";
-                $earnedStatRight = '';
+                $earnedStatRight = "Diraih";
             }
         } elseif ($type === 'aksara_lanjutan') {
             $currentSoal = (int) ($stats['tipeCounts'][Soal::TIPE_MENULIS_AKSARA] ?? 0);
@@ -335,16 +335,17 @@ class BadgeService
             $progressPercent = (int) round((($soalProgress + $levelProgress) / 2) * 100);
 
             if (! $isUnlocked) {
-                if ($currentSoal < $targetSoal && ! $aksaraDone) {
-                    $syaratText = "Syarat: ".($targetSoal - $currentSoal)." soal aksara lagi & tuntaskan Level Aksara";
-                } elseif ($currentSoal < $targetSoal) {
-                    $syaratText = "Syarat: ".($targetSoal - $currentSoal)." soal aksara lagi (Saat ini {$currentSoal}/{$targetSoal})";
+                $sisaSoal = max(0, $targetSoal - $currentSoal);
+                if ($sisaSoal > 0 && ! $aksaraDone) {
+                    $syaratText = "Kurang {$sisaSoal} Soal Aksara ({$currentSoal}/{$targetSoal}) & Tuntaskan Level";
+                } elseif ($sisaSoal > 0) {
+                    $syaratText = "Kurang {$sisaSoal} Soal Aksara ({$currentSoal}/{$targetSoal})";
                 } else {
-                    $syaratText = "Syarat: Tuntaskan Level Aksara Jawa Terlebih Dahulu";
+                    $syaratText = "Tuntaskan Level Aksara Jawa";
                 }
             } else {
                 $earnedStatLeft = "Aksara Jawa: Selesai";
-                $earnedStatRight = '';
+                $earnedStatRight = "Diraih";
             }
         } elseif ($type === 'perfect_scores') {
             $currentSoal = (int) $stats['perfectScoresCount'];
@@ -352,11 +353,11 @@ class BadgeService
             $progressPercent = $targetSoal > 0 ? min(100, (int) round(($currentSoal / $targetSoal) * 100)) : 100;
 
             if (! $isUnlocked) {
-                $sisa = $targetSoal - $currentSoal;
-                $syaratText = "Syarat: {$sisa} kuis skor >= 90 lagi (Saat ini {$currentSoal}/{$targetSoal})";
+                $sisa = max(0, $targetSoal - $currentSoal);
+                $syaratText = "Kurang {$sisa} Kuis Skor ≥ 90 ({$currentSoal}/{$targetSoal})";
             } else {
                 $earnedStatLeft = "Kuis Skor >= 90: {$currentSoal} Soal";
-                $earnedStatRight = '';
+                $earnedStatRight = "Diraih";
             }
         } elseif ($type === 'streak') {
             $targetStreak = (int) ($def['target_streak'] ?? 3);
@@ -366,10 +367,10 @@ class BadgeService
 
             if (! $isUnlocked) {
                 $sisa = max(1, $targetStreak - $currentStreak);
-                $syaratText = "Syarat: {$sisa} hari lagi (Saat ini {$currentStreak}/{$targetStreak} hari)";
+                $syaratText = "Kurang {$sisa} Hari Streak ({$currentStreak}/{$targetStreak} Hari)";
             } else {
                 $earnedStatLeft = "Streak: {$currentStreak} Hari Aktif";
-                $earnedStatRight = '';
+                $earnedStatRight = "Diraih";
             }
         } elseif ($type === 'total_exp') {
             $targetExp = (int) ($def['target_exp'] ?? 250);
@@ -379,10 +380,10 @@ class BadgeService
 
             if (! $isUnlocked) {
                 $sisa = max(0, $targetExp - $currentExp);
-                $syaratText = "Syarat: {$sisa} XP lagi (Saat ini {$currentExp}/{$targetExp} XP)";
+                $syaratText = "Kurang {$sisa} XP ({$currentExp}/{$targetExp} XP)";
             } else {
-                $earnedStatLeft = "Total EXP: {$currentExp}";
-                $earnedStatRight = '';
+                $earnedStatLeft = "Total Akumulasi EXP: {$currentExp} XP";
+                $earnedStatRight = "Diraih";
             }
         } elseif ($type === 'completed_levels') {
             $targetLevels = (int) ($def['target_levels'] ?? 3);
@@ -392,10 +393,10 @@ class BadgeService
 
             if (! $isUnlocked) {
                 $sisa = max(0, $targetLevels - $currentLevels);
-                $syaratText = "Syarat: {$sisa} level lagi (Saat ini {$currentLevels}/{$targetLevels} level)";
+                $syaratText = "Kurang {$sisa} Level ({$currentLevels}/{$targetLevels})";
             } else {
-                $earnedStatLeft = "Level Pembelajaran";
-                $earnedStatRight = "{$currentLevels} Level Selesai";
+                $earnedStatLeft = "Level Pembelajaran: {$currentLevels} Selesai";
+                $earnedStatRight = "Diraih";
             }
         }
 

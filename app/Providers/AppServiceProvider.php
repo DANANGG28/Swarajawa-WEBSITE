@@ -50,9 +50,9 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             return (new MailMessage)
-                ->subject('Atur Ulang Kata Sandi - Sinau Jowo')
+                ->subject('Atur Ulang Kata Sandi - SINAU APP')
                 ->greeting('Halo '.$notifiable->nama_lengkap.'!')
-                ->line('Kami menerima permintaan untuk mengatur ulang kata sandi akun Sinau Jowo Anda.')
+                ->line('Kami menerima permintaan untuk mengatur ulang kata sandi akun SINAU APP Anda.')
                 ->action('Atur Ulang Kata Sandi', $url)
                 ->line('Tautan ini berlaku selama 60 menit.')
                 ->line('Jika Anda tidak merasa meminta atur ulang kata sandi, abaikan saja email ini.');

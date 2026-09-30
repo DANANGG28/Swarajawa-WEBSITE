@@ -31,7 +31,7 @@
         </div>
     </header>
 
-    <main class="flex-1 w-full max-w-3xl mx-auto px-4 md:px-6 py-6 md:py-8 flex flex-col justify-center items-center">
+    <main class="flex-1 w-full max-w-3xl mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-6 md:py-8 flex flex-col justify-start sm:justify-center items-center">
         @yield('konten')
     </main>
 

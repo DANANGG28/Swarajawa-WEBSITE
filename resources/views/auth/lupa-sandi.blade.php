@@ -95,7 +95,7 @@
     </main>
 
     <footer class="w-full py-4 text-center text-xs text-gray-500">
-        <p>&copy; 2025 Sinau Jowo. Hak Cipta Dilindungi. Pembelajaran Bahasa &amp; Budaya Jawa.</p>
+        <p>&copy; 2025 SINAU APP. Hak Cipta Dilindungi. Pembelajaran Bahasa &amp; Budaya Jawa.</p>
     </footer>
 </body>
 </html>

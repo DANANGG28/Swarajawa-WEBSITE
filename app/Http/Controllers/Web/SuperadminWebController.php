@@ -39,7 +39,7 @@ class SuperadminWebController extends Controller
     {
         return view('superadmin.dashboard', [
             'judul' => 'Dashboard Superadmin',
-            'subjudul' => 'Ringkasan penggunaan sistem Sinau Jowo',
+            'subjudul' => 'Ringkasan penggunaan sistem SINAU APP',
             'role' => 'superadmin',
             'active' => 'dashboard',
             'stat' => [
@@ -115,7 +115,7 @@ class SuperadminWebController extends Controller
     {
         return view('superadmin.tambah-guru', [
             'judul' => 'Daftarkan Pengelola Baru',
-            'subjudul' => 'Tambah akun guru atau superadmin baru untuk mengelola sistem Sinau Jowo',
+            'subjudul' => 'Tambah akun guru atau superadmin baru untuk mengelola sistem SINAU APP',
             'role' => 'superadmin',
             'active' => 'guru',
         ]);

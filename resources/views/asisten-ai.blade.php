@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Tanya Basa AI - Sinau Jowo Web</title>
+    <title>Tanya Basa AI - SINAU APP Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400..800;1,400..800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -201,10 +201,10 @@
         </div>
     </div>
 
-    <main class="w-full pt-4 lg:pt-8 flex-1 bg-surface">
-        <div class="flex flex-col lg:flex-row w-full max-w-7xl mx-auto min-h-[calc(100vh-4rem)] px-4 sm:px-6 md:px-10 py-2 sm:py-4 gap-6">
+    <main class="w-full flex-1 flex flex-col bg-surface">
+        <div class="flex flex-col lg:flex-row w-full max-w-7xl mx-auto flex-1 min-h-[calc(100vh-3.5rem)] lg:min-h-[calc(100vh-2rem)] px-4 sm:px-6 md:px-10 py-3 sm:py-4 gap-6">
             <!-- SIDEBAR KHUSUS DESKTOP -->
-            <aside class="hidden lg:flex lg:flex-col lg:w-72 shrink-0 justify-between bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-surface-container h-[calc(100vh-7rem)] lg:sticky lg:top-20 z-10">
+            <aside class="hidden lg:flex lg:flex-col lg:w-72 shrink-0 justify-between bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-surface-container h-[calc(100vh-4rem)] lg:sticky lg:top-4 z-10">
                 <div class="flex flex-col gap-4 overflow-hidden">
                     <div class="flex items-center gap-2 pb-3 border-b border-surface-container">
                         <a href="{{ route('siswa.dashboard') }}" title="Bali menyang Beranda"
@@ -240,13 +240,12 @@
                 </div>
             </aside>
 
-            <div class="flex-1 flex flex-col max-w-3xl mx-auto w-full pb-8">
-                <div class="flex flex-col items-center text-center mb-6 sm:mb-8">
-                    <h1 class="font-heading text-xl sm:text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight mb-1">Tanya apa saja seputar Basa Jawa</h1>
-                    <p class="font-body text-xs sm:text-sm text-on-surface-variant max-w-lg">Tingkatan unggah-ungguh, aksara Jawa, peribahasa, atau terjemahan krama alus langsung terverifikasi.</p>
+            <div class="flex-1 flex flex-col max-w-3xl mx-auto w-full justify-between min-h-full pb-2 sm:pb-4">
+                <div class="flex flex-col items-center text-center pt-4 sm:pt-8 mb-8 sm:mb-10 shrink-0">
+                    <h1 class="font-heading text-xl sm:text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight">Tanya apa saja seputar Basa Jawa</h1>
                 </div>
 
-                <div class="flex flex-col gap-6 w-full" id="chat-messages">
+                <div class="flex flex-col gap-5 sm:gap-6 w-full flex-1 mb-4" id="chat-messages">
                     <div class="flex items-start gap-3 w-full">
                         <div class="w-9 h-9 rounded-xl bg-primary-700 text-white flex items-center justify-center shrink-0 shadow-sm">
                             <span class="material-symbols-outlined text-[20px]">smart_toy</span>
@@ -257,43 +256,27 @@
                                     Sugeng rawuh, <strong class="text-primary-700">{{ $userNama }}</strong>! Kula <strong class="text-primary-700">Semar AI</strong>, rencang panjenengan anggenipun sinau Basa Jawi. Sumangga tanglet bab unggah-ungguh basa (Ngoko, Krama, Krama Alus), aksara Jawa, tembung saroja, peribahasa, tuwin kabudayan Jawa.
                                 </p>
                             </div>
-                            <div class="flex flex-wrap gap-2">
-                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Ubahlah ke Krama Alus: 'Saya mau makan bersama kakek'">Ubah ke Krama Alus: &ldquo;Saya mau makan bersama kakek&rdquo;</button>
-                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Apa bedane tembung 'turu', 'tilem', lan 'sare'?">Bedane tembung &lsquo;turu&rsquo;, &lsquo;tilem&rsquo;, lan &lsquo;sare&rsquo;?</button>
-                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Apa tegese bebasan 'Becik ketitik ala ketara'?">Tegese bebasan &lsquo;Becik ketitik ala ketara&rsquo;</button>
-                                <button type="button" class="suggestion-chip text-left bg-surface-container-low hover:bg-surface-container text-primary-700 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl font-body text-xs font-semibold shadow-sm transition-all active:scale-95" data-prompt="Piye panganggone sandhangan wulu lan suku ing aksara Jawa?">Panganggone sandhangan wulu lan suku</button>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="sticky bottom-4 w-full pt-4 mt-6">
-                    <div class="rounded-full bg-surface-container-lowest border border-surface-container p-1.5 pl-3.5 sm:pl-4 pr-1.5 flex items-center gap-2 shadow-md">
+                <div class="sticky bottom-0 sm:bottom-2 w-full pt-3 pb-2 sm:pb-0 mt-auto bg-surface/90 backdrop-blur-md z-20">
+                    <div class="rounded-full bg-surface-container-lowest border border-surface-container p-1.5 pl-3.5 sm:pl-4 pr-1.5 flex items-center gap-2 shadow-lg hover:border-primary-300 transition-colors">
                         <button type="button" id="micBtn" title="Ketik nganggo swara"
                             class="w-9 h-9 rounded-full hover:bg-surface-container text-on-surface-variant hover:text-primary-600 flex items-center justify-center transition-colors shrink-0">
                             <span class="material-symbols-outlined text-[20px]">mic</span>
                         </button>
                         <input type="text" id="chat-input-field" placeholder="Ketik pitakon basa Jawa ing kene..." autocomplete="off"
-                            class="flex-1 min-w-0 bg-transparent border-none outline-none font-body text-xs sm:text-sm text-on-surface placeholder:text-gray-500 py-1">
+                            class="flex-1 min-w-0 bg-transparent border-none outline-none font-body text-xs sm:text-sm text-on-surface placeholder:text-gray-500 py-1.5">
                         <button type="button" id="chat-send-btn" title="Kirim pitakon"
                             class="w-9 h-9 rounded-full bg-primary-700 hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all active:scale-95 shadow-sm shrink-0">
                             <span class="material-symbols-outlined text-[20px]">send</span>
                         </button>
                     </div>
-                    <p class="text-center font-caption text-[10px] sm:text-[11px] text-gray-500 mt-2 px-2">
-                        Asisten Tanya Bahasa menjawab berdasarkan basis data korpus resmi sekolah.
-                    </p>
                 </div>
             </div>
         </div>
     </main>
-
-    <footer class="w-full bg-surface-container-low py-4 mt-auto">
-        <div class="w-full px-5 md:px-10 flex flex-col sm:flex-row items-center justify-between gap-2 text-on-surface-variant font-caption text-xs">
-            <span>&copy; 2026 Sinau Jowo. Kagunganipun sesarengan kangge nguri-uri kabudayan.</span>
-            <span class="font-label-upper uppercase tracking-wider text-primary-700 font-bold">Ngoko &bull; Madya &bull; Krama Inggil</span>
-        </div>
-    </footer>
 
     <script>
         window.AsistenAI = (function () {
@@ -367,7 +350,6 @@
                             <div class="rounded-2xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm text-on-surface border border-surface-container">
                                 <span class="block font-label-upper text-[10px] uppercase tracking-wider text-gray-500 mb-1">${label}</span>
                                 <p class="font-body text-xs sm:text-sm leading-relaxed whitespace-pre-wrap" data-text></p>
-                                <div class="hidden flex-col gap-1 pt-2 mt-2 border-t border-surface-container" data-sources></div>
                             </div>
                         </div>
                     </div>
@@ -390,24 +372,9 @@
                 `);
             }
 
-            function renderSources(node, sources) {
-                if (! Array.isArray(sources) || sources.length === 0) return;
-                const wrap = node.querySelector('[data-sources]');
-                const title = document.createElement('div');
-                title.className = 'flex items-center gap-1.5 text-gray-500 font-caption text-xs';
-                title.innerHTML = '<span class="material-symbols-outlined text-[14px]">menu_book</span><span data-judul></span>';
-                title.querySelector('[data-judul]').textContent = 'Sumber korpus: ' + sources.map(function (s) {
-                    return s.judul;
-                }).filter(Boolean).join('; ');
-                wrap.appendChild(title);
-                wrap.classList.remove('hidden');
-                wrap.classList.add('flex');
-            }
-
-            function appendReply(text, sources) {
+            function appendReply(text) {
                 const node = botBubble('Wangsulan Semar AI');
                 node.querySelector('[data-text]').textContent = text;
-                renderSources(node, sources);
                 container.appendChild(node);
                 scrollToBottom();
             }
@@ -501,14 +468,14 @@
                         if (m.role === 'user') {
                             container.appendChild(userBubble(m.pesan));
                         } else {
-                            appendReply(m.pesan, m.sumber || []);
+                            appendReply(m.pesan);
                         }
                     });
                     setActiveHighlight(data.id);
                     scrollToBottom();
                 } catch (err) {
                     resetView();
-                    appendReply('Mohon maaf, riwayat obrolan tidak dapat dibuka. Silakan coba lagi.', []);
+                    appendReply('Mohon maaf, riwayat obrolan tidak dapat dibuka. Silakan coba lagi.');
                 } finally {
                     setBusy(false);
                     input.focus();
@@ -574,7 +541,7 @@
                         const message = res.status === 429
                             ? 'Mohon maaf, Anda mengirim pertanyaan terlalu cepat. Silakan tunggu beberapa saat lagi.'
                             : 'Mohon maaf, terjadi gangguan teknis. Silakan coba lagi.';
-                        appendReply(message, []);
+                        appendReply(message);
                         return;
                     }
 
@@ -583,10 +550,10 @@
                         upsertHistoryItem(data.session_id, data.session_title);
                     }
 
-                    appendReply(data.jawaban || 'Mohon maaf, saya belum dapat menjawab pertanyaan tersebut.', data.sumber || []);
+                    appendReply(data.jawaban || 'Mohon maaf, saya belum dapat menjawab pertanyaan tersebut.');
                 } catch (err) {
                     typing.remove();
-                    appendReply('Mohon maaf, koneksi ke asisten gagal. Silakan periksa koneksi internet Anda.', []);
+                    appendReply('Mohon maaf, koneksi ke asisten gagal. Silakan periksa koneksi internet Anda.');
                 } finally {
                     setBusy(false);
                     input.focus();

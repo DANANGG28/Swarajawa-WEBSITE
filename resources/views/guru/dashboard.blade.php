@@ -16,7 +16,7 @@
                             <span class="material-symbols-outlined text-[22px]">analytics</span>
                         </div>
                         <div>
-                            <h2 class="font-heading text-base sm:text-lg font-extrabold text-white tracking-tight">Ringkasan Pengajaran Sinau Jowo</h2>
+                            <h2 class="font-heading text-base sm:text-lg font-extrabold text-white tracking-tight">Ringkasan Pengajaran SINAU APP</h2>
                             <p class="font-caption text-xs text-white/80">Pantauan menyeluruh progres siswa, kurikulum pembelajaran, dan kelas yang Anda ampu</p>
                         </div>
                     </div>
