@@ -7,6 +7,7 @@ use App\Models\Siswa;
 use App\Rules\UniqueCaseInsensitive;
 use App\Rules\UniquePhoneNumber;
 use App\Rules\UniqueUserEmail;
+use App\Services\GoogleSiswaService;
 use App\Services\ProgresService;
 use App\Support\AuthContext;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +21,10 @@ use Throwable;
 
 class AuthWebController extends Controller
 {
-    public function __construct(private readonly ProgresService $progres) {}
+    public function __construct(
+        private readonly ProgresService $progres,
+        private readonly GoogleSiswaService $googleSiswa,
+    ) {}
 
     public function showMasuk(): View
     {
@@ -139,7 +143,7 @@ class AuthWebController extends Controller
                 ->with('sukses', 'Selamat datang, '.$akun['user']->nama_lengkap.'!');
         }
 
-        $siswa = $this->buatSiswaDariGoogle($googleUser->getName(), $email);
+        $siswa = $this->googleSiswa->createFromGoogle($googleUser->getName(), $email);
 
         Auth::guard('siswa')->login($siswa, true);
         $request->session()->regenerate();
@@ -147,37 +151,6 @@ class AuthWebController extends Controller
         return redirect()
             ->route(AuthContext::homeRouteFor('siswa'))
             ->with('sukses', 'Akun berhasil dibuat dengan Google. Selamat belajar, '.$siswa->nama_lengkap.'!');
-    }
-
-    /**
-     * Buat akun siswa baru dari data profil Google.
-     */
-    private function buatSiswaDariGoogle(?string $nama, string $email): Siswa
-    {
-        $siswa = Siswa::create([
-            'nis' => $this->nisUnik(),
-            'nama_lengkap' => $nama ?: Str::before($email, '@'),
-            'jenis_kelamin' => 'L',
-            'kelas' => null,
-            'no_telpon' => null,
-            'email' => $email,
-            'password' => Str::random(32),
-        ]);
-
-        $siswa->exp()->create(['total_exp' => 0]);
-        $siswa->strek()->create(['current_streak' => 0, 'highest_streak' => 0]);
-        $this->progres->initialize($siswa);
-
-        return $siswa;
-    }
-
-    private function nisUnik(): string
-    {
-        do {
-            $nis = 'G'.now()->format('ymd').Str::upper(Str::random(4));
-        } while (Siswa::query()->where('nis', $nis)->exists());
-
-        return $nis;
     }
 
     public function showLupaSandi(): View
