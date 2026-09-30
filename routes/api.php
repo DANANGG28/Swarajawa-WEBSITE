@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\GoogleAuthController;
 use App\Http\Controllers\Api\GuruController;
 use App\Http\Controllers\Api\GuruDashboardController;
 use App\Http\Controllers\Api\KuisController;
@@ -29,6 +30,7 @@ Route::prefix('auth')->group(function () {
     Route::post('siswa/login', [AuthController::class, 'loginSiswa']);
     Route::post('guru/login', [AuthController::class, 'loginGuru']);
     Route::post('superadmin/login', [AuthController::class, 'loginSuperadmin']);
+    Route::post('google', [GoogleAuthController::class, 'login']);
 });
 
 Route::middleware('auth.any')->group(function () {
