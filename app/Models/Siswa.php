@@ -71,6 +71,10 @@ class Siswa extends Authenticatable
         return $missing;
     }
 
+    protected $appends = [
+        'foto_url',
+    ];
+
     protected $hidden = [
         'password',
         'remember_token',
