@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lengkapi & Edit Data Diri Siswa - Sinau Jowo Web</title>
+    <title>Lengkapi & Edit Data Diri Siswa - SINAU APP Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400..800;1,400..800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -155,7 +155,7 @@
                                 @if($persenLengkap === 100)
                                     Semua data profil Anda sudah terisi lengkap. Anda tetap dapat memperbarui informasi kapan saja.
                                 @else
-                                    Lengkapi foto profil dan data diri Anda untuk memaksimalkan pengalaman belajar di Sinau Jowo.
+                                    Lengkapi foto profil dan data diri Anda untuk memaksimalkan pengalaman belajar di SINAU APP.
                                 @endif
                             </p>
                             @if(count($belumLengkap) > 0)

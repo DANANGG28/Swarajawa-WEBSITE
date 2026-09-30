@@ -208,3 +208,22 @@ Route::get('/storage/image/siswa/{filename}', function (string $filename) {
 
     return response()->file($path);
 })->name('siswa.image');
+
+Route::get('/storage/logo/{filename}', function (string $filename) {
+    $path = storage_path('logo/'.$filename);
+    if (! file_exists($path)) {
+        $path = storage_path('app/public/logo/'.$filename);
+    }
+    if (! file_exists($path)) {
+        $path = public_path('storage/logo/'.$filename);
+    }
+    if (! file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path, [
+        'Cache-Control' => 'no-cache, no-store, must-revalidate',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
+    ]);
+})->name('logo.image');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Beranda Siswa - Sinau Jowo Web</title>
+    <title>Dashboard Beranda Siswa - SINAU APP Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
@@ -106,7 +106,7 @@
                 </svg>
             </div>
             <div>
-                <h1 class="text-base font-black tracking-tight text-primary uppercase leading-none">Sinau Jowo</h1>
+                <h1 class="text-base font-black tracking-tight text-primary uppercase leading-none">SINAU APP</h1>
                 <span class="text-[9px] font-extrabold uppercase tracking-widest text-primary-600 block mt-0.5">Platform Pasinaon</span>
             </div>
         </div>
@@ -352,26 +352,18 @@
                     </div>
                 </div>
 
-                <!-- Latihan Ngomong (STT & TTS) -->
-                <section class="bg-white rounded-[32px] p-5 border-2 border-slate-200 sj-card sj-card-hover space-y-3" data-purpose="speaking-practice">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                    <line x1="12" x2="12" y1="19" y2="22"></line>
-                                </svg>
-                            </div>
-                            <h3 class="text-base font-black text-slate-900">Latihan Ngomong</h3>
+                <!-- Latihan Ngomong -->
+                <section class="bg-white rounded-[32px] p-5 border-2 border-slate-200 sj-card sj-card-hover space-y-4" data-purpose="speaking-practice">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                <line x1="12" x2="12" y1="19" y2="22"></line>
+                            </svg>
                         </div>
-                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-brand-600">
-                            <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> STT &amp; TTS
-                        </span>
+                        <h3 class="text-base font-black text-slate-900">Latihan Ngomong</h3>
                     </div>
-                    <p class="text-xs font-bold text-slate-500 leading-relaxed">
-                        Latih pangucapanmu nganggo mic. Swara diowahi dadi teks (STT), banjur diwangsuli swara (TTS).
-                    </p>
                     <a href="{{ route('kuis.latihan-ngomong') }}" class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-black transition-all shadow-md shadow-brand-600/30 active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewBox="0 0 24 24">
                             <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
@@ -419,18 +411,13 @@
 
                 <!-- Asisten Tanya Bahasa AI -->
                 <section class="bg-white rounded-[32px] p-6 border-2 border-slate-200 sj-card sj-card-hover space-y-4" data-purpose="ai-assistant">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path>
-                                </svg>
-                            </div>
-                            <h3 class="text-base font-black text-slate-900">Tanya Bahasa AI</h3>
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path>
+                            </svg>
                         </div>
-                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-emerald-600">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online
-                        </span>
+                        <h3 class="text-base font-black text-slate-900">Tanya Bahasa AI</h3>
                     </div>
                     <div class="flex items-start gap-2">
                         <div class="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center shrink-0">

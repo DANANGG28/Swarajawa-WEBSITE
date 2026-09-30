@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papan Skor & Peringkat Siswa - Sinau Jowo Web</title>
+    <title>Papan Skor & Peringkat Siswa - SINAU APP Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400..800;1,400..800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -124,34 +124,16 @@
     <x-sidebar active="papan-skor" />
 
     <div class="pl-0 lg:pl-72 flex flex-col min-h-screen pb-24 lg:pb-0">
-        <!-- HEADER -->
-        <header class="fixed top-0 left-0 lg:left-72 right-0 h-16 lg:h-20 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] px-4 lg:px-space-xl flex items-center justify-between">
-            <div class="flex items-center flex-1 max-w-md">
-                <div class="flex items-center w-full bg-gray-50 rounded-full px-3 py-1.5 sm:px-space-md sm:py-space-xs gap-2 sm:gap-space-sm border border-gray-200/60 focus-within:border-primary-500 transition-colors">
-                    <span class="material-symbols-outlined text-gray-500 text-[18px] sm:text-[20px]">search</span>
-                    <input type="text" placeholder="Cari materi, aksara, siswa..." class="w-full bg-transparent border-none outline-none font-body text-on-surface placeholder:text-gray-500 text-xs sm:text-sm">
-                </div>
-            </div>
-            <div class="flex items-center gap-space-lg ml-3">
-                <button type="button" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-gray-50 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors relative">
-                    <span class="material-symbols-outlined text-[18px] sm:text-[20px]">notifications</span>
-                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary"></span>
-                </button>
-            </div>
-        </header>
-
         <!-- MAIN CONTENT -->
-        <main class="flex-1 pt-16 lg:pt-20 w-full px-3.5 sm:px-6 lg:px-margin-desktop py-4 lg:py-space-xl bg-background">
+        <main class="flex-1 w-full px-3.5 sm:px-6 lg:px-margin-desktop py-6 sm:py-8 bg-background">
             <div class="flex flex-col w-full pb-space-xl gap-4 sm:gap-space-lg">
                 <!-- HERO HEADER BANNER -->
                 <section class="relative overflow-hidden rounded-[20px] sm:rounded-[24px] bg-gradient-to-r from-primary-700 via-primary-600 to-primary text-on-primary p-4 sm:p-6 lg:p-8 shadow-md">
                     <div class="relative z-10 flex flex-col gap-3 sm:gap-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1.5 font-label-upper tracking-wider text-yellow-300 uppercase font-bold text-[10px] sm:text-xs">
-                                <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-current text-yellow-300 shrink-0" viewBox="0 0 24 24">
-                                    <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"></path>
-                                </svg>
-                                <span class="truncate">PAPAN SKOR • {{ $scope === 'sekolah' ? 'PERINGKAT SEKOLAH' : ($kelasSiswa ? 'KELAS '.$kelasSiswa : 'SEMUA KELAS') }}</span>
+                                
+                                <span class="truncate">PAPAN SKOR | {{ $scope === 'sekolah' ? 'PERINGKAT SEKOLAH' : ($kelasSiswa ? 'KELAS '.$kelasSiswa : 'SEMUA KELAS') }}</span>
                             </div>
                         </div>
 
@@ -161,7 +143,7 @@
                                     Papan Peringkat Siswa
                                 </h1>
                                 <p class="font-body text-xs sm:text-sm lg:text-base text-primary-fixed leading-relaxed">
-                                    Lihat capaian poin (XP), streak pembelajaran, dan urutan peringkat siswa.
+                                    Lihat capaian poin XP, streak pembelajaran, dan urutan peringkat siswa.
                                 </p>
                             </div>
 
@@ -210,12 +192,7 @@
                 <!-- PODIUM TOP 3 SECTION -->
                 <section class="bg-surface-container-lowest rounded-xl sm:rounded-2xl p-3.5 sm:p-5 lg:p-6 shadow-sm border border-gray-100 flex flex-col gap-4 sm:gap-6">
                     <div class="flex items-center justify-between border-b border-gray-100 pb-3 sm:pb-4">
-                        <div class="flex items-center gap-2 sm:gap-3">
-                            <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-primary-500/10 text-primary-600 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 fill-none stroke-currentColor stroke-2" viewBox="0 0 24 24">
-                                    <path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </svg>
-                            </div>
+                        <div>
                             <h2 class="font-heading text-xs sm:text-base lg:text-heading font-bold text-on-surface">Tiga Besar (Top 3)</h2>
                         </div>
                         <span class="font-label-upper text-[10px] sm:text-xs uppercase tracking-wider text-gray-500 font-semibold truncate">{{ $scope === 'sekolah' ? 'SEKOLAH' : 'KELAS '.($kelasSiswa ?? 'SEMUA') }}</span>

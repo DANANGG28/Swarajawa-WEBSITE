@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil, Pengaturan & Koleksi Badge Siswa - Sinau Jowo Web</title>
+    <title>Profil, Pengaturan & Koleksi Badge Siswa - SINAU APP Web</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400..800;1,400..800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -138,42 +138,14 @@
     <x-sidebar active="profil" />
 
     <div class="pl-0 lg:pl-72 flex flex-col min-h-screen pb-24 lg:pb-8">
-        <!-- HEADER -->
-        <header class="fixed top-0 left-0 lg:left-72 right-0 h-16 lg:h-20 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] px-4 lg:px-space-xl flex items-center justify-between">
-            <div class="flex items-center flex-1 max-w-md">
-                <div class="flex items-center w-full bg-gray-50 rounded-full px-space-md py-space-xs gap-space-sm border border-gray-200/60 focus-within:border-primary-500 transition-colors">
-                    <span class="material-symbols-outlined text-gray-500 text-[20px]">search</span>
-                    <input type="text" placeholder="Cari materi aksara, peribahasa, tata bahasa..." class="w-full bg-transparent border-none outline-none font-body text-body text-on-surface placeholder:text-gray-500 text-xs sm:text-sm">
-                </div>
-            </div>
-            <div class="flex items-center gap-space-lg">
-                <button type="button" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-50 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors relative">
-                    <span class="material-symbols-outlined text-[20px]">notifications</span>
-                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary"></span>
-                </button>
-            </div>
-        </header>
-
         <!-- MAIN CONTENT -->
-        <main class="flex-1 pt-20 lg:pt-24 w-full px-3.5 sm:px-8 py-4 sm:py-6 bg-background max-w-6xl mx-auto">
+        <main class="flex-1 w-full px-3.5 sm:px-8 py-6 sm:py-8 bg-background max-w-6xl mx-auto">
             <!-- UNIFIED SINGLE PROFILE CARD (§1 & §5.10) -->
             <div class="w-full bg-surface-container-lowest rounded-[20px] sm:rounded-[28px] shadow-sm border border-gray-100 overflow-hidden flex flex-col">
 
                 <!-- 1. Profile Hero Banner & Identity Header (Purple Gradient with Pure White Text & Verified) -->
                 <div class="w-full bg-gradient-to-r from-primary-700 via-primary-600 to-primary-500 relative p-4 sm:p-6 lg:p-8 text-white overflow-hidden">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-
-                    <!-- Sub-header bar -->
-                    <div class="relative z-10 flex items-center justify-between mb-4 sm:mb-6">
-                        <div class="flex items-center gap-1.5 sm:gap-2 text-white/90 font-label-upper text-[10px] sm:text-xs uppercase tracking-wider font-semibold truncate">
-                            <span class="material-symbols-outlined text-[16px] sm:text-[18px] shrink-0">school</span>
-                            <span class="truncate">Portal Belajar Siswa • Sinau Jowo</span>
-                        </div>
-                        <div class="hidden sm:flex items-center gap-1.5 text-white/80 text-caption font-caption text-xs">
-                            <span class="material-symbols-outlined text-sm">event</span>
-                            <span>Semester Ganjil 2024/2025</span>
-                        </div>
-                    </div>
 
                     <!-- Identity & Action Row -->
                     <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
@@ -205,11 +177,8 @@
                                     <span>•</span>
                                     <span>KELAS {{ $siswa->kelas ? $siswa->kelas : 'SISWA' }}</span>
                                     <span>•</span>
-                                    <span>SINAU JOWO</span>
+                                    <span>SINAU APP</span>
                                 </div>
-                                <p class="font-body text-xs sm:text-sm text-white/85 mt-1 sm:mt-1.5 max-w-xl leading-relaxed">
-                                    “Siswa rajin mempelajari tata krama bahasa dan aksara Jawa.”
-                                </p>
                             </div>
                         </div>
 
@@ -310,7 +279,6 @@
                     <div class="bg-surface-container-low p-4 sm:p-6 rounded-2xl border border-primary-100/50 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
                         <div class="flex flex-col min-w-0">
                             <h2 class="font-heading text-sm sm:text-base lg:text-heading text-black-900 font-bold">Koleksi Piagam & Lencana Belajar</h2>
-                            <p class="font-body text-xs sm:text-sm text-gray-500 mt-0.5">Lencana diraih secara dinamis berdasarkan penyelesaian kuis wicara, aksara, tata krama, dan pencapaian EXP.</p>
                         </div>
                         <!-- Badge Completion Counter Bar -->
                         <div class="flex flex-col w-full md:w-80 bg-white p-3 sm:p-3.5 rounded-xl border border-gray-100 shadow-sm shrink-0">
@@ -351,9 +319,9 @@
                                                 <p class="font-caption text-xs text-on-surface-variant mt-1 leading-relaxed">{{ $badge['deskripsi'] }}</p>
                                             </div>
                                         </div>
-                                        <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl flex items-center justify-between text-[11px] sm:text-xs text-gray-500 border border-primary-100/30">
-                                            <span>{{ $badge['earned_stat_left'] }}</span>
-                                            <span class="text-primary-700 font-bold">{{ $badge['earned_stat_right'] }}</span>
+                                        <div class="w-full mt-3 sm:mt-4 pt-2 bg-surface-container-low p-2 sm:p-2.5 rounded-xl flex items-center justify-between text-[11px] sm:text-xs text-gray-600 border border-primary-100/30">
+                                            <span class="truncate">{{ $badge['earned_stat_left'] }}</span>
+                                            <span class="text-primary-700 font-bold shrink-0">{{ $badge['earned_stat_right'] }}</span>
                                         </div>
                                     </div>
                                 @endforeach
@@ -365,7 +333,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-heading text-sm sm:text-base font-bold text-on-surface">Belum Ada Lencana yang Terbuka</h4>
-                                    <p class="font-body text-xs sm:text-sm text-gray-500 max-w-md mt-1">Selesaikan kuis wicara suara, latihan aksara Jawa, dan kumpulkan poin EXP untuk membuka lencana pertamamu!</p>
+                                    <p class="font-body text-xs sm:text-sm text-gray-500 max-w-md mt-1">Selesaikan kuis wicara suara, latihan aksara Jawa, dan tuntaskan unit materi untuk membuka lencana pertamamu!</p>
                                 </div>
                                 <a href="{{ route('siswa.topik') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-600 text-white font-semibold text-xs hover:bg-primary-700 transition-colors shadow-sm mt-1">
                                     <span class="material-symbols-outlined text-base">play_circle</span>
@@ -485,7 +453,7 @@
                             <div class="flex flex-col gap-2 sm:gap-2.5 font-body">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 sm:py-2.5 bg-white px-3 sm:px-4 rounded-xl border border-gray-100 shadow-sm gap-0.5 sm:gap-2">
                                     <span class="text-gray-500 font-medium text-xs sm:text-sm shrink-0">Asal Sekolah</span>
-                                    <span class="font-bold text-black-900 text-xs sm:text-sm text-left sm:text-right break-words">{{ $siswa->sekolah ?? 'Sinau Jowo Academy' }}</span>
+                                    <span class="font-bold text-black-900 text-xs sm:text-sm text-left sm:text-right break-words">{{ $siswa->sekolah ?? 'SINAU APP Academy' }}</span>
                                 </div>
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 sm:py-2.5 bg-white px-3 sm:px-4 rounded-xl border border-gray-100 shadow-sm gap-0.5 sm:gap-2">
                                     <span class="text-gray-500 font-medium text-xs sm:text-sm shrink-0">Kurikulum & Muatan</span>

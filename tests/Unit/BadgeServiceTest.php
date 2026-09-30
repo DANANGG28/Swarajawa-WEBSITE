@@ -74,6 +74,11 @@ class BadgeServiceTest extends TestCase
         $earnedIds = array_column($result['earned'], 'id');
         $this->assertContains('wicara_prigel', $earnedIds);
         $this->assertGreaterThanOrEqual(1, $result['earned_count']);
+
+        $wicaraBadge = collect($result['earned'])->firstWhere('id', 'wicara_prigel');
+        $this->assertNotNull($wicaraBadge);
+        $this->assertSame('Diraih', $wicaraBadge['earned_stat_right']);
+        $this->assertStringNotContainsString('+', $wicaraBadge['earned_stat_right']);
     }
 
     public function test_student_unlocks_streak_badge(): void
@@ -90,6 +95,11 @@ class BadgeServiceTest extends TestCase
         $earnedIds = array_column($result['earned'], 'id');
 
         $this->assertContains('gathutkaca_streak_master', $earnedIds);
+
+        $streakBadge = collect($result['earned'])->firstWhere('id', 'gathutkaca_streak_master');
+        $this->assertNotNull($streakBadge);
+        $this->assertSame('Diraih', $streakBadge['earned_stat_right']);
+        $this->assertStringNotContainsString('+', $streakBadge['earned_stat_right']);
     }
 
     public function test_student_unlocks_exp_badge(): void
@@ -104,5 +114,10 @@ class BadgeServiceTest extends TestCase
         $earnedIds = array_column($result['earned'], 'id');
 
         $this->assertContains('wasasis_utama', $earnedIds);
+
+        $expBadge = collect($result['earned'])->firstWhere('id', 'wasasis_utama');
+        $this->assertNotNull($expBadge);
+        $this->assertSame('Diraih', $expBadge['earned_stat_right']);
+        $this->assertStringNotContainsString('+', $expBadge['earned_stat_right']);
     }
 }
