@@ -42,6 +42,10 @@ class KuisController extends Controller
         $hasil = $this->scoring->score($soal, $data['jawaban']);
         $catatan = $this->jawaban->record($siswa, $soal, $hasil);
 
+        // Alur soal berikutnya sing konsisten karo website (FR-23):
+        // prioritas soal durung tuntas maju, banjur bagian/level sabanjure.
+        $nextSoal = $this->jawaban->nextSoal($siswa, $soal->levelMateri, $soal->id, $soal->pembahasan_id);
+
         return response()->json([
             'message' => $hasil['benar'] ? 'Jawaban benar!' : 'Jawaban belum tepat.',
             'benar' => $hasil['benar'],
@@ -53,6 +57,9 @@ class KuisController extends Controller
             'reward_exp' => $catatan['reward_exp'],
             'level_selesai' => $catatan['level_selesai'],
             'level_berikutnya' => $catatan['level_berikutnya'],
+            'next_soal_id' => $nextSoal?->id,
+            'next_pembahasan_id' => $nextSoal?->pembahasan_id,
+            'next_level_materi_id' => $nextSoal?->level_materi_id,
             'total_exp' => $catatan['total_exp'],
             'current_streak' => $catatan['current_streak'],
             'highest_streak' => $catatan['highest_streak'],

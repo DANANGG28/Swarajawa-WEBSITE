@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\SoalController;
 use App\Http\Controllers\Api\SpeakingExerciseController;
 use App\Http\Controllers\Api\SpeechController;
 use App\Http\Controllers\Api\SuperadminDashboardController;
+use App\Http\Controllers\Api\TopikController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json([
@@ -38,6 +39,9 @@ Route::middleware('auth.any')->group(function () {
         Route::get('materi', [MateriController::class, 'index']);
         Route::get('materi/{levelMateri}', [MateriController::class, 'show']);
         Route::post('materi/{levelMateri}/mulai', [MateriController::class, 'mulai']);
+
+        Route::get('topik', [TopikController::class, 'index']);
+        Route::get('topik/{topik}', [TopikController::class, 'show']);
 
         Route::post('kuis/jawab', [KuisController::class, 'jawab']);
         Route::post('kuis/selesai', [KuisController::class, 'selesai']);
