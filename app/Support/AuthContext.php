@@ -72,7 +72,7 @@ class AuthContext
         foreach (self::ROLES as $role) {
             $model = self::modelFor($role);
 
-            if ($model && $user = $model::query()->where('email', $email)->first()) {
+            if ($model && $user = $model::query()->whereRaw('LOWER(email) = ?', [mb_strtolower(trim($email))])->first()) {
                 return ['user' => $user, 'role' => $role];
             }
         }

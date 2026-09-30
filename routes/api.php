@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\GoogleAuthController;
 use App\Http\Controllers\Api\GuruController;
 use App\Http\Controllers\Api\GuruDashboardController;
 use App\Http\Controllers\Api\KuisController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Api\SoalController;
 use App\Http\Controllers\Api\SpeakingExerciseController;
 use App\Http\Controllers\Api\SpeechController;
 use App\Http\Controllers\Api\SuperadminDashboardController;
+use App\Http\Controllers\Api\TopikController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json([
@@ -28,6 +30,7 @@ Route::prefix('auth')->group(function () {
     Route::post('siswa/login', [AuthController::class, 'loginSiswa']);
     Route::post('guru/login', [AuthController::class, 'loginGuru']);
     Route::post('superadmin/login', [AuthController::class, 'loginSuperadmin']);
+    Route::post('google', [GoogleAuthController::class, 'login']);
 });
 
 Route::middleware('auth.any')->group(function () {
@@ -38,6 +41,9 @@ Route::middleware('auth.any')->group(function () {
         Route::get('materi', [MateriController::class, 'index']);
         Route::get('materi/{levelMateri}', [MateriController::class, 'show']);
         Route::post('materi/{levelMateri}/mulai', [MateriController::class, 'mulai']);
+
+        Route::get('topik', [TopikController::class, 'index']);
+        Route::get('topik/{topik}', [TopikController::class, 'show']);
 
         Route::post('kuis/jawab', [KuisController::class, 'jawab']);
         Route::post('kuis/selesai', [KuisController::class, 'selesai']);
