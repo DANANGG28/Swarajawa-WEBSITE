@@ -19,7 +19,7 @@ use App\Http\Controllers\Api\TopikController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json([
-    'app' => 'Sinau Jowo API',
+    'app' => 'SINAU APP API',
     'status' => 'ok',
     'time' => now()->toIso8601String(),
 ]));

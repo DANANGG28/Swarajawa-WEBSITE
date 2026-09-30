@@ -25,21 +25,18 @@
             class="inline-flex items-center justify-center w-11 h-11 rounded-full text-gray-500 hover:text-black-900 hover:bg-white/80 border border-transparent hover:border-gray-200 transition-colors">
             <span class="material-symbols-outlined text-[26px]">close</span>
         </a>
-        <a href="{{ route('daftar') }}"
-            class="btn-3d btn-3d-outline inline-flex items-center justify-center px-5 py-2 rounded-full border-2 border-primary-600 text-primary-600 hover:bg-primary-fixed font-bold text-sm tracking-wide uppercase transition-all">
-            Daftar
-        </a>
+
     </nav>
 
     <main class="flex-1 flex items-center justify-center px-4 py-6 sm:py-10">
         <div class="w-full max-w-[460px] bg-surface-container-lowest rounded-3xl border border-gray-200 p-7 sm:p-10 shadow-md"
             data-purpose="kartu-masuk">
             <header class="text-center mb-8">
-                <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-primary-600 flex items-center justify-center text-white shadow-md">
-                    <span class="material-symbols-outlined text-[30px]">school</span>
+                <div class="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 rounded-3xl bg-primary-600 flex items-center justify-center text-white shadow-lg p-2.5 sm:p-3 transition-transform hover:scale-105">
+                    <img src="{{ route('logo.image', ['filename' => 'Logo_TP.png']) }}?v={{ file_exists(storage_path('logo/Logo_TP.png')) ? filemtime(storage_path('logo/Logo_TP.png')) : time() }}" alt="Logo SINAU APP" class="w-full h-full object-contain drop-shadow-sm">
                 </div>
                 <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-black-900 tracking-tight">Masuk</h1>
-                <p class="font-caption text-caption text-gray-500 mt-1">Masukkan email dan kata sandi akun Sinau Jowo Anda.</p>
+
             </header>
 
             @if (session('sukses'))
@@ -105,23 +102,6 @@
                 <span>Masuk dengan Google</span>
             </a>
 
-            <footer class="mt-8 space-y-3 text-center text-[11px] text-gray-500 leading-relaxed">
-                <p>
-                    Dengan masuk ke Sinau Jowo, Anda menyetujui
-                    <a href="#" class="font-semibold text-black-900 hover:text-primary-600 underline underline-offset-2">Ketentuan Layanan</a>
-                    dan
-                    <a href="#" class="font-semibold text-black-900 hover:text-primary-600 underline underline-offset-2">Kebijakan Privasi</a>
-                    kami.
-                </p>
-                <p class="text-gray-500/80">
-                    Situs ini dilindungi reCAPTCHA Enterprise dan
-                    <a href="#" class="underline hover:text-black-900">Kebijakan Privasi</a> serta
-                    <a href="#" class="underline hover:text-black-900">Ketentuan Layanan</a> Google berlaku.
-                </p>
-                <div class="pt-3 border-t border-gray-200">
-                    <p class="font-bold text-gray-500">Guru dan administrator didaftarkan oleh sekolah.</p>
-                </div>
-            </footer>
 
             <p class="mt-5 text-center font-caption text-caption text-gray-500">
                 Belum punya akun?
@@ -131,7 +111,7 @@
     </main>
 
     <footer class="w-full py-4 text-center text-xs text-gray-500">
-        <p>&copy; 2025 Sinau Jowo. Platform Pembelajaran Bahasa Jawa Interaktif.</p>
+        <p>&copy; 2025 SINAU APP. Platform Pembelajaran Bahasa Jawa Interaktif.</p>
     </footer>
 
     <script>
