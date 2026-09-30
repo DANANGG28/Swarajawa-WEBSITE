@@ -14,6 +14,7 @@ use App\Models\Topik;
 use App\Rules\UniqueCaseInsensitive;
 use App\Rules\UniquePhoneNumber;
 use App\Rules\UniqueUserEmail;
+use App\Services\BadgeService;
 use App\Services\GamificationService;
 use App\Services\ProgresService;
 use App\Services\QuizScoringService;
@@ -29,6 +30,7 @@ class HomeController extends Controller
     public function __construct(
         private readonly GamificationService $gamification,
         private readonly ProgresService $progres,
+        private readonly BadgeService $badges,
     ) {}
 
     /**
@@ -441,6 +443,8 @@ class HomeController extends Controller
 
         $guruPangampu = $siswa->guru()->get();
 
+        $badgeData = $this->badges->getBadgesForSiswa($siswa);
+
         return view('profil', [
             'siswa' => $siswa,
             'totalExp' => $totalExp,
@@ -452,6 +456,12 @@ class HomeController extends Controller
             'completedQuestions' => $completedQuestions,
             'totalQuestions' => $totalQuestions,
             'guruPangampu' => $guruPangampu,
+            'earnedBadges' => $badgeData['earned'],
+            'lockedBadges' => $badgeData['locked'],
+            'allBadges' => $badgeData['all'],
+            'totalBadgesCount' => $badgeData['total_count'],
+            'earnedBadgesCount' => $badgeData['earned_count'],
+            'persenLencana' => $badgeData['completion_percentage'],
         ]);
     }
 
@@ -513,13 +523,13 @@ class HomeController extends Controller
 
         $data = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/', new UniqueCaseInsensitive('siswa', 'nama_lengkap', ignoreId: $siswa->id, customMessage: 'Nama lengkap sudah terdaftar.')],
-            'nis' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20'],
+            'nis' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:4', 'max:20', 'unique:siswa,nis,'.$siswa->id],
             'jenis_kelamin' => ['nullable', 'in:L,P'],
             'kelas' => ['nullable', 'string', 'max:50'],
             'no_telpon' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:16', new UniquePhoneNumber('siswa', $siswa->id)],
             'email' => ['required', 'email', 'max:255', new UniqueUserEmail('siswa', $siswa->id)],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:500'],
         ], [
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
@@ -529,14 +539,15 @@ class HomeController extends Controller
             'nis.regex' => 'NIS hanya boleh berisi angka.',
             'nis.min' => 'NIS minimal 4 digit.',
             'nis.max' => 'NIS maksimal 20 digit.',
+            'nis.unique' => 'NIS sudah terdaftar. Silakan gunakan NIS yang berbeda.',
             'no_telpon.regex' => 'Nomor telepon hanya boleh berisi angka.',
             'no_telpon.min' => 'Nomor telepon minimal 9 digit.',
             'no_telpon.max' => 'Nomor telepon maksimal 16 digit.',
             'password.min' => 'Kata sandi minimal 6 karakter.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
-            'foto.image' => 'File harus berupa gambar.',
-            'foto.mimes' => 'Format foto harus berupa JPG, PNG, atau WEBP.',
-            'foto.max' => 'Ukuran foto maksimal 2 MB.',
+            'foto.image' => 'File foto profil harus berupa gambar valid.',
+            'foto.mimes' => 'Format foto profil harus berupa JPG, JPEG, PNG, atau WEBP.',
+            'foto.max' => 'Ukuran foto profil maksimal 500 KB.',
         ]);
 
         if ($request->hasFile('foto')) {

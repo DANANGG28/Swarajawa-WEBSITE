@@ -18,7 +18,7 @@ class GuruFactory extends Factory
             'nip' => fake()->unique()->numerify('##################'),
             'nama_lengkap' => 'Bu '.fake()->firstNameFemale().' '.fake()->lastName(),
             'jenis_kelamin' => fake()->randomElement(['L', 'P']),
-            'status_pegawaian' => fake()->randomElement(['PNS', 'PPPK', 'GTT']),
+            'status_pegawaian' => fake()->randomElement(['PKWTT', 'PKWT', 'PPPK', 'PNS']),
             'no_telpon' => fake()->numerify('08##########'),
             'email' => fake()->unique()->safeEmail(),
             'password' => 'password',

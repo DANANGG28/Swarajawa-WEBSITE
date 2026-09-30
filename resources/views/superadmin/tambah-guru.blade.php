@@ -117,7 +117,7 @@
                             <input type="file" name="foto" id="fotoInput" accept="image/jpeg,image/png,image/jpg,image/webp"
                                    onchange="previewImage(this)"
                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-600 file:text-white hover:file:bg-primary-700 cursor-pointer">
-                            <span class="font-caption text-caption text-gray-400">Format: JPG, PNG, WEBP (Maksimal 2 MB)</span>
+                            <span class="font-caption text-caption text-gray-400">Format: JPG, PNG, WEBP (Maksimal 500 KB)</span>
                             @error('foto')
                                 <span class="text-error text-xs font-caption">{{ $message }}</span>
                             @enderror
@@ -198,9 +198,14 @@
                             </span>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">work</span>
-                                <input type="text" name="status_pegawaian" value="{{ old('status_pegawaian') }}"
-                                       placeholder="PNS / PPPK / GTT / Tetap"
-                                       class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all">
+                                <select name="status_pegawaian" id="statusPegawaianSelect"
+                                        class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 py-3 font-body text-body outline-none focus:border-primary-500 focus:bg-white transition-all cursor-pointer">
+                                    <option value="" {{ old('status_pegawaian') === null || old('status_pegawaian') === '' ? 'selected' : '' }}>-- Pilih Status Pegawai --</option>
+                                    <option value="PKWTT" {{ old('status_pegawaian') === 'PKWTT' ? 'selected' : '' }}>PKWTT</option>
+                                    <option value="PKWT" {{ old('status_pegawaian') === 'PKWT' ? 'selected' : '' }}>PKWT</option>
+                                    <option value="PPPK" {{ old('status_pegawaian') === 'PPPK' ? 'selected' : '' }}>PPPK</option>
+                                    <option value="PNS" {{ old('status_pegawaian') === 'PNS' ? 'selected' : '' }}>PNS</option>
+                                </select>
                             </div>
                             @error('status_pegawaian')
                                 <span class="text-error text-xs font-caption">{{ $message }}</span>
@@ -301,13 +306,22 @@
             const preview = document.getElementById('fotoPreview');
             const placeholder = document.getElementById('fotoPlaceholder');
             if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 500 * 1024) {
+                    alert('Ukuran foto melebihi 500 KB. Silakan pilih foto dengan ukuran maksimal 500 KB.');
+                    input.value = '';
+                    preview.src = '';
+                    preview.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                    return;
+                }
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.classList.remove('hidden');
                     placeholder.classList.add('hidden');
                 }
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
             }
         }
 
