@@ -50,7 +50,7 @@ class ValidasiFormRevisiTest extends TestCase
         $this->assertDatabaseHas('siswa', ['email' => 'budi.santoso@test.test']);
     }
 
-    public function test_nis_hanya_angka_dan_tidak_unik(): void
+    public function test_nis_hanya_angka_dan_harus_unik(): void
     {
         $admin = Superadmin::factory()->create();
 
@@ -72,16 +72,16 @@ class ValidasiFormRevisiTest extends TestCase
             'password' => 'password123',
         ])->assertSessionHasNoErrors();
 
-        // Simpan siswa 2 dengan NIS yang SAMA (99999) -> HARUS LOLOS karena NIS tidak unik
+        // Simpan siswa 2 dengan NIS yang SAMA (99999) -> HARUS DITOLAK karena NIS wajib unik
         $this->actingAs($admin, 'superadmin')->post(route('superadmin.siswa.store'), [
             'nis' => '99999',
             'nama_lengkap' => 'Siswa Dua',
             'jenis_kelamin' => 'P',
             'email' => 'siswa2@test.test',
             'password' => 'password123',
-        ])->assertSessionHasNoErrors();
+        ])->assertSessionHasErrors('nis');
 
-        $this->assertEquals(2, Siswa::where('nis', '99999')->count());
+        $this->assertEquals(1, Siswa::where('nis', '99999')->count());
     }
 
     public function test_topik_case_insensitive_duplicate_ditolak(): void

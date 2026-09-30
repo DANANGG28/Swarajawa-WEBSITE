@@ -112,11 +112,19 @@
                     <h1 class="font-heading text-base sm:text-lg font-extrabold text-on-surface truncate">Lengkapi Data Diri</h1>
                 </div>
             </div>
-            <div class="flex items-center gap-space-lg">
+            <div class="flex items-center gap-2 sm:gap-space-lg">
                 <a href="{{ route('siswa.profil') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-on-surface-variant hover:bg-surface-container-high transition-colors">
                     <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                     <span>Kembali ke Profil</span>
                 </a>
+                {{-- Tombol Keluar Akun Khusus Mobile di Header --}}
+                <form method="POST" action="{{ route('keluar') }}" class="lg:hidden flex items-center">
+                    @csrf
+                    <button type="submit" onclick="return confirm('Apakah Anda yakin ingin keluar dari akun?')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer" title="Keluar dari Akun">
+                        <span class="material-symbols-outlined text-[16px]">logout</span>
+                        <span>Keluar</span>
+                    </button>
+                </form>
             </div>
         </header>
 
@@ -224,7 +232,7 @@
                                         </button>
                                     </div>
                                     <p class="font-body text-xs text-gray-500 mt-2.5 leading-relaxed">
-                                        Mendukung format JPG, PNG, atau WEBP. Ukuran file maksimal 2 MB.
+                                        Mendukung format JPG, PNG, atau WEBP. Ukuran file maksimal 500 KB.
                                     </p>
                                 </div>
                                 <div id="selectedFileInfo" class="hidden items-center gap-2 text-xs font-semibold text-primary-700 bg-primary-50 px-3 py-1.5 rounded-lg border border-primary-200/60 max-w-fit">
@@ -494,9 +502,9 @@
             if (input.files && input.files[0]) {
                 const file = input.files[0];
 
-                // Validate file size (max 2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('Ukuran foto melebihi 2 MB. Silakan pilih foto dengan ukuran lebih kecil.');
+                // Validate file size (max 500 KB)
+                if (file.size > 500 * 1024) {
+                    alert('Ukuran foto melebihi 500 KB. Silakan pilih foto dengan ukuran maksimal 500 KB.');
                     input.value = '';
                     return;
                 }
