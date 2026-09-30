@@ -323,7 +323,7 @@ class BadgeService
                 }
             } else {
                 $earnedStatLeft = "{$def['stat_label']}: {$currentSoal} Soal";
-                $earnedStatRight = "+{$currentExp} XP";
+                $earnedStatRight = '';
             }
         } elseif ($type === 'aksara_lanjutan') {
             $currentSoal = (int) ($stats['tipeCounts'][Soal::TIPE_MENULIS_AKSARA] ?? 0);
@@ -344,7 +344,7 @@ class BadgeService
                 }
             } else {
                 $earnedStatLeft = "Aksara Jawa: Selesai";
-                $earnedStatRight = "+150 XP";
+                $earnedStatRight = '';
             }
         } elseif ($type === 'perfect_scores') {
             $currentSoal = (int) $stats['perfectScoresCount'];
@@ -356,7 +356,7 @@ class BadgeService
                 $syaratText = "Syarat: {$sisa} kuis skor >= 90 lagi (Saat ini {$currentSoal}/{$targetSoal})";
             } else {
                 $earnedStatLeft = "Kuis Skor >= 90: {$currentSoal} Soal";
-                $earnedStatRight = "+180 XP";
+                $earnedStatRight = '';
             }
         } elseif ($type === 'streak') {
             $targetStreak = (int) ($def['target_streak'] ?? 3);
@@ -369,7 +369,7 @@ class BadgeService
                 $syaratText = "Syarat: {$sisa} hari lagi (Saat ini {$currentStreak}/{$targetStreak} hari)";
             } else {
                 $earnedStatLeft = "Streak: {$currentStreak} Hari Aktif";
-                $earnedStatRight = "+100 XP";
+                $earnedStatRight = '';
             }
         } elseif ($type === 'total_exp') {
             $targetExp = (int) ($def['target_exp'] ?? 250);
@@ -381,8 +381,8 @@ class BadgeService
                 $sisa = max(0, $targetExp - $currentExp);
                 $syaratText = "Syarat: {$sisa} XP lagi (Saat ini {$currentExp}/{$targetExp} XP)";
             } else {
-                $earnedStatLeft = "Total Akumulasi EXP";
-                $earnedStatRight = "{$currentExp} XP";
+                $earnedStatLeft = "Total EXP: {$currentExp}";
+                $earnedStatRight = '';
             }
         } elseif ($type === 'completed_levels') {
             $targetLevels = (int) ($def['target_levels'] ?? 3);

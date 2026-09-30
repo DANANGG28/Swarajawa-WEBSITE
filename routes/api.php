@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BadgeController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\GoogleAuthController;
 use App\Http\Controllers\Api\GuruController;
@@ -51,6 +52,7 @@ Route::middleware('auth.any')->group(function () {
 
         Route::get('leaderboard', [LeaderboardController::class, 'index']);
         Route::get('progres', [ProgresController::class, 'index']);
+        Route::get('badge', [BadgeController::class, 'index']);
 
         Route::match(['put', 'post'], 'profil/data', [ProfilController::class, 'update']);
 
