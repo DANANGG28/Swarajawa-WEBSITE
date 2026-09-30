@@ -38,7 +38,7 @@
                         </span>
                     </div>
                     <p class="font-body text-body text-white/90">
-                        Tambah akun guru pengajar atau akun superadmin pengelola sistem Sinau Jowo.
+                        Tambah akun guru pengajar atau akun superadmin pengelola sistem SINAU APP.
                     </p>
                 </div>
             </div>

@@ -106,13 +106,13 @@
 
             <div class="mt-6 flex items-center gap-2 font-caption text-caption text-on-surface-variant opacity-80">
                 <span class="material-symbols-outlined text-green-500 text-[18px]">verified_user</span>
-                <span>Enkripsi Keamanan Kata Sandi &bull; Sinau Jowo v2.4</span>
+                <span>Enkripsi Keamanan Kata Sandi &bull; SINAU APP v2.4</span>
             </div>
         </div>
     </main>
 
     <footer class="w-full py-4 text-center text-xs text-gray-500">
-        <p>&copy; 2025 Sinau Jowo. Hak Cipta Dilindungi. Pengetahuan Bahasa &amp; Aksara Jawa.</p>
+        <p>&copy; 2025 SINAU APP. Hak Cipta Dilindungi. Pengetahuan Bahasa &amp; Aksara Jawa.</p>
     </footer>
 
     <script>

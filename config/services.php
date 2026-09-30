@@ -51,7 +51,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Sinau Jowo — AI Speech vendors (setup-tts-stt-live.md)
+    | SINAU APP — AI Speech vendors (setup-tts-stt-live.md)
     |--------------------------------------------------------------------------
     | TTS memakai edge-tts (tanpa API key) & STT memakai ElevenLabs Scribe.
     | Bila kredensial STT kosong / edge-tts gagal, service otomatis memakai
