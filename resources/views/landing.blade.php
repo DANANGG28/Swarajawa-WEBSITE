@@ -1,5 +1,14 @@
-<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>SINAU APP - Belajar Bahasa Jawa dengan Menyenangkan</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-<style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; } @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } } .animate-fadeIn { animation: fadeIn 0.2s ease-out; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-tint": "#F0EEFA", "tertiary-container": "#7d4f29", "inverse-on-surface": "#f2efff", "on-background": "#1a1a26", "background": "#fcf8ff", "inverse-surface": "#2f2f3c", "secondary-fixed-dim": "#ffb2bf", "primary-dark": "#2E2470", "on-error": "#ffffff", "border-subtle": "#E4E4EE", "on-surface": "#1a1a26", "surface-subtle": "#F5F5FA", "inverse-primary": "#c6bfff", "secondary-container": "#ff98ac", "on-error-container": "#93000a", "surface-container-low": "#f5f2ff", "primary-fixed": "#e4dfff", "secondary-tint": "#FDF2F4", "border-card": "#E6E6F0", "surface-tint": "#5948ce", "on-surface-variant": "#474554", "tertiary-fixed": "#ffdcc4", "surface-dim": "#dbd8e9", "tertiary-fixed-dim": "#f8ba8b", "primary-pressed": "#3E3099", "on-tertiary-fixed-variant": "#673d18", "surface-container": "#efecfd", "primary": "#3c25b1", "error-container": "#ffdad6", "tertiary-tint": "#FEF6F0", "error": "#ba1a1a", "on-tertiary": "#ffffff", "tertiary": "#623814", "primary-container": "#5443c9", "surface-bright": "#fcf8ff", "secondary-fixed": "#ffd9de", "on-primary-fixed": "#160066", "surface": "#fcf8ff", "on-primary-fixed-variant": "#402cb5", "on-secondary-container": "#792d40", "on-tertiary-fixed": "#2f1500", "surface-container-high": "#e9e6f7", "secondary": "#964356", "primary-fixed-dim": "#c6bfff", "outline-variant": "#c8c4d6", "surface-container-highest": "#e3e0f1", "on-primary-container": "#d2cbff", "surface-light": "#FFFFFF", "on-tertiary-container": "#ffc59b", "on-secondary-fixed": "#3f0016", "on-primary": "#ffffff", "on-secondary-fixed-variant": "#792c3f", "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "outline": "#787585", "surface-variant": "#e3e0f1" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "gutter": "1.5rem", "margin": "2rem", "space-xl": "2.5rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "space-md": "1rem", "space-sm": "0.5rem" }, "fontFamily": { "headline-md": [ "Epilogue" ], "body-sm": [ "Manrope" ], "body-md": [ "Manrope" ], "label-lg": [ "Manrope" ], "display-hero": [ "Epilogue" ], "display-hero-mobile": [ "Epilogue" ], "headline-sm": [ "Epilogue" ], "label-md": [ "Manrope" ], "label-sm": [ "Manrope" ], "body-lg": [ "Manrope" ], "headline-lg-mobile": [ "Epilogue" ], "headline-lg": [ "Epilogue" ] }, "fontSize": { "headline-md": [ "24px", { "lineHeight": "32px", "fontWeight": "700" } ], "body-sm": [ "14px", { "lineHeight": "20px", "fontWeight": "500" } ], "body-md": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "label-lg": [ "15px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "700" } ], "display-hero": [ "52px", { "lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "800" } ], "display-hero-mobile": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" } ], "headline-sm": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "label-md": [ "13px", { "lineHeight": "18px", "letterSpacing": "0.04em", "fontWeight": "600" } ], "label-sm": [ "11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "700" } ], "body-lg": [ "18px", { "lineHeight": "28px", "fontWeight": "400" } ], "headline-lg-mobile": [ "26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "headline-lg": [ "34px", { "lineHeight": "42px", "letterSpacing": "-0.01em", "fontWeight": "700" } ] } } } };</script></head><body class="bg-background font-body-md text-body-md text-on-background selection:bg-primary-tint selection:text-primary"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>SINAU APP - Belajar Bahasa Jawa dengan Menyenangkan</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; } @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } } .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+.sticker { border: 3px solid #1a1a26; box-shadow: 5px 5px 0 0 #1a1a26; }
+.sticker-sm { border: 2px solid #1a1a26; box-shadow: 3px 3px 0 0 #1a1a26; }
+.sticker-btn { border: 3px solid #1a1a26; box-shadow: 4px 4px 0 0 #1a1a26; transition: transform .12s ease, box-shadow .12s ease, background-color .15s ease; }
+.sticker-btn:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 0 #1a1a26; }
+.sticker-btn:active { transform: translate(4px,4px); box-shadow: 0 0 0 0 #1a1a26; }
+.sticker-btn:focus-visible, a:focus-visible, button:focus-visible, select:focus-visible { outline: 3px solid #3c25b1; outline-offset: 3px; }
+.header-scrolled { box-shadow: 0 3px 0 0 #1a1a26; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-tint": "#F0EEFA", "tertiary-container": "#7d4f29", "inverse-on-surface": "#f2efff", "on-background": "#1a1a26", "background": "#fcf8ff", "inverse-surface": "#2f2f3c", "secondary-fixed-dim": "#ffb2bf", "primary-dark": "#2E2470", "on-error": "#ffffff", "border-subtle": "#E4E4EE", "on-surface": "#1a1a26", "surface-subtle": "#F5F5FA", "inverse-primary": "#c6bfff", "secondary-container": "#ff98ac", "on-error-container": "#93000a", "surface-container-low": "#f5f2ff", "primary-fixed": "#e4dfff", "secondary-tint": "#FDF2F4", "border-card": "#E6E6F0", "surface-tint": "#5948ce", "on-surface-variant": "#474554", "tertiary-fixed": "#ffdcc4", "surface-dim": "#dbd8e9", "tertiary-fixed-dim": "#f8ba8b", "primary-pressed": "#3E3099", "on-tertiary-fixed-variant": "#673d18", "surface-container": "#efecfd", "primary": "#3c25b1", "error-container": "#ffdad6", "tertiary-tint": "#FEF6F0", "error": "#ba1a1a", "on-tertiary": "#ffffff", "tertiary": "#623814", "primary-container": "#5443c9", "surface-bright": "#fcf8ff", "secondary-fixed": "#ffd9de", "on-primary-fixed": "#160066", "surface": "#fcf8ff", "on-primary-fixed-variant": "#402cb5", "on-secondary-container": "#792d40", "on-tertiary-fixed": "#2f1500", "surface-container-high": "#e9e6f7", "secondary": "#964356", "primary-fixed-dim": "#c6bfff", "outline-variant": "#c8c4d6", "surface-container-highest": "#e3e0f1", "on-primary-container": "#d2cbff", "surface-light": "#FFFFFF", "on-tertiary-container": "#ffc59b", "on-secondary-fixed": "#3f0016", "on-primary": "#ffffff", "on-secondary-fixed-variant": "#792c3f", "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "outline": "#787585", "surface-variant": "#e3e0f1" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "gutter": "1.5rem", "margin": "2rem", "space-xl": "2.5rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "space-md": "1rem", "space-sm": "0.5rem" }, "fontFamily": { "headline-md": [ "Epilogue" ], "body-sm": [ "Manrope" ], "body-md": [ "Manrope" ], "label-lg": [ "Manrope" ], "display-hero": [ "Epilogue" ], "display-hero-mobile": [ "Epilogue" ], "headline-sm": [ "Epilogue" ], "label-md": [ "Manrope" ], "label-sm": [ "Manrope" ], "body-lg": [ "Manrope" ], "headline-lg-mobile": [ "Epilogue" ], "headline-lg": [ "Epilogue" ] }, "fontSize": { "headline-md": [ "24px", { "lineHeight": "32px", "fontWeight": "700" } ], "body-sm": [ "14px", { "lineHeight": "20px", "fontWeight": "500" } ], "body-md": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "label-lg": [ "15px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "700" } ], "display-hero": [ "52px", { "lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "800" } ], "display-hero-mobile": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" } ], "headline-sm": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "label-md": [ "13px", { "lineHeight": "18px", "letterSpacing": "0.04em", "fontWeight": "600" } ], "label-sm": [ "11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "700" } ], "body-lg": [ "18px", { "lineHeight": "28px", "fontWeight": "400" } ], "headline-lg-mobile": [ "26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "headline-lg": [ "34px", { "lineHeight": "42px", "letterSpacing": "-0.01em", "fontWeight": "700" } ] } } } };</script></head><body class="bg-background font-body-md text-body-md text-on-background selection:bg-primary-tint selection:text-primary"><div id="scroll-progress" class="fixed top-0 left-0 h-1 w-0 bg-primary z-[60]"></div><header id="site-header" class="fixed top-0 left-0 right-0 z-50 bg-surface border-b-[3px] border-on-surface transition-shadow">
 <div class="max-w-[1200px] mx-auto px-margin h-20 flex items-center justify-between">
 <a href="{{ url('/') }}" class="flex items-center gap-3">
 <div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center font-headline-sm font-extrabold shadow-sm">SA</div>
@@ -9,36 +18,45 @@
 </div>
 </a>
 <div class="flex items-center gap-3">
-<a href="{{ route('masuk') }}" class="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg font-bold shadow-[0_4px_0_0_#3E3099] hover:bg-primary active:translate-y-1 active:shadow-[0_1px_0_0_#3E3099] transition-all">Mulai Belajar</a>
+<a href="{{ route('masuk') }}" class="inline-flex items-center justify-center px-6 py-2.5 rounded bg-primary-container text-on-primary font-label-lg text-label-lg font-bold sticker-btn hover:bg-primary">Mulai Belajar</a>
 </div>
 </div>
 </header><main class="w-full pt-20 bg-background"><div class="flex flex-col w-full">
-<!-- Top Ambient Glow Decorator -->
+<!-- Top Comic Sunburst Decorator (flat rays, motif sticker — R-01: no glow orb) -->
 <div class="relative w-full overflow-hidden">
-<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[380px] bg-gradient-to-tr from-primary-tint via-tertiary-tint to-secondary-tint rounded-full blur-3xl pointer-events-none opacity-80 -z-10"></div>
+<svg class="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[380px] pointer-events-none -z-10" id="hero-burst" viewBox="0 0 800 400" aria-hidden="true">
+<g>
+<polygon points="400,200 391,-360 409,-360" fill="#F0EEFA" transform="rotate(0 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#FDF2F4" transform="rotate(30 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#FEF6F0" transform="rotate(60 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#F0EEFA" transform="rotate(90 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#FDF2F4" transform="rotate(120 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#FEF6F0" transform="rotate(150 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#F0EEFA" transform="rotate(180 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#FDF2F4" transform="rotate(210 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#FEF6F0" transform="rotate(240 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#F0EEFA" transform="rotate(270 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#FDF2F4" transform="rotate(300 400 200)"></polygon>
+<polygon points="400,200 391,-360 409,-360" fill="#FEF6F0" transform="rotate(330 400 200)"></polygon>
+</g>
+</svg>
 <!-- HERO SECTION -->
 <section class="max-w-[1200px] mx-auto px-margin pt-10 pb-16 lg:pt-14 lg:pb-24 w-full">
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
 <!-- Text Column (7 Cols) -->
 <div class="lg:col-span-7 flex flex-col items-start gap-space-md">
 <!-- Top Badge -->
-{{-- <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-tint text-primary font-label-md text-label-md shadow-sm">
-<svg aria-hidden="true" class="w-4 h-4 fill-primary" viewBox="0 0 24 24">
-<path d="M12 2l2.9 6.88 7.42.61-5.63 4.9 1.69 7.33L12 17.88 5.62 21.72l1.69-7.33-5.63-4.9 7.42-.61L12 2z"></path>
-</svg>
-<span class="">Platform Belajar Bahasa Jawa Digital No. 1</span>
-</div> --}}
 <!-- Headline -->
-<h1 class="font-display-hero text-display-hero-mobile md:text-display-hero text-on-surface tracking-tight">
+<h1 class="font-display-hero text-display-hero-mobile md:text-display-hero text-on-surface tracking-tight" id="hero-title">
             Lestarikan <span class="text-primary underline decoration-secondary-container decoration-wavy decoration-2">Bahasa Jawa</span> dengan Menyenangkan.
           </h1>
 <!-- Body Text -->
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl" id="hero-body">
             Kuasai tingkatan bahasa mulai dari <strong class="text-on-surface">Ngoko</strong>, <strong class="text-on-surface">Krama Alus</strong>, sampai menulis <strong class="text-on-surface">Aksara Jawa</strong> dengan mudah hanya 10 menit setiap hari. Kurikulum interaktif yang disesuaikan untuk siswa SMP, SMA, dan generasi muda.
           </p>
 <!-- Dual CTA Buttons -->
-<div class="flex flex-wrap items-center gap-space-md pt-2">
-<a class="inline-flex items-center gap-2 px-space-xl py-3.5 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg shadow-[0_4px_0_0_#3E3099] hover:bg-primary active:translate-y-1 active:shadow-[0_1px_0_0_#3E3099] transition-all" href="{{ route('masuk') }}">
+<div class="flex flex-wrap items-center gap-space-md pt-2" id="hero-cta">
+<a class="inline-flex items-center gap-2 px-space-xl py-3.5 rounded bg-primary-container text-on-primary font-label-lg text-label-lg sticker-btn hover:bg-primary" href="{{ route('masuk') }}">
 <span class="">Mulai Belajar Gratis</span>
 <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
 <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z"></path>
@@ -46,45 +64,13 @@
 </a>
 
 </div>
-<!-- Micro Proof Banner -->
-<div class="flex items-center gap-4 pt-2">
-<div class="flex -space-x-2 overflow-hidden">
-<div class="inline-block h-8 w-8 rounded-full bg-secondary-tint text-secondary font-bold text-xs flex items-center justify-center shadow-sm">
-<span class="">ND</span>
-</div>
-<div class="inline-block h-8 w-8 rounded-full bg-primary-tint text-primary font-bold text-xs flex items-center justify-center shadow-sm">
-<span class="">BS</span>
-</div>
-<div class="inline-block h-8 w-8 rounded-full bg-tertiary-tint text-tertiary font-bold text-xs flex items-center justify-center shadow-sm">
-<span class="">AK</span>
-</div>
-</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant">
-              Digunakan oleh lebih dari <strong class="text-on-surface font-semibold">120.000+ pelajar</strong> di Jawa Tengah, DIY, &amp; Jawa Timur.
-            </div>
-</div>
 </div>
 <!-- Interactive Preview Card (5 Cols) -->
 <div class="lg:col-span-5 w-full" id="simulasi">
-<div class="bg-surface-light rounded-xl p-space-lg shadow-xl shadow-primary-dark/5 flex flex-col gap-space-md relative">
-<!-- Header Card Bar -->
-<div class="flex items-center justify-between">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary-tint text-tertiary font-label-sm text-label-sm">
-{{-- <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-<path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm0 14.54L4.82 13.6 3 14.59 12 19.5l9-4.91-1.82-.99L12 17.54z"></path>
-</svg> --}}
-{{-- <span class="">Tingkat Krama Inggil (Sopan)</span> --}}
-</div>
-{{-- <div class="flex items-center gap-1.5 font-label-sm text-label-sm text-secondary font-bold">
-<svg class="w-4 h-4 fill-secondary" viewBox="0 0 24 24">
-<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-</svg>
-<span class="">+15 XP</span>
-</div> --}}
-</div>
+<div class="bg-surface-light rounded-2xl p-space-lg sticker rotate-[-1deg] flex flex-col gap-space-md relative" id="sim-card">
 <!-- Speaker Audio Prompt Simulation -->
 <div class="flex items-center gap-space-md p-space-md rounded-lg bg-surface-container-low">
-<button class="w-12 h-12 rounded-full bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0 shadow-[0_3px_0_0_#3E3099] hover:bg-primary active:translate-y-1 active:shadow-none transition-all" id="audio-sim-btn">
+<button class="w-12 h-12 rounded-full bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0 sticker-btn hover:bg-primary" id="audio-sim-btn" onclick="speakText('Bapak lagi mangan sega')">
 <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
 </svg>
@@ -104,19 +90,19 @@
 </div>
 <!-- Word Bank Tiles (Interactive) -->
 <div class="flex flex-wrap gap-2 pt-1" id="word-bank">
-<button class="tile-btn px-4 py-2 rounded-full bg-white text-on-surface font-label-md text-label-md shadow-[0_3px_0_0_#c8c4d6] hover:bg-primary-tint active:translate-y-1 active:shadow-none transition-all" onclick="pickTile(this, 'Bapak')">Bapak</button>
-<button class="tile-btn px-4 py-2 rounded-full bg-white text-on-surface font-label-md text-label-md shadow-[0_3px_0_0_#c8c4d6] hover:bg-primary-tint active:translate-y-1 active:shadow-none transition-all" onclick="pickTile(this, 'nembe')">nembe</button>
-<button class="tile-btn px-4 py-2 rounded-full bg-white text-on-surface font-label-md text-label-md shadow-[0_3px_0_0_#c8c4d6] hover:bg-primary-tint active:translate-y-1 active:shadow-none transition-all" onclick="pickTile(this, 'dhahar')">dhahar</button>
-<button class="tile-btn px-4 py-2 rounded-full bg-white text-on-surface font-label-md text-label-md shadow-[0_3px_0_0_#c8c4d6] hover:bg-primary-tint active:translate-y-1 active:shadow-none transition-all" onclick="pickTile(this, 'sekul')">sekul</button>
-<button class="tile-btn px-4 py-2 rounded-full bg-white text-on-surface font-label-md text-label-md shadow-[0_3px_0_0_#c8c4d6] hover:bg-primary-tint active:translate-y-1 active:shadow-none transition-all" onclick="pickTile(this, 'nedha')">nedha</button>
-<button class="tile-btn px-4 py-2 rounded-full bg-white text-on-surface font-label-md text-label-md shadow-[0_3px_0_0_#c8c4d6] hover:bg-primary-tint active:translate-y-1 active:shadow-none transition-all" onclick="pickTile(this, 'turu')">turu</button>
+<button class="tile-btn px-4 py-2 rounded-md bg-white text-on-surface font-label-md text-label-md sticker-sm hover:bg-primary-tint transition-all" onclick="pickTile(this, 'Bapak')">Bapak</button>
+<button class="tile-btn px-4 py-2 rounded-md bg-white text-on-surface font-label-md text-label-md sticker-sm hover:bg-primary-tint transition-all" onclick="pickTile(this, 'nembe')">nembe</button>
+<button class="tile-btn px-4 py-2 rounded-md bg-white text-on-surface font-label-md text-label-md sticker-sm hover:bg-primary-tint transition-all" onclick="pickTile(this, 'dhahar')">dhahar</button>
+<button class="tile-btn px-4 py-2 rounded-md bg-white text-on-surface font-label-md text-label-md sticker-sm hover:bg-primary-tint transition-all" onclick="pickTile(this, 'sekul')">sekul</button>
+<button class="tile-btn px-4 py-2 rounded-md bg-white text-on-surface font-label-md text-label-md sticker-sm hover:bg-primary-tint transition-all" onclick="pickTile(this, 'nedha')">nedha</button>
+<button class="tile-btn px-4 py-2 rounded-md bg-white text-on-surface font-label-md text-label-md sticker-sm hover:bg-primary-tint transition-all" onclick="pickTile(this, 'turu')">turu</button>
 </div>
 <!-- Feedback Bar & Action -->
 <div class="hidden p-3 rounded-lg font-label-md text-label-md flex items-center justify-between" id="feedback-box">
 <span id="feedback-text"></span>
 <button class="text-xs underline font-bold" onclick="resetSim()">Coba Lagi</button>
 </div>
-<button class="w-full py-3 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg shadow-[0_4px_0_0_#3E3099] hover:bg-primary active:translate-y-1 active:shadow-[0_1px_0_0_#3E3099] transition-all" id="btn-periksa" onclick="checkAnswer()">
+<button class="w-full py-3 rounded bg-primary-container text-on-primary font-label-lg text-label-lg sticker-btn hover:bg-primary" id="btn-periksa" onclick="checkAnswer()">
               Periksa Jawaban
             </button>
 </div>
@@ -124,59 +110,9 @@
 </div>
 </section>
 </div>
-<!-- STAT COUNTER STRIP -->
-<section class="w-full bg-surface-container-low py-12">
-<div class="max-w-[1200px] mx-auto px-margin">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-space-md">
-<!-- Stat 1 -->
-<div class="p-space-md rounded-xl bg-surface-light shadow-sm flex flex-col items-center text-center">
-<div class="w-12 h-12 rounded-full bg-primary-tint text-primary flex items-center justify-center mb-2">
-<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path>
-</svg>
-</div>
-<span class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">120.000+</span>
-<span class="font-label-md text-label-md text-on-surface-variant">Siswa Aktif Belajar</span>
-</div>
-<!-- Stat 2 -->
-<div class="p-space-md rounded-xl bg-surface-light shadow-sm flex flex-col items-center text-center">
-<div class="w-12 h-12 rounded-full bg-secondary-tint text-secondary flex items-center justify-center mb-2">
-<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"></path>
-</svg>
-</div>
-<span class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">450+</span>
-<span class="font-label-md text-label-md text-on-surface-variant">Modul Belajar Singkat</span>
-</div>
-<!-- Stat 3 -->
-<div class="p-space-md rounded-xl bg-surface-light shadow-sm flex flex-col items-center text-center">
-<div class="w-12 h-12 rounded-full bg-tertiary-tint text-tertiary flex items-center justify-center mb-2">
-<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path>
-</svg>
-</div>
-<span class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">20 Aksara</span>
-<span class="font-label-md text-label-md text-on-surface-variant">Carakan &amp; Pasangan</span>
-</div>
-<!-- Stat 4 -->
-<div class="p-space-md rounded-xl bg-surface-light shadow-sm flex flex-col items-center text-center">
-<div class="w-12 h-12 rounded-full bg-primary-tint text-primary flex items-center justify-center mb-2">
-<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-<path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
-</svg>
-</div>
-<span class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">4.9 / 5.0</span>
-<span class="font-label-md text-label-md text-on-surface-variant">Rating dari Guru &amp; Dosen</span>
-</div>
-</div>
-</div>
-</section>
 <!-- FITUR UTAMA PASINAON (Bento Grid) -->
-<section class="max-w-[1200px] mx-auto px-margin py-20 w-full">
-<div class="text-center max-w-2xl mx-auto mb-14">
-{{-- <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-tint text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider mb-3">
-        Metode Modern &amp; Interaktif
-      </div> --}}
+<section class="max-w-[1200px] mx-auto px-margin py-20 w-full" id="fitur">
+<div class="text-center max-w-2xl mx-auto mb-14 reveal-up">
 <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
         Belajar Bahasa Jawa Tanpa Rasa Bosan
       </h2>
@@ -186,9 +122,9 @@
 </div>
 <div class="grid grid-cols-1 md:grid-cols-12 gap-space-lg">
 <!-- Feature 1: Tingkatan Bahasa Leveling (Large 7 Cols) -->
-<div class="md:col-span-7 bg-surface-light rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="comic-panel md:col-span-7 bg-surface-light rounded-2xl p-space-lg sticker md:rotate-[-0.6deg] flex flex-col justify-between" id="tingkatan">
 <div class="flex flex-col gap-space-sm">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-tint text-primary font-label-sm text-label-sm w-fit">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-primary-tint text-primary font-label-sm text-label-sm w-fit sticker-sm">
 <svg class="w-4 h-4 fill-primary" viewBox="0 0 24 24">
 <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"></path>
 </svg>
@@ -200,10 +136,6 @@
           </p>
 <!-- Interactive Level Switcher Component -->
 <div class="mt-4 p-space-md rounded-xl bg-surface-subtle flex flex-col gap-3">
-<div class="flex items-center justify-between pb-2">
-
-
-</div>
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
 <div class="p-3 rounded-lg bg-white shadow-sm flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-secondary font-bold">1. Ngoko Lugu</span>
@@ -225,9 +157,9 @@
 </div>
 </div>
 <!-- Feature 2: Aksara Jawa Studio (5 Cols) -->
-<div class="md:col-span-5 bg-surface-light rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="comic-panel md:col-span-5 bg-surface-light rounded-2xl p-space-lg sticker md:rotate-[0.6deg] flex flex-col justify-between">
 <div class="flex flex-col gap-space-sm">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-tint text-secondary font-label-sm text-label-sm w-fit">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-secondary-tint text-secondary font-label-sm text-label-sm w-fit sticker-sm">
 <svg class="w-4 h-4 fill-secondary" viewBox="0 0 24 24">
 <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path>
 </svg>
@@ -242,7 +174,7 @@
 <div class="text-7xl font-bold text-primary select-none py-2 tracking-widest font-serif">
               ꦏ
             </div>
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-tint text-primary font-label-sm text-label-sm font-bold mt-1">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-primary-tint text-primary font-label-sm text-label-sm font-bold mt-1 sticker-sm">
 <span class="">Aksara "Ka" • 3 Tarikan Garis</span>
 </div>
 <p class="font-body-sm text-body-sm text-outline mt-2">
@@ -252,9 +184,9 @@
 </div>
 </div>
 <!-- Feature 3: AI Wicara (Audio Pronunciation) (6 Cols) -->
-<div class="md:col-span-6 bg-surface-light rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="comic-panel md:col-span-6 bg-surface-light rounded-2xl p-space-lg sticker md:rotate-[-0.6deg] flex flex-col justify-between" id="wicara">
 <div class="flex flex-col gap-space-sm">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary-tint text-tertiary font-label-sm text-label-sm w-fit">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-tertiary-tint text-tertiary font-label-sm text-label-sm w-fit sticker-sm">
 <svg class="w-4 h-4 fill-tertiary" viewBox="0 0 24 24">
 <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
 <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path>
@@ -275,7 +207,7 @@
 </div>
 <div class="flex flex-col">
 <span class="font-label-sm text-label-sm text-on-surface font-bold">Pelafalan Swara Jejeg vs Miring</span>
-<span class="font-body-sm text-body-sm text-on-surface-variant">Akurasi Ucap: 98% (Sangat Baik)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Contoh evaluasi: swara jejeg &amp; miring</span>
 </div>
 </div>
 <!-- Audio waves inline SVG -->
@@ -297,9 +229,9 @@
 </div>
 </div>
 <!-- Feature 4: Interactive Match Quiz (6 Cols) -->
-<div class="md:col-span-6 bg-surface-light rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="comic-panel md:col-span-6 bg-surface-light rounded-2xl p-space-lg sticker md:rotate-[0.6deg] flex flex-col justify-between">
 <div class="flex flex-col gap-space-sm">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-tint text-primary font-label-sm text-label-sm w-fit">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-primary-tint text-primary font-label-sm text-label-sm w-fit sticker-sm">
 <svg class="w-4 h-4 fill-primary" viewBox="0 0 24 24">
 <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"></path>
 </svg>
@@ -332,8 +264,8 @@
 <section class="w-full bg-surface-container py-20" id="aksara-explorer">
 <div class="max-w-[1200px] mx-auto px-margin">
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-12">
-<div class="flex flex-col gap-2 max-w-xl">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-tint text-secondary font-label-sm text-label-sm font-bold w-fit uppercase">
+<div class="flex flex-col gap-2 max-w-xl reveal-up">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-secondary-tint text-secondary font-label-sm text-label-sm font-bold w-fit uppercase sticker-sm">
             Eksplorasi Aksara Carakan
           </div>
 <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
@@ -345,65 +277,65 @@
 </div>
 <div class="flex items-center gap-2">
 <span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Tampilkan:</span>
-<span class="px-3 py-1.5 rounded-full bg-surface-light text-primary font-label-md text-label-md font-bold shadow-sm">Carakan Dasar</span>
-<span class="px-3 py-1.5 rounded-full bg-surface-container-high text-outline font-label-md text-label-md">Pasangan</span>
+<span class="px-3 py-1.5 rounded-md bg-surface-light text-primary font-label-md text-label-md font-bold sticker-sm">Carakan Dasar</span>
+<span class="px-3 py-1.5 rounded-md bg-surface-container-high text-outline font-label-md text-label-md">Pasangan</span>
 </div>
 </div>
 <!-- Aksara Grid (10 Visible Base Grid) -->
 <div class="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-10 gap-3">
 <!-- Ha -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦲ', 'Ha / A', 'Hana / Ono (Ada)', 'Menggambarkan keberadaan hidup dan asal serta tujuan kehidupan.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦲ', 'Ha / A', 'Hana / Ono (Ada)', 'Menggambarkan keberadaan hidup dan asal serta tujuan kehidupan.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦲ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">Ha</span>
 </button>
 <!-- Na -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦤ', 'Na', 'Nata (Mengatur)', 'Artinya harus menaati perintah dan aturan kehidupan.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦤ', 'Na', 'Nata (Mengatur)', 'Artinya harus menaati perintah dan aturan kehidupan.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦤ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">Na</span>
 </button>
 <!-- Ca -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦕ', 'Ca', 'Catur (Bicara)', 'Cipta, rasa, dan karsa di dalam diri manusia.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦕ', 'Ca', 'Catur (Bicara)', 'Cipta, rasa, dan karsa di dalam diri manusia.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦕ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">Ca</span>
 </button>
 <!-- Ra -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦫ', 'Ra', 'Rasa (Perasaan)', 'Rasa sejati yang menuntun menuju kebaikan.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦫ', 'Ra', 'Rasa (Perasaan)', 'Rasa sejati yang menuntun menuju kebaikan.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦫ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">Ra</span>
 </button>
 <!-- Ka -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦏ', 'Ka', 'Karya (Bekerja)', 'Karsa dan karya nyata di dunia.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦏ', 'Ka', 'Karya (Bekerja)', 'Karsa dan karya nyata di dunia.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦏ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">Ka</span>
 </button>
 <!-- Da -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦢ', 'Da', 'Dadar (Ujian)', 'Dada membusung dan tabah menghadapi cobaan.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦢ', 'Da', 'Dadar (Ujian)', 'Dada membusung dan tabah menghadapi cobaan.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦢ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">Da</span>
 </button>
 <!-- Ta -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦠ', 'Ta', 'Tatag (Kuat)', 'Teguh dalam pendirian dan budi luhur.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦠ', 'Ta', 'Tatag (Kuat)', 'Teguh dalam pendirian dan budi luhur.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦠ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">Ta</span>
 </button>
 <!-- Sa -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦱ', 'Sa', 'Sabar (Ikhlas)', 'Berserah kepada Tuhan Yang Maha Kuasa.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦱ', 'Sa', 'Sabar (Ikhlas)', 'Berserah kepada Tuhan Yang Maha Kuasa.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦱ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">Sa</span>
 </button>
 <!-- Wa -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦮ', 'Wa', 'Waspada (Hati-hati)', 'Tahu sebelum terjadi, berhati-hati dalam bertindak.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦮ', 'Wa', 'Waspada (Hati-hati)', 'Tahu sebelum terjadi, berhati-hati dalam bertindak.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦮ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">Wa</span>
 </button>
 <!-- La -->
-<button class="aksara-tile p-4 rounded-xl bg-surface-light hover:bg-primary-tint text-center shadow-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦭ', 'La', 'Luhur (Mulia)', 'Perilaku utama meraih keutamaan dalam hidup.')">
+<button class="aksara-tile p-4 rounded-md bg-surface-light hover:bg-primary-tint text-center sticker-sm hover:-translate-y-1 transition-all flex flex-col items-center justify-center gap-1 group" onclick="inspectAksara('ꦭ', 'La', 'Luhur (Mulia)', 'Perilaku utama meraih keutamaan dalam hidup.')">
 <span class="text-4xl font-serif text-primary group-hover:scale-110 transition-transform">ꦭ</span>
 <span class="font-label-md text-label-md text-on-surface font-bold">La</span>
 </button>
 </div>
 <!-- Selected Aksara Inspection Card -->
-<div class="mt-6 p-space-lg rounded-2xl bg-surface-light shadow-md flex flex-col md:flex-row items-center justify-between gap-space-lg" id="aksara-detail">
+<div class="mt-6 p-space-lg rounded-2xl bg-surface-light sticker flex flex-col md:flex-row items-center justify-between gap-space-lg" id="aksara-detail">
 <div class="flex items-center gap-space-md">
 <div class="w-20 h-20 rounded-2xl bg-primary-tint text-primary flex items-center justify-center text-5xl font-serif font-bold flex-shrink-0" id="disp-char">
             ꦲ
@@ -411,7 +343,7 @@
 <div class="flex flex-col">
 <div class="flex items-center gap-2">
 <span class="font-headline-md text-headline-md text-on-surface" id="disp-phonetic">Ha / A</span>
-<span class="px-2 py-0.5 rounded-full bg-tertiary-tint text-tertiary font-label-sm text-label-sm font-bold">Aksara Dasar</span>
+<span class="px-2 py-0.5 rounded-md bg-tertiary-tint text-tertiary font-label-sm text-label-sm font-bold sticker-sm">Aksara Dasar</span>
 </div>
 <span class="font-body-md text-body-md text-primary font-semibold mt-1" id="disp-example">Contoh: Hana / Ono (Ada)</span>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1" id="disp-philosophy">
@@ -420,24 +352,21 @@
 </div>
 </div>
 <div class="flex items-center gap-3">
-<button class="inline-flex items-center gap-2 px-space-md py-2.5 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-primary-tint transition-all">
+<button class="inline-flex items-center gap-2 px-space-md py-2.5 rounded-md bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-primary-tint sticker-sm transition-all" onclick="speakText(document.getElementById('disp-example').textContent)">
 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"></path>
 </svg>
 <span class="">Dengarkan Suara</span>
-</button>
-<button class="inline-flex items-center gap-2 px-space-md py-2.5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md shadow-[0_3px_0_0_#3E3099] active:translate-y-1 active:shadow-none transition-all">
-<span class="">Latihan Menulis</span>
 </button>
 </div>
 </div>
 </div>
 </section>
 <!-- GAMIFIED JOURNEY MAP (Learning Path) -->
-<section class="max-w-[1200px] mx-auto px-margin py-20 w-full">
-<div class="text-center max-w-xl mx-auto mb-16">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-tint text-primary font-label-sm text-label-sm font-bold uppercase tracking-wider mb-2">
-        Alur Belajar Anda
+<section class="max-w-[1200px] mx-auto px-margin py-20 w-full" id="alur">
+<div class="text-center max-w-xl mx-auto mb-16 reveal-up">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-primary-tint text-primary font-label-sm text-label-sm font-bold uppercase tracking-wider mb-2 sticker-sm">
+        Contoh Alur Belajar
       </div>
 <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
         Langkah Runtut Menuju Mahir Bahasa Jawa
@@ -449,150 +378,60 @@
 <!-- Sequential Timeline / Path -->
 <div class="relative flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl mx-auto">
 <!-- Background Connecting Line -->
-<div class="hidden md:block absolute top-1/2 left-8 right-8 h-2 bg-surface-container-highest -translate-y-1/2 -z-0"></div>
+<div class="hidden md:block absolute top-1/2 left-8 right-8 h-2 bg-primary -translate-y-1/2 origin-left -z-0" id="alur-line"></div>
 <!-- Step 1: Selesai -->
-<div class="relative z-10 flex flex-col items-center text-center group">
+<div class="journey-step relative z-10 flex flex-col items-center text-center group">
 <div class="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_4px_0_0_#2E2470] mb-3">
 <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24">
 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
 </svg>
 </div>
-<span class="inline-block px-2.5 py-0.5 rounded-full bg-secondary-tint text-secondary font-label-sm text-label-sm font-bold mb-1">Level 1 • Selesai</span>
+<span class="inline-block px-2.5 py-0.5 rounded-md bg-secondary-tint text-secondary font-label-sm text-label-sm font-bold mb-1 sticker-sm">Level 1 • Selesai</span>
 <span class="font-headline-sm text-headline-sm text-on-surface">Pembuka &amp; Salam</span>
 <span class="font-body-sm text-body-sm text-on-surface-variant max-w-[180px]">Salam, keluarga, dan kata sehari-hari</span>
 </div>
 <!-- Step 2: Selesai -->
-<div class="relative z-10 flex flex-col items-center text-center group">
+<div class="journey-step relative z-10 flex flex-col items-center text-center group">
 <div class="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_4px_0_0_#2E2470] mb-3">
 <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24">
 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
 </svg>
 </div>
-<span class="inline-block px-2.5 py-0.5 rounded-full bg-secondary-tint text-secondary font-label-sm text-label-sm font-bold mb-1">Level 2 • Selesai</span>
+<span class="inline-block px-2.5 py-0.5 rounded-md bg-secondary-tint text-secondary font-label-sm text-label-sm font-bold mb-1 sticker-sm">Level 2 • Selesai</span>
 <span class="font-headline-sm text-headline-sm text-on-surface">Undha-Usuk Krama</span>
 <span class="font-body-sm text-body-sm text-on-surface-variant max-w-[180px]">Membedakan kata krama madya &amp; inggil</span>
 </div>
 <!-- Step 3: Aktif -->
-<div class="relative z-10 flex flex-col items-center text-center group">
-<div class="w-20 h-20 -my-2 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-[0_6px_0_0_#792d40] animate-bounce mb-3">
+<div class="journey-step relative z-10 flex flex-col items-center text-center group">
+<div class="w-20 h-20 -my-2 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-[0_6px_0_0_#792d40] mb-3">
 <svg class="w-10 h-10 fill-current" viewBox="0 0 24 24">
 <path d="M12 2l2.9 6.88 7.42.61-5.63 4.9 1.69 7.33L12 17.88 5.62 21.72l1.69-7.33-5.63-4.9 7.42-.61L12 2z"></path>
 </svg>
 </div>
-<span class="inline-block px-3 py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm font-bold mb-1">Level 3 • Aktif Hari Ini</span>
+<span class="inline-block px-3 py-1 rounded-md bg-primary-container text-on-primary font-label-sm text-label-sm font-bold mb-1 sticker-sm">Level 3 • Aktif Hari Ini</span>
 <span class="font-headline-sm text-headline-sm text-primary font-bold">Aksara Carakan 1-10</span>
 <span class="font-body-sm text-body-sm text-on-surface font-semibold max-w-[190px]">Latihan menulis Ha hingga La dengan sandhangan</span>
 </div>
 <!-- Step 4: Terkunci -->
-<div class="relative z-10 flex flex-col items-center text-center group opacity-60">
+<div class="journey-step relative z-10 flex flex-col items-center text-center group opacity-60">
 <div class="w-16 h-16 rounded-full bg-surface-container-high text-outline flex items-center justify-center mb-3">
 <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24">
 <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path>
 </svg>
 </div>
-<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container-highest text-outline font-label-sm text-label-sm font-bold mb-1">Level 4 • Terkunci</span>
+<span class="inline-block px-2.5 py-0.5 rounded-md bg-surface-container-highest text-outline font-label-sm text-label-sm font-bold mb-1 sticker-sm">Level 4 • Terkunci</span>
 <span class="font-headline-sm text-headline-sm text-on-surface">Paribasan &amp; Bebasan</span>
 <span class="font-body-sm text-body-sm text-on-surface-variant max-w-[180px]">Filsafat petuah luhur para leluhur</span>
 </div>
 </div>
 </section>
-<!-- GURU & MURID TESTIMONI -->
-<section class="w-full bg-surface-container-low py-20">
-<div class="max-w-[1200px] mx-auto px-margin">
-<div class="text-center max-w-xl mx-auto mb-14">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary-tint text-tertiary font-label-sm text-label-sm font-bold uppercase tracking-wider mb-2">
-          Kata Pelajar
-        </div>
-<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
-          Pengalaman Nyata dari Sekolah
-        </h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-2">
-          Bagaimana Sinau membantu para siswa dan guru meningkatkan penilaian muatan lokal dengan menyenangkan.
-        </p>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
-<!-- Testi 1 -->
-<div class="p-space-lg rounded-2xl bg-surface-light shadow-sm flex flex-col justify-between">
-<div class="flex flex-col gap-3">
-<div class="flex items-center gap-1 text-tertiary">
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-</div>
-<p class="font-body-md text-body-md text-on-surface">
-              "Dulu nilai mulok Bahasa Jawaku hanya 65 karena kesulitan menghafal aksara pasangan dan sandhangan. Setelah 3 minggu belajar di sini, nilai ujian semester naik jadi 92!"
-            </p>
-</div>
-<div class="flex items-center gap-3 pt-6">
-<div class="w-11 h-11 rounded-full bg-primary-tint text-primary font-bold flex items-center justify-center text-sm">
-              AN
-            </div>
-<div class="flex flex-col">
-<span class="font-label-lg text-label-lg text-on-surface font-bold">Anggit Nugroho</span>
-<span class="font-body-sm text-body-sm text-on-surface-variant">Siswa SMA Negeri 3 Surakarta</span>
-</div>
-</div>
-</div>
-<!-- Testi 2 -->
-<div class="p-space-lg rounded-2xl bg-surface-light shadow-sm flex flex-col justify-between">
-<div class="flex flex-col gap-3">
-<div class="flex items-center gap-1 text-tertiary">
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-</div>
-<p class="font-body-md text-body-md text-on-surface">
-              "Sebagai guru, platform ini sangat bermanfaat sebagai media pembelajaran interaktif di kelas. Anak-anak lebih bersemangat karena konsep gamifikasi dan tantangan XP-nya."
-            </p>
-</div>
-<div class="flex items-center gap-3 pt-6">
-<div class="w-11 h-11 rounded-full bg-secondary-tint text-secondary font-bold flex items-center justify-center text-sm">
-              SW
-            </div>
-<div class="flex flex-col">
-<span class="font-label-lg text-label-lg text-on-surface font-bold">Ibu Sri Wahyuni, M.Pd.</span>
-<span class="font-body-sm text-body-sm text-on-surface-variant">Guru Bahasa Jawa SMP N 1 Yogyakarta</span>
-</div>
-</div>
-</div>
-<!-- Testi 3 -->
-<div class="p-space-lg rounded-2xl bg-surface-light shadow-sm flex flex-col justify-between">
-<div class="flex flex-col gap-3">
-<div class="flex items-center gap-1 text-tertiary">
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-</div>
-<p class="font-body-md text-body-md text-on-surface">
-              "Latihan suara (AI Wicara) membuatku lebih percaya diri saat berbicara dengan kakek-nenek di desa. Sekarang bahasa kramaku lebih lancar dan tidak canggung lagi."
-            </p>
-</div>
-<div class="flex items-center gap-3 pt-6">
-<div class="w-11 h-11 rounded-full bg-tertiary-tint text-tertiary font-bold flex items-center justify-center text-sm">
-              RM
-            </div>
-<div class="flex flex-col">
-<span class="font-label-lg text-label-lg text-on-surface font-bold">Rian Mahendra</span>
-<span class="font-body-sm text-body-sm text-on-surface-variant">Mahasiswa Teknik Informatika, Malang</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
 <!-- CALL TO ACTION (Vibrant Purple Container) -->
-<section class="max-w-[1200px] mx-auto px-margin py-20 w-full">
-<div class="rounded-3xl bg-primary text-on-primary p-space-xl md:p-16 relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-space-xl">
+<section class="max-w-[1200px] mx-auto px-margin py-20 w-full" id="gabung">
+<div class="rounded-3xl bg-primary text-on-primary p-space-xl md:p-16 relative overflow-hidden sticker flex flex-col md:flex-row items-center justify-between gap-space-xl" id="cta-panel">
 <!-- Decorative Backdrop Circles -->
-<div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-primary-container/40 pointer-events-none blur-2xl"></div>
-<div class="absolute left-1/4 -top-20 w-64 h-64 rounded-full bg-secondary-container/20 pointer-events-none blur-xl"></div>
-<div class="flex flex-col gap-space-sm max-w-xl z-10">
+<div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-primary-container/40 pointer-events-none blur-2xl" id="cta-blob-1"></div>
+<div class="absolute left-1/4 -top-20 w-64 h-64 rounded-full bg-secondary-container/20 pointer-events-none blur-xl" id="cta-blob-2"></div>
+<div class="flex flex-col gap-space-sm max-w-xl z-10 reveal-up">
 <span class="font-label-sm text-label-sm text-on-primary-container font-bold uppercase tracking-wider">
           Gabung Komunitas Generasi Mahir Bahasa Jawa
         </span>
@@ -614,10 +453,10 @@
 </div>
 </div>
 <div class="flex flex-col sm:flex-row md:flex-col gap-space-md z-10 w-full md:w-auto">
-<a class="inline-flex items-center justify-center px-10 py-4 rounded-full bg-white text-primary font-label-lg text-label-lg font-bold shadow-[0_5px_0_0_#dbd8e9] hover:bg-surface-bright active:translate-y-1 active:shadow-[0_1px_0_0_#dbd8e9] transition-all text-center" href="{{ route('masuk') }}">
+<a class="inline-flex items-center justify-center px-10 py-4 rounded bg-white text-primary font-label-lg text-label-lg font-bold sticker-btn hover:bg-surface-bright text-center" href="{{ route('masuk') }}">
           Daftar Sekarang - Gratis
         </a>
-<a class="inline-flex items-center justify-center px-10 py-3.5 rounded-full bg-primary-dark/40 text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-dark/60 transition-all text-center" href="#aksara-explorer">
+<a class="inline-flex items-center justify-center px-10 py-3.5 rounded bg-primary-dark/40 text-on-primary font-label-md text-label-md font-semibold sticker-btn hover:bg-primary-dark/60 text-center" href="#aksara-explorer">
           Jelajahi Kurikulum Sekolah
         </a>
 </div>
@@ -661,7 +500,7 @@
     container.innerHTML = "";
     selectedWords.forEach((item, idx) => {
       const chip = document.createElement("button");
-      chip.className = "px-3.5 py-1.5 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-[0_2px_0_0_#2E2470] animate-fadeIn";
+      chip.className = "px-3.5 py-1.5 rounded-md bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 sticker-sm animate-fadeIn";
       chip.innerHTML = `<span>${item.word}</span> <svg class="w-3.5 h-3.5 fill-current opacity-80" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
       chip.onclick = () => removeSlot(idx);
       container.appendChild(chip);
@@ -711,6 +550,89 @@
     card.classList.add("scale-[0.99]");
     setTimeout(() => card.classList.remove("scale-[0.99]"), 150);
   }
-</script></main><footer class="w-full bg-inverse-surface text-inverse-on-surface pt-space-xl pb-margin"><div class="max-w-[1200px] mx-auto px-margin"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-lg pb-space-xl"><div class="lg:col-span-2 flex flex-col gap-space-md pr-space-lg"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-sm font-extrabold">SA</div><span class="font-headline-sm text-headline-sm text-surface font-bold">SINAU APP</span></div><p class="font-body-md text-body-md text-surface-dim max-w-sm">Platform belajar Bahasa Jawa modern dengan pendekatan gamifikasi interaktif. Melestarikan budaya luhur dengan cara yang menyenangkan.</p><div class="flex items-center gap-space-sm pt-space-sm"><div class="px-space-md py-1 rounded-full bg-surface-variant/20 text-surface-bright font-label-sm text-label-sm font-bold tracking-wider uppercase">Aksara Carakan</div><div class="px-space-md py-1 rounded-full bg-surface-variant/20 text-surface-bright font-label-sm text-label-sm font-bold tracking-wider uppercase">Tingkatan Bahasa</div></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-lg text-label-lg text-surface font-bold">Kurikulum</span><div class="flex flex-col gap-space-xs font-body-sm text-body-sm text-surface-dim"><a class="hover:text-surface-bright transition-colors py-1" data-path="tingkatan-level" href="#">Ngoko Lugu &amp; Alus</a><a class="hover:text-surface-bright transition-colors py-1" data-path="tingkatan-level" href="#">Krama Madya</a><a class="hover:text-surface-bright transition-colors py-1" data-path="tingkatan-level" href="#">Krama Inggil</a><a class="hover:text-surface-bright transition-colors py-1" data-path="aksara-jawa" href="#">Aksara Jawa &amp; Pasangan</a><a class="hover:text-surface-bright transition-colors py-1" data-path="sandhangan-aksara" href="#">Sandhangan Swara</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-lg text-label-lg text-surface font-bold">Fitur Pembelajaran</span><div class="flex flex-col gap-space-xs font-body-sm text-body-sm text-surface-dim"><a class="hover:text-surface-bright transition-colors py-1" data-path="tts-audio" href="#">TTS Suara Asli</a><a class="hover:text-surface-bright transition-colors py-1" data-path="ai-pitutur" href="#">AI Pengenalan Wicara</a><a class="hover:text-surface-bright transition-colors py-1" data-path="latihan-interaktif" href="#">Latihan Interaktif</a><a class="hover:text-surface-bright transition-colors py-1" data-path="tantangan-dina" href="#">Tantangan Harian</a><a class="hover:text-surface-bright transition-colors py-1" data-path="leaderboard" href="#">Papan Juara Belajar</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-lg text-label-lg text-surface font-bold">Komunitas &amp; Info</span><div class="flex flex-col gap-space-xs font-body-sm text-body-sm text-surface-dim"><a class="hover:text-surface-bright transition-colors py-1" data-path="komunitas" href="#">Komunitas Belajar</a><a class="hover:text-surface-bright transition-colors py-1" data-path="pusat-bantuan" href="#">Pusat Bantuan</a><a class="hover:text-surface-bright transition-colors py-1" data-path="panduan-guru" href="#">Panduan Guru &amp; Sekolah</a><a class="hover:text-surface-bright transition-colors py-1" data-path="kabijakan-privasi" href="#">Kebijakan Privasi</a><a class="hover:text-surface-bright transition-colors py-1" data-path="katentuan-layanan" href="#">Ketentuan Layanan</a></div></div></div><div class="pt-space-lg mt-space-md flex flex-col sm:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-xs text-surface-dim font-label-md text-label-md"><span class="material-symbols-outlined text-surface-dim text-[20px]">language</span><select class="bg-transparent text-surface-dim font-label-md text-label-md focus:outline-none cursor-pointer pr-space-md"><option class="bg-inverse-surface text-surface-bright" value="id">Bahasa Indonesia</option><option class="bg-inverse-surface text-surface-bright" value="jv">Bahasa Jawa</option><option class="bg-inverse-surface text-surface-bright" value="en">English</option></select></div><p class="font-body-sm text-body-sm text-surface-dim text-center sm:text-right">© 2026 SINAU APP. Seluruh hak cipta dilindungi.</p></div></div></footer>
 
+  // TTS via Web Speech API (suara Jawa bila tersedia, fallback Indonesia)
+  function speakText(text) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'jv-ID';
+    const voices = window.speechSynthesis.getVoices();
+    const jv = voices.find(v => v.lang && v.lang.startsWith('jv'));
+    if (jv) u.voice = jv; else u.lang = 'id-ID';
+    window.speechSynthesis.speak(u);
+  }
+</script></main><footer class="w-full bg-inverse-surface text-inverse-on-surface pt-space-xl pb-margin"><div class="max-w-[1200px] mx-auto px-margin"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg pb-space-xl"><div class="lg:col-span-2 flex flex-col gap-space-md pr-space-lg"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-sm font-extrabold">SA</div><span class="font-headline-sm text-headline-sm text-surface font-bold">SINAU APP</span></div><p class="font-body-md text-body-md text-surface-dim max-w-sm">Platform belajar Bahasa Jawa modern dengan pendekatan gamifikasi interaktif. Melestarikan budaya luhur dengan cara yang menyenangkan.</p></div><div class="flex flex-col gap-space-sm"><span class="font-label-lg text-label-lg text-surface font-bold">Kurikulum</span><div class="flex flex-col gap-space-xs font-body-sm text-body-sm text-surface-dim"><a class="hover:text-surface-bright transition-colors py-1" href="#tingkatan">Ngoko Lugu &amp; Alus</a><a class="hover:text-surface-bright transition-colors py-1" href="#tingkatan">Krama Madya</a><a class="hover:text-surface-bright transition-colors py-1" href="#tingkatan">Krama Inggil</a><a class="hover:text-surface-bright transition-colors py-1" href="#aksara-explorer">Aksara Jawa &amp; Pasangan</a><a class="hover:text-surface-bright transition-colors py-1" href="#aksara-explorer">Sandhangan Swara</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-lg text-label-lg text-surface font-bold">Fitur Pembelajaran</span><div class="flex flex-col gap-space-xs font-body-sm text-body-sm text-surface-dim"><a class="hover:text-surface-bright transition-colors py-1" href="#wicara">AI Pengenalan Wicara</a><a class="hover:text-surface-bright transition-colors py-1" href="#simulasi">Latihan Interaktif</a><a class="hover:text-surface-bright transition-colors py-1" href="#alur">Tantangan Harian</a></div></div></div><div class="pt-space-lg mt-space-md flex flex-col sm:flex-row items-center justify-between gap-space-md"><p class="font-body-sm text-body-sm text-surface-dim text-center sm:text-right">© 2026 SINAU APP. Seluruh hak cipta dilindungi.</p></div></div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+  (function () {
+    // Header: shadow saat scroll (tanpa GSAP, selalu aktif)
+    const header = document.getElementById('site-header');
+    let headerTicking = false;
+    window.addEventListener('scroll', function () {
+      if (headerTicking) return;
+      headerTicking = true;
+      requestAnimationFrame(function () {
+        header.classList.toggle('header-scrolled', window.scrollY > 8);
+        headerTicking = false;
+      });
+    }, { passive: true });
+
+    // Guard: tanpa GSAP / reduced-motion -> halaman tampil utuh (semua animasi gsap.from)
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!window.gsap || !window.ScrollTrigger || reduce) return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    // 1. Progress bar scroll (ikut posisi scroll)
+    gsap.to('#scroll-progress', { width: '100%', ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: true } });
+
+    // 2. Hero entrance saat load (pop komik)
+    gsap.timeline({ defaults: { ease: 'back.out(1.4)' } })
+      .from('#hero-title', { y: 40, autoAlpha: 0, duration: 0.7 })
+      .from('#hero-body', { y: 40, autoAlpha: 0, duration: 0.6 }, '-=0.45')
+      .from('#hero-cta', { y: 40, autoAlpha: 0, duration: 0.6 }, '-=0.40')
+      .from('#simulasi', { y: 40, autoAlpha: 0, rotate: 3, duration: 0.7 }, '-=0.40');
+
+    // 3. Sunburst berputar pelan mengikuti scroll
+    gsap.set('#hero-burst', { xPercent: -50 });
+    gsap.to('#hero-burst', { rotation: 30, ease: 'none', scrollTrigger: { trigger: '#hero-burst', start: 'top top', end: 'bottom top', scrub: true } });
+
+    // 4. Kartu simulasi parallax halus (elemen terpisah dari entrance agar tidak bentrok)
+    gsap.to('#sim-card', { y: -40, ease: 'none', scrollTrigger: { trigger: '#simulasi', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+    // 5. Judul tiap section reveal saat masuk viewport
+    gsap.utils.toArray('.reveal-up').forEach(function (el) {
+      gsap.from(el, { y: 36, autoAlpha: 0, duration: 0.7, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+    });
+
+    // 6. Panel fitur pop + rotate berselang
+    gsap.from('.comic-panel', {
+      y: 60, autoAlpha: 0, rotate: function (i) { return i % 2 ? 1.5 : -1.5; },
+      stagger: 0.15, duration: 0.8, ease: 'back.out(1.3)',
+      scrollTrigger: { trigger: '#fitur .grid', start: 'top 80%', once: true }
+    });
+
+    // 7. Cascade 10 tile aksara
+    gsap.from('.aksara-tile', {
+      scale: 0, rotate: -12, stagger: 0.06, duration: 0.5, ease: 'back.out(2.2)',
+      scrollTrigger: { trigger: '.aksara-tile', start: 'top 75%', once: true }
+    });
+
+    // 8. Kartu detail aksara
+    gsap.from('#aksara-detail', { y: 40, autoAlpha: 0, duration: 0.7, ease: 'power2.out', scrollTrigger: { trigger: '#aksara-detail', start: 'top 85%', once: true } });
+
+    // 9+10. Garis journey tergambar & langkah muncul berurutan (scrub maju-mundur)
+    const journeyTl = gsap.timeline({ scrollTrigger: { trigger: '#alur', start: 'top 70%', end: 'bottom 60%', scrub: true } });
+    journeyTl.fromTo('#alur-line', { scaleX: 0 }, { scaleX: 1, ease: 'none', duration: 4 }, 0)
+      .from('.journey-step', { scale: 0.5, autoAlpha: 0, y: 30, stagger: 0.9, duration: 0.8, ease: 'back.out(1.6)' }, 0);
+
+    // 11. Panel CTA scale-in
+    gsap.from('#cta-panel', { scale: 0.92, rotate: -2, autoAlpha: 0, duration: 0.8, ease: 'back.out(1.4)', scrollTrigger: { trigger: '#gabung', start: 'top 80%', once: true } });
+
+    // 12. Lingkaran dekor CTA parallax berlawanan arah
+    gsap.to('#cta-blob-1', { y: -60, ease: 'none', scrollTrigger: { trigger: '#gabung', start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.to('#cta-blob-2', { y: 60, ease: 'none', scrollTrigger: { trigger: '#gabung', start: 'top bottom', end: 'bottom top', scrub: true } });
+  })();
+</script>
 </body></html>
