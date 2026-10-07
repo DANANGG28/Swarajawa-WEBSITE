@@ -521,14 +521,31 @@ function meanNearestDistance(source, target) {
     return sum / source.length;
 }
 
+function normalizePointsToBounds(points) {
+    if (!points || points.length < 2) return points || [];
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const p of points) {
+        if (p.x < minX) minX = p.x;
+        if (p.x > maxX) maxX = p.x;
+        if (p.y < minY) minY = p.y;
+        if (p.y > maxY) maxY = p.y;
+    }
+    const w = Math.max(1e-4, maxX - minX);
+    const h = Math.max(1e-4, maxY - minY);
+    return points.map((p) => ({
+        x: (p.x - minX) / w,
+        y: (p.y - minY) / h,
+    }));
+}
+
 /**
  * Skor kecocokan berbasis cakupan bentuk (order-independent).
  * Rata-rata jarak tiap titik goresan ke titik template terdekat (dua arah),
  * dinormalisasi dengan toleransi. Cocok untuk aksara multi-goresan.
  */
-export function accuracyScore(userStrokes, templateStrokes, tolerance = 0.3) {
-    const user = flattenPoints(userStrokes);
-    const template = flattenPoints(templateStrokes);
+export function accuracyScore(userStrokes, templateStrokes, tolerance = 0.35) {
+    const user = normalizePointsToBounds(flattenPoints(userStrokes));
+    const template = normalizePointsToBounds(flattenPoints(templateStrokes));
     if (user.length < 2 || template.length < 2) return 0;
 
     const avg = (meanNearestDistance(user, template) + meanNearestDistance(template, user)) / 2;

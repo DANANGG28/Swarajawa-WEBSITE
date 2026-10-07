@@ -36,7 +36,7 @@ class DollarRecognizer
      * @param  array<int, array<int, array{0: float|int, 1: float|int}>>  $candidateStrokes
      * @param  array<int, array<int, array{0: float|int, 1: float|int}>>  $templateStrokes
      */
-    public static function traceCoverage(array $candidateStrokes, array $templateStrokes, float $tolerance = 0.3): float
+    public static function traceCoverage(array $candidateStrokes, array $templateStrokes, float $tolerance = 0.35): float
     {
         $candidate = self::flatten($candidateStrokes);
         $template = self::flatten($templateStrokes);
@@ -45,9 +45,41 @@ class DollarRecognizer
             return 0.0;
         }
 
+        $candidate = self::normalizeToBounds($candidate);
+        $template = self::normalizeToBounds($template);
+
         $avg = (self::meanNearest($candidate, $template) + self::meanNearest($template, $candidate)) / 2.0;
 
         return max(0.0, min(1.0, 1.0 - ($avg / max(1e-6, $tolerance))));
+    }
+
+    /**
+     * @param  array<int, array{0: float, 1: float}>  $points
+     * @return array<int, array{0: float, 1: float}>
+     */
+    public static function normalizeToBounds(array $points): array
+    {
+        if (count($points) < 2) {
+            return $points;
+        }
+
+        $minX = $maxX = $points[0][0];
+        $minY = $maxY = $points[0][1];
+
+        foreach ($points as $p) {
+            $minX = min($minX, $p[0]);
+            $maxX = max($maxX, $p[0]);
+            $minY = min($minY, $p[1]);
+            $maxY = max($maxY, $p[1]);
+        }
+
+        $w = max(1e-4, $maxX - $minX);
+        $h = max(1e-4, $maxY - $minY);
+
+        return array_map(fn (array $p): array => [
+            ($p[0] - $minX) / $w,
+            ($p[1] - $minY) / $h,
+        ], $points);
     }
 
     /**

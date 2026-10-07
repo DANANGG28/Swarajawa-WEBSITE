@@ -87,6 +87,46 @@ class QuizScoringServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(90, $hasil['skor']);
         $this->assertTrue($hasil['benar']);
     }
+    public function test_menulis_aksara_shifted_and_scaled_trace_scores_high(): void
+    {
+        $circle = $this->circlePath();
+        $soal = new Soal([
+            'tipe_soal' => Soal::TIPE_MENULIS_AKSARA,
+            'kunci_jawaban' => ['paths' => [$circle]],
+        ]);
+
+        // Simulasi goresan pada frame mobile: shifted + scaled + slight jitter
+        $mobileTrace = array_map(function ($p) {
+            return [
+                round(0.2 + $p[0] * 0.5 + (rand(-10, 10) / 1000.0), 4),
+                round(0.1 + $p[1] * 0.6 + (rand(-10, 10) / 1000.0), 4),
+            ];
+        }, $circle);
+
+        $hasil = $this->service->score($soal, ['strokes' => [$mobileTrace]]);
+
+        $this->assertGreaterThanOrEqual(85, $hasil['skor']);
+        $this->assertTrue($hasil['benar']);
+    }
+
+    public function test_menulis_aksara_wrong_shape_scores_low(): void
+    {
+        $circle = $this->circlePath();
+        $soal = new Soal([
+            'tipe_soal' => Soal::TIPE_MENULIS_AKSARA,
+            'kunci_jawaban' => ['paths' => [$circle]],
+        ]);
+
+        // Garis lurus horizontal acak
+        $straightLine = [
+            [0.1, 0.5], [0.3, 0.5], [0.5, 0.5], [0.7, 0.5], [0.9, 0.5],
+        ];
+
+        $hasil = $this->service->score($soal, ['strokes' => [$straightLine]]);
+
+        $this->assertLessThan(60, $hasil['skor']);
+        $this->assertFalse($hasil['benar']);
+    }
 
     public function test_kuis_suara_similarity_scoring(): void
     {
