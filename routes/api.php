@@ -20,11 +20,13 @@ use App\Http\Controllers\Api\SuperadminDashboardController;
 use App\Http\Controllers\Api\TopikController;
 use Illuminate\Support\Facades\Route;
 
+// Nama rute dipakai Scramble sebagai operationId; tanpa nama, rute closure ini
+// satu-satunya operasi di dokumen OpenAPI yang kehilangan operationId.
 Route::get('/health', fn () => response()->json([
     'app' => 'SINAU APP API',
     'status' => 'ok',
     'time' => now()->toIso8601String(),
-]));
+]))->name('health');
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);

@@ -7,7 +7,6 @@ use App\Models\JawabanSiswa;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
-use App\Models\Strek;
 
 class BadgeService
 {
@@ -323,7 +322,7 @@ class BadgeService
                 }
             } else {
                 $earnedStatLeft = "{$def['stat_label']}: {$currentSoal} Soal";
-                $earnedStatRight = "Diraih";
+                $earnedStatRight = 'Diraih';
             }
         } elseif ($type === 'aksara_lanjutan') {
             $currentSoal = (int) ($stats['tipeCounts'][Soal::TIPE_MENULIS_AKSARA] ?? 0);
@@ -341,11 +340,11 @@ class BadgeService
                 } elseif ($sisaSoal > 0) {
                     $syaratText = "Kurang {$sisaSoal} Soal Aksara ({$currentSoal}/{$targetSoal})";
                 } else {
-                    $syaratText = "Tuntaskan Level Aksara Jawa";
+                    $syaratText = 'Tuntaskan Level Aksara Jawa';
                 }
             } else {
-                $earnedStatLeft = "Aksara Jawa: Selesai";
-                $earnedStatRight = "Diraih";
+                $earnedStatLeft = 'Aksara Jawa: Selesai';
+                $earnedStatRight = 'Diraih';
             }
         } elseif ($type === 'perfect_scores') {
             $currentSoal = (int) $stats['perfectScoresCount'];
@@ -357,7 +356,7 @@ class BadgeService
                 $syaratText = "Kurang {$sisa} Kuis Skor ≥ 90 ({$currentSoal}/{$targetSoal})";
             } else {
                 $earnedStatLeft = "Kuis Skor >= 90: {$currentSoal} Soal";
-                $earnedStatRight = "Diraih";
+                $earnedStatRight = 'Diraih';
             }
         } elseif ($type === 'streak') {
             $targetStreak = (int) ($def['target_streak'] ?? 3);
@@ -370,7 +369,7 @@ class BadgeService
                 $syaratText = "Kurang {$sisa} Hari Streak ({$currentStreak}/{$targetStreak} Hari)";
             } else {
                 $earnedStatLeft = "Streak: {$currentStreak} Hari Aktif";
-                $earnedStatRight = "Diraih";
+                $earnedStatRight = 'Diraih';
             }
         } elseif ($type === 'total_exp') {
             $targetExp = (int) ($def['target_exp'] ?? 250);
@@ -383,7 +382,7 @@ class BadgeService
                 $syaratText = "Kurang {$sisa} XP ({$currentExp}/{$targetExp} XP)";
             } else {
                 $earnedStatLeft = "Total Akumulasi EXP: {$currentExp} XP";
-                $earnedStatRight = "Diraih";
+                $earnedStatRight = 'Diraih';
             }
         } elseif ($type === 'completed_levels') {
             $targetLevels = (int) ($def['target_levels'] ?? 3);
@@ -396,7 +395,7 @@ class BadgeService
                 $syaratText = "Kurang {$sisa} Level ({$currentLevels}/{$targetLevels})";
             } else {
                 $earnedStatLeft = "Level Pembelajaran: {$currentLevels} Selesai";
-                $earnedStatRight = "Diraih";
+                $earnedStatRight = 'Diraih';
             }
         }
 
