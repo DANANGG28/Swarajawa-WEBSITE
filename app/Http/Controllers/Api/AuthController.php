@@ -10,6 +10,7 @@ use App\Rules\UniqueUserEmail;
 use App\Services\GamificationService;
 use App\Services\ProgresService;
 use App\Support\AuthContext;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,16 +80,24 @@ class AuthController extends Controller
         ]);
     }
 
+    // Aturan validasi login berada di attemptRole(), di luar jangkauan inferensi Scramble,
+    // jadi badan permintaan ketiga endpoint login ini didokumentasikan eksplisit.
+    #[BodyParameter('email', description: 'Email akun terdaftar.', required: true, type: 'string', format: 'email')]
+    #[BodyParameter('password', description: 'Kata sandi akun.', required: true, type: 'string')]
     public function loginSiswa(Request $request): JsonResponse
     {
         return $this->attemptRole($request, 'siswa');
     }
 
+    #[BodyParameter('email', description: 'Email akun terdaftar.', required: true, type: 'string', format: 'email')]
+    #[BodyParameter('password', description: 'Kata sandi akun.', required: true, type: 'string')]
     public function loginGuru(Request $request): JsonResponse
     {
         return $this->attemptRole($request, 'guru');
     }
 
+    #[BodyParameter('email', description: 'Email akun terdaftar.', required: true, type: 'string', format: 'email')]
+    #[BodyParameter('password', description: 'Kata sandi akun.', required: true, type: 'string')]
     public function loginSuperadmin(Request $request): JsonResponse
     {
         return $this->attemptRole($request, 'superadmin');
