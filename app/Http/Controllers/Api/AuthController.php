@@ -11,11 +11,13 @@ use App\Services\GamificationService;
 use App\Services\ProgresService;
 use App\Support\AuthContext;
 use Dedoc\Scramble\Attributes\BodyParameter;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+#[Group('Auth', description: 'Endpoint masuk dan pendaftaran. Ambil token di sini lebih dulu: panggil `POST /api/auth/siswa/login` (atau `guru` / `superadmin`), salin nilai `token` dari respons, klik tombol Authorize di kanan atas, lalu tempel di kolom token. Tanpa token, endpoint bertanda peran menjawab 401 `Belum terautentikasi.`', weight: 1)]
 class AuthController extends Controller
 {
     public function __construct(
@@ -25,6 +27,8 @@ class AuthController extends Controller
 
     /**
      * Registrasi mandiri KHUSUS siswa (FR-1).
+     *
+     * Respons memuat `token` siap pakai; tidak perlu login terpisah. Salin nilainya lalu tempel di tombol Authorize.
      */
     public function registerSiswa(Request $request): JsonResponse
     {
@@ -56,6 +60,8 @@ class AuthController extends Controller
 
     /**
      * Login terpadu tanpa memilih peran — peran dideteksi otomatis dari email.
+     *
+     * Kirim email & kata sandi, salin `token` dari respons, lalu tempel di tombol Authorize.
      */
     public function login(Request $request): JsonResponse
     {
@@ -80,6 +86,11 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Login siswa: tukar email & kata sandi dengan token akses.
+     *
+     * Token dari respons ini dipakai untuk endpoint bertanda peran siswa — salin nilainya, lalu tempel di tombol Authorize.
+     */
     // Aturan validasi login berada di attemptRole(), di luar jangkauan inferensi Scramble,
     // jadi badan permintaan ketiga endpoint login ini didokumentasikan eksplisit.
     #[BodyParameter('email', description: 'Email akun terdaftar.', required: true, type: 'string', format: 'email')]
@@ -89,6 +100,11 @@ class AuthController extends Controller
         return $this->attemptRole($request, 'siswa');
     }
 
+    /**
+     * Login guru: tukar email & kata sandi dengan token akses.
+     *
+     * Token dari respons ini dipakai untuk endpoint bertanda peran guru — salin nilainya, lalu tempel di tombol Authorize.
+     */
     #[BodyParameter('email', description: 'Email akun terdaftar.', required: true, type: 'string', format: 'email')]
     #[BodyParameter('password', description: 'Kata sandi akun.', required: true, type: 'string')]
     public function loginGuru(Request $request): JsonResponse
@@ -96,6 +112,11 @@ class AuthController extends Controller
         return $this->attemptRole($request, 'guru');
     }
 
+    /**
+     * Login superadmin: tukar email & kata sandi dengan token akses.
+     *
+     * Token dari respons ini dipakai untuk endpoint bertanda peran superadmin — salin nilainya, lalu tempel di tombol Authorize.
+     */
     #[BodyParameter('email', description: 'Email akun terdaftar.', required: true, type: 'string', format: 'email')]
     #[BodyParameter('password', description: 'Kata sandi akun.', required: true, type: 'string')]
     public function loginSuperadmin(Request $request): JsonResponse
