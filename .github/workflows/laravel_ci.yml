@@ -1,4 +1,13 @@
-name: Laravel CI/CD
+# Deploy produksi ditangani Dokploy (Provider GitHub, Branch = main, Trigger Type
+# "On Push"), jadi workflow ini sengaja hanya menjalankan CI.
+#
+# Percobaan memanggil deploy webhook Dokploy dari sini sudah dilakukan dan ditolak
+# dengan HTTP 301 "Branch Not Match": endpoint itu menerima payload push dari Git
+# provider (berisi ref), bukan POST kosong. Kalau nanti deploy ingin dijalankan
+# dari Actions (mis. supaya menunggu tes hijau), pakai API Dokploy
+# (`POST /api/application.deploy` + header x-api-key + applicationId) dan ubah
+# Trigger Type aplikasi supaya tidak dobel build dengan jalur On Push.
+name: Laravel CI
 
 on:
   push:
@@ -133,51 +142,3 @@ jobs:
 
     - name: Run tests
       run: php artisan test
-
-  deploy:
-    name: Deploy ke Dokploy (main)
-    runs-on: ubuntu-latest
-    needs: test
-    # Hanya push ke main yang men-deploy; pull request dan run manual tidak.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    timeout-minutes: 15
-    concurrency:
-      group: deploy-main
-      cancel-in-progress: false
-
-    env:
-      DOKPLOY_WEBHOOK_URL: ${{ secrets.DOKPLOY_WEBHOOK_URL }}
-      APP_HEALTHCHECK_URL: ${{ secrets.APP_HEALTHCHECK_URL }}
-
-    steps:
-    - name: Pastikan webhook Dokploy tersedia
-      run: |
-        if [ -z "$DOKPLOY_WEBHOOK_URL" ]; then
-          echo "::error::Secret DOKPLOY_WEBHOOK_URL belum diisi (Settings > Secrets and variables > Actions). Ambil URL-nya di Dokploy: aplikasi > Deployments > webhook deploy."
-          exit 1
-        fi
-
-    - name: Trigger deploy Dokploy
-      run: |
-        status=$(curl -sS -o /tmp/dokploy-response.txt -w '%{http_code}' \
-          -X POST "$DOKPLOY_WEBHOOK_URL" -H 'accept: application/json')
-        echo "HTTP $status"
-        cat /tmp/dokploy-response.txt 2>/dev/null || true
-        case "$status" in
-          2*) ;;
-          *) echo "::error::Dokploy menolak trigger deploy (HTTP $status)."; exit 1 ;;
-        esac
-
-    - name: Tunggu aplikasi sehat
-      if: env.APP_HEALTHCHECK_URL != ''
-      run: |
-        for attempt in $(seq 1 40); do
-          status=$(curl -s -o /dev/null -w '%{http_code}' "$APP_HEALTHCHECK_URL" || true)
-          echo "percobaan $attempt: HTTP $status"
-          if [ "$status" = "200" ]; then
-            exit 0
-          fi
-          sleep 15
-        done
-        echo "::error::$APP_HEALTHCHECK_URL tidak menjawab 200 setelah ~10 menit."
-        exit 1
