@@ -30,3 +30,6 @@ setup-edge-tts.sh
 DESIGN.md
 
 LARAVEL_GOOGLE_OAUTH_TASK.md
+
+# Konfigurasi agen lokal (MCP dsb) tidak ikut repo
+/.omp/
