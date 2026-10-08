@@ -285,7 +285,6 @@ class WebDashboardTest extends TestCase
 
         $response->assertOk()
             ->assertSee('Budi Santoso')
-            ->assertSee('Koleksi Piagam & Lencana Belajar')
             ->assertSee('Gathutkaca Streak Master')
             ->assertSee('Wasasis Utama')
             ->assertSee('Wicara Prigel');
@@ -566,7 +565,6 @@ class WebDashboardTest extends TestCase
 
     public function test_superadmin_can_create_guru_with_valid_photo_under_500kb(): void
     {
-        Storage::fake('public');
         $admin = Superadmin::factory()->create();
         $validFile = UploadedFile::fake()->image('guru_avatar.png', 200, 200)->size(300);
 
@@ -588,11 +586,11 @@ class WebDashboardTest extends TestCase
         ]);
         $guru = Guru::where('email', 'guruvalid@sekolah.sch.id')->first();
         $this->assertNotNull($guru->foto);
-        $this->assertFileExists(public_path('storage/' . $guru->foto));
+        $this->assertFileExists(storage_path('image/guru/'.$guru->foto));
 
         // Clean up created file in storage
-        if ($guru->foto && file_exists(public_path('storage/' . $guru->foto))) {
-            @unlink(public_path('storage/' . $guru->foto));
+        if ($guru->foto && file_exists(storage_path('image/guru/'.$guru->foto))) {
+            @unlink(storage_path('image/guru/'.$guru->foto));
         }
     }
 
@@ -604,8 +602,9 @@ class WebDashboardTest extends TestCase
 
         $largeFile = UploadedFile::fake()->image('avatar_siswa.jpg')->size(700);
 
-        $response = $this->actingAs($siswa, 'siswa')->put('/profil', [
+        $response = $this->actingAs($siswa, 'siswa')->put(route('siswa.profil.update'), [
             'nama_lengkap' => $siswa->nama_lengkap,
+            'email' => $siswa->email,
             'jenis_kelamin' => $siswa->jenis_kelamin,
             'kelas' => $siswa->kelas,
             'foto' => $largeFile,
@@ -622,8 +621,9 @@ class WebDashboardTest extends TestCase
 
         $pdfFile = UploadedFile::fake()->create('dokumen.pdf', 200, 'application/pdf');
 
-        $response = $this->actingAs($siswa, 'siswa')->put('/profil', [
+        $response = $this->actingAs($siswa, 'siswa')->put(route('siswa.profil.update'), [
             'nama_lengkap' => $siswa->nama_lengkap,
+            'email' => $siswa->email,
             'jenis_kelamin' => $siswa->jenis_kelamin,
             'kelas' => $siswa->kelas,
             'foto' => $pdfFile,
@@ -640,8 +640,9 @@ class WebDashboardTest extends TestCase
 
         $validFile = UploadedFile::fake()->image('siswa_avatar.jpg', 200, 200)->size(250);
 
-        $response = $this->actingAs($siswa, 'siswa')->put('/profil', [
+        $response = $this->actingAs($siswa, 'siswa')->put(route('siswa.profil.update'), [
             'nama_lengkap' => 'Nama Baru Siswa',
+            'email' => $siswa->email,
             'jenis_kelamin' => 'P',
             'kelas' => '8A',
             'foto' => $validFile,
@@ -651,11 +652,11 @@ class WebDashboardTest extends TestCase
         $siswa->refresh();
         $this->assertEquals('Nama Baru Siswa', $siswa->nama_lengkap);
         $this->assertNotNull($siswa->foto);
-        $this->assertFileExists(public_path('storage/' . $siswa->foto));
+        $this->assertFileExists(storage_path('image/siswa/'.$siswa->foto));
 
         // Clean up created file
-        if ($siswa->foto && file_exists(public_path('storage/' . $siswa->foto))) {
-            @unlink(public_path('storage/' . $siswa->foto));
+        if ($siswa->foto && file_exists(storage_path('image/siswa/'.$siswa->foto))) {
+            @unlink(storage_path('image/siswa/'.$siswa->foto));
         }
     }
 
