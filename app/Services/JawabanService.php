@@ -55,8 +55,8 @@ class JawabanService
         $nextLevel = null;
 
         if ($levelMateri) {
-            $totalSoalLevel = Soal::where('level_materi_id', $levelMateri->id)->count();
             $soalIdsLevel = Soal::where('level_materi_id', $levelMateri->id)->pluck('id');
+            $totalSoalLevel = $soalIdsLevel->count();
             // Unit selesai jika semua soal pada level ini sudah pernah dikerjakan minimal 1x
             $dikerjakanCount = JawabanSiswa::where('siswa_id', $siswa->id)
                 ->whereIn('soal_id', $soalIdsLevel)
@@ -167,14 +167,21 @@ class JawabanService
                 ->orderBy('urutan')
                 ->get();
 
-            foreach ($nextPembahasans as $nextPembahasan) {
-                $soalNextPembahasan = Soal::where('pembahasan_id', $nextPembahasan->id)
+            if ($nextPembahasans->isNotEmpty()) {
+                // Satu query untuk semua pembahasan berikutnya; urutan id tetap
+                // menaik sehingga elemen pertama tiap grup = soal terkecil.
+                $soalPerPembahasan = Soal::whereIn('pembahasan_id', $nextPembahasans->pluck('id'))
                     ->whereNotIn('id', $selesaiSoalIds)
                     ->orderBy('id')
-                    ->first();
+                    ->get()
+                    ->groupBy('pembahasan_id');
 
-                if ($soalNextPembahasan) {
-                    return $soalNextPembahasan;
+                foreach ($nextPembahasans as $nextPembahasan) {
+                    $soalNextPembahasan = $soalPerPembahasan->get($nextPembahasan->id)?->first();
+
+                    if ($soalNextPembahasan) {
+                        return $soalNextPembahasan;
+                    }
                 }
             }
         }
@@ -192,11 +199,9 @@ class JawabanService
 
         // 4. Jika semua soal di level ini SUDAH TUNTAS (skor >= 70 untuk seluruh soal)
         // dan siswa sedang dalam mode latihan ulang (replay), lanjutkan urutan sekuensial forward
-        $totalSoalLevel = Soal::where('level_materi_id', $levelMateri->id)->count();
-        $totalSelesaiLevel = count(array_intersect(
-            Soal::where('level_materi_id', $levelMateri->id)->pluck('id')->all(),
-            $selesaiSoalIds
-        ));
+        $soalIdsLevel = Soal::where('level_materi_id', $levelMateri->id)->pluck('id');
+        $totalSoalLevel = $soalIdsLevel->count();
+        $totalSelesaiLevel = count(array_intersect($soalIdsLevel->all(), $selesaiSoalIds));
 
         if ($totalSoalLevel > 0 && $totalSelesaiLevel >= $totalSoalLevel) {
             // Replay mode: maju ke soal berikutnya dalam pembahasan

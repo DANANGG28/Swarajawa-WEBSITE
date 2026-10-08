@@ -607,10 +607,17 @@ class SuperadminWebController extends Controller
         $level = LevelMateri::create($this->validatedLevel($request));
 
         $siswaIds = Siswa::pluck('id');
-        foreach ($siswaIds as $sId) {
-            ProgresSiswa::firstOrCreate(
-                ['siswa_id' => $sId, 'level_materi_id' => $level->id],
-                ['status' => ProgresSiswa::STATUS_TERKUNCI]
+        if ($siswaIds->isNotEmpty()) {
+            $now = now();
+            ProgresSiswa::query()->insertOrIgnore(
+                $siswaIds->map(fn ($sId): array => [
+                    'siswa_id' => $sId,
+                    'level_materi_id' => $level->id,
+                    'status' => ProgresSiswa::STATUS_TERKUNCI,
+                    'tanggal_selesai' => null,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ])->all()
             );
         }
 
