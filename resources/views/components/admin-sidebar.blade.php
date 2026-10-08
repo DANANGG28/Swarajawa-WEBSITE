@@ -7,6 +7,7 @@
             ['key' => 'guru', 'label' => 'Pengelola', 'ikon' => 'supervisor_account', 'url' => route('superadmin.guru'), 'alias' => []],
             ['key' => 'siswa', 'label' => 'Akun Siswa', 'ikon' => 'groups', 'url' => route('superadmin.siswa'), 'alias' => []],
             ['key' => 'topik', 'label' => 'Topik', 'ikon' => 'topic', 'url' => route('superadmin.topik'), 'alias' => ['level-materi', 'soal', 'pembahasan']],
+            ['key' => 'dokumentasi-api', 'label' => 'Dokumentasi API', 'ikon' => 'api', 'url' => route('superadmin.dokumentasi-api'), 'alias' => []],
         ]
         : [
             ['key' => 'dashboard', 'label' => 'Pemantauan Siswa', 'ikon' => 'monitoring', 'url' => route('guru.dashboard'), 'alias' => []],

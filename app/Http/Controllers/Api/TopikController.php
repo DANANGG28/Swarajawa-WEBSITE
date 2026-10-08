@@ -39,18 +39,25 @@ class TopikController extends Controller
 
         $topikList = Topik::query()->with('units')->orderBy('urutan')->get();
 
-        $data = $topikList->map(function (Topik $topik) use ($siswa, $lulusIds): array {
+        $allUnitIds = $topikList->pluck('units')->collapse()->pluck('id')->unique()->values();
+        $soalByUnit = Soal::query()
+            ->whereIn('level_materi_id', $allUnitIds)
+            ->get(['id', 'level_materi_id'])
+            ->groupBy('level_materi_id');
+        $unitSelesaiIds = ProgresSiswa::query()
+            ->where('siswa_id', $siswa->id)
+            ->where('status', ProgresSiswa::STATUS_SELESAI)
+            ->whereIn('level_materi_id', $allUnitIds)
+            ->pluck('level_materi_id');
+
+        $data = $topikList->map(function (Topik $topik) use ($lulusIds, $soalByUnit, $unitSelesaiIds): array {
             $unitIds = $topik->units->pluck('id');
-            $soalIds = Soal::query()->whereIn('level_materi_id', $unitIds)->pluck('id');
+            $soalIds = $unitIds->flatMap(fn ($unitId) => ($soalByUnit->get($unitId) ?? collect())->pluck('id'));
             $totalSoal = $soalIds->count();
             $lulus = $lulusIds->intersect($soalIds)->count();
             $persen = $totalSoal > 0 ? (int) round(($lulus / $totalSoal) * 100) : 0;
 
-            $unitSelesai = ProgresSiswa::query()
-                ->where('siswa_id', $siswa->id)
-                ->whereIn('level_materi_id', $unitIds)
-                ->where('status', ProgresSiswa::STATUS_SELESAI)
-                ->count();
+            $unitSelesai = $unitIds->intersect($unitSelesaiIds)->count();
 
             $status = ($totalSoal > 0 && $lulus >= $totalSoal)
                 ? 'selesai'
@@ -101,23 +108,36 @@ class TopikController extends Controller
             ->orderBy('urutan')
             ->get();
 
-        $unitData = $units->values()->map(function (LevelMateri $level, int $index) use ($progresMap, $lulusIds): array {
+        $unitIds = $units->pluck('id');
+        $soalByLevel = Soal::query()
+            ->whereIn('level_materi_id', $unitIds)
+            ->get(['id', 'level_materi_id', 'pembahasan_id'])
+            ->groupBy('level_materi_id');
+        $pembahasanPerLevel = Pembahasan::query()
+            ->whereIn('level_materi_id', $unitIds)
+            ->withCount('soal')
+            ->orderBy('urutan')
+            ->orderBy('id')
+            ->get()
+            ->groupBy('level_materi_id');
+        $soalByPembahasan = Soal::query()
+            ->whereIn('pembahasan_id', $pembahasanPerLevel->collapse()->pluck('id'))
+            ->get(['id', 'pembahasan_id'])
+            ->groupBy('pembahasan_id');
+
+        $unitData = $units->values()->map(function (LevelMateri $level, int $index) use ($progresMap, $lulusIds, $soalByLevel, $pembahasanPerLevel, $soalByPembahasan): array {
             $status = $progresMap[$level->id]->status ?? ProgresSiswa::STATUS_TERKUNCI;
 
-            $levelSoalIds = $level->soal()->pluck('id');
+            $levelSoalIds = ($soalByLevel->get($level->id) ?? collect())->pluck('id');
             $lulusLevel = $levelSoalIds->filter(fn ($id) => $lulusIds->has($id))->count();
             $totalLevel = $level->soal_count;
             $persenLevel = $totalLevel > 0 ? (int) round(($lulusLevel / $totalLevel) * 100) : 0;
 
             $terkunci = $status === ProgresSiswa::STATUS_TERKUNCI;
 
-            $bagian = Pembahasan::query()
-                ->where('level_materi_id', $level->id)
-                ->withCount('soal')
-                ->orderBy('urutan')
-                ->get()
-                ->map(function (Pembahasan $pembahasan) use ($lulusIds, $terkunci): array {
-                    $soalIds = $pembahasan->soal()->pluck('id');
+            $bagian = ($pembahasanPerLevel->get($level->id) ?? collect())
+                ->map(function (Pembahasan $pembahasan) use ($lulusIds, $terkunci, $soalByPembahasan): array {
+                    $soalIds = ($soalByPembahasan->get($pembahasan->id) ?? collect())->pluck('id');
                     $lulus = $soalIds->filter(fn ($id) => $lulusIds->has($id))->count();
                     $total = $pembahasan->soal_count;
                     $persen = $total > 0 ? (int) round(($lulus / $total) * 100) : 0;
