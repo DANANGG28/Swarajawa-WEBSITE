@@ -56,6 +56,8 @@ Route::middleware('auth.any')->group(function () {
 
         Route::match(['put', 'post'], 'profil/data', [ProfilController::class, 'update']);
 
+        Route::match(['put', 'post'], 'profil/data', [ProfilController::class, 'update']);
+
         Route::post('chat', [ChatController::class, 'ask'])->middleware('throttle:30,1');
         Route::get('chat/histori', [ChatController::class, 'histori']);
         Route::get('chat/sesi/{chatSession}', [ChatController::class, 'show']);
