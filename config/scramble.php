@@ -1,7 +1,6 @@
 <?php
 
 use Dedoc\Scramble\SecurityDocumentation\MiddlewareAuthSecurityStrategy;
-use Dedoc\Scramble\Support\Generator\SecurityScheme;
 
 return [
     /*
@@ -212,8 +211,12 @@ MD,
     'security_strategy' => [
         MiddlewareAuthSecurityStrategy::class,
         [
+            // Skema bearer bawaan strategi ini dipakai apa adanya. Objek
+            // SecurityScheme sengaja tidak ditulis di sini: nilai objek membuat
+            // `php artisan config:cache` gagal (var_export tidak bisa
+            // mengekspor objek tanpa __set_state), dan container produksi
+            // menjalankan config:cache saat start.
             'middleware' => ['auth.any'],
-            'scheme' => SecurityScheme::http('bearer'),
         ],
     ],
 ];
