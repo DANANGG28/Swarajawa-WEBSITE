@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use Dedoc\Scramble\Scramble;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Dokumentasi API hanya disajikan lewat grup superadmin (lihat routes/web.php),
+        // jadi rute bawaan paket (/docs/api dan /docs/api.json) tidak dipakai.
+        Scramble::ignoreDefaultRoutes();
     }
 
     /**
@@ -29,6 +33,20 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->configurePasswordResetNotification();
+        $this->configureApiDocumentation();
+    }
+
+    /**
+     * Dokumentasikan semua metode HTTP pada rute bertipe `match`.
+     *
+     * Bawaan Scramble hanya memakai metode pertama (`$route->methods()[0]`), sehingga
+     * `POST /api/profil/data` dan `PATCH` pada rute update resource hilang dari dokumen.
+     */
+    private function configureApiDocumentation(): void
+    {
+        Scramble::configure()->resolveOperationMethodsUsing(
+            fn (Route $route): array => array_values(array_diff($route->methods(), ['HEAD', 'OPTIONS']))
+        );
     }
 
     /**

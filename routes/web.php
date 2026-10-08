@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\GuruWebController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\KuisSesiController;
 use App\Http\Controllers\Web\SuperadminWebController;
+use Dedoc\Scramble\Scramble;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -166,6 +167,9 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
     Route::delete('/soal/{soal}', [SuperadminWebController::class, 'soalDestroy'])->name('soal.destroy');
 
     Route::post('/soal/generate-tts', [SuperadminWebController::class, 'generateTts'])->name('soal.tts');
+
+    Scramble::registerUiRoute('dokumentasi-api')->name('dokumentasi-api');
+    Scramble::registerJsonSpecificationRoute('dokumentasi-api.json')->name('dokumentasi-api.spec');
 });
 
 Route::get('/storage/image/guru/{filename}', function (string $filename) {
