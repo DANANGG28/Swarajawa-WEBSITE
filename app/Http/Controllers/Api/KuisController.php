@@ -24,6 +24,10 @@ class KuisController extends Controller
 
     /**
      * Jawab satu butir soal: nilai, beri EXP, perbarui streak (FR-3..FR-8, FR-10).
+     *
+     * Butuh token peran siswa (`POST /api/auth/siswa/login`). `soal_id` harus id soal yang
+     * benar-benar ada — ambil salah satunya dari `GET /api/materi`; id asal-asalan dijawab
+     * `422` oleh aturan `exists:soal,id`, dan level yang belum tercapai dijawab `403`.
      */
     public function jawab(Request $request): JsonResponse
     {

@@ -1,6 +1,6 @@
 <?php
 
-use Dedoc\Scramble\SecurityDocumentation\MiddlewareAuthSecurityStrategy;
+use App\Support\Docs\BearerAuthSecurityStrategy;
 
 return [
     /*
@@ -62,6 +62,20 @@ Responsnya memuat `token`. Kirim di setiap permintaan berikutnya sebagai header:
 
 Klik **Authorize** di halaman ini lalu tempel token tersebut. Token tidak kedaluwarsa
 sampai dihapus lewat `POST /api/auth/logout`.
+
+## Cara mencoba (tombol Try it out)
+1. **Ambil token.** Buka grup **Auth**, pilih endpoint login sesuai peran, isi `email`
+   & `password`, kirim, lalu salin nilai `token` dari respons. Untuk `POST /api/kuis/jawab`
+   pakai `POST /api/auth/siswa/login` (endpoint itu bertanda peran `siswa`).
+2. **Pasang token.** Klik tombol **Authorize** di kanan atas, tempel token tadi, lalu
+   Authorize. Setelah itu setiap request dari halaman ini membawa
+   `Authorization: Bearer <token>`.
+3. **Kirim request.** Pilih endpoint, isi body, klik Send API Request. Nilai yang merujuk
+   data lain wajib benar-benar ada: `soal_id` pada `POST /api/kuis/jawab` harus id soal
+   nyata (ambil dari `GET /api/materi`), kalau tidak dijawab `422` oleh aturan `exists`.
+
+Arti kode status yang sering muncul di sini: `401` token belum dikirim atau tidak sah,
+`403` token sah tapi perannya tidak cocok, `422` isi body tidak lolos validasi.
 
 ## Peran
 Endpoint bertanda peran hanya bisa diakses token dengan peran itu:
@@ -208,15 +222,5 @@ MD,
      *     ],
      * ],
      */
-    'security_strategy' => [
-        MiddlewareAuthSecurityStrategy::class,
-        [
-            // Skema bearer bawaan strategi ini dipakai apa adanya. Objek
-            // SecurityScheme sengaja tidak ditulis di sini: nilai objek membuat
-            // `php artisan config:cache` gagal (var_export tidak bisa
-            // mengekspor objek tanpa __set_state), dan container produksi
-            // menjalankan config:cache saat start.
-            'middleware' => ['auth.any'],
-        ],
-    ],
+    'security_strategy' => BearerAuthSecurityStrategy::class,
 ];

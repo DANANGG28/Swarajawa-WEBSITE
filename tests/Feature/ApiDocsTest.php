@@ -74,6 +74,25 @@ class ApiDocsTest extends TestCase
         }
     }
 
+    public function test_dokumen_memuat_panduan_ambil_token(): void
+    {
+        $spec = $this->spec();
+
+        $this->assertStringContainsString('Ambil token', $spec['info']['description'] ?? '', 'Deskripsi dokumen tidak memuat langkah ambil token.');
+        $this->assertStringContainsString('Authorize', $spec['info']['description'] ?? '');
+        $this->assertStringContainsString('soal_id', $spec['info']['description'] ?? '', 'Langkah Try it out tidak menyebut contoh id yang harus nyata.');
+
+        $grupAuth = collect($spec['tags'] ?? [])->firstWhere('name', 'Auth');
+        $this->assertNotNull($grupAuth, 'Grup Auth tidak ada di dokumen.');
+        $this->assertStringContainsString('token', $grupAuth['description'] ?? '');
+
+        foreach (['/auth/siswa/login', '/auth/guru/login', '/auth/superadmin/login', '/auth/login'] as $path) {
+            $this->assertStringContainsString('Authorize', $spec['paths'][$path]['post']['description'] ?? '', "Deskripsi {$path} tidak mengarahkan ke Authorize.");
+        }
+
+        $this->assertStringContainsString('api/auth/siswa/login', $spec['components']['securitySchemes']['http']['description'] ?? '', 'Deskripsi skema bearer tidak menyebut cara ambil token.');
+    }
+
     public function test_url_server_mengarah_ke_prefiks_api(): void
     {
         $spec = $this->spec();
