@@ -87,6 +87,7 @@ class QuizScoringServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(90, $hasil['skor']);
         $this->assertTrue($hasil['benar']);
     }
+
     public function test_menulis_aksara_shifted_and_scaled_trace_scores_high(): void
     {
         $circle = $this->circlePath();
