@@ -77,32 +77,32 @@ class HomeController extends Controller
             $jawabanByLevel = $semuaJawaban->groupBy(fn (JawabanSiswa $jawaban) => $soalLevelMap[$jawaban->soal_id] ?? null);
 
             $allLevels = $allLevels->map(function (LevelMateri $level) use ($progresByLevel, $jawabanByLevel) {
-                    $progres = $progresByLevel[$level->id] ?? null;
+                $progres = $progresByLevel[$level->id] ?? null;
 
-                    $jawabanLevel = $jawabanByLevel->get($level->id) ?? collect();
+                $jawabanLevel = $jawabanByLevel->get($level->id) ?? collect();
 
-                    $lulusCount = $jawabanLevel->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
-                    $totalSoal = $level->soal_count;
-                    $persen = $totalSoal > 0 ? (int) round(($lulusCount / $totalSoal) * 100) : 0;
-                    $rataSkor = $jawabanLevel->count() > 0 ? (int) round($jawabanLevel->avg('skor_tertinggi')) : 0;
+                $lulusCount = $jawabanLevel->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
+                $totalSoal = $level->soal_count;
+                $persen = $totalSoal > 0 ? (int) round(($lulusCount / $totalSoal) * 100) : 0;
+                $rataSkor = $jawabanLevel->count() > 0 ? (int) round($jawabanLevel->avg('skor_tertinggi')) : 0;
 
-                    $status = $progres?->status ?? ProgresSiswa::STATUS_TERKUNCI;
+                $status = $progres?->status ?? ProgresSiswa::STATUS_TERKUNCI;
 
-                    return (object) [
-                        'id' => $level->id,
-                        'topik_id' => $level->topik_id,
-                        'urutan' => $level->urutan,
-                        'nama_materi' => $level->nama_materi,
-                        'deskripsi' => $level->deskripsi,
-                        'reward_exp' => $level->reward_exp,
-                        'total_soal' => $totalSoal,
-                        'pembahasan_count' => $level->pembahasan_count,
-                        'lulus_count' => $lulusCount,
-                        'persen' => $persen,
-                        'rata_skor' => $rataSkor,
-                        'status' => $status,
-                    ];
-                });
+                return (object) [
+                    'id' => $level->id,
+                    'topik_id' => $level->topik_id,
+                    'urutan' => $level->urutan,
+                    'nama_materi' => $level->nama_materi,
+                    'deskripsi' => $level->deskripsi,
+                    'reward_exp' => $level->reward_exp,
+                    'total_soal' => $totalSoal,
+                    'pembahasan_count' => $level->pembahasan_count,
+                    'lulus_count' => $lulusCount,
+                    'persen' => $persen,
+                    'rata_skor' => $rataSkor,
+                    'status' => $status,
+                ];
+            });
 
             // Topik (kategori paling dhuwur): 1 topik -> akeh unit.
             $topikList = Topik::query()->orderBy('urutan')->get();

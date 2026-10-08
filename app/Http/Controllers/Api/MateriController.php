@@ -8,6 +8,7 @@ use App\Models\JawabanSiswa;
 use App\Models\LevelMateri;
 use App\Models\ProgresSiswa;
 use App\Models\Siswa;
+use App\Models\Soal;
 use App\Services\ProgresService;
 use App\Services\QuizScoringService;
 use Dedoc\Scramble\Attributes\QueryParameter;
@@ -114,7 +115,7 @@ class MateriController extends Controller
      * Isi atribut dinamis `skor_tertinggi_siswa` ing saben soal supaya
      * SoalResource bisa nuduhake status pengerjaan siswa.
      *
-     * @param  Collection<int, \App\Models\Soal>  $soal
+     * @param  Collection<int, Soal>  $soal
      */
     private function enrichStatusSoal(Siswa $siswa, Collection $soal): void
     {
@@ -133,9 +134,9 @@ class MateriController extends Controller
     }
 
     /**
-     * @param  Collection<int, \App\Models\Soal>  $soal
+     * @param  Collection<int, Soal>  $soal
      */
-    private function firstUnfinished(Collection $soal): ?\App\Models\Soal
+    private function firstUnfinished(Collection $soal): ?Soal
     {
         return $soal->first(function ($item): bool {
             $skor = $item->skor_tertinggi_siswa;
@@ -145,7 +146,7 @@ class MateriController extends Controller
     }
 
     /**
-     * @param  Collection<int, \App\Models\Soal>  $soalCollection
+     * @param  Collection<int, Soal>  $soalCollection
      * @return array<string, mixed>
      */
     private function payload(Siswa $siswa, LevelMateri $levelMateri, ?int $pembahasanId, Collection $soalCollection): array

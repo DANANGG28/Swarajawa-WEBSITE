@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Models\Exp;
 use App\Models\JawabanSiswa;
 use App\Models\LevelMateri;
-use App\Models\ProgresSiswa;
 use App\Models\Siswa;
 use App\Models\Soal;
 use App\Models\Strek;
@@ -22,7 +21,7 @@ class BadgeServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->badgeService = new BadgeService();
+        $this->badgeService = new BadgeService;
     }
 
     public function test_new_student_starts_with_zero_earned_badges(): void
