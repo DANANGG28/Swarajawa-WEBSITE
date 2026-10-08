@@ -65,20 +65,21 @@ class HomeController extends Controller
             $currentStreak = (int) ($strek?->current_streak ?? 0);
             $highestStreak = (int) ($strek?->highest_streak ?? 0);
 
-            // Unit (level_materi) & progres
+            // Unit (level_materi) & progres — semua data diambil sekali, bukan per level.
             $allLevels = LevelMateri::query()
                 ->withCount(['soal', 'pembahasan'])
                 ->orderBy('urutan')
-                ->get()
-                ->map(function (LevelMateri $level) use ($siswa) {
-                    $progres = ProgresSiswa::where('siswa_id', $siswa->id)
-                        ->where('level_materi_id', $level->id)
-                        ->first();
+                ->get();
 
-                    $levelSoalIds = $level->soal()->pluck('id');
-                    $jawabanLevel = JawabanSiswa::where('siswa_id', $siswa->id)
-                        ->whereIn('soal_id', $levelSoalIds)
-                        ->get();
+            $progresByLevel = ProgresSiswa::where('siswa_id', $siswa->id)->get()->keyBy('level_materi_id');
+            $soalLevelMap = Soal::whereIn('level_materi_id', $allLevels->pluck('id'))->pluck('level_materi_id', 'id');
+            $semuaJawaban = JawabanSiswa::where('siswa_id', $siswa->id)->get();
+            $jawabanByLevel = $semuaJawaban->groupBy(fn (JawabanSiswa $jawaban) => $soalLevelMap[$jawaban->soal_id] ?? null);
+
+            $allLevels = $allLevels->map(function (LevelMateri $level) use ($progresByLevel, $jawabanByLevel) {
+                    $progres = $progresByLevel[$level->id] ?? null;
+
+                    $jawabanLevel = $jawabanByLevel->get($level->id) ?? collect();
 
                     $lulusCount = $jawabanLevel->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
                     $totalSoal = $level->soal_count;
@@ -167,8 +168,8 @@ class HomeController extends Controller
             $recentLevel = $lastJawaban?->soal?->levelMateri ?? ($activeLevel ? LevelMateri::find($activeLevel->id) : null);
             $recentProgress = null;
             if ($recentLevel) {
-                $recentTotalSoal = Soal::where('level_materi_id', $recentLevel->id)->count();
                 $recentSoalIds = Soal::where('level_materi_id', $recentLevel->id)->pluck('id');
+                $recentTotalSoal = $recentSoalIds->count();
                 $recentSelesai = JawabanSiswa::where('siswa_id', $siswa->id)
                     ->whereIn('soal_id', $recentSoalIds)
                     ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
@@ -186,20 +187,24 @@ class HomeController extends Controller
             }
 
             // Pembahasan (sub-materi) saben level -> dadi node ing roadmap per unit.
+            $pembahasanPerLevel = Pembahasan::query()
+                ->whereIn('level_materi_id', $levels->pluck('id'))
+                ->withCount('soal')
+                ->orderBy('urutan')
+                ->orderBy('id')
+                ->get()
+                ->groupBy('level_materi_id');
+            $soalPembahasanMap = Soal::whereIn('pembahasan_id', $pembahasanPerLevel->collapse()->pluck('id'))
+                ->pluck('pembahasan_id', 'id');
+            $jawabanByPembahasan = $semuaJawaban->groupBy(fn (JawabanSiswa $jawaban) => $soalPembahasanMap[$jawaban->soal_id] ?? null);
+
             $pembahasanByLevel = [];
             foreach ($levels as $lvl) {
                 $levelTerkunci = $lvl->status === ProgresSiswa::STATUS_TERKUNCI;
 
-                $pembahasanByLevel[$lvl->id] = Pembahasan::query()
-                    ->where('level_materi_id', $lvl->id)
-                    ->withCount('soal')
-                    ->orderBy('urutan')
-                    ->get()
-                    ->map(function (Pembahasan $pembahasan) use ($siswa, $levelTerkunci) {
-                        $soalIds = $pembahasan->soal()->pluck('id');
-                        $jawaban = JawabanSiswa::where('siswa_id', $siswa->id)
-                            ->whereIn('soal_id', $soalIds)
-                            ->get();
+                $pembahasanByLevel[$lvl->id] = ($pembahasanPerLevel->get($lvl->id) ?? collect())
+                    ->map(function (Pembahasan $pembahasan) use ($levelTerkunci, $jawabanByPembahasan) {
+                        $jawaban = $jawabanByPembahasan->get($pembahasan->id) ?? collect();
 
                         $lulus = $jawaban->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)->count();
                         $total = $pembahasan->soal_count;
@@ -313,17 +318,23 @@ class HomeController extends Controller
             ->where('skor_tertinggi', '>=', QuizScoringService::PASS_THRESHOLD)
             ->pluck('soal_id');
 
-        $topikCards = $topikList->map(function (Topik $topik) use ($siswa, $lulusIds) {
+        $allUnitIds = $topikList->pluck('units')->collapse()->pluck('id')->unique()->values();
+        $soalByUnit = Soal::whereIn('level_materi_id', $allUnitIds)
+            ->get(['id', 'level_materi_id'])
+            ->groupBy('level_materi_id');
+        $unitSelesaiIds = ProgresSiswa::where('siswa_id', $siswa->id)
+            ->where('status', ProgresSiswa::STATUS_SELESAI)
+            ->whereIn('level_materi_id', $allUnitIds)
+            ->pluck('level_materi_id');
+
+        $topikCards = $topikList->map(function (Topik $topik) use ($lulusIds, $soalByUnit, $unitSelesaiIds) {
             $unitIds = $topik->units->pluck('id');
-            $soalIds = Soal::whereIn('level_materi_id', $unitIds)->pluck('id');
+            $soalIds = $unitIds->flatMap(fn ($unitId) => ($soalByUnit->get($unitId) ?? collect())->pluck('id'));
             $totalSoal = $soalIds->count();
             $lulus = $lulusIds->intersect($soalIds)->count();
             $persen = $totalSoal > 0 ? (int) round(($lulus / $totalSoal) * 100) : 0;
 
-            $unitSelesai = ProgresSiswa::where('siswa_id', $siswa->id)
-                ->whereIn('level_materi_id', $unitIds)
-                ->where('status', ProgresSiswa::STATUS_SELESAI)
-                ->count();
+            $unitSelesai = $unitIds->intersect($unitSelesaiIds)->count();
 
             $status = ($totalSoal > 0 && $lulus >= $totalSoal)
                 ? 'selesai'

@@ -19,13 +19,24 @@ class ProgresService
     {
         $levels = LevelMateri::query()->orderBy('urutan')->get();
 
-        DB::transaction(function () use ($siswa, $levels) {
-            foreach ($levels as $index => $level) {
-                ProgresSiswa::updateOrCreate(
-                    ['siswa_id' => $siswa->id, 'level_materi_id' => $level->id],
-                    ['status' => $index === 0 ? ProgresSiswa::STATUS_BERJALAN : ProgresSiswa::STATUS_TERKUNCI],
-                );
-            }
+        if ($levels->isEmpty()) {
+            return;
+        }
+
+        $now = now();
+        $rows = $levels->values()->map(fn (LevelMateri $level, int $index): array => [
+            'siswa_id' => $siswa->id,
+            'level_materi_id' => $level->id,
+            'status' => $index === 0 ? ProgresSiswa::STATUS_BERJALAN : ProgresSiswa::STATUS_TERKUNCI,
+            'tanggal_selesai' => null,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ])->all();
+
+        DB::transaction(function () use ($rows) {
+            // Padanan updateOrCreate: baris baru disisipkan, baris lama hanya diperbarui
+            // pada status/updated_at (tanggal_selesai tidak diusik).
+            ProgresSiswa::query()->upsert($rows, ['siswa_id', 'level_materi_id'], ['status', 'updated_at']);
         });
     }
 
