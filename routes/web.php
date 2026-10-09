@@ -249,10 +249,34 @@ Route::get('/storage/logo/{filename}', function (string $filename) {
 })->name('logo.image');
 
 Route::get('/storage/ekpresi_jawaban/{filename}', function (string $filename) {
-    $path = storage_path('ekpresi_jawaban/'.$filename);
-    if (! file_exists($path)) {
+    $candidates = [
+        public_path('images/ekpresi_jawaban/'.$filename),
+        public_path('images/ekpresi_jawaban/'.ucfirst($filename)),
+        public_path('images/ekpresi_jawaban/'.strtolower($filename)),
+        public_path('storage/ekpresi_jawaban/'.$filename),
+        public_path('storage/ekpresi_jawaban/'.ucfirst($filename)),
+        storage_path('ekpresi_jawaban/'.$filename),
+        storage_path('ekpresi_jawaban/'.ucfirst($filename)),
+        storage_path('ekpresi_jawaban/'.strtolower($filename)),
+        storage_path('app/public/ekpresi_jawaban/'.$filename),
+    ];
+
+    $path = null;
+    foreach ($candidates as $candidate) {
+        if (file_exists($candidate)) {
+            $path = $candidate;
+            break;
+        }
+    }
+
+    if (! $path) {
         abort(404);
     }
 
-    return response()->file($path);
+    $mime = str_ends_with(strtolower($path), '.png') ? 'image/png' : 'image/jpeg';
+
+    return response()->file($path, [
+        'Content-Type' => $mime,
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
 })->name('ekpresi.image');

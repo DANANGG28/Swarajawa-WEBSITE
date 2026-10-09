@@ -102,6 +102,7 @@ COPY --from=assets /build/public/build ./public/build
 RUN mkdir -p /opt/app-seed \
     && cp -a storage/app/corpus /opt/app-seed/corpus \
     && cp -a storage/image /opt/app-seed/image \
+    && cp -a storage/ekpresi_jawaban /opt/app-seed/ekpresi_jawaban \
     && mkdir -p storage/framework/cache/data storage/framework/sessions \
         storage/framework/testing storage/framework/views storage/logs \
         bootstrap/cache \
