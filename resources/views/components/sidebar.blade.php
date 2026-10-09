@@ -112,7 +112,7 @@
         <!-- Brand -->
         <div class="flex items-center gap-3.5 px-2 mb-8" data-purpose="brand-header">
             <div class="w-11 h-11 rounded-2xl bg-primary-600 flex items-center justify-center text-white shadow-md shadow-primary-600/30 p-1.5 shrink-0">
-                <img src="{{ route('logo.image', ['filename' => 'Logo_TP.png']) }}?v={{ file_exists(storage_path('logo/Logo_TP.png')) ? filemtime(storage_path('logo/Logo_TP.png')) : time() }}" alt="Logo SINAU APP" class="w-full h-full object-contain drop-shadow-sm">
+                <img src="{{ route('logo.image', ['filename' => 'logo_tp.png']) }}?v={{ file_exists(storage_path('logo/logo_tp.png')) ? filemtime(storage_path('logo/logo_tp.png')) : (file_exists(storage_path('logo/Logo_TP.png')) ? filemtime(storage_path('logo/Logo_TP.png')) : time()) }}" alt="Logo SINAU APP" class="w-full h-full object-contain drop-shadow-sm">
             </div>
             <div>
                 <h1 class="text-xl font-black tracking-tight text-primary uppercase leading-none">SINAU APP</h1>

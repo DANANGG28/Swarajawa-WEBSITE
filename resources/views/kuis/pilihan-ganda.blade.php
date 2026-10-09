@@ -129,7 +129,7 @@
                             level_berikutnya: res.level_berikutnya,
                             next_url: res.next_url,
                             next_level_url: res.next_level_url,
-                            title: res.benar ? 'Jawabanmu Bener!' : 'Durung Pas!'
+                            title: res.benar ? 'Jawabanmu Bener!' : ''
                         });
                     }
 
