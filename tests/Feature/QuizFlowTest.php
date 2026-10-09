@@ -551,4 +551,22 @@ class QuizFlowTest extends TestCase
         $apiResponse->assertStatus(403)
             ->assertJsonPath('perlu_lengkapi_profil', true);
     }
+
+    public function test_ekpresi_image_route_serves_valid_image_and_handles_missing_file(): void
+    {
+        $responseBenar = $this->get('/storage/ekpresi_jawaban/Benar.png');
+        $responseBenar->assertOk()
+            ->assertHeader('Content-Type', 'image/png');
+
+        $responseSalah = $this->get('/storage/ekpresi_jawaban/Salah.png');
+        $responseSalah->assertOk()
+            ->assertHeader('Content-Type', 'image/png');
+
+        $responseLower = $this->get('/storage/ekpresi_jawaban/benar.png');
+        $responseLower->assertOk()
+            ->assertHeader('Content-Type', 'image/png');
+
+        $response404 = $this->get('/storage/ekpresi_jawaban/tidak_ada_file_ini.png');
+        $response404->assertNotFound();
+    }
 }

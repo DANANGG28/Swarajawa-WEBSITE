@@ -26,6 +26,7 @@ mkdir -p \
     storage/logs \
     storage/app/public \
     storage/image \
+    storage/ekpresi_jawaban \
     bootstrap/cache
 
 # --- 3. Restore data seed bila volume persistent masih kosong -----------------
@@ -39,6 +40,7 @@ seed_if_empty() {
 }
 seed_if_empty storage/app/corpus /opt/app-seed/corpus
 seed_if_empty storage/image /opt/app-seed/image
+seed_if_empty storage/ekpresi_jawaban /opt/app-seed/ekpresi_jawaban
 
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R ug+rwX storage bootstrap/cache
