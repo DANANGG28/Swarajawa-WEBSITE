@@ -114,7 +114,8 @@ class AksaraSoalTest extends TestCase
             ->assertOk()
             ->assertSee('tracing-canvas', false)
             ->assertSee('aksara-tracing-canvas', false)
-            ->assertSee('new window.TracingCanvas', false);
+            ->assertSee('new window.TracingCanvas', false)
+            ->assertSee('quiz-feedback-modal', false);
     }
 
     public function test_jawab_tracing_scores_using_client_template_when_paths_empty(): void
