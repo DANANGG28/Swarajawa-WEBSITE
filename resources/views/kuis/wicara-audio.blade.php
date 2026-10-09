@@ -108,7 +108,7 @@
                         level_berikutnya: jawabRes ? jawabRes.level_berikutnya : null,
                         next_url: jawabRes ? jawabRes.next_url : null,
                         next_level_url: jawabRes ? jawabRes.next_level_url : null,
-                        title: isPassed ? 'Lancar & Bener!' : 'Belum Tepat'
+                        title: isPassed ? 'Lancar & Bener!' : ''
                     });
                 }
             }

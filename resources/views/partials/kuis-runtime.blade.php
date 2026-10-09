@@ -5,6 +5,8 @@
         ttsUrl: @json(route('kuis.tts')),
         sttUrl: @json(route('kuis.stt')),
         stsUrl: @json(route('kuis.sts')),
+        imgBenarUrl: @json(route('ekpresi.image', ['filename' => 'Benar.png'])),
+        imgSalahUrl: @json(route('ekpresi.image', ['filename' => 'Salah.png'])),
     };
     window.postJSON = async function (url, body) {
         const res = await fetch(url, {
@@ -78,15 +80,38 @@
 
         const isBenar = Boolean(opts.benar);
 
-        // Emoji Reaksi & 3D Badge
-        const emojiEl = document.getElementById('modal-emoji');
+        // Gambar Ekspresi Reaksi & 3D Badge
+        const imgUrl = isBenar
+            ? (window.KUIS?.imgBenarUrl || '/storage/ekpresi_jawaban/Benar.png')
+            : (window.KUIS?.imgSalahUrl || '/storage/ekpresi_jawaban/Salah.png');
+
         const emojiBadge = document.getElementById('modal-emoji-badge');
+        const emojiImg = document.getElementById('modal-emoji-img');
+        const emojiEl = document.getElementById('modal-emoji');
+
+        if (emojiImg) {
+            emojiImg.src = imgUrl;
+            emojiImg.alt = isBenar ? 'Jawaban Bener' : 'Jawaban Kurang Tepat';
+        } else if (emojiBadge) {
+            let img = emojiBadge.querySelector('img');
+            if (!img) {
+                img = document.createElement('img');
+                img.id = 'modal-emoji-img';
+                img.className = 'w-full h-full object-contain';
+                emojiBadge.appendChild(img);
+            }
+            img.src = imgUrl;
+            img.alt = isBenar ? 'Jawaban Bener' : 'Jawaban Kurang Tepat';
+        }
+
         if (emojiEl) {
             emojiEl.textContent = isBenar ? '🥳' : '😔';
+            emojiEl.classList.add('hidden');
         }
+
         if (emojiBadge) {
-            emojiBadge.className = 'w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl flex items-center justify-center text-3xl sm:text-4xl border-2 border-b-4 mb-2.5 shadow-sm transform transition-transform hover:scale-105 select-none ' +
-                (isBenar ? 'bg-emerald-100 border-emerald-300 border-b-emerald-500' : 'bg-rose-100 border-rose-300 border-b-rose-500');
+            emojiBadge.className = 'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl flex items-center justify-center p-2 mb-2.5 shadow-sm transform transition-transform hover:scale-105 select-none overflow-hidden ' +
+                (isBenar ? 'bg-emerald-100' : 'bg-rose-100');
         }
 
         // Status Badge & Title
@@ -96,8 +121,8 @@
         const titleEl = document.getElementById('modal-title');
 
         if (badgeEl) {
-            badgeEl.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-xl font-heading font-black text-[11px] tracking-wider uppercase mb-1.5 shadow-sm ' +
-                (isBenar ? 'bg-emerald-500 text-white border-b-2 border-emerald-700' : 'bg-rose-500 text-white border-b-2 border-rose-700');
+            badgeEl.className = 'inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-heading font-black text-[11px] tracking-wider uppercase mb-1.5 shadow-sm text-center ' +
+                (isBenar ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white');
         }
         if (iconEl) {
             iconEl.textContent = isBenar ? 'verified' : 'cancel';
@@ -106,7 +131,14 @@
             statusTextEl.textContent = isBenar ? 'Leres Sanget!' : 'Durung Pas!';
         }
         if (titleEl) {
-            titleEl.textContent = isBenar ? (opts.title || 'Jawabanmu Bener!') : (opts.title || 'Jawaban Kurang Tepat');
+            if (isBenar) {
+                titleEl.textContent = opts.title || 'Jawabanmu Bener!';
+                titleEl.classList.remove('hidden');
+            } else {
+                // Hapus text biasa "Durung Pas!" agar tidak duplikat dengan status badge
+                titleEl.textContent = '';
+                titleEl.classList.add('hidden');
+            }
         }
 
         // Statistik Skor, EXP, Streak

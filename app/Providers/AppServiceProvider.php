@@ -18,7 +18,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // Dokumentasi API hanya disajikan lewat grup superadmin (lihat routes/web.php),
         // jadi rute bawaan paket (/docs/api dan /docs/api.json) tidak dipakai.
-        Scramble::ignoreDefaultRoutes();
+        if (class_exists(Scramble::class)) {
+            Scramble::ignoreDefaultRoutes();
+        }
     }
 
     /**
@@ -44,9 +46,11 @@ class AppServiceProvider extends ServiceProvider
      */
     private function configureApiDocumentation(): void
     {
-        Scramble::configure()->resolveOperationMethodsUsing(
-            fn (Route $route): array => array_values(array_diff($route->methods(), ['HEAD', 'OPTIONS']))
-        );
+        if (class_exists(Scramble::class)) {
+            Scramble::configure()->resolveOperationMethodsUsing(
+                fn (Route $route): array => array_values(array_diff($route->methods(), ['HEAD', 'OPTIONS']))
+            );
+        }
     }
 
     /**

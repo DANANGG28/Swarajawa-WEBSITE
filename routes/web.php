@@ -168,8 +168,10 @@ Route::middleware('web.auth:superadmin')->prefix('superadmin')->name('superadmin
 
     Route::post('/soal/generate-tts', [SuperadminWebController::class, 'generateTts'])->name('soal.tts');
 
-    Scramble::registerUiRoute('dokumentasi-api')->name('dokumentasi-api');
-    Scramble::registerJsonSpecificationRoute('dokumentasi-api.json')->name('dokumentasi-api.spec');
+    if (class_exists(Scramble::class)) {
+        Scramble::registerUiRoute('dokumentasi-api')->name('dokumentasi-api');
+        Scramble::registerJsonSpecificationRoute('dokumentasi-api.json')->name('dokumentasi-api.spec');
+    }
 });
 
 Route::get('/storage/image/guru/{filename}', function (string $filename) {
@@ -214,20 +216,43 @@ Route::get('/storage/image/siswa/{filename}', function (string $filename) {
 })->name('siswa.image');
 
 Route::get('/storage/logo/{filename}', function (string $filename) {
-    $path = storage_path('logo/'.$filename);
-    if (! file_exists($path)) {
-        $path = storage_path('app/public/logo/'.$filename);
+    $candidates = [
+        storage_path('logo/'.$filename),
+        storage_path('logo/'.strtolower($filename)),
+        storage_path('logo/logo_tp.png'),
+        storage_path('logo/Logo_TP.png'),
+        public_path('storage/logo/'.$filename),
+        public_path('storage/logo/logo_tp.png'),
+        public_path('images/'.$filename),
+        public_path('images/logo_tp.png'),
+        storage_path('app/public/logo/'.$filename),
+    ];
+
+    $path = null;
+    foreach ($candidates as $candidate) {
+        if (file_exists($candidate)) {
+            $path = $candidate;
+            break;
+        }
     }
-    if (! file_exists($path)) {
-        $path = public_path('storage/logo/'.$filename);
+
+    if (! $path) {
+        abort(404);
     }
+
+    $mime = str_ends_with(strtolower($path), '.png') ? 'image/png' : 'image/jpeg';
+
+    return response()->file($path, [
+        'Content-Type' => $mime,
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->name('logo.image');
+
+Route::get('/storage/ekpresi_jawaban/{filename}', function (string $filename) {
+    $path = storage_path('ekpresi_jawaban/'.$filename);
     if (! file_exists($path)) {
         abort(404);
     }
 
-    return response()->file($path, [
-        'Cache-Control' => 'no-cache, no-store, must-revalidate',
-        'Pragma' => 'no-cache',
-        'Expires' => '0',
-    ]);
-})->name('logo.image');
+    return response()->file($path);
+})->name('ekpresi.image');
