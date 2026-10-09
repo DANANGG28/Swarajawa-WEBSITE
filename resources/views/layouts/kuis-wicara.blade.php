@@ -35,6 +35,7 @@
         @yield('konten')
     </main>
 
+    @include('partials.kuis-feedback-modal')
     @include('partials.kuis-runtime')
     <script>
         (function () {

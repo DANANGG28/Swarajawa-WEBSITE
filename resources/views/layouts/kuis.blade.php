@@ -19,6 +19,7 @@
         </div>
     </footer>
 
+    @include('partials.kuis-feedback-modal')
     @include('partials.kuis-runtime')
     @stack('skrip')
     @include('partials.siswa-sound')
