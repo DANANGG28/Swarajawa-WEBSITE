@@ -16,6 +16,10 @@
         darkMode: "class",
         theme: {
           extend: {
+            "screens": {
+              // Sidebar 288 + widget 380 sudah muat sejak 1024px CSS.
+              "dash": "1024px",
+            },
             "colors": {
               "brand": {
                 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd',
@@ -125,9 +129,9 @@
     </header>
 
     <div class="pl-0 lg:pl-72 min-h-screen pb-24 lg:pb-8 sj-app">
-        <div class="flex flex-col xl:flex-row max-w-[1200px] mx-auto">
+        <div class="flex flex-col dash:flex-row max-w-[1200px] mx-auto">
             <!-- BEGIN: Center Learning Column -->
-            <main class="flex-1 min-w-0 px-4 sm:px-8 py-5 sm:py-7">
+            <main class="flex-1 min-w-0 px-4 xl:px-8 py-5 sm:py-7">
                 <div class="max-w-3xl mx-auto space-y-6 sm:space-y-8">
 
                     <!-- Welcome Alert Banner -->
@@ -330,7 +334,7 @@
             <!-- END: Center Learning Column -->
 
             <!-- BEGIN: Right Sidebar (Widgets) -->
-            <aside id="dashboard-widgets" class="hidden xl:block w-[380px] shrink-0 px-6 py-7 space-y-5 sj-widgets sticky top-0 self-start" data-purpose="right-sidebar-widgets">
+            <aside id="dashboard-widgets" class="hidden dash:block w-[300px] xl:w-[380px] shrink-0 px-4 xl:px-6 py-7 space-y-5 sj-widgets sticky top-0 self-start" data-purpose="right-sidebar-widgets">
                 <!-- Stats Bar -->
                 <div class="bg-white rounded-[32px] p-5 px-6 border-2 border-slate-200 sj-card sj-card-hover flex items-center justify-around" data-purpose="top-stats-bar">
                     <button type="button" id="btn-open-streak-modal" class="flex items-center gap-3 text-left cursor-pointer active:scale-95 transition-transform">
@@ -579,7 +583,7 @@
             if (!aside) return;
 
             function apply() {
-                if (window.innerWidth < 1280) {
+                if (window.innerWidth < 1024) {
                     aside.style.top = '';
                     return;
                 }
