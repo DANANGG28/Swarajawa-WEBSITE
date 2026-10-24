@@ -46,9 +46,16 @@ class TtsService
         $voice ??= config('services.edge_tts.voice_default', 'jv-ID-DimasNeural');
 
         $directory = trim($directory, '/');
-        $relative = $directory.'/'.Str::uuid().'.mp3';
+        $cacheSubdir = $directory . '/cache';
+        $hash = md5($voice . ':' . $text);
+        $relative = $cacheSubdir . '/' . $hash . '.mp3';
 
-        Storage::disk('public')->makeDirectory($directory, 0775, true, true);
+        // Cache hit: langsung kembalikan berkas yang sudah pernah dibuat
+        if (Storage::disk('public')->exists($relative) && Storage::disk('public')->size($relative) > 0) {
+            return $relative;
+        }
+
+        Storage::disk('public')->makeDirectory($cacheSubdir, 0775, true, true);
         $absolute = Storage::disk('public')->path($relative);
         @chmod(dirname($absolute), 0775);
 
@@ -107,9 +114,13 @@ class TtsService
     private function mock(string $text, string $voice, ?string $error = null, string $directory = 'tts'): array
     {
         $directory = trim($directory, '/');
-        $relative = $directory.'/mock_'.Str::uuid().'.mp3';
-        Storage::disk('public')->makeDirectory($directory, 0775, true, true);
-        Storage::disk('public')->put($relative, base64_decode(self::SILENT_MP3_BASE64));
+        $hash = md5($voice . ':' . $text);
+        $relative = $directory . '/mock_' . $hash . '.mp3';
+
+        if (! Storage::disk('public')->exists($relative)) {
+            Storage::disk('public')->makeDirectory($directory, 0775, true, true);
+            Storage::disk('public')->put($relative, base64_decode(self::SILENT_MP3_BASE64));
+        }
 
         if (! Storage::disk('public')->exists($relative)) {
             throw new RuntimeException('Gagal menyimpan audio TTS — cek izin tulis storage/app/public.');

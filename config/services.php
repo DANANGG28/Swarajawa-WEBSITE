@@ -64,6 +64,15 @@ return [
         'language' => env('ELEVENLABS_STT_LANGUAGE', 'jav'),
     ],
 
+    'groq' => [
+        'api_key' => env('GROQ_API_KEY'),
+        'whisper_model' => env('GROQ_WHISPER_MODEL', 'whisper-large-v3'),
+    ],
+
+    'stt' => [
+        'driver' => env('STT_DRIVER', 'groq'),
+    ],
+
     'edge_tts' => [
         'binary' => env('EDGE_TTS_BINARY', 'edge-tts'),
         'voice_default' => env('EDGE_TTS_VOICE', 'jv-ID-DimasNeural'),
