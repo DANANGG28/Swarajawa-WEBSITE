@@ -52,25 +52,24 @@ class VoiceTutorService
     private function callLlm(string $userText, array $history, string $contextMode): ?array
     {
         $systemPrompt = <<<'PROMPT'
-Panjenengan menika "Si Swara", tutor pacelathon Basa Jawa ingkang grapyak, sabar, lan pinter ing aplikasi SwaraJawa.
-Tugas panjenengan yaiku ngobrol interaktif kaliyan siswa, mbiyantu siswa sinau pacelathon (percakapan), tembung, lan unggah-ungguh basa Jawa (Ngoko, Krama Madya, Krama Alus/Inggil).
+Kamu adalah "Si Swara", tutor percakapan dan koreksi Bahasa Jawa di aplikasi SwaraJawa.
+Tugasmu adalah membimbing siswa SMP/SMA belajar percakapan, kosakata, dan unggah-ungguh Bahasa Jawa (Ngoko, Krama Madya, Krama Alus).
 
-Pandhuan wangsulan:
-1. Wangsulana kanthi ramah, sopan, lan ringkes (maksimal 2-3 ukara cekak).
-2. Gunakake Basa Jawa (utawa campuran Basa Indonesia ingkang trep menawa siswa takon teges/terjemahan).
-3. Yen siswa takon carane ngomong ing kahanan tartamtu, wenehi ukara Basa Jawa sing bener, banjur tantang siswa supaya nurokake lafal kasebut: "Coba saiki tirukna: [ukara target]".
-4. Yen siswa lagi nurokake utawa mangsuli, wenehi apresiasi ("Pinter!", "Saiki wis leres!").
-5. Format respon kudu JSON valid persis kaya iki:
+Panduan Berbicara & Menjawab:
+1. Sampaikan evaluasi, koreksi pelafalan, atau penjelasan cara berbicara dalam Bahasa Indonesia yang ramah, santun, dan singkat (maksimal 2 kalimat).
+2. Jika siswa bertanya atau perlu contoh kalimat Bahasa Jawa, berikan kalimat yang benar, lalu tantang siswa untuk menirukan: "Coba sekarang tirukan: [kalimat target Jawa]".
+3. Jika ucapan siswa sudah benar, berikan apresiasi ("Pintar! Sudah benar.") dalam Bahasa Indonesia.
+4. Format respon WAJIB JSON valid:
 {
-  "balasan_teks": "teks wangsulan kanggo siswa",
+  "balasan_teks": "teks koreksi atau penjelasan dalam Bahasa Indonesia ramah",
+  "voice": "id-ID-ArdiNeural",
   "expression": "happy" | "neutral" | "thinking" | "speaking" | "curious",
-  "suggested_repeat": "ukara Basa Jawa cekak sing kudu diturokake siswa (utawa null yen ora ana tantangan tirukan)",
+  "suggested_repeat": "kalimat Jawa pendek yang harus ditirukan siswa (atau null jika tidak ada tantangan)",
   "vocabulary": [
-    {"word": "tembung", "meaning": "arti dalam bahasa Indonesia", "level": "Krama/Ngoko"}
+    {"word": "kata Jawa", "meaning": "arti dalam Bahasa Indonesia", "level": "Krama/Ngoko"}
   ]
 }
 PROMPT;
-
         $messages = [
             ['role' => 'system', 'content' => $systemPrompt],
         ];
@@ -108,6 +107,7 @@ PROMPT;
                     if (is_array($parsed) && isset($parsed['balasan_teks'])) {
                         return [
                             'balasan_teks' => (string) $parsed['balasan_teks'],
+                            'voice' => ! empty($parsed['voice']) ? (string) $parsed['voice'] : 'id-ID-ArdiNeural',
                             'expression' => in_array($parsed['expression'] ?? '', ['happy', 'neutral', 'thinking', 'speaking', 'curious']) ? $parsed['expression'] : 'happy',
                             'suggested_repeat' => ! empty($parsed['suggested_repeat']) ? (string) $parsed['suggested_repeat'] : null,
                             'vocabulary' => is_array($parsed['vocabulary'] ?? null) ? $parsed['vocabulary'] : [],
@@ -140,6 +140,7 @@ PROMPT;
                     if (is_array($parsed) && isset($parsed['balasan_teks'])) {
                         return [
                             'balasan_teks' => (string) $parsed['balasan_teks'],
+                            'voice' => ! empty($parsed['voice']) ? (string) $parsed['voice'] : 'id-ID-ArdiNeural',
                             'expression' => in_array($parsed['expression'] ?? '', ['happy', 'neutral', 'thinking', 'speaking', 'curious']) ? $parsed['expression'] : 'happy',
                             'suggested_repeat' => ! empty($parsed['suggested_repeat']) ? (string) $parsed['suggested_repeat'] : null,
                             'vocabulary' => is_array($parsed['vocabulary'] ?? null) ? $parsed['vocabulary'] : [],
@@ -164,7 +165,8 @@ PROMPT;
         // Kasus: Terima kasih
         if (str_contains($lower, 'terima kasih') || str_contains($lower, 'makasih') || str_contains($lower, 'matur nuwun')) {
             return [
-                'balasan_teks' => 'Kagem matur nuwun ingkang leres dhateng tiyang sepuh, ucapaken: "Matur sembah nuwun sanget". Coba saiki tirukna lafal iki ya!',
+                'balasan_teks' => 'Untuk berterima kasih secara sopan kepada orang tua atau guru, sampaikan: "Matur sembah nuwun sanget". Coba sekarang tirukan ya!',
+                'voice' => 'id-ID-ArdiNeural',
                 'expression' => 'happy',
                 'suggested_repeat' => 'Matur sembah nuwun sanget',
                 'vocabulary' => [
@@ -177,7 +179,8 @@ PROMPT;
         // Kasus: Maaf / Nyuwun sewu
         if (str_contains($lower, 'maaf') || str_contains($lower, 'permisi') || str_contains($lower, 'nyuwun sewu') || str_contains($lower, 'pangapunten')) {
             return [
-                'balasan_teks' => 'Yen nyuwun sewu utawa njaluk ngapura kanthi sopan, aturaken: "Nyuwun pangapunten lahir batin". Ayo coba tirukna!',
+                'balasan_teks' => 'Kalau mau permisi lewat atau minta maaf secara sopan, ucapkan: "Nyuwun pangapunten lahir batin". Ayo coba tirukan!',
+                'voice' => 'id-ID-ArdiNeural',
                 'expression' => 'neutral',
                 'suggested_repeat' => 'Nyuwun pangapunten lahir batin',
                 'vocabulary' => [
@@ -190,7 +193,8 @@ PROMPT;
         // Kasus: Salam / Selamat pagi / Sapaan
         if (str_contains($lower, 'halo') || str_contains($lower, 'hai') || str_contains($lower, 'pagi') || str_contains($lower, 'sugeng')) {
             return [
-                'balasan_teks' => 'Sugeng enjang! Kula Si Swara, kanca sinau Basa Jawa panjenengan. Coba sapa kula nganggo: "Sugeng enjang, Mas".',
+                'balasan_teks' => 'Selamat pagi! Saya Si Swara, teman belajar Bahasa Jawa kamu. Coba sapa saya dengan: "Sugeng enjang, Mas".',
+                'voice' => 'id-ID-ArdiNeural',
                 'expression' => 'happy',
                 'suggested_repeat' => 'Sugeng enjang, Mas',
                 'vocabulary' => [
@@ -203,7 +207,8 @@ PROMPT;
         // Kasus: Makan / Nedha / Dhahar
         if (str_contains($lower, 'makan') || str_contains($lower, 'mangan') || str_contains($lower, 'lapar') || str_contains($lower, 'dhahar')) {
             return [
-                'balasan_teks' => 'Basa Jawa mangan kuwi ana undha-usuke: mangan (ngoko), nedha (krama madya), lan dhahar (krama alus). Coba tirukna ukara iki: "Bapak sampun dhahar".',
+                'balasan_teks' => 'Bahasa Jawa makan memiliki tingkatan: mangan untuk ngoko, nedha untuk krama madya, dan dhahar untuk orang tua. Coba tirukan: "Bapak sampun dhahar".',
+                'voice' => 'id-ID-ArdiNeural',
                 'expression' => 'curious',
                 'suggested_repeat' => 'Bapak sampun dhahar',
                 'vocabulary' => [
@@ -215,7 +220,8 @@ PROMPT;
 
         // Kasus: Menirukan atau jawaban pendek
         return [
-            'balasan_teks' => 'Leres sanget! Pangucapan lan tata basamu sansaya sae. Coba saiki wicara babagan apa sing koksenengi dina iki.',
+            'balasan_teks' => 'Pintar! Pengucapan dan tata bahasamu sudah semakin tepat. Coba sekarang kamu tirukan kalimat ini ya.',
+            'voice' => 'id-ID-ArdiNeural',
             'expression' => 'happy',
             'suggested_repeat' => 'Kula remen sinau Basa Jawa',
             'vocabulary' => [

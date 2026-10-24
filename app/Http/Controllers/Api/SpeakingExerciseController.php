@@ -175,7 +175,7 @@ class SpeakingExerciseController extends Controller
 
             $tutorReply = $this->voiceTutor->generateReply($userText, $history, $contextMode);
 
-            $voice = config('services.edge_tts.voice_default', 'jv-ID-DimasNeural');
+            $voice = $tutorReply['voice'] ?? config('services.edge_tts.voice_feedback', 'id-ID-ArdiNeural');
             $tts = $this->tts->synthesize($tutorReply['balasan_teks'], $voice);
 
             return response()->json([
