@@ -2,12 +2,11 @@
 
 @section('konten')
 <div class="w-full max-w-2xl mx-auto flex flex-col gap-4 relative" id="voice-tutor-container">
-    <!-- Header Panggung Voice Tutor -->
-    <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200 shadow-sm flex items-center justify-between gap-3">
+    <!-- Bar Kontrol Atas (Status & Pengaturan Sesi) -->
+    <div class="bg-white rounded-2xl px-4 py-3 border border-gray-200 shadow-xs flex items-center justify-between gap-3">
         <div class="flex items-center gap-2.5">
-            <span class="relative flex h-3 w-3">
-                <span id="live-indicator-ping" class="hidden absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span id="live-indicator-dot" class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            <span class="relative flex h-2.5 w-2.5">
+                <span id="live-indicator-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
             </span>
             <div class="flex flex-col">
                 <span class="font-heading text-xs sm:text-sm font-bold text-black-900 leading-tight">Si Swara</span>
@@ -32,8 +31,10 @@
         </div>
     </div>
 
-    <!-- Center Stage: Maskot Kapsul Si Swara (SVG Interaktif) -->
-    <div class="bg-white rounded-3xl p-5 sm:p-6 border border-gray-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden select-none">
+    <!-- Center Stage: Maskot Kapsul Si Swara Sekaligus Tombol Rekam Interaktif -->
+    <div id="mascot-interactive-btn" role="button" tabindex="0" aria-label="Ketuk Si Swara kanggo wicara utawa mandheg"
+        class="bg-white rounded-3xl p-5 sm:p-6 border-2 border-gray-200 hover:border-primary-400 focus:outline-none focus:border-primary-500 shadow-sm flex flex-col items-center justify-center relative overflow-hidden select-none cursor-pointer transition-all duration-200 group">
+        
         <div class="relative w-[180px] h-[210px] flex items-center justify-center">
             <!-- Cincin Gelombang Audio Konsentris di Belakang Kapsul -->
             <svg id="pulse-rings" class="absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-300 opacity-0" viewBox="0 0 180 210">
@@ -43,7 +44,7 @@
             </svg>
 
             <!-- Maskot Kapsul Vektor "Si Swara" -->
-            <svg id="mascot-svg" class="relative z-10 w-[140px] h-[190px] drop-shadow-md cursor-pointer transition-transform duration-200" viewBox="0 0 140 190">
+            <svg id="mascot-svg" class="relative z-10 w-[140px] h-[190px] drop-shadow-md transition-transform duration-200 group-hover:scale-[1.03]" viewBox="0 0 140 190">
                 <defs>
                     <linearGradient id="pill-body-grad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stop-color="#FFFFFF" />
@@ -53,7 +54,7 @@
                 </defs>
 
                 <!-- Badan Kapsul Utama -->
-                <rect x="10" y="10" width="120" height="168" rx="60" fill="url(#pill-body-grad)" stroke="#A79BFF" stroke-width="2.4" />
+                <rect id="pill-rect-border" x="10" y="10" width="120" height="168" rx="60" fill="url(#pill-body-grad)" stroke="#A79BFF" stroke-width="2.4" class="transition-colors duration-200" />
 
                 <!-- Aksen Blangkon / Motif Tradisional Jawa ing Kepala Kapsul -->
                 <path d="M 32 32 Q 70 24 108 32 L 104 38 Q 70 30 36 38 Z" fill="#5443C9" opacity="0.22" />
@@ -99,8 +100,14 @@
             </svg>
         </div>
 
+        <!-- Indikator Status Mic Tepat di Bawah Maskot -->
+        <div id="mascot-mic-badge" class="mt-2 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-50 text-primary-700 border border-primary-200/80 transition-all duration-200">
+            <span id="mascot-mic-icon" class="material-symbols-outlined text-[18px]">mic</span>
+            <span id="mascot-mic-label" class="font-heading text-xs sm:text-sm font-bold">Ketuk Si Swara kanggo wicara</span>
+        </div>
+
         <!-- Kartu Tantangan Tirukan Lafal (Repeat Challenge Card) -->
-        <div id="repeat-challenge-card" class="w-full mt-3 p-3.5 sm:p-4 rounded-2xl bg-surface-container-low border border-primary-200/70 shadow-sm flex items-center justify-between gap-3 transition-all duration-200">
+        <div id="repeat-challenge-card" class="w-full mt-4 p-3.5 sm:p-4 rounded-2xl bg-surface-container-low border border-primary-200/70 shadow-2xs flex items-center justify-between gap-3 transition-all duration-200" onclick="event.stopPropagation();">
             <div class="flex items-start gap-3 min-w-0">
                 <div class="w-8 h-8 rounded-xl bg-primary-100 text-primary-700 flex items-center justify-center shrink-0 mt-0.5">
                     <span class="material-symbols-outlined text-[18px]">record_voice_over</span>
@@ -111,16 +118,16 @@
                 </div>
             </div>
             <button id="btn-slow-play" type="button" title="Rungokna alon (0.8x)"
-                class="shrink-0 p-2 rounded-xl bg-white hover:bg-primary-50 text-primary-700 border border-primary-200 shadow-sm active:scale-95 transition-all">
+                class="shrink-0 p-2 rounded-xl bg-white hover:bg-primary-50 text-primary-700 border border-primary-200 shadow-2xs active:scale-95 transition-all">
                 <span class="material-symbols-outlined text-[18px]">slow_motion_video</span>
             </button>
         </div>
     </div>
 
-    <!-- Area Transkrip Percakapan -->
-    <div class="bg-white rounded-3xl p-4 sm:p-5 border border-gray-200 shadow-sm flex flex-col gap-3 min-h-[200px] max-h-[300px] overflow-y-auto" id="transcript-list">
+    <!-- Area Transkrip Percakapan (Teks AI Tampil Mengalir Sinkron dengan Audio) -->
+    <div class="bg-white rounded-3xl p-4 sm:p-5 border border-gray-200 shadow-sm flex flex-col gap-3 min-h-[220px] max-h-[340px] overflow-y-auto" id="transcript-list">
         <!-- Balasan Awal Tutor -->
-        <div class="flex items-start gap-2.5 max-w-[85%]">
+        <div class="flex items-start gap-2.5 max-w-[88%]">
             <div class="w-7 h-7 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
                 S
             </div>
@@ -133,14 +140,13 @@
         </div>
     </div>
 
-    <!-- Dock Kontrol Audio & Rekam Ala GoPrep -->
-    <div class="bg-white rounded-3xl p-4 sm:p-5 border border-gray-200 shadow-sm flex flex-col gap-3">
-        <!-- Toggle Hands-Free & Mode Input -->
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+    <!-- Dock Bawah Ramping (Mode Handsfree & Input Teks Alternatif) -->
+    <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200 shadow-xs flex flex-col gap-2.5">
+        <div class="flex items-center justify-between">
             <label class="inline-flex items-center gap-2 cursor-pointer select-none">
                 <input id="toggle-handsfree" type="checkbox" checked class="sr-only peer">
                 <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600"></div>
-                <span class="font-body text-xs font-semibold text-gray-700">Mode Hands-Free (Otomatis)</span>
+                <span class="font-body text-xs font-semibold text-gray-700">Mode Hands-Free (Auto Stop)</span>
             </label>
 
             <button id="btn-toggle-input-mode" type="button"
@@ -150,30 +156,14 @@
             </button>
         </div>
 
-        <!-- Tombol Utama Mic (Diameter 76px) -->
-        <div id="mic-action-container" class="flex flex-col items-center justify-center gap-2 pt-1 pb-1">
-            <div class="relative flex items-center justify-center">
-                <!-- Glowing Ripple Ring when recording -->
-                <div id="mic-pulse-ring" class="hidden absolute w-24 h-24 rounded-full bg-red-400/30 animate-ping"></div>
-
-                <button id="btn-main-mic" type="button" aria-label="Mulai bicara"
-                    class="relative z-10 w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-primary-600 to-primary-800 hover:from-primary-700 hover:to-primary-900 text-white flex items-center justify-center shadow-lg shadow-primary-600/30 active:scale-95 transition-all">
-                    <span id="mic-main-icon" class="material-symbols-outlined text-[32px] sm:text-[36px]">mic</span>
-                </button>
-            </div>
-            <p id="mic-status-label" class="font-heading text-xs sm:text-sm font-bold text-black-900 text-center mt-1">
-                Ketuk mic kanggo wicara
-            </p>
-        </div>
-
-        <!-- Input Bar Teks Alternatif (Muncul jika tombol ketik ditekan / mic tidak tersedia) -->
-        <form id="form-text-input" class="hidden flex items-center gap-2 pt-1">
+        <!-- Form Teks Alternatif (Tersembunyi secara default) -->
+        <form id="form-text-input" class="hidden flex items-center gap-2 pt-1 border-t border-gray-100">
             <input id="input-text-chat" type="text" placeholder="Ketik pitakon utawa ukara Basa Jawa ing kene..."
-                class="flex-1 bg-surface-container-low border border-gray-200 rounded-2xl px-4 py-2.5 font-body text-xs sm:text-sm text-black-900 focus:outline-none focus:border-primary-500">
+                class="flex-1 bg-surface-container-low border border-gray-200 rounded-xl px-3.5 py-2 font-body text-xs sm:text-sm text-black-900 focus:outline-none focus:border-primary-500">
             <button type="submit"
-                class="px-4 py-2.5 rounded-2xl bg-primary-600 hover:bg-primary-700 text-white font-heading text-xs sm:text-sm font-bold shadow-sm transition-all active:scale-95 flex items-center gap-1">
+                class="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-heading text-xs sm:text-sm font-bold shadow-2xs transition-all active:scale-95 flex items-center gap-1">
                 <span>Kirim</span>
-                <span class="material-symbols-outlined text-[16px]">send</span>
+                <span class="material-symbols-outlined text-[15px]">send</span>
             </button>
         </form>
     </div>
@@ -227,7 +217,9 @@
 <script>
 (function() {
     // 1. Elemen Panggung & Kontrol
+    const mascotBtn = document.getElementById('mascot-interactive-btn');
     const mascotSvg = document.getElementById('mascot-svg');
+    const pillRectBorder = document.getElementById('pill-rect-border');
     const eyeLeftPupil = document.getElementById('eye-left-pupil');
     const eyeRightPupil = document.getElementById('eye-right-pupil');
     const eyeLeftShine = document.getElementById('eye-left-shine');
@@ -241,11 +233,11 @@
     const mouthTalking = document.getElementById('mouth-talking');
     const pulseRings = document.getElementById('pulse-rings');
 
+    const mascotMicBadge = document.getElementById('mascot-mic-badge');
+    const mascotMicIcon = document.getElementById('mascot-mic-icon');
+    const mascotMicLabel = document.getElementById('mascot-mic-label');
+
     const statusText = document.getElementById('status-text');
-    const btnMainMic = document.getElementById('btn-main-mic');
-    const micMainIcon = document.getElementById('mic-main-icon');
-    const micPulseRing = document.getElementById('mic-pulse-ring');
-    const micStatusLabel = document.getElementById('mic-status-label');
     const toggleHandsfree = document.getElementById('toggle-handsfree');
     const transcriptList = document.getElementById('transcript-list');
     const repeatChallengeCard = document.getElementById('repeat-challenge-card');
@@ -276,7 +268,6 @@
     let mediaRecorder = null;
     let audioChunks = [];
     let audioContext = null;
-    let silenceTimer = null;
     let lastAudioEnergyTime = Date.now();
 
     const conversationHistory = [];
@@ -287,7 +278,7 @@
 
     let currentAudioPlayer = null;
 
-    // 3. Interactive Spring Gaze Tracking
+    // 3. Interactive Spring Gaze Tracking (Nututi gerakan kursor/mouse)
     let targetGazeX = 0, targetGazeY = 0;
     let currentGazeX = 0, currentGazeY = 0;
 
@@ -335,7 +326,6 @@
 
     // 5. Mascot Mood Switcher
     function setMascotMood(mood) {
-        // Reset element states
         eyeLeftPupil.classList.remove('hidden');
         eyeRightPupil.classList.remove('hidden');
         eyeLeftShine.classList.remove('hidden');
@@ -366,7 +356,6 @@
         } else if (mood === 'speaking') {
             mouthTalking.classList.remove('hidden');
         } else {
-            // neutral
             mouthNeutral.classList.remove('hidden');
         }
     }
@@ -398,8 +387,57 @@
         setMascotMood('happy');
     }
 
-    // 7. Audio Playback (Direct Base64 Zero-Roundtrip)
-    function playAudio(audioBase64, audioUrl, onComplete) {
+    // 7. Streaming Teks Berjalan Bareng dengan Audio yang Diputar AI
+    function streamTextWithAudio(audio, fullText, textContainer, cursorElement, onComplete) {
+        const words = fullText.trim().split(/\s+/);
+        textContainer.textContent = '';
+        if (cursorElement) cursorElement.classList.remove('hidden');
+
+        let isDone = false;
+
+        function updateProgress() {
+            if (isDone) return;
+
+            const duration = audio.duration;
+            const current = audio.currentTime;
+
+            if (duration && duration > 0 && !isNaN(duration)) {
+                const ratio = Math.min(1.0, current / duration);
+                const count = Math.min(words.length, Math.floor(ratio * words.length) + 1);
+                textContainer.textContent = words.slice(0, count).join(' ');
+            } else {
+                // Fallback jika durasi belum terbaca seketika
+                const cur = textContainer.textContent.trim().split(/\s+/).filter(Boolean).length;
+                if (cur < words.length) {
+                    textContainer.textContent = words.slice(0, cur + 1).join(' ');
+                }
+            }
+
+            if (audio.ended || (duration && current >= duration - 0.05)) {
+                isDone = true;
+                textContainer.textContent = fullText;
+                if (cursorElement) cursorElement.classList.add('hidden');
+                if (onComplete) onComplete();
+                return;
+            }
+
+            requestAnimationFrame(updateProgress);
+        }
+
+        requestAnimationFrame(updateProgress);
+
+        audio.addEventListener('ended', () => {
+            if (!isDone) {
+                isDone = true;
+                textContainer.textContent = fullText;
+                if (cursorElement) cursorElement.classList.add('hidden');
+                if (onComplete) onComplete();
+            }
+        }, { once: true });
+    }
+
+    // 8. Putar Audio AI (Zero-Roundtrip Base64) + Sinkronisasi Teks Streaming
+    function playAudio(audioBase64, audioUrl, fullText = null, textContainer = null, cursorElement = null) {
         if (currentAudioPlayer) {
             currentAudioPlayer.pause();
             currentAudioPlayer = null;
@@ -413,7 +451,8 @@
         }
 
         if (!audioSrc) {
-            if (onComplete) onComplete();
+            if (fullText && textContainer) textContainer.textContent = fullText;
+            if (cursorElement) cursorElement.classList.add('hidden');
             return;
         }
 
@@ -422,36 +461,39 @@
         currentAudioPlayer = audio;
         isAiSpeaking = true;
         statusText.textContent = 'Si Swara lagi matur...';
+        mascotMicLabel.textContent = 'Si Swara lagi matur...';
+        mascotMicIcon.textContent = 'volume_up';
         startLipSync();
 
-        audio.onended = () => {
-            isAiSpeaking = false;
-            stopLipSync();
-            statusText.textContent = 'Aktif · Kanca Sinau Basa Jawa';
-            if (onComplete) onComplete();
+        // Mulai sinkronisasi teks streaming bersamaan dengan audio
+        if (fullText && textContainer) {
+            streamTextWithAudio(audio, fullText, textContainer, cursorElement, () => {
+                onAiAudioComplete();
+            });
+        } else {
+            audio.onended = () => onAiAudioComplete();
+        }
 
-            // Jika handsfree aktif, otomatis aktifkan mic untuk giliran siswa
-            if (handsFreeEnabled && !isRecording && !isProcessing) {
-                setTimeout(() => {
-                    startRecording();
-                }, 400);
-            }
-        };
-
-        audio.onerror = () => {
-            isAiSpeaking = false;
-            stopLipSync();
-            statusText.textContent = 'Aktif · Kanca Sinau Basa Jawa';
-            if (onComplete) onComplete();
-        };
-
-        audio.play().catch(() => {
-            isAiSpeaking = false;
-            stopLipSync();
-        });
+        audio.onerror = () => onAiAudioComplete();
+        audio.play().catch(() => onAiAudioComplete());
     }
 
-    // 8. Perekaman Suara (MediaRecorder + Fast Silence VAD 550ms)
+    function onAiAudioComplete() {
+        isAiSpeaking = false;
+        stopLipSync();
+        statusText.textContent = 'Aktif · Kanca Sinau Basa Jawa';
+        mascotMicLabel.textContent = 'Ketuk Si Swara kanggo wicara';
+        mascotMicIcon.textContent = 'mic';
+
+        // Jika handsfree aktif, otomatis nyalakan kembali mic setelah jeda 400ms
+        if (handsFreeEnabled && !isRecording && !isProcessing) {
+            setTimeout(() => {
+                startRecording();
+            }, 450);
+        }
+    }
+
+    // 9. Perekaman Suara (Dipicu Tombol Maskot Kapsul + VAD 550ms Auto-Stop)
     async function startRecording() {
         if (isRecording || isProcessing || isAiSpeaking) return;
 
@@ -459,7 +501,6 @@
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             audioChunks = [];
 
-            // Setup MediaRecorder
             const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : '';
             mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
 
@@ -479,21 +520,24 @@
 
             mediaRecorder.start(100);
             isRecording = true;
+
+            // Efek visual merekam pada maskot
             pulseRings.style.opacity = '1';
-            micPulseRing.classList.remove('hidden');
-            btnMainMic.classList.remove('from-primary-600', 'to-primary-800');
-            btnMainMic.classList.add('from-red-500', 'to-red-700');
-            micMainIcon.textContent = 'stop';
-            micStatusLabel.textContent = 'Ngrungokake swara panjenengan...';
+            mascotBtn.classList.remove('border-gray-200', 'hover:border-primary-400');
+            mascotBtn.classList.add('border-red-500', 'shadow-md', 'shadow-red-500/15');
+            pillRectBorder.setAttribute('stroke', '#EF4444');
+            mascotMicBadge.classList.remove('bg-primary-50', 'text-primary-700', 'border-primary-200/80');
+            mascotMicBadge.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+            mascotMicIcon.textContent = 'stop_circle';
+            mascotMicLabel.textContent = 'Mirengaken... (Ketuk kanggo mandheg)';
             statusText.textContent = 'Kula mirengaken...';
             setMascotMood('neutral');
 
-            // Setup VAD hening 550ms nganggo Web Audio API
             setupSilenceDetector(stream);
 
         } catch (err) {
-            console.warn('Microphone access denied:', err);
-            micStatusLabel.textContent = 'Mic ora diidini. Mangga nggunakake form ketik ing ngisor.';
+            console.warn('Microphone error:', err);
+            mascotMicLabel.textContent = 'Mic ora diidini. Gunakna form ketik.';
             showTextInputMode();
         }
     }
@@ -516,11 +560,10 @@
                 for (let i = 0; i < buffer.length; i++) sum += buffer[i];
                 const avg = sum / buffer.length;
 
-                // Threshold suara
-                if (avg > 15) {
+                if (avg > 14) {
                     lastAudioEnergyTime = Date.now();
-                } else if (handsFreeEnabled && Date.now() - lastAudioEnergyTime > 600) {
-                    // Hening lebih dari 600ms -> auto stop
+                } else if (handsFreeEnabled && Date.now() - lastAudioEnergyTime > 550) {
+                    // Hening 550ms -> auto-stop
                     stopRecording();
                     return;
                 }
@@ -533,12 +576,16 @@
     function stopRecording() {
         if (!isRecording || !mediaRecorder) return;
         isRecording = false;
+
+        // Reset visual maskot
         pulseRings.style.opacity = '0';
-        micPulseRing.classList.add('hidden');
-        btnMainMic.classList.remove('from-red-500', 'to-red-700');
-        btnMainMic.classList.add('from-primary-600', 'to-primary-800');
-        micMainIcon.textContent = 'mic';
-        micStatusLabel.textContent = 'Si Swara lagi mikir wangsulan...';
+        mascotBtn.classList.remove('border-red-500', 'shadow-md', 'shadow-red-500/15');
+        mascotBtn.classList.add('border-gray-200', 'hover:border-primary-400');
+        pillRectBorder.setAttribute('stroke', '#A79BFF');
+        mascotMicBadge.classList.remove('bg-red-50', 'text-red-700', 'border-red-200');
+        mascotMicBadge.classList.add('bg-primary-50', 'text-primary-700', 'border-primary-200/80');
+        mascotMicIcon.textContent = 'hourglass_empty';
+        mascotMicLabel.textContent = 'Si Swara lagi mikir wangsulan...';
         statusText.textContent = 'Mikir rumiyin...';
         setMascotMood('thinking');
 
@@ -547,7 +594,7 @@
         } catch (_) {}
     }
 
-    // 9. Kirim Audio / Teks dhateng Backend Voice Tutor
+    // 10. Kirim Audio / Teks ke Backend Voice Tutor
     async function submitAudio(audioBlob, mockTranscript = null) {
         isProcessing = true;
         setMascotMood('thinking');
@@ -560,7 +607,6 @@
             formData.append('mock_transcript', mockTranscript);
         }
 
-        // Riwayat 4 obrolan pungkasan
         const historySlice = conversationHistory.slice(-4);
         historySlice.forEach((h, idx) => {
             formData.append(`history[${idx}][role]`, h.role);
@@ -578,7 +624,7 @@
                 body: formData,
             });
 
-            if (!res.ok) throw new Error('Server returned ' + res.status);
+            if (!res.ok) throw new Error('Server status ' + res.status);
             const data = await res.json();
 
             // Tambah dialog siswa
@@ -587,19 +633,20 @@
                 conversationHistory.push({ role: 'user', content: data.transkripsi_siswa });
             }
 
-            // Tambah balasan tutor
+            // Siapkan bubble tutor untuk streaming teks yang berjalan bareng audio
+            let tutorElements = null;
             if (data.balasan_teks) {
-                appendChatBubble('tutor', data.balasan_teks, data.audio_base64, data.audio_url);
+                tutorElements = appendChatBubble('tutor', '', data.audio_base64, data.audio_url, true);
                 conversationHistory.push({ role: 'assistant', content: data.balasan_teks });
             }
 
-            // Update kartu tantangan tirukan lafal
+            // Perbarui kartu tantangan tirukan lafal
             if (data.suggested_repeat) {
                 repeatChallengeText.textContent = data.suggested_repeat;
                 repeatChallengeCard.classList.remove('hidden');
             }
 
-            // Update kosakata sesi
+            // Perbarui kosakata sesi
             if (Array.isArray(data.vocabulary)) {
                 data.vocabulary.forEach(v => {
                     if (!vocabularyList.some(item => item.word.toLowerCase() === v.word.toLowerCase())) {
@@ -611,52 +658,70 @@
 
             isProcessing = false;
             setMascotMood(data.expression || 'happy');
-            micStatusLabel.textContent = 'Ketuk mic kanggo wicara';
 
-            // Putar audio langsung dari memory base64
-            playAudio(data.audio_base64, data.audio_url);
+            // Putar audio dan stream teks bersamaan
+            if (tutorElements && data.balasan_teks) {
+                playAudio(
+                    data.audio_base64,
+                    data.audio_url,
+                    data.balasan_teks,
+                    tutorElements.textEl,
+                    tutorElements.cursorEl
+                );
+            }
 
         } catch (err) {
-            console.error('Voice tutor request failed:', err);
+            console.error('Voice tutor interact error:', err);
             isProcessing = false;
             setMascotMood('neutral');
-            micStatusLabel.textContent = 'Gagal ngirim audio. Mangga cobi malih.';
+            mascotMicLabel.textContent = 'Gagal ngirim audio. Mangga cobi malih.';
             statusText.textContent = 'Aktif · Kanca Sinau Basa Jawa';
         }
     }
 
-    // 10. Tambah Gelembung Obrolan ing Layar
-    function appendChatBubble(sender, text, audioBase64 = null, audioUrl = null) {
+    // 11. Tambah Bubble Chat (Mendukung Wadah Teks Streaming)
+    function appendChatBubble(sender, initialText, audioBase64 = null, audioUrl = null, isStreaming = false) {
         const bubble = document.createElement('div');
         if (sender === 'siswa') {
-            bubble.className = 'flex items-start justify-end gap-2 max-w-[85%] self-end';
+            bubble.className = 'flex items-start justify-end gap-2 max-w-[88%] self-end';
             bubble.innerHTML = `
-                <div class="p-3 rounded-2xl rounded-tr-sm bg-primary-700 text-white font-body text-xs sm:text-sm leading-relaxed shadow-sm">
-                    ${escapeHtml(text)}
+                <div class="p-3 rounded-2xl rounded-tr-sm bg-primary-700 text-white font-body text-xs sm:text-sm leading-relaxed shadow-xs">
+                    ${escapeHtml(initialText)}
                 </div>
             `;
+            transcriptList.appendChild(bubble);
+            transcriptList.scrollTop = transcriptList.scrollHeight;
+            return null;
         } else {
-            bubble.className = 'flex items-start gap-2.5 max-w-[85%]';
+            bubble.className = 'flex items-start gap-2.5 max-w-[88%]';
             bubble.innerHTML = `
                 <div class="w-7 h-7 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
                     S
                 </div>
                 <div class="p-3 rounded-2xl rounded-tl-sm bg-gray-50 border border-gray-200 text-black-900 font-body text-xs sm:text-sm leading-relaxed flex items-start gap-2 shadow-2xs">
-                    <span class="flex-1">${escapeHtml(text)}</span>
-                    <button type="button" class="btn-replay-item shrink-0 text-primary-600 hover:text-primary-800 p-0.5" title="Putar ulang">
+                    <span class="flex-1 text-container">${escapeHtml(initialText)}</span>
+                    <span class="streaming-cursor inline-block w-1.5 h-3.5 bg-primary-600 animate-pulse ${isStreaming ? '' : 'hidden'}"></span>
+                    <button type="button" class="btn-replay-item shrink-0 text-primary-600 hover:text-primary-800 p-0.5 ${isStreaming ? 'hidden' : ''}" title="Putar ulang">
                         <span class="material-symbols-outlined text-[16px]">volume_up</span>
                     </button>
                 </div>
             `;
+
+            const textEl = bubble.querySelector('.text-container');
+            const cursorEl = bubble.querySelector('.streaming-cursor');
             const btnReplay = bubble.querySelector('.btn-replay-item');
+
             if (btnReplay) {
                 btnReplay.addEventListener('click', () => {
                     playAudio(audioBase64, audioUrl);
                 });
             }
+
+            transcriptList.appendChild(bubble);
+            transcriptList.scrollTop = transcriptList.scrollHeight;
+
+            return { bubble, textEl, cursorEl, btnReplay };
         }
-        transcriptList.appendChild(bubble);
-        transcriptList.scrollTop = transcriptList.scrollHeight;
     }
 
     function escapeHtml(str) {
@@ -665,7 +730,7 @@
         return div.innerHTML;
     }
 
-    // 11. Render Rekap Kosakata Modal
+    // 12. Render Rekap Kosakata Modal
     function renderVocabularyList() {
         vocabBadgeCount.textContent = vocabularyList.length;
         vocabModalList.innerHTML = '';
@@ -685,12 +750,20 @@
         });
     }
 
-    // 12. Event Listeners
-    btnMainMic.addEventListener('click', () => {
+    // 13. Event Listeners Interaktif
+    // Maskot Oval Interaktif berfungsi sebagai Tombol Mic Utama
+    mascotBtn.addEventListener('click', () => {
         if (isRecording) {
             stopRecording();
-        } else {
+        } else if (!isProcessing && !isAiSpeaking) {
             startRecording();
+        }
+    });
+
+    mascotBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            mascotBtn.click();
         }
     });
 
@@ -709,7 +782,6 @@
         submitAudio(null, text);
     });
 
-    // Replay initial greeting
     document.querySelectorAll('.btn-replay-audio').forEach(btn => {
         btn.addEventListener('click', () => {
             submitAudio(null, 'Sugeng enjang sedaya');
