@@ -71,6 +71,7 @@ Route::middleware('auth.any')->group(function () {
 
         Route::post('soal/{soal}/quiz-suara', [SpeakingExerciseController::class, 'quizSuara']);
         Route::post('soal/{soal}/latihan-ngomong', [SpeakingExerciseController::class, 'latihanNgomong']);
+        Route::post('voice-tutor/interact', [SpeakingExerciseController::class, 'voiceTutorInteract']);
     });
 
     Route::middleware('role:guru,superadmin')->group(function () {

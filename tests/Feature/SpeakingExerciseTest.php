@@ -176,4 +176,30 @@ class SpeakingExerciseTest extends TestCase
 
         $this->assertDatabaseHas('exp', ['siswa_id' => $siswa->id, 'total_exp' => 0]);
     }
+
+    public function test_voice_tutor_interact_returns_conversation_reply_and_base64(): void
+    {
+        $level = $this->level(1);
+        $siswa = $this->siswaDenganProgres($level);
+        Sanctum::actingAs($siswa);
+
+        $response = $this->post('/api/voice-tutor/interact', [
+            'audio' => $this->audio(),
+            'mock_transcript' => 'gimana cara bilang terima kasih ke guru',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'transkripsi_siswa',
+                'balasan_teks',
+                'expression',
+                'suggested_repeat',
+                'vocabulary',
+                'audio_base64',
+                'audio_url',
+            ]);
+
+        $this->assertEquals('gimana cara bilang terima kasih ke guru', $response->json('transkripsi_siswa'));
+        $this->assertNotEmpty($response->json('audio_base64'));
+    }
 }

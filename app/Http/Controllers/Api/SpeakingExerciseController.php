@@ -8,12 +8,12 @@ use App\Services\Ai\PenilaianUcapanService;
 use App\Services\Ai\RagService;
 use App\Services\Ai\SttService;
 use App\Services\Ai\TtsService;
+use App\Services\Ai\VoiceTutorService;
 use App\Services\JawabanService;
 use App\Services\ProgresService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
 /**
  * Dua fitur speaking practice (setup-tts-stt-live.md):
  *
@@ -29,6 +29,7 @@ class SpeakingExerciseController extends Controller
         private readonly JawabanService $jawaban,
         private readonly ProgresService $progres,
         private readonly RagService $rag,
+        private readonly VoiceTutorService $voiceTutor,
     ) {}
 
     /**
@@ -81,6 +82,7 @@ class SpeakingExerciseController extends Controller
                 'benar' => $kategori === PenilaianUcapanService::BENAR,
                 'teks_respons' => $teksRespons,
                 'audio_url' => $tts['audio_url'],
+                'audio_base64' => $tts['audio_base64'] ?? null,
                 'skor_tertinggi' => $catatan['skor_tertinggi'],
                 'exp_didapat' => $catatan['exp_didapat'],
                 'reward_exp' => $catatan['reward_exp'],
@@ -141,11 +143,55 @@ class SpeakingExerciseController extends Controller
                 'transkripsi' => $hasilStt['text'],
                 'feedback_text' => $feedback,
                 'audio_url' => $tts['audio_url'],
+                'audio_base64' => $tts['audio_base64'] ?? null,
+                'expression' => 'happy',
             ]);
         } catch (\Throwable $e) {
             Log::error('Latihan Ngomong gagal: '.$e->getMessage());
 
             return response()->json(['message' => 'Gagal memproses audio, coba lagi.'], 500);
+        }
+    }
+
+    /**
+     * Voice Tutor Interaktif — Free-form interactive speaking practice ala GoPrep.gg Preppy AI.
+     * Menghasilkan transkripsi, balasan teks, audio base64 in-memory, ekspresi avatar, dan repeat challenge.
+     */
+    public function voiceTutorInteract(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'audio' => ['required', 'file', 'mimetypes:audio/*,video/mp4,video/webm', 'max:10240'],
+            'mock_transcript' => ['nullable', 'string', 'max:1000'],
+            'history' => ['nullable', 'array'],
+            'context_mode' => ['nullable', 'string', 'in:free_talk,roleplay,vocabulary'],
+        ]);
+
+        try {
+            $hasilStt = $this->stt->transcribeFile($data['audio'], 'jw', $data['mock_transcript'] ?? null);
+            $userText = (string) ($hasilStt['text'] ?? '');
+
+            $history = $data['history'] ?? [];
+            $contextMode = $data['context_mode'] ?? 'free_talk';
+
+            $tutorReply = $this->voiceTutor->generateReply($userText, $history, $contextMode);
+
+            $voice = config('services.edge_tts.voice_default', 'jv-ID-DimasNeural');
+            $tts = $this->tts->synthesize($tutorReply['balasan_teks'], $voice);
+
+            return response()->json([
+                'mock' => (bool) ($hasilStt['mock'] || $tts['mock']),
+                'transkripsi_siswa' => $userText,
+                'balasan_teks' => $tutorReply['balasan_teks'],
+                'expression' => $tutorReply['expression'],
+                'suggested_repeat' => $tutorReply['suggested_repeat'],
+                'vocabulary' => $tutorReply['vocabulary'],
+                'audio_base64' => $tts['audio_base64'] ?? null,
+                'audio_url' => $tts['audio_url'] ?? null,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Voice Tutor interact error: ' . $e->getMessage());
+
+            return response()->json(['message' => 'Gagal memproses percakapan: ' . $e->getMessage()], 500);
         }
     }
 
