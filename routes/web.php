@@ -65,6 +65,7 @@ Route::middleware('web.auth:siswa')->prefix('kuis')->group(function () {
     Route::get('/speak-to-text', [KuisSesiController::class, 'speakToText'])->name('kuis.speak-to-text');
     Route::get('/latihan-ngomong', [KuisSesiController::class, 'latihanNgomong'])->name('kuis.latihan-ngomong');
     Route::post('/latihan-ngomong/jawab', [KuisSesiController::class, 'latihanNgomongJawab'])->name('kuis.latihan-ngomong.jawab');
+    Route::post('/voice-tutor/interact', [KuisSesiController::class, 'voiceTutorInteract'])->name('kuis.voice-tutor.interact');
     Route::get('/tracing-aksara', [KuisSesiController::class, 'tracingAksara'])->name('kuis.tracing-aksara');
 
     Route::post('/jawab', [KuisSesiController::class, 'jawab'])->name('kuis.jawab');

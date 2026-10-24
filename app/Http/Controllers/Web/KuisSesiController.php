@@ -19,6 +19,7 @@ use App\Services\GamificationService;
 use App\Services\JawabanService;
 use App\Services\ProgresService;
 use App\Services\QuizScoringService;
+use App\Services\Ai\VoiceTutorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,6 +44,7 @@ class KuisSesiController extends Controller
         private readonly RagService $rag,
         private readonly ProgresService $progres,
         private readonly JawabanService $jawaban,
+        private readonly VoiceTutorService $voiceTutor,
     ) {}
 
     public function pilihanGanda(): View|RedirectResponse
@@ -280,6 +282,60 @@ class KuisSesiController extends Controller
             Log::error('Latihan Ngomong (web) gagal: '.$e->getMessage());
 
             return response()->json(['message' => 'Gagal memproses audio, coba lagi.'], 500);
+        }
+    }
+
+    /**
+     * Interaksi Voice Tutor Dua Arah (Web) ala GoPrep.gg Preppy AI.
+     */
+    public function voiceTutorInteract(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'audio' => ['nullable', 'file', 'mimetypes:audio/*,video/mp4,video/webm', 'max:15360'],
+            'audio_base64' => ['nullable', 'string', 'max:15000000'],
+            'mock_transcript' => ['nullable', 'string', 'max:1000'],
+            'history' => ['nullable', 'array'],
+            'context_mode' => ['nullable', 'string', 'in:free_talk,roleplay,vocabulary'],
+        ]);
+
+        try {
+            $userText = '';
+            $isMock = false;
+
+            if ($request->hasFile('audio')) {
+                $hasilStt = $this->stt->transcribeFile($request->file('audio'), 'jv', $data['mock_transcript'] ?? null);
+                $userText = (string) ($hasilStt['text'] ?? '');
+                $isMock = (bool) ($hasilStt['mock'] ?? false);
+            } elseif (! empty($data['audio_base64'])) {
+                $hasilStt = $this->stt->transcribe($data['audio_base64'], 'jv', $data['mock_transcript'] ?? null);
+                $userText = (string) ($hasilStt['text'] ?? '');
+                $isMock = (bool) ($hasilStt['mock'] ?? false);
+            } elseif (! empty($data['mock_transcript'])) {
+                $userText = trim($data['mock_transcript']);
+            }
+
+            $history = $data['history'] ?? [];
+            $contextMode = $data['context_mode'] ?? 'free_talk';
+
+            $tutorReply = $this->voiceTutor->generateReply($userText, $history, $contextMode);
+
+            $voice = config('services.edge_tts.voice_default', 'jv-ID-DimasNeural');
+            $tts = $this->tts->synthesize($tutorReply['balasan_teks'], $voice);
+
+            return response()->json([
+                'mock' => (bool) ($isMock || $tts['mock']),
+                'transkripsi_siswa' => $userText,
+                'balasan_teks' => $tutorReply['balasan_teks'],
+                'expression' => $tutorReply['expression'],
+                'suggested_repeat' => $tutorReply['suggested_repeat'],
+                'vocabulary' => $tutorReply['vocabulary'],
+                'audio_base64' => $tts['audio_base64'] ?? null,
+                'audio_url' => $tts['audio_url'] ?? null,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Web Voice Tutor interact error: ' . $e->getMessage());
+
+            return response()->json(['message' => 'Gagal memproses percakapan: ' . $e->getMessage()], 500);
         }
     }
 

@@ -202,4 +202,22 @@ class SpeakingExerciseTest extends TestCase
         $this->assertEquals('gimana cara bilang terima kasih ke guru', $response->json('transkripsi_siswa'));
         $this->assertNotEmpty($response->json('audio_base64'));
     }
+
+    public function test_web_voice_tutor_interact_route_works_for_web_siswa(): void
+    {
+        $level = $this->level(1);
+        $siswa = $this->siswaDenganProgres($level);
+
+        $response = $this->actingAs($siswa, 'siswa')->post('/kuis/voice-tutor/interact', [
+            'mock_transcript' => 'sugeng enjang mas',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'transkripsi_siswa',
+                'balasan_teks',
+                'expression',
+                'audio_base64',
+            ]);
+    }
 }
