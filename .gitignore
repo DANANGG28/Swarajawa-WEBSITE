@@ -3,6 +3,7 @@
 
 # Environment files (example is committed)
 .env
+.env.prod
 .env.*
 !.env.example
 .phpactor.json
