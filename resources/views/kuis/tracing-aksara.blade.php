@@ -29,6 +29,14 @@
                     <div id="canvas-loading" class="absolute inset-0 flex items-center justify-center text-white/80 font-body text-body gap-2">
                         <span class="material-symbols-outlined animate-spin">progress_activity</span> Menyiapkan kanvas…
                     </div>
+
+                    <!-- Pop-up Notifikasi Melayang di Atas Kanvas -->
+                    <div id="canvas-popup" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-20 transition-all duration-300 transform max-w-[92%] w-auto select-none pointer-events-auto">
+                        <div id="canvas-popup-inner" class="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl shadow-2xl backdrop-blur-md border text-xs sm:text-sm font-bold font-body cursor-pointer">
+                            <span id="canvas-popup-icon" class="material-symbols-outlined text-[20px] shrink-0">info</span>
+                            <span id="canvas-popup-text"></span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -38,9 +46,8 @@
                 </div>
 
                 <div id="canvas-hint-bar" class="rounded-xl border border-gray-100 bg-surface-container-low p-3 text-center font-body text-body text-gray-500">
-                    Telusuri bentuk aksara hingga tepat. Jika kurang mirip, kanvas akan mengulang secara otomatis.
+                    Telusuri bentuk aksara hingga tepat (minimal 70%). Gunakan tombol Hapus Goresan jika ingin mengulang.
                 </div>
-                <div id="canvas-popup" class="hidden rounded-2xl p-4 border text-center font-body text-body font-bold"></div>
 
                 <div id="feedback" class="hidden rounded-2xl p-5 border"></div>
             </section>
@@ -65,7 +72,6 @@
                 const FALLBACK = (SOAL.paths || []).map((s) => s.map((p) => ({ x: p[0], y: p[1] })));
 
                 const feedback = document.getElementById('feedback');
-                const statusChip = document.getElementById('canvas-status');
                 const popup = document.getElementById('canvas-popup');
                 const loading = document.getElementById('canvas-loading');
                 let tracer = null;
@@ -74,26 +80,35 @@
                 function showPopup(message, type) {
                     if (!popup) return;
                     const green = type === 'success';
-                    popup.className = 'rounded-2xl p-4 border text-center font-body text-body font-bold ' + (green ? 'bg-green-500/10 border-green-500/30 text-green-600' : 'bg-error-container/60 border-error/30 text-error');
-                    popup.textContent = message;
+                    const inner = document.getElementById('canvas-popup-inner');
+                    const icon = document.getElementById('canvas-popup-icon');
+                    const text = document.getElementById('canvas-popup-text');
+
+                    if (inner && icon && text) {
+                        inner.className = 'flex items-center gap-2.5 px-4 py-2.5 rounded-2xl shadow-2xl backdrop-blur-md border text-xs sm:text-sm font-bold font-body cursor-pointer transition-all ' +
+                            (green
+                                ? 'bg-emerald-950/90 border-emerald-400/60 text-emerald-100 shadow-emerald-950/60'
+                                : 'bg-rose-950/90 border-rose-400/60 text-rose-100 shadow-rose-950/60');
+                        icon.textContent = green ? 'check_circle' : 'draw';
+                        icon.className = 'material-symbols-outlined text-[20px] shrink-0 ' + (green ? 'text-emerald-300' : 'text-rose-300');
+                        text.textContent = message;
+                    } else {
+                        popup.textContent = message;
+                    }
+
                     popup.classList.remove('hidden');
                     if (popupTimer) clearTimeout(popupTimer);
-                    popupTimer = setTimeout(() => popup.classList.add('hidden'), 1600);
+                    popupTimer = setTimeout(() => popup.classList.add('hidden'), 2600);
                 }
 
-                function markSuccess() {
-                    if (statusChip) {
-                        statusChip.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-caption text-caption font-bold bg-green-500/15 text-green-600';
-                        statusChip.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500"></span> Berhasil!';
-                    }
-                    showPopup('Berhasil! Aksara sudah benar.', 'success');
-                }
+                popup?.addEventListener('click', () => {
+                    if (popupTimer) clearTimeout(popupTimer);
+                    popup.classList.add('hidden');
+                });
 
-                function markActive() {
-                    if (statusChip) {
-                        statusChip.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-caption text-caption font-bold bg-primary-fixed/60 text-primary-700';
-                        statusChip.innerHTML = '<span class="w-2 h-2 rounded-full bg-primary-600 animate-ping"></span> Goresan Aktif';
-                    }
+                function markSuccess(score) {
+                    const pct = Math.round((score || 0) * 100);
+                    showPopup('Tepat! Kemiripan ' + pct + '%', 'success');
                 }
 
                 function start() {
@@ -103,15 +118,18 @@
                     tracer = new window.TracingCanvas(canvas, FALLBACK, {
                         aksara: SOAL.aksara || null,
                         passThreshold: 0.7,
-                        onSuccess: () => markSuccess(),
-                        onFail: () => showPopup('Kurang mirip, ayo dicoba lagi.', 'fail'),
+                        autoResetOnFail: false,
+                        onSuccess: (score) => markSuccess(score),
+                        onFail: (score) => {
+                            const pct = Math.round((score || 0) * 100);
+                            showPopup('Kemiripan ' + pct + '% (min. 70%)', 'fail');
+                        },
                     });
 
                     if (loading) loading.remove();
 
                     document.getElementById('btn-reset')?.addEventListener('click', () => {
                         tracer.reset();
-                        markActive();
                     });
 
                     const ttsBtn = document.getElementById('btn-tts');
