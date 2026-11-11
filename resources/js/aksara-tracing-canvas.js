@@ -580,6 +580,7 @@ export class TracingCanvas {
             epsilon: 0.004,
             passThreshold: 0.7,
             retryDelay: 750,
+            autoResetOnFail: false,
             fontFamily: '"Noto Sans Javanese", sans-serif',
             onStrokeCompleted: null,
             onSuccess: null,
@@ -758,14 +759,16 @@ export class TracingCanvas {
                 if (typeof this.options.onSuccess === 'function') this.options.onSuccess(score);
             }
         } else {
-            // Belum mirip → rapikan sekilas lalu ulangi (bersihkan kanvas).
+            // Belum mirip
             this.redraw();
             if (typeof this.options.onFail === 'function') this.options.onFail(score);
-            if (this._retryTimer) clearTimeout(this._retryTimer);
-            this._retryTimer = setTimeout(() => {
-                this._retryTimer = null;
-                this.reset();
-            }, this.options.retryDelay);
+            if (this.options.autoResetOnFail) {
+                if (this._retryTimer) clearTimeout(this._retryTimer);
+                this._retryTimer = setTimeout(() => {
+                    this._retryTimer = null;
+                    this.reset();
+                }, this.options.retryDelay);
+            }
         }
     }
 
