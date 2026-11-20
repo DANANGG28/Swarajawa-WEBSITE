@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Support\Pgvector;
 use Database\Factories\KorpusFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class Korpus extends Model
 {
@@ -15,7 +17,7 @@ class Korpus extends Model
 
     protected $table = 'korpus';
 
-    private static ?bool $vectorSearchSupport = null;
+    private static bool $vectorSearchSupported = false;
 
     protected $fillable = [
         'judul',
@@ -40,23 +42,26 @@ class Korpus extends Model
     /**
      * Apakah kolom `embedding` bertipe pgvector. Di PostgreSQL tanpa ekstensi
      * pgvector, kolom jatuh ke JSON dan pencarian dihitung di PHP.
+     *
+     * Hasil positif di-cache per proses; migrasi berjalan setelah proses hidup
+     * hanya bisa menambah kapabilitas, jadi hasil negatif sengaja tidak
+     * di-cache agar tidak terkunci di jalur fallback.
      */
     public static function supportsVectorSearch(): bool
     {
-        if (self::$vectorSearchSupport !== null) {
-            return self::$vectorSearchSupport;
+        if (self::$vectorSearchSupported) {
+            return true;
         }
 
-        if (DB::getDriverName() !== 'pgsql') {
-            return self::$vectorSearchSupport = false;
+        if (DB::getDriverName() !== 'pgsql' || ! Pgvector::available()) {
+            return false;
         }
 
-        $type = DB::table('information_schema.columns')
-            ->where('table_name', 'korpus')
-            ->where('column_name', 'embedding')
-            ->value('udt_name');
+        if (! Schema::hasColumn('korpus', 'embedding')) {
+            return false;
+        }
 
-        return self::$vectorSearchSupport = $type === 'vector';
+        return self::$vectorSearchSupported = self::embeddingColumnType() === 'vector';
     }
 
     /**
@@ -69,11 +74,21 @@ class Korpus extends Model
     public function scopeSimilarTo(Builder $query, array $vector, int $limit = 3): Builder
     {
         $vectorStr = '['.implode(',', $vector).']';
+        $type = Pgvector::type();
+        $distance = Pgvector::distanceOperator();
 
         return $query->select(['id', 'judul', 'kategori', 'konten', 'sumber'])
-            ->selectRaw('(1 - (embedding <=> ?::vector)) AS score', [$vectorStr])
+            ->selectRaw("(1 - (embedding {$distance} ?::{$type})) AS score", [$vectorStr])
             ->whereNotNull('embedding')
-            ->orderByRaw('embedding <=> ?::vector ASC', [$vectorStr])
+            ->orderByRaw("embedding {$distance} ?::{$type} ASC", [$vectorStr])
             ->limit($limit);
+    }
+
+    private static function embeddingColumnType(): ?string
+    {
+        return DB::table('information_schema.columns')
+            ->where('table_name', 'korpus')
+            ->where('column_name', 'embedding')
+            ->value('udt_name');
     }
 }
