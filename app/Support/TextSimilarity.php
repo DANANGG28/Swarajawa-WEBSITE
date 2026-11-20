@@ -68,4 +68,36 @@ class TextSimilarity
 
         return $union === 0 ? 0.0 : $intersection / $union;
     }
+
+    /**
+     * Hitung kesamaan kosinus (cosine similarity) antara dua vektor numerik.
+     *
+     * @param  array<int, float>  $a
+     * @param  array<int, float>  $b
+     */
+    public static function cosine(array $a, array $b): float
+    {
+        $count = count($a);
+        if ($count === 0 || $count !== count($b)) {
+            return 0.0;
+        }
+
+        $dotProduct = 0.0;
+        $normA = 0.0;
+        $normB = 0.0;
+
+        for ($i = 0; $i < $count; $i++) {
+            $valA = (float) $a[$i];
+            $valB = (float) $b[$i];
+            $dotProduct += $valA * $valB;
+            $normA += $valA * $valA;
+            $normB += $valB * $valB;
+        }
+
+        if ($normA <= 0.0 || $normB <= 0.0) {
+            return 0.0;
+        }
+
+        return $dotProduct / (sqrt($normA) * sqrt($normB));
+    }
 }

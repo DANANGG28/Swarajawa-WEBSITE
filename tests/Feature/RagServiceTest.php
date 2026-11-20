@@ -129,4 +129,41 @@ class RagServiceTest extends TestCase
         $this->assertStringContainsString('Mangan kalebu ngoko', $hasil['jawaban']);
         Http::assertNothingSent();
     }
+
+    public function test_vector_retrieval_flow_when_embeddings_succeed(): void
+    {
+        config()->set('ai.gemini_api_key', 'fake-gemini-key');
+
+        $dimension = (int) config('ai.embedding_dimension');
+        $corpusVector = array_fill(0, $dimension, 0.0);
+        $corpusVector[0] = 1.0;
+
+        Http::fake([
+            '*:embedContent*' => Http::response([
+                'embedding' => [
+                    'values' => $corpusVector,
+                ],
+            ]),
+            '*/chat/completions' => Http::response([
+                'choices' => [
+                    ['message' => ['content' => 'Wangsulan saking korpus vektor.']],
+                ],
+            ]),
+        ]);
+
+        Korpus::create([
+            'judul' => 'Topik Vektor Jawa',
+            'kategori' => 'tata-basa',
+            'konten' => 'Konten tata basa adhedhasar vektor.',
+            'sumber' => 'Bausastra Jawa',
+            'embedding' => $corpusVector,
+        ]);
+
+        $hasil = app(RagService::class)->ask('pertanyaan tentang tata basa');
+
+        $this->assertTrue($hasil['dijawab']);
+        $this->assertSame('Wangsulan saking korpus vektor.', $hasil['jawaban']);
+        $this->assertNotEmpty($hasil['sumber']);
+        $this->assertSame('Topik Vektor Jawa', $hasil['sumber'][0]['judul']);
+    }
 }

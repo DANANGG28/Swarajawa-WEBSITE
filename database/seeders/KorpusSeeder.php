@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Korpus;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 
 class KorpusSeeder extends Seeder
 {
@@ -40,6 +41,11 @@ class KorpusSeeder extends Seeder
 
         foreach ($this->entries() as $entry) {
             Korpus::updateOrCreate(['judul' => $entry['judul']], $entry);
+        }
+
+        if (! empty(config('ai.gemini_api_key'))) {
+            $this->command?->info('Menjalankan embedding korpus...');
+            Artisan::call('korpus:embed');
         }
     }
 

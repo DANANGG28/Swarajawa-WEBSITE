@@ -20,4 +20,17 @@ return [
     'model' => env('AI_PROVIDER_MODEL', 'gemini-3.8-flash'),
 
     'timeout' => (int) env('AI_PROVIDER_TIMEOUT', 30),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Vector Embedding Model (Google text-embedding-004)
+    |--------------------------------------------------------------------------
+    */
+    'embedding_model' => env('AI_EMBEDDING_MODEL', 'text-embedding-004'),
+
+    'embedding_dimension' => (int) env('AI_EMBEDDING_DIMENSION', 768),
+
+    'gemini_api_key' => env('GEMINI_API_KEY'),
+
+    'embedding_base_url' => env('AI_EMBEDDING_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta'),
 ];

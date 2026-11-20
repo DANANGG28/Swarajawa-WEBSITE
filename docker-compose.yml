@@ -25,7 +25,8 @@ services:
         depends_on:
             - pgsql
     pgsql:
-        image: 'postgres:18-alpine'
+        # pgvector dibutuhkan kolom `korpus.embedding` bertipe vector.
+        image: 'pgvector/pgvector:pg18'
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
         environment:

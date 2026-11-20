@@ -30,10 +30,11 @@ jobs:
     timeout-minutes: 20
 
     # Database tes memakai PostgreSQL, sama seperti produksi (Supabase PG 17).
-    # Nilai di phpunit.xml (sqlite) tidak dipaksa, jadi variabel di bawah ini menang.
+    # Image pgvector dipakai supaya jalur retrieval `embedding <=> ?` ikut teruji;
+    # phpunit.xml (sqlite) menguji jalur fallback kosinus di PHP.
     services:
       postgres:
-        image: postgres:17
+        image: pgvector/pgvector:pg17
         env:
           POSTGRES_DB: testing
           POSTGRES_USER: root

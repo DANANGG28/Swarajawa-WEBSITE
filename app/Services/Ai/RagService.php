@@ -76,6 +76,10 @@ class RagService
     /** @var array<string, array<int, string>>|null */
     private static ?array $synonymIndex = null;
 
+    public function __construct(
+        private EmbeddingService $embedding
+    ) {}
+
     /**
      * @return array{dijawab: bool, jawaban: string, sumber: array<int, array<string, ?string>>, skor_tertinggi: float}
      */
@@ -86,7 +90,7 @@ class RagService
         }
 
         $tokens = $this->keywords($question);
-        $relevant = $this->retrieve($tokens, $limit);
+        $relevant = $this->retrieve($question, $tokens, $limit);
 
         $answer = $this->generate($question, $relevant);
 
@@ -130,7 +134,56 @@ class RagService
      * @param  array<int, string>  $tokens
      * @return Collection<int, array{item: Korpus, score: float}>
      */
-    private function retrieve(array $tokens, int $limit): Collection
+    private function retrieve(string $question, array $tokens, int $limit): Collection
+    {
+        $queryVector = $this->embedding->embed($question);
+
+        if ($queryVector !== null) {
+            $vectorDocs = $this->retrieveByVector($queryVector, $limit);
+
+            if ($vectorDocs->isNotEmpty()) {
+                return $vectorDocs;
+            }
+        }
+
+        return $this->retrieveByKeywords($tokens, $limit);
+    }
+
+    /**
+     * Retrieval semantik: pgvector bila kolom `embedding` bertipe vector,
+     * selain itu kosinus dihitung di PHP.
+     *
+     * @param  array<float>  $queryVector
+     * @return Collection<int, array{item: Korpus, score: float}>
+     */
+    private function retrieveByVector(array $queryVector, int $limit): Collection
+    {
+        if (Korpus::supportsVectorSearch()) {
+            return Korpus::query()->similarTo($queryVector, $limit)->get()
+                ->map(fn (Korpus $item): array => [
+                    'item' => $item,
+                    'score' => (float) ($item->score ?? 0.0),
+                ])
+                ->filter(fn (array $row): bool => $row['score'] > 0)
+                ->values();
+        }
+
+        return Korpus::query()->whereNotNull('embedding')->get()
+            ->map(fn (Korpus $item): array => [
+                'item' => $item,
+                'score' => TextSimilarity::cosine($queryVector, (array) $item->embedding),
+            ])
+            ->filter(fn (array $row): bool => $row['score'] > 0)
+            ->sortByDesc('score')
+            ->take($limit)
+            ->values();
+    }
+
+    /**
+     * @param  array<int, string>  $tokens
+     * @return Collection<int, array{item: Korpus, score: float}>
+     */
+    private function retrieveByKeywords(array $tokens, int $limit): Collection
     {
         $synonyms = self::synonymIndex();
 
