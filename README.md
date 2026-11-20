@@ -157,6 +157,21 @@ di `docker-compose.yml` sudah `pgvector/pgvector:pg18`. Bila ekstensinya tidak
 tersedia, migrasi menurunkan kolom ke `json` dan retrieval menghitung kosinus
 di PHP, jadi aplikasi tetap jalan tanpa pgvector.
 
+Di Supabase, ekstensi `vector` dipasang ke schema `extensions`, bukan `public`.
+Koneksi default sudah memakai `DB_SEARCH_PATH=public,extensions`; kalau nilai
+itu dikosongkan, cast `?::vector` akan gagal walau ekstensinya terpasang.
+Pasang sekali lewat SQL Editor (atau biarkan migrasi melakukannya):
+
+```sql
+create schema if not exists extensions;
+create extension if not exists vector with schema extensions;
+
+alter table public.korpus add column if not exists embedding extensions.vector(768);
+
+create index if not exists korpus_embedding_hnsw_idx
+    on public.korpus using hnsw (embedding extensions.vector_cosine_ops);
+```
+
 ---
 
 ## 5. Frontend (Vite)

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Support\Pgvector;
 use Database\Factories\KorpusFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class Korpus extends Model
 {
@@ -14,8 +16,6 @@ class Korpus extends Model
     use HasFactory;
 
     protected $table = 'korpus';
-
-    private static ?bool $vectorSearchSupport = null;
 
     protected $fillable = [
         'judul',
@@ -43,20 +43,16 @@ class Korpus extends Model
      */
     public static function supportsVectorSearch(): bool
     {
-        if (self::$vectorSearchSupport !== null) {
-            return self::$vectorSearchSupport;
-        }
-
         if (DB::getDriverName() !== 'pgsql') {
-            return self::$vectorSearchSupport = false;
+            return false;
         }
 
-        $type = DB::table('information_schema.columns')
-            ->where('table_name', 'korpus')
-            ->where('column_name', 'embedding')
-            ->value('udt_name');
+        if (! Pgvector::available()) {
+            return false;
+        }
 
-        return self::$vectorSearchSupport = $type === 'vector';
+        return Schema::hasColumn('korpus', 'embedding')
+            && self::embeddingColumnType() === 'vector';
     }
 
     /**
@@ -69,11 +65,21 @@ class Korpus extends Model
     public function scopeSimilarTo(Builder $query, array $vector, int $limit = 3): Builder
     {
         $vectorStr = '['.implode(',', $vector).']';
+        $type = Pgvector::type();
+        $distance = Pgvector::distanceOperator();
 
         return $query->select(['id', 'judul', 'kategori', 'konten', 'sumber'])
-            ->selectRaw('(1 - (embedding <=> ?::vector)) AS score', [$vectorStr])
+            ->selectRaw("(1 - (embedding {$distance} ?::{$type})) AS score", [$vectorStr])
             ->whereNotNull('embedding')
-            ->orderByRaw('embedding <=> ?::vector ASC', [$vectorStr])
+            ->orderByRaw("embedding {$distance} ?::{$type} ASC", [$vectorStr])
             ->limit($limit);
+    }
+
+    private static function embeddingColumnType(): ?string
+    {
+        return DB::table('information_schema.columns')
+            ->where('table_name', 'korpus')
+            ->where('column_name', 'embedding')
+            ->value('udt_name');
     }
 }
