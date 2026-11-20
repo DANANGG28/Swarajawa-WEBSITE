@@ -15,7 +15,12 @@ Codebase RAG sudah ada dan JANGAN dibuat ulang dari nol:
 
 ## Keputusan Arsitektur (SUDAH FINAL — jangan diubah tanpa konfirmasi user)
 
-**Korpus disimpan sebagai file, BUKAN di-embed ke vector database.** Alasan: skala data kecil (ribuan baris teks pendek), proyek tugas kuliah, dan retrieval berbasis keyword similarity (bukan semantic/vector search) sudah cukup untuk kebutuhan guardrail chatbot ini. Ini membuat sistem ringan — tidak perlu pgvector, tidak perlu API embedding berbayar, tidak perlu infra tambahan.
+**Korpus disimpan di tabel `korpus` PostgreSQL dengan kolom vektor `embedding` (pgvector).** Retrieval semantik memakai kemiripan kosinus Google `text-embedding-004`; retrieval kata kunci + sinonim tetap dipakai sebagai fallback saat API embedding tidak tersedia atau tidak ada baris ber-embedding.
+
+- Lokasi data mentah tetap file JSON di `storage/app/corpus/`, di-seed oleh `KorpusSeeder`.
+- Vektor diisi oleh `php artisan korpus:embed` (`--force` untuk menimpa yang lama).
+- `pgvector` wajib ada di image PostgreSQL (`pgvector/pgvector:*`). Bila ekstensi tidak tersedia, kolom otomatis jatuh ke `json` dan kosinus dihitung di PHP — migrasi tidak gagal, hanya lebih lambat.
+- Dimensi vektor mengikuti `AI_EMBEDDING_DIMENSION`; respons API dengan dimensi berbeda ditolak agar insert tidak gagal.
 
 **Wikipedia Basa Jawa (materi budaya) TIDAK dikerjakan di tahap ini.** Fokus dulu ke 2 sumber dataset di bawah. Materi budaya dari Wikipedia menyusul di iterasi berikutnya (butuh proses kurasi judul artikel secara manual dulu — belum siap).
 
@@ -168,9 +173,9 @@ Karena ini chatbot untuk siswa SMP/SMA yang berpotensi dipakai banyak orang saat
 
 ## Yang TIDAK boleh dilakukan tanpa konfirmasi user
 
-- Jangan pindah arsitektur ke pgvector/vector DB — keputusan file-based sudah final untuk tahap ini.
+- Jangan menghapus fallback retrieval kata kunci/sinonim — jalur itu dipakai saat embedding tidak tersedia.
 - Jangan menambahkan Wikipedia Basa Jawa — di luar scope tahap ini.
-- Jangan mengubah skema kolom `Korpus` model/migration yang sudah ada.
+- Jangan mengubah skema kolom `Korpus` model/migration yang sudah ada tanpa migrasi baru.
 - Jangan menebak nama repo/kolom dataset NgokoKrama — cari dan verifikasi dulu.
 - Jangan gunakan Baoesastra Djawa dalam bentuk apa pun.
 - Jangan hardcode API key AI provider di mana pun di kode atau config yang ter-commit ke git.

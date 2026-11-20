@@ -144,6 +144,19 @@ Mengisi data awal:
 ./vendor/bin/sail artisan db:seed
 ```
 
+`KorpusSeeder` otomatis menjalankan `korpus:embed` bila `GEMINI_API_KEY` terisi.
+Untuk mengisi atau memperbarui vektor korpus secara manual:
+
+```bash
+./vendor/bin/sail artisan korpus:embed          # hanya baris yang belum punya embedding
+./vendor/bin/sail artisan korpus:embed --force  # timpa semua embedding
+```
+
+Kolom `korpus.embedding` memakai tipe `vector` dari pgvector. Image PostgreSQL
+di `docker-compose.yml` sudah `pgvector/pgvector:pg18`. Bila ekstensinya tidak
+tersedia, migrasi menurunkan kolom ke `json` dan retrieval menghitung kosinus
+di PHP, jadi aplikasi tetap jalan tanpa pgvector.
+
 ---
 
 ## 5. Frontend (Vite)
