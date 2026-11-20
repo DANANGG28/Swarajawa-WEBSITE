@@ -17,6 +17,8 @@ class Korpus extends Model
 
     protected $table = 'korpus';
 
+    private static bool $vectorSearchSupported = false;
+
     protected $fillable = [
         'judul',
         'kategori',
@@ -40,19 +42,26 @@ class Korpus extends Model
     /**
      * Apakah kolom `embedding` bertipe pgvector. Di PostgreSQL tanpa ekstensi
      * pgvector, kolom jatuh ke JSON dan pencarian dihitung di PHP.
+     *
+     * Hasil positif di-cache per proses; migrasi berjalan setelah proses hidup
+     * hanya bisa menambah kapabilitas, jadi hasil negatif sengaja tidak
+     * di-cache agar tidak terkunci di jalur fallback.
      */
     public static function supportsVectorSearch(): bool
     {
-        if (DB::getDriverName() !== 'pgsql') {
+        if (self::$vectorSearchSupported) {
+            return true;
+        }
+
+        if (DB::getDriverName() !== 'pgsql' || ! Pgvector::available()) {
             return false;
         }
 
-        if (! Pgvector::available()) {
+        if (! Schema::hasColumn('korpus', 'embedding')) {
             return false;
         }
 
-        return Schema::hasColumn('korpus', 'embedding')
-            && self::embeddingColumnType() === 'vector';
+        return self::$vectorSearchSupported = self::embeddingColumnType() === 'vector';
     }
 
     /**
